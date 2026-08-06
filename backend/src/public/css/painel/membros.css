@@ -1,0 +1,448 @@
+/* ==========================================================================
+   DIRETÓRIO DE MEMBROS
+
+   Barra de controle, régua de carga, visão em tabela e o pop-up de perfil.
+
+   Faz parte do CSS do painel, carregado por views/layouts/painel.njk.
+   As variáveis usadas aqui vêm de tokens.css.
+   ========================================================================== */
+
+
+.membros-container {
+  max-width: 1500px;
+}
+
+
+/* ------------------------------------------------------ barra de controle */
+
+.membros-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  margin-bottom: 1.75rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+
+.membros-visao {
+  display: inline-flex;
+  gap: 0.15rem;
+  margin-left: auto;
+  padding: 0.15rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+}
+
+/* Agrupar por. Mesma caixa segmentada da visão, mas com rótulo em texto: são
+   três palavras e nenhum ícone diz "agrupar por setor" sem legenda. */
+.membros-agrupar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  margin-left: auto;
+  padding: 0.15rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+}
+
+/* Quando o controle aparece, é ele que ganha o empurrão para a direita; a
+   visão passa a andar colada nele. Escondido (sem JavaScript), nada muda. */
+.membros-agrupar:not([hidden]) ~ .membros-visao {
+  margin-left: 0;
+}
+
+.membros-agrupar-rotulo {
+  padding: 0 0.35rem 0 0.25rem;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  color: var(--muted);
+}
+
+.membros-agrupar .visao-btn {
+  width: auto;
+  padding: 0 0.5rem;
+  font-family: inherit;
+  font-size: var(--t-mini);
+  font-weight: 600;
+}
+
+.visao-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 26px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+
+.visao-btn:hover {
+  color: var(--text);
+}
+
+/* Aba ativa é o estado que o âmbar tem direito de marcar: diz onde você está */
+.visao-btn.active {
+  background: var(--surface-3);
+  color: var(--ember);
+}
+
+.membros-aviso {
+  margin-bottom: 1.25rem;
+  font-size: var(--t-meta);
+  color: var(--muted);
+}
+
+/* Contagem ao lado do eyebrow, sem competir com ele */
+.eyebrow-conta {
+  padding: 0.02rem 0.4rem;
+  border-radius: 99px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* ------------------------------------------------------- cartão de pessoa */
+
+.card-nome {
+  transition: color 0.15s var(--ease);
+}
+
+.card-nome:hover {
+  color: var(--ember);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.card-membro .card-setor {
+  margin-top: 0.3rem;
+}
+
+.card-setor-vazio {
+  font-style: italic;
+}
+
+
+/* --------------------------------------------------------- régua de carga */
+
+/*
+   A ASSINATURA DO DIRETÓRIO.
+
+   Um traço de 4px que responde de relance "quem está sobrecarregado". A
+   largura sai de --ocupacao, calculada no template contra o maior total aberto
+   do clube — então a comparação acontece entre pessoas, na horizontal, sem
+   ler número nenhum.
+
+   Só cor semântica aqui. Nenhum âmbar: carga é estado, e âmbar é ação.
+*/
+.regua {
+  display: flex;
+  gap: 2px;
+  width: var(--ocupacao, 100%);
+  min-width: 12px;
+  height: 4px;
+  margin-top: 0.55rem;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+/* Cada segmento é um link para o quadro filtrado. Sem sublinhado e sem cor de
+   link: aqui a cor É o dado, e um segmento de 4px não comporta decoração. */
+.regua-parte {
+  display: block;
+  min-width: 3px;
+  text-decoration: none;
+}
+
+.regua-pendente {
+  background: var(--warn);
+}
+
+.regua-andamento {
+  background: var(--info);
+}
+
+.regua-atrasada {
+  background: var(--danger);
+}
+
+/* O alvo real é a legenda logo abaixo; o segmento só reage para dizer que
+   também é clicável. */
+.regua:hover .regua-parte {
+  opacity: 0.75;
+}
+
+.regua-parte:hover {
+  opacity: 1;
+}
+
+/* Régua vazia é informação: um traço que existe e está zerado, não um sumiço */
+.regua-vazia {
+  width: 100%;
+  height: 1px;
+  margin-top: 0.7rem;
+  background: var(--line-strong);
+}
+
+.regua-legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.5rem;
+  margin-top: 0.35rem;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+/* A legenda carrega o mesmo destino dos segmentos e é o caminho de teclado:
+   herda a cor porque o dado já está dito na palavra, não no azul de link. */
+.regua-legenda a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.regua-legenda a:hover {
+  color: var(--text-dim);
+  border-bottom-color: var(--line-strong);
+}
+
+.regua-atraso {
+  color: var(--danger);
+}
+
+.regua-legenda a.regua-atraso:hover {
+  color: var(--danger);
+  border-bottom-color: var(--danger);
+}
+
+.regua-livre {
+  font-style: normal;
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+
+/* --------------------------------------------------------------- tabela */
+
+.tabela-rolagem {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--surface);
+}
+
+.tabela-membros {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-meta);
+}
+
+.tabela-membros th {
+  padding: 0.65rem 0.8rem;
+  border-bottom: 1px solid var(--line-strong);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tabela-membros td {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.tabela-membros tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela-membros tbody tr {
+  transition: background-color 0.15s var(--ease);
+}
+
+.tabela-membros tbody tr:hover {
+  background: var(--surface-2);
+}
+
+.tabela-usuario {
+  display: block;
+  margin-top: 0.1rem;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  color: var(--muted);
+}
+
+.tabela-setor {
+  color: var(--text-dim);
+}
+
+.tabela-num,
+.tabela-data {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.tabela-num {
+  text-align: right;
+  color: var(--text-dim);
+}
+
+.tabela-atraso {
+  color: var(--danger);
+}
+
+.tabela-data {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.tabela-acoes {
+  text-align: right;
+}
+
+
+/* ---------------------------------------------------- pop-up de perfil */
+
+.perfil-topo {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.perfil-avatar {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.perfil-nome {
+  font-size: 1.1rem;
+}
+
+.perfil-usuario {
+  margin-top: 0.1rem;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  color: var(--muted);
+}
+
+.perfil-dados {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.1rem;
+  font-size: var(--t-meta);
+}
+
+.perfil-dados dt {
+  color: var(--muted);
+}
+
+.perfil-dados dd {
+  color: var(--text);
+}
+
+.perfil-bio {
+  padding: 0.7rem 0.8rem;
+  margin-bottom: 1.1rem;
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  max-width: 65ch;
+  font-size: var(--t-meta);
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+.perfil-contagem {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+
+.perfil-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.perfil-tarefa {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  font-size: var(--t-meta);
+  transition: border-color 0.15s var(--ease);
+}
+
+.perfil-tarefa:hover {
+  border-color: var(--line-strong);
+}
+
+.perfil-tarefa-titulo {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.perfil-tarefa-prazo {
+  flex: 0 0 auto;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  color: var(--muted);
+}
+
+.perfil-tarefa.is-atrasada .perfil-tarefa-prazo {
+  color: var(--danger);
+}
+
+
+/* --------------------------------------------------------------- mobile */
+
+@media (max-width: 680px) {
+  .membros-barra {
+    padding: 0.5rem;
+  }
+
+  .membros-visao {
+    margin-left: 0;
+  }
+
+  /* A tabela em tela estreita vira rolagem horizontal em vez de espremer */
+  .tabela-membros {
+    min-width: 560px;
+  }
+}

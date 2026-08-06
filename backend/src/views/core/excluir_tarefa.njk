@@ -1,0 +1,49 @@
+{#
+  Confirmação de exclusão de tarefa. Mesmo formato das outras três telas de
+  excluir.
+#}
+{% extends "layouts/painel.njk" %}
+
+{% block titulo %}Excluir tarefa - Clube de Programação{% endblock %}
+
+{% block conteudo %}
+<div class="form-page">
+  <div class="painel-header">
+    <div>
+      <p class="eyebrow">tarefas</p>
+      <h1>Excluir esta tarefa?</h1>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="confirm-info">
+      <h3>{{ tarefa.titulo }}</h3>
+      {# `status_label` e não `get_status_display`: os dois existem no service,
+         mas o resto do painel usa o primeiro. #}
+      <span class="badge badge-{{ tarefa.status }}">{{ tarefa.status_label }}</span>
+      {% if tarefa.descricao %}
+        <p class="card-desc">{{ tarefa.descricao }}</p>
+      {% endif %}
+      <div class="card-meta">
+        <span>#{{ tarefa.id }}</span>
+        <span><strong>{{ tarefa.responsavel.usuario.get_full_name|default(tarefa.responsavel.usuario.username) }}</strong></span>
+        {% if tarefa.prazo %}<span>prazo {{ tarefa.prazo|date("d/m/Y") }}</span>{% endif %}
+        {% if tarefa.anexos|length %}<span>{{ tarefa.anexos|length }} anexo{{ tarefa.anexos|length|pluralize }}</span>{% endif %}
+      </div>
+    </div>
+
+    <p class="confirm-warning">
+      A tarefa e os anexos dela saem do quadro. Não dá para desfazer. Se ela só
+      terminou, mova para "Concluída" em vez de excluir.
+    </p>
+
+    <form method="POST">
+      {{ csrf_token() | safe }}
+      <div class="form-buttons">
+        <button type="submit" class="btn-danger">Excluir tarefa</button>
+        <a href="{{ url('ver_tarefa', tarefa.id) }}" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

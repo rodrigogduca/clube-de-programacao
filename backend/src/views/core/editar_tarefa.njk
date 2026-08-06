@@ -1,0 +1,37 @@
+{% extends "layouts/painel.njk" %}
+
+{#
+  O formulário em si vive em partials/form_tarefa.njk, compartilhado com a tela
+  de criação e com o pop-up. Esta página é só a moldura.
+#}
+
+{% block titulo %}Editar tarefa - Clube de Programação{% endblock %}
+
+{% block conteudo %}
+<div class="form-page">
+  {#
+    "Ver a tarefa" e "Gerenciar anexos" ficavam numa SEGUNDA fileira de botões,
+    dentro do cartão, logo abaixo do "Salvar" do formulário. Duas fileiras
+    coladas, e a de baixo com mais botões que a de cima — nada indicava qual
+    delas terminava o trabalho.
+
+    "Ver a tarefa" saiu: esta página é a tarefa, com todos os campos abertos e
+    editáveis. "Anexos" subiu para o cabeçalho, que é onde as outras telas
+    põem o destino relacionado, longe do botão que salva.
+  #}
+  <div class="painel-header">
+    <div>
+      <p class="eyebrow">tarefas</p>
+      <h1>Editar tarefa</h1>
+      <p class="painel-sub"><strong>{{ tarefa.titulo }}</strong></p>
+    </div>
+    <div class="painel-actions">
+      <a href="{{ url('gerenciar_anexos', tarefa.id) }}" class="btn-secondary">Anexos</a>
+    </div>
+  </div>
+
+  <div class="form-card">
+    {% include "partials/form_tarefa.njk" %}
+  </div>
+</div>
+{% endblock %}

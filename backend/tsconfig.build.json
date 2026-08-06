@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"],
+  "compilerOptions": {
+    // `rootDir` EXPLÍCITO, e isto não é preciosismo.
+    //
+    // Sem ele o tsc deduz a raiz a partir do menor diretório comum aos
+    // arquivos de entrada — ou seja, o layout do `dist/` passa a depender de
+    // QUAIS arquivos existem. Quando `api/index.ts` virou `api/index.js`, a
+    // raiz comum deixou de ser `backend/` e passou a ser `backend/src/`: a
+    // saída pulou de `dist/src/main.js` para `dist/main.js` sozinha, enquanto
+    // os assets continuaram indo para `dist/src/` (o `outDir` declarado no
+    // nest-cli.json).
+    //
+    // O resultado eram dois diretórios de mesmo nome e conteúdos diferentes —
+    // `dist/views/` com o `routes.js` compilado e `dist/src/views/` com os
+    // `.njk` — e o `start:prod` apontando para um caminho que já não existia.
+    //
+    // Fixando em `./`, a saída é sempre `dist/src/**`, o que casa com o
+    // `outDir` dos assets, com o `start:prod` e com o `require` do
+    // `api/index.js`.
+    "rootDir": "./"
+  }
+}

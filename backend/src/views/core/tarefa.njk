@@ -1,0 +1,52 @@
+{% extends "layouts/painel.njk" %}
+
+{#
+  TAREFA — a página por trás do pop-up.
+
+  Todo caminho até o detalhe passa por aqui: com JavaScript o clique no cartão
+  abre o pop-up, sem JavaScript (ou com o link colado na barra de endereços) a
+  mesma URL entrega esta página. O miolo é o mesmo partial nos dois casos.
+#}
+
+{% block titulo %}{{ tarefa.titulo }} - Clube de Programação{% endblock %}
+
+{% block conteudo %}
+<div class="form-page">
+  {#
+    O cabeçalho segue a regra das outras telas — eyebrow, h1, régua — só que
+    aqui o eyebrow carrega dado em vez de rótulo: o id, que é como se endereça
+    uma tarefa numa reunião ("o 42 está travado"), e o status.
+  #}
+  <div class="painel-header detalhe-cabecalho">
+    <div>
+      <p class="eyebrow">
+        <span class="detalhe-id">#{{ tarefa.id }}</span>
+        <span class="badge badge-{{ tarefa.status }}">{{ tarefa.status_label }}</span>
+      </p>
+      <h1>{{ tarefa.titulo }}</h1>
+    </div>
+  </div>
+
+  <div class="form-card detalhe-card" data-trilho="{{ tarefa.status }}">
+    {% include "partials/detalhe_tarefa.njk" %}
+  </div>
+
+  {#
+    "Voltar ao quadro" saiu: "Painel" é o primeiro link da navbar, visível
+    nesta mesma tela, e um botão de voltar do lado de um botão de excluir
+    é peso desperdiçado no lugar mais perigoso da página.
+
+    Excluir em contorno e não em vermelho sólido: dois blocos de cor cheia
+    lado a lado disputam o clique, e o que deve vencer é "Editar".
+  #}
+  {% if can_manage_tasks %}
+    <div class="form-buttons">
+      <a href="{{ url('editar_tarefa', tarefa.id) }}" class="btn-primary">Editar tarefa</a>
+      <a href="{{ url('excluir_tarefa', tarefa.id) }}" class="btn-danger-ghost"
+         data-confirm="Excluir tarefa?"
+         data-confirm-detalhe="{{ tarefa.titulo }}"
+         data-confirm-acao="Excluir">Excluir</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{#
+  Confirmação de exclusão de membro. Mesmo formato das outras três telas de
+  excluir: o h1 pergunta, o poço identifica, uma linha vermelha diz o que se
+  perde, o botão repete o verbo.
+#}
+{% extends "layouts/painel.njk" %}
+
+{% block titulo %}Excluir membro - Clube de Programação{% endblock %}
+
+{% block conteudo %}
+<div class="form-page">
+  <div class="painel-header">
+    <div>
+      <p class="eyebrow">membros</p>
+      <h1>Excluir {{ membro_alvo.usuario.get_full_name|default(membro_alvo.usuario.username) }}?</h1>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="confirm-info">
+      <div class="card-avatar">{{ membro_alvo.usuario.first_name|make_list|first|default("?") }}{{ membro_alvo.usuario.last_name|make_list|first|default("") }}</div>
+      <h3>{{ membro_alvo.usuario.get_full_name|default(membro_alvo.usuario.username) }}</h3>
+      <span class="badge badge-{{ membro_alvo.cargo }}">{{ membro_alvo.cargo_label }}</span>
+      <div class="card-meta">
+        <span>@{{ membro_alvo.usuario.username }}</span>
+        {% if membro_alvo.setor %}<span>{{ membro_alvo.setor.nome }}</span>{% endif %}
+        <span>desde {{ membro_alvo.data_entrada|date("d/m/Y") }}</span>
+      </div>
+    </div>
+
+    {# A consequência que pega gente de surpresa é esta, e ela merece a única
+       linha vermelha da tela: as tarefas vão junto. #}
+    <p class="confirm-warning">
+      A conta e todas as tarefas atribuídas a esta pessoa são removidas junto.
+      Se as tarefas precisam continuar, passe-as para outro responsável antes.
+      Não dá para desfazer.
+    </p>
+
+    <form method="POST">
+      {{ csrf_token() | safe }}
+      <div class="form-buttons">
+        <button type="submit" class="btn-danger">Excluir membro</button>
+        <a href="{{ url('listar_membros') }}" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

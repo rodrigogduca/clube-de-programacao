@@ -1,0 +1,160 @@
+/* ==========================================================================
+   RESPONSIVO
+
+   Ajustes por largura e o respeito a prefers-reduced-motion. Carregado por último, porque sobrescreve.
+
+   Faz parte do CSS do painel, carregado por views/layouts/painel.njk.
+   As variáveis usadas aqui vêm de tokens.css.
+   ========================================================================== */
+
+
+/* Entre tablet e desktop o quadro rola na horizontal em vez de empilhar: três
+   colunas lado a lado são o que faz o kanban ser legível, e empilhar perde
+   isso. Abaixo de 680px empilha de vez, porque aí não cabe nem uma coluna. */
+@media (max-width: 1100px) and (min-width: 681px) {
+  .kanban-board {
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    grid-auto-columns: minmax(260px, 1fr);
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scroll-snap-type: x proximity;
+  }
+
+  .kanban-column {
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 680px) {
+  .kanban-board {
+    grid-template-columns: 1fr;
+  }
+
+  .kanban-cards {
+    max-height: none;
+  }
+
+  /* Cada controle numa linha: seletores lado a lado ficam ilegíveis */
+  .kanban-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .kanban-toolbar .filter-select,
+  .kanban-check {
+    width: 100%;
+  }
+
+  .kanban-csv {
+    width: 100%;
+  }
+
+  .kanban-csv > * {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .modal-caixa {
+    padding: 1.2rem;
+  }
+
+  .painel-linha {
+    padding: 0.55rem 0.7rem;
+  }
+
+  /* A ação desce para a própria linha em vez de espremer os números */
+  .painel-linha-acao {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 860px) {
+  .nav-title,
+  .nav-user-name {
+    display: none;
+  }
+
+  .nav-user-info {
+    padding-left: 0.5rem;
+  }
+
+  .nav-links {
+    gap: 0;
+  }
+
+  .nav-link {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 680px) {
+  body {
+    font-size: 14px;
+  }
+
+  .painel-container {
+    padding: 1.25rem 0.9rem 4rem;
+  }
+
+  .nav-container {
+    padding: 0 0.9rem;
+  }
+
+  /* A barra vira um trilho rolável em vez de quebrar linha */
+  .nav-links {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .painel-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .painel-actions {
+    width: 100%;
+  }
+
+  .painel-actions .btn-primary,
+  .painel-actions .btn-secondary {
+    flex: 1;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-card {
+    padding: 1.1rem;
+  }
+
+  .solicitacao-card,
+  .anexo-item {
+    flex-direction: column;
+  }
+
+  /* No celular o cabeçalho vira uma coluna, então o botão de ação da tela
+     ocupa a linha inteira em vez de ficar preso à direita de um título que
+     já quebrou em duas linhas. */
+  .painel-header .painel-actions .btn-primary,
+  .painel-header .painel-actions .btn-secondary {
+    flex: 1 1 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

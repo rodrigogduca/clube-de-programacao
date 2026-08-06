@@ -1,0 +1,107 @@
+{% extends "layouts/painel.njk" %}
+
+{% block titulo %}Novo membro - Clube de Programação{% endblock %}
+
+{% block conteudo %}
+<div class="form-page">
+  <div class="painel-header">
+    <div>
+      <p class="eyebrow">membros</p>
+      <h1>Novo membro</h1>
+      <p class="painel-sub">A conta já nasce ativa: a pessoa entra com o usuário e a senha definidos aqui.</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form method="POST">
+      {{ csrf_token() | safe }}
+
+      {# `old` devolve o que foi digitado quando o servidor recusa o envio. A
+         senha não volta de propósito: reexibi-la em HTML é risco desnecessário
+         (ver CAMPOS_NAO_PRESERVADOS em src/common/flash.ts). #}
+      <div class="form-group">
+        <label for="id_first_name" class="form-label">Nome</label>
+        <input type="text" name="first_name" id="id_first_name" class="form-input"
+               value="{{ old.first_name | default('') }}" maxlength="80" required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_last_name" class="form-label">Sobrenome</label>
+        <input type="text" name="last_name" id="id_last_name" class="form-input"
+               value="{{ old.last_name | default('') }}" maxlength="80">
+      </div>
+
+      <div class="form-group">
+        <label for="id_username" class="form-label">Nome de usuário</label>
+        <input type="text" name="username" id="id_username" class="form-input"
+               value="{{ old.username | default('') }}"
+               minlength="3" maxlength="40" autocomplete="off" required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_email" class="form-label">E-mail</label>
+        <input type="email" name="email" id="id_email" class="form-input"
+               value="{{ old.email | default('') }}" autocomplete="off" required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_senha" class="form-label">Senha</label>
+        <input type="password" name="senha" id="id_senha" class="form-input"
+               minlength="8" autocomplete="new-password" required>
+        <p class="form-ajuda">Mínimo de 8 caracteres. Combine com a pessoa — o sistema não envia a senha por e-mail.</p>
+      </div>
+
+      {#
+        Diretor monta a própria equipe: cargo é sempre Membro e o setor é o
+        dele, sem escolha. Mostrar um `<select>` com o clube inteiro só para o
+        servidor recusar depois seria uma promessa falsa.
+
+        O campo travado vai como `hidden` porque `<select disabled>` não é
+        enviado — e aí o setor chegaria vazio no POST.
+      #}
+      {% if restrito_ao_setor %}
+        {% set meu_setor = setores | first %}
+        <div class="form-group">
+          <span class="form-label">Cargo</span>
+          <p class="form-fixo">Membro</p>
+          <input type="hidden" name="cargo" value="membro">
+        </div>
+
+        <div class="form-group">
+          <span class="form-label">Setor</span>
+          <p class="form-fixo">{{ meu_setor.nome | default('Sem setor') }}</p>
+          <p class="form-ajuda">Você adiciona membros ao seu setor.</p>
+          {% if meu_setor %}<input type="hidden" name="setorId" value="{{ meu_setor.id }}">{% endif %}
+        </div>
+      {% else %}
+        <div class="form-group">
+          <label for="id_cargo" class="form-label">Cargo</label>
+          {% set cargo_atual = old.cargo | default('membro') %}
+          <select name="cargo" id="id_cargo" class="form-input">
+            {% for valor, rotulo in [['membro','Membro'],['diretor','Diretor'],['administrador','Administrador']] %}
+              <option value="{{ valor }}" {% if cargo_atual == valor %}selected{% endif %}>{{ rotulo }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="id_setor" class="form-label">Setor</label>
+          <select name="setorId" id="id_setor" class="form-input">
+            <option value="">Nenhum</option>
+            {% for s in setores %}
+              <option value="{{ s.id }}" {% if old.setorId == s.id|string %}selected{% endif %}>{{ s.nome }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
+
+      {# Cancelar volta para o diretório, que é de onde se chega aqui — antes
+         caía no quadro, uma tela que a pessoa não estava usando. #}
+      <div class="form-buttons">
+        <button type="submit" class="btn-primary">Criar membro</button>
+        <a href="{{ url('listar_membros') }}" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

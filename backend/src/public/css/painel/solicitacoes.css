@@ -1,0 +1,110 @@
+/* ==========================================================================
+   SOLICITAÇÕES DE CADASTRO
+
+   Só o cartão da fila. O filtro por status usa `tabs-bar`/`tab-btn` de
+   layout.css — os mesmos do quadro.
+
+   `.filter-bar` e `.filter-btn` foram removidos daqui: eram uma cópia da barra
+   de abas com outro nome, outra fonte (0.82rem contra 0.83rem) e outro
+   padding, usada numa tela só. Duas barras quase iguais em telas vizinhas
+   custam mais do que a diferença que entregavam, que era nenhuma.
+
+   Faz parte do CSS do painel, carregado por views/layouts/painel.njk.
+   As variáveis usadas aqui vêm de tokens.css.
+   ========================================================================== */
+
+
+.solicitacao-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem;
+  margin-bottom: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  transition: border-color 0.15s var(--ease);
+}
+
+.solicitacao-card:hover {
+  border-color: var(--line-strong);
+}
+
+.solicitacao-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+/* Nome e selos na mesma linha: quem é a pessoa e o que ela vai ser no clube
+   são a mesma pergunta, e separá-las em duas linhas obrigava o olho a descer
+   para completar a frase. */
+.solicitacao-titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.solicitacao-titulo h3 {
+  font-family: var(--sans);
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+/* A linha de metadados quebra em duas quando o e-mail é longo, e o `min-width`
+   do pai impede que ela empurre os botões para fora do cartão. */
+.solicitacao-info .card-meta {
+  flex-wrap: wrap;
+  gap: 0.2rem 0.85rem;
+}
+
+/*
+  A senha escolhida no cadastro, fechada por padrão.
+
+  O `<details>` não é enfeite: o painel é usado em reunião e com a tela
+  projetada, e antes esta linha ficava aberta em toda solicitação pendente.
+  O gesto de abrir é o que separa "preciso desta senha agora" de "esta senha
+  esteve na tela o tempo todo".
+*/
+.solicitacao-senha > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: fit-content;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s var(--ease);
+}
+
+.solicitacao-senha > summary:hover {
+  color: var(--text-dim);
+}
+
+/* `user-select: all` porque o único motivo de abrir isto é copiar a senha */
+.solicitacao-senha > code {
+  display: inline-block;
+  margin-top: 0.45rem;
+  padding: 0.3rem 0.55rem;
+  background: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+  color: var(--text);
+  user-select: all;
+}
+
+.solicitacao-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}

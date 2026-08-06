@@ -1,0 +1,58 @@
+{#
+  Página de erro.
+
+  Renderizada pelo WebExceptionFilter em falhas de GET. Recebe `status`,
+  `titulo`, `mensagem` e `logado`. Em erros 5xx a mensagem é genérica de
+  propósito — o detalhe com stack vai só para o log.
+
+  ERA A ÚNICA TELA SEM SAÍDA DO SISTEMA. Tinha o número, o título, a mensagem
+  e o "voltar para a página inicial" que o layout dá de graça — e a página
+  inicial quase nunca é o lugar de onde a pessoa veio. Quem levava 403 dentro
+  do painel era despejado no site público e tinha de entrar de novo pela porta
+  da frente.
+
+  Agora o caminho de volta depende de quem está lendo: com sessão, o painel;
+  sem sessão, o login. O `logado` vem do filtro justamente para isso.
+#}
+{% extends "layouts/auth.njk" %}
+
+{% block titulo %}{{ titulo }} - Clube de Programação{% endblock %}
+
+{% block meta %}
+  <meta name="robots" content="noindex, nofollow">
+{% endblock %}
+
+{% block cabecalho %}
+  {#
+    O número é o dado, e dado neste projeto é mono. Grande porque é a única
+    coisa que distingue um 404 (o endereço está errado) de um 403 (o endereço
+    está certo e você não pode) — e essa diferença muda o que a pessoa faz em
+    seguida.
+  #}
+  <p class="erro-status" aria-hidden="true">{{ status }}</p>
+  <h1>{{ titulo }}</h1>
+  <p class="erro-mensagem">
+    <span class="sr-only">Erro {{ status }}.</span>{{ mensagem }}
+  </p>
+{% endblock %}
+
+{% block conteudo %}{% endblock %}
+
+{% block rodape %}
+  {#
+    Uma saída em destaque e uma discreta. A em destaque é a que devolve a
+    pessoa ao trabalho; a discreta é a página pública, que serve de última
+    parada para todo mundo.
+  #}
+  <div class="erro-saidas">
+    {% if logado %}
+      <a href="{{ url('painel') }}" class="erro-saida-principal">Voltar ao painel</a>
+    {% else %}
+      <a href="{{ url('login') }}" class="erro-saida-principal">Entrar</a>
+    {% endif %}
+    <a href="{{ url('home') }}" class="back-to-home">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      Página inicial
+    </a>
+  </div>
+{% endblock %}

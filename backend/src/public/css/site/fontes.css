@@ -1,0 +1,28 @@
+/* ==========================================================================
+   FONTE DA MARCA — Bryndan Write
+
+   Hospedada aqui mesmo (public/fonts/), não no Google Fonts: é uma fonte
+   avulsa que o clube trouxe, e o lettering dela é o mesmo do logo desenhado à
+   mão. Por isso ela entra como a voz da marca, e não como a fonte de leitura.
+
+   Dois limites que decidem onde ela pode ser usada:
+
+   1. Só existe um peso (Regular). Pedir `font-weight: 700` faz o navegador
+      engordar o traço na força bruta e o desenho suja. Todo seletor que usa
+      `--marca` fixa `font-weight: 400`.
+   2. Não tem glifo de travessão (—) nem de meia-risca (–): saem como
+      retângulo vazio. Texto com travessão fica na fonte de leitura.
+
+   Acentuação do português está completa (á à â ã é ê í ó ô õ ú ç), o que era
+   o requisito real para usá-la em títulos aqui.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Bryndan Write";
+  /* `swap`: o título aparece na fonte de sistema e troca quando a fonte chega.
+     Sem isso o herói fica invisível enquanto os 167 KB baixam. */
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+  src: url("../../fonts/BryndanWriteBook-nGPM.ttf") format("truetype");
+}

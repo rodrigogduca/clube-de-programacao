@@ -1,0 +1,330 @@
+{#
+  KANBAN — macros do quadro e do cartão de tarefa.
+
+  Antes o mesmo bloco de cartão aparecia nove vezes em painel_admin.njk e três
+  em painel_membro.njk. Qualquer campo novo significava editar doze trechos
+  iguais, e foi assim que os `data-*` de filtro e arraste ficaram faltando em
+  metade deles. Aqui existe uma definição só.
+
+  Importe sempre `with context`, senão `url()` e `csrf_token()` não chegam:
+
+    {% import "partials/kanban.njk" as kanban with context %}
+    {{ kanban.quadro(pendentes, andamento, concluidas, can_manage_tasks, true) }}
+
+  Argumentos que aparecem em quase toda macro:
+    pode_gerir  mostra editar/excluir. Cargo de gestão.
+    pode_mover  permite arrastar e trocar o status. Gestão ou o próprio
+                responsável — é o que o TasksService.updateStatus aceita.
+#}
+
+{% macro cartao(tarefa, pode_gerir, pode_mover) %}
+  {#
+    Os `data-*` são o contrato com public/js/kanban.js: arraste lê
+    `tarefa-id`/`status`, e os filtros leem os demais. `data-busca` concentra o
+    texto pesquisável já em minúsculas para o filtro não recalcular a cada
+    tecla.
+  #}
+  <article class="kanban-card
+                  {%- if tarefa.atrasada %} is-atrasada{% endif %}
+                  {%- if tarefa.prazo_proximo %} is-proxima{% endif %}"
+           data-tarefa-id="{{ tarefa.id }}"
+           data-status="{{ tarefa.status }}"
+           data-setor-id="{{ tarefa.setor.id | default(0) }}"
+           data-responsavel-id="{{ tarefa.responsavel.id | default(0) }}"
+           data-prioridade="{{ tarefa.prioridade | default('media') }}"
+           data-atrasada="{{ 'sim' if tarefa.atrasada else 'nao' }}"
+           data-busca="{{ (tarefa.titulo ~ ' ' ~ (tarefa.descricao | default('')) ~ ' ' ~ (tarefa.projeto | default('')) ~ ' ' ~ (tarefa.responsavel.usuario.get_full_name | default(''))) | lower }}"
+           {#
+             `data-arrastavel` e não `draggable="true"`: o atributo nativo liga a
+             API de drag-and-drop do HTML5, que assume o gesto e para de emitir
+             pointermove — o arraste morria depois do primeiro evento. O
+             kanban.js usa Pointer Events, então marca com data-*.
+           #}
+           {% if pode_mover %}data-arrastavel="sim" tabindex="0" aria-roledescription="cartão arrastável"{% endif %}>
+
+    {% if pode_mover %}
+      <span class="kanban-grip" aria-hidden="true" title="Arraste para mover">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>
+      </span>
+    {% endif %}
+
+    {#
+      O título abre o pop-up de leitura. Continua sendo um link de verdade para
+      /painel/tarefa/:id, então sem JavaScript o clique leva à página do
+      detalhe — que antes não existia: para ler a descrição inteira era preciso
+      abrir o formulário de edição.
+    #}
+    <h4 class="kanban-card-titulo">
+      <a href="{{ url('ver_tarefa', tarefa.id) }}" class="kanban-card-link"
+         data-modal="ver-tarefa"
+         data-tarefa-id="{{ tarefa.id }}"
+         data-tarefa-titulo="{{ tarefa.titulo }}">{{ tarefa.titulo }}</a>
+    </h4>
+
+    {% if tarefa.descricao %}
+      <p class="kanban-card-desc">{{ tarefa.descricao | truncatewords(15) }}</p>
+    {% endif %}
+
+    <div class="kanban-card-tags">
+      {% if tarefa.prioridade %}
+        <span class="kanban-card-prioridade prioridade-{{ tarefa.prioridade }}">{{ tarefa.get_prioridade_display }}</span>
+      {% endif %}
+      {% if tarefa.funcao %}
+        <span class="kanban-card-funcao">{{ tarefa.get_funcao_display }}</span>
+      {% endif %}
+      {% if tarefa.projeto %}
+        <span class="kanban-card-projeto">{{ tarefa.projeto }}</span>
+      {% endif %}
+    </div>
+
+    <div class="kanban-card-meta">
+      <span class="kanban-card-pessoa">
+        <span class="kanban-card-avatar" aria-hidden="true">{{ tarefa.responsavel.usuario.first_name | make_list | first | default('?') }}</span>
+        {{ tarefa.responsavel.usuario.get_full_name | default(tarefa.responsavel.usuario.username) }}
+      </span>
+
+      {% if tarefa.prazo %}
+        {# date_utc e não date: prazo é data sem hora, gravada como meia-noite
+           UTC — no fuso do Brasil o filtro local mostraria o dia anterior. #}
+        <span class="kanban-prazo">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          {{ tarefa.prazo | date_utc("d/m/Y") }}
+          {%- if tarefa.atrasada %}<em class="kanban-prazo-aviso">atrasada</em>{% endif %}
+        </span>
+      {% endif %}
+    </div>
+
+    <div class="kanban-card-rodape">
+      <a href="{{ url('gerenciar_anexos', tarefa.id) }}" class="kanban-card-anexos">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        {% if tarefa.anexos_count %}{{ tarefa.anexos_count }}{% else %}0{% endif %}
+      </a>
+
+      {% if pode_gerir %}
+        <span class="kanban-card-acoes">
+          <a href="{{ url('editar_tarefa', tarefa.id) }}" class="kbn-edit"
+             data-modal="editar-tarefa"
+             data-tarefa-id="{{ tarefa.id }}"
+             data-tarefa-titulo="{{ tarefa.titulo }}">Editar</a>
+          {#
+            data-confirm faz public/js/ui.js abrir o modal e postar para este
+            mesmo href. Sem JS o link continua abrindo a tela de confirmação,
+            que é a rota GET correspondente.
+          #}
+          <a href="{{ url('excluir_tarefa', tarefa.id) }}"
+             class="kbn-delete"
+             data-confirm="Excluir tarefa?"
+             data-confirm-detalhe="{{ tarefa.titulo }}"
+             data-confirm-acao="Excluir">Excluir</a>
+        </span>
+      {% endif %}
+    </div>
+
+    {% if pode_mover %}
+      {#
+        Sem JS este formulário funciona sozinho: troca o status e recarrega.
+        Com JS o kanban.js intercepta o submit, chama a API e não recarrega.
+      #}
+      <form method="POST" action="{{ url('atualizar_tarefa', tarefa.id) }}" class="kanban-status-form">
+        {{ csrf_token() | safe }}
+        <label class="sr-only" for="status-{{ tarefa.id }}">Status da tarefa {{ tarefa.titulo }}</label>
+        <select name="status" id="status-{{ tarefa.id }}" class="kanban-select">
+          {% for value, label in tarefa.STATUS_CHOICES %}
+            <option value="{{ value }}" {% if tarefa.status == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn-small kanban-mover">Mover</button>
+      </form>
+    {% endif %}
+  </article>
+{% endmacro %}
+
+
+{% macro coluna(status, titulo, tarefas, pode_gerir, pode_mover) %}
+  <section class="kanban-column" data-coluna="{{ status }}">
+    <header class="kanban-column-header kanban-header-{{ status }}">
+      <span class="kanban-dot dot-{{ status }}"></span>
+      <h3>{{ titulo }}</h3>
+      <span class="kanban-count" data-contador>{{ tarefas | length }}</span>
+
+      {#
+        O `+` da coluna cria a tarefa já naquele status. O aria-label é próprio
+        de cada um: três botões chamados "Adicionar" são inúteis para quem usa
+        leitor de tela.
+      #}
+      {% if pode_gerir %}
+        <a href="{{ url('criar_tarefa') }}" class="kanban-add"
+           data-modal="criar-tarefa" data-status="{{ status }}"
+           title="Nova tarefa em {{ titulo }}"
+           aria-label="Nova tarefa em {{ titulo }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </a>
+      {% endif %}
+    </header>
+
+    {#
+      data-status marca a zona de soltura; o kanban.js só aceita o cartão em
+      uma coluna diferente da atual.
+    #}
+    <div class="kanban-cards" data-status="{{ status }}">
+      {% for tarefa in tarefas %}
+        {{ cartao(tarefa, pode_gerir, pode_mover) }}
+      {% endfor %}
+
+      {# Fica no DOM sempre: os filtros o revelam quando escondem tudo. #}
+      <p class="kanban-empty"{% if tarefas | length %} hidden{% endif %}>Nada aqui.</p>
+    </div>
+  </section>
+{% endmacro %}
+
+
+{#
+  Três vazios diferentes, porque são três situações diferentes e a mesma frase
+  para as três não ajuda ninguém:
+
+  - coluna sem cartão      "Nada aqui." Três palavras bastam: é uma de três
+                           colunas, e as outras duas explicam o contexto.
+  - quadro inteiramente
+    vazio                  O pato e o convite para criar a primeira. É o estado
+                           mais raro e mais desanimador do painel, e o ÚNICO
+                           lugar do sistema interno onde o mascote aparece —
+                           repetido em cada vazio ele viraria papel de parede.
+  - filtro sem resultado   Diz que o problema é o filtro, e oferece limpá-lo.
+                           Revelado pelo kanban.js, que é quem sabe disso.
+#}
+{% macro quadro(pendentes, andamento, concluidas, pode_gerir, pode_mover) %}
+  {% set total = (pendentes | length) + (andamento | length) + (concluidas | length) %}
+
+  <div class="kanban-board" data-kanban>
+    {{ coluna('pendente', 'Pendente', pendentes, pode_gerir, pode_mover) }}
+    {{ coluna('em_andamento', 'Em andamento', andamento, pode_gerir, pode_mover) }}
+    {{ coluna('concluida', 'Concluída', concluidas, pode_gerir, pode_mover) }}
+  </div>
+
+  {% if total == 0 %}
+    <div class="kanban-vazio-total">
+      <img src="{{ static('images/pato.png') }}" alt="" aria-hidden="true" width="96" height="84">
+      <p>Nenhuma tarefa ainda. Comece criando a primeira.</p>
+      {% if pode_gerir %}
+        <a href="{{ url('criar_tarefa') }}" class="btn-primary" data-modal="criar-tarefa" data-status="pendente">+ Nova tarefa</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="kanban-vazio-filtro" data-vazio-filtro hidden>
+    <p>Nenhuma tarefa passa nestes filtros.</p>
+    <button type="button" class="btn-small-outline" data-limpar-filtros>Limpar filtros</button>
+  </div>
+{% endmacro %}
+
+
+{#
+  Barra de busca e filtros. `escopo` diferencia as instâncias na mesma página
+  (a aba "Todos" e cada aba de setor têm uma cada), porque os ids precisam ser
+  únicos para os <label> apontarem certo.
+#}
+{% macro filtros(escopo, membros, setores, com_setor) %}
+  <div class="kanban-toolbar" data-filtros>
+    <div class="kanban-busca">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <label class="sr-only" for="busca-{{ escopo }}">Buscar tarefa</label>
+      <input type="search" id="busca-{{ escopo }}" class="kanban-busca-input"
+             data-filtro="busca" placeholder="Buscar por título, projeto ou responsável…"
+             autocomplete="off">
+    </div>
+
+    {% if com_setor %}
+      <label class="sr-only" for="setor-{{ escopo }}">Filtrar por setor</label>
+      <select id="setor-{{ escopo }}" class="filter-select" data-filtro="setor">
+        <option value="">Todos os setores</option>
+        {% for setor in setores %}
+          <option value="{{ setor.id }}">{{ setor.nome }}</option>
+        {% endfor %}
+        <option value="0">Sem setor</option>
+      </select>
+    {% endif %}
+
+    {# Um seletor com uma opção só não filtra nada: some quando não há lista. #}
+    {% if membros | length > 1 %}
+      <label class="sr-only" for="responsavel-{{ escopo }}">Filtrar por responsável</label>
+      <select id="responsavel-{{ escopo }}" class="filter-select" data-filtro="responsavel">
+        <option value="">Todos os responsáveis</option>
+        {% for m in membros %}
+          <option value="{{ m.id }}">{{ m.usuario.get_full_name | default(m.usuario.username) }}</option>
+        {% endfor %}
+      </select>
+    {% endif %}
+
+    <label class="sr-only" for="prioridade-{{ escopo }}">Filtrar por prioridade</label>
+    <select id="prioridade-{{ escopo }}" class="filter-select" data-filtro="prioridade">
+      <option value="">Toda prioridade</option>
+      <option value="urgente">Urgente</option>
+      <option value="alta">Alta</option>
+      <option value="media">Média</option>
+      <option value="baixa">Baixa</option>
+    </select>
+
+    <label class="kanban-check">
+      <input type="checkbox" data-filtro="atrasada">
+      <span>Só atrasadas</span>
+    </label>
+
+    {#
+      Sem controle visível de propósito: status é a coluna, e um <select> de
+      status ao lado de três colunas rotuladas seria redundante. Ele existe
+      para a régua de carga do diretório, que abre o quadro por /painel?...
+      &status=pendente. "Limpar filtros" o zera junto com os demais.
+    #}
+    <input type="hidden" data-filtro="status" value="">
+
+    <button type="button" class="btn-small-outline kanban-limpar-filtros" data-limpar-filtros hidden>
+      Limpar filtros
+    </button>
+  </div>
+{% endmacro %}
+
+
+{#
+  Ferramentas de planilha. O formulário de importação é multipart, então o
+  panel.controller valida o CSRF na mão (o middleware não lê corpo multipart).
+#}
+{% macro ferramentas_csv(pode_limpar) %}
+  <div class="kanban-csv">
+    <a href="{{ url('exportar_tarefas') }}" class="btn-small-outline">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+      Exportar CSV
+    </a>
+
+    <form method="POST" action="{{ url('importar_tarefas') }}"
+          enctype="multipart/form-data" class="kanban-csv-import" data-import-csv>
+      {{ csrf_token() | safe }}
+      {#
+        "Importar tarefas" e não "Importar CSV": o botão diz o que acontece,
+        não em que formato. Quem quer cadastrar trinta tarefas de uma vez
+        procura por "tarefas", não por "CSV" — e era assim que a função ficava
+        invisível para quem mais precisava dela.
+      #}
+      <label class="btn-small-outline kanban-csv-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg>
+        Importar tarefas
+        {# O change no input dispara o submit via ui.js: evita o passo extra de
+           escolher o arquivo e depois clicar em enviar. #}
+        <input type="file" name="arquivo" accept=".csv,text/csv,text/plain" hidden>
+      </label>
+      <noscript><button type="submit" class="btn-small">Enviar</button></noscript>
+    </form>
+
+    <a href="{{ url('modelo_tarefas') }}" class="kanban-csv-modelo">Baixar modelo</a>
+
+    {% if pode_limpar %}
+      <form method="POST" action="{{ url('limpar_tarefas') }}" data-limpar-tarefas hidden>
+        {{ csrf_token() | safe }}
+        <input type="hidden" name="confirmacao" value="">
+      </form>
+      <button type="button" class="btn-small-outline btn-outline-danger"
+              data-limpar-tarefas-abrir>
+        Limpar todas
+      </button>
+    {% endif %}
+  </div>
+{% endmacro %}

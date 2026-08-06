@@ -1,0 +1,30 @@
+{#
+  LISTA DE ANEXOS — definição única.
+
+  Serve três consumidores: a aba de anexos do detalhe (página e pop-up) e a
+  resposta de `POST /painel/tarefa/:id/anexos?parcial=1`, que o pop-up injeta
+  depois de anexar sem recarregar.
+
+  O trecho é montado aqui, e não no JavaScript, pelo mesmo motivo do
+  `detalhe_tarefa.njk`: um campo novo é escrito uma vez e aparece nos dois
+  lugares, e os filtros do Nunjucks continuam valendo.
+
+  Espera `anexos` no contexto.
+#}
+
+{% if anexos %}
+  <ul class="detalhe-anexo-lista">
+    {% for anexo in anexos %}
+      <li class="detalhe-anexo">
+        <span class="badge badge-{{ anexo.tipo }}">{{ anexo.tipo }}</span>
+        {% if anexo.url %}
+          <a href="{{ anexo.url }}" target="_blank" rel="noopener" class="detalhe-anexo-nome">{{ anexo.nome }}</a>
+        {% else %}
+          <span class="detalhe-anexo-nome">{{ anexo.nome }}</span>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="detalhe-vazio">Nenhum anexo.</p>
+{% endif %}

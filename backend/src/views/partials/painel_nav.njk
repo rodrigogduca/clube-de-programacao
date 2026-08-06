@@ -1,0 +1,102 @@
+{#
+  NAVBAR DO PAINEL — a mesma barra da página inicial.
+
+  Pílula flutuante, logo com o lettering da marca, links em pílula e o menu do
+  usuário como avatar circular. O nome escrito por extenso ao lado do selo de
+  cargo saiu daqui: eram três coisas competindo no canto direito (nome, cargo,
+  "Sair") e nenhuma delas é navegação. Agora são as iniciais num círculo, e o
+  nome, o cargo e as ações vivem no menu que ele abre — como na home.
+
+  O `.user-avatar` e o `.user-dropdown` já eram estilizados em `painel/nav.css`
+  e já tinham o gatilho em `public/js/painel.js`; o que faltava era o template
+  usá-los.
+
+  Se renomear uma classe aqui, renomeie também em painel/nav.css.
+#}
+<nav class="painel-nav">
+  <div class="nav-container">
+    <a href="{{ url('home') }}" class="nav-logo-link">
+      <img src="{{ static('images/logo.png') }}" alt="Logo Clube" class="nav-logo">
+      <span class="nav-title">Clube de Programação</span>
+    </a>
+
+    <div class="nav-links">
+      {% if user.is_authenticated %}
+        <a href="{{ url('painel') }}" class="nav-link">Painel</a>
+
+        <a href="{{ url('listar_membros') }}" class="nav-link">Membros</a>
+
+        {#
+          "+ Membro", "+ Tarefa" e "Novo setor" saíram daqui.
+
+          A navbar é navegação: ela diz onde se pode ir, não o que se pode
+          criar. Criar mora onde a coisa criada vive — a tarefa no `+` de cada
+          coluna do kanban, que já a faz nascer no status certo; o membro no
+          "+ Novo membro" do diretório; o setor na barra de abas do quadro, que
+          é onde os setores aparecem.
+
+          "Novo setor" era o último sobrevivente da regra antiga e ainda por
+          cima o mais raro dos três: um clube cria setor uma vez por gestão e
+          tarefa toda semana. Estava ocupando o lugar mais nobre da tela para
+          uma ação anual.
+        #}
+
+        {# Só quem responde por cadastro. Antes o link aparecia para todo mundo
+           logado e o membro comum levava 403 ao clicar. Para o diretor, tanto o
+           link quanto o número contam apenas o setor dele. #}
+        {% if can_approve_signup %}
+          {% if solicitacoes_pendentes %}
+            <a href="{{ url('listar_solicitacoes') }}" class="nav-link nav-link-alert">
+              Solicitações
+              <span class="nav-badge">{{ solicitacoes_pendentes }}</span>
+            </a>
+          {% else %}
+            <a href="{{ url('listar_solicitacoes') }}" class="nav-link">Solicitações</a>
+          {% endif %}
+        {% endif %}
+
+      {% else %}
+        <a href="{{ url('login') }}" class="nav-link">Entrar</a>
+        <a href="{{ url('solicitar_cadastro') }}" class="nav-link">Solicitar Cadastro</a>
+      {% endif %}
+    </div>
+
+    {# O avatar fica FORA de `.nav-links` porque no celular a lista inteira
+       recolhe atrás do hambúrguer, e a conta é a única coisa que não pode
+       sumir junto: é por ela que se sai do sistema. #}
+    {% if user.is_authenticated %}
+        <div class="user-menu">
+          {# As iniciais são o rótulo do botão; o `aria-label` diz o que ele faz,
+             porque "RD" sozinho não é nome de comando para quem ouve a tela. #}
+          <button class="user-avatar" type="button" aria-haspopup="true" aria-expanded="false"
+                  aria-label="Abrir menu da conta">{{ membro.usuario.first_name|make_list|first|default("?") }}{{ membro.usuario.last_name|make_list|first|default("") }}</button>
+          <div class="user-dropdown">
+            <div class="user-dropdown-header">
+              <strong>{{ membro.usuario.get_full_name | default(membro.usuario.username) }}</strong>
+              <span>{{ cargo_label }}</span>
+            </div>
+            {#
+              O menu da conta lista o que é da conta, e mais nada.
+
+              Tinha "Menu" e "Painel" aqui dentro. "Painel" é o primeiro link da
+              barra, a dois centímetros dali; "Menu" abria uma tela que era uma
+              cópia desta mesma barra em forma de cartões, e que foi removida.
+              Sobrou o que só existe aqui: sair do painel e sair da conta.
+            #}
+            <div class="user-dropdown-divider"></div>
+            <a href="{{ url('home') }}" class="user-dropdown-item">Página Inicial</a>
+            <div class="user-dropdown-divider"></div>
+            <form method="POST" action="{{ url('logout') }}">
+              {{ csrf_token() | safe }}
+              <button type="submit" class="user-dropdown-item user-dropdown-logout">Sair</button>
+            </form>
+          </div>
+        </div>
+    {% endif %}
+
+    {# Abre a mesma lista, empilhada, abaixo da barra (ver painel.js). #}
+    <button type="button" class="nav-mobile-toggle" aria-label="Abrir menu" aria-expanded="false">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>

@@ -1,0 +1,33 @@
+{#
+  MODAL DE CONTEÚDO — a casca larga.
+
+  Serve o pop-up de tarefa (ver, editar, criar) e o perfil de membro. Vem
+  vazia; o public/js/ui.js preenche eyebrow, título, corpo e ações pelo
+  `PainelUI.abrirModal`.
+
+  Uma casca só para os três modos da tarefa é o que permite a transição
+  ver → editar sem a caixa piscar: o `trocarCorpo` troca o miolo e mantém
+  posição, tamanho e título no lugar.
+
+  `data-trilho` no .modal-caixa carrega a cor do status — abrir a tarefa não
+  desorienta, porque a caixa chega na mesma cor da coluna de onde ela veio.
+
+  Sem JS este modal nunca abre, e todo link que o aciona continua apontando
+  para a rota de página correspondente.
+#}
+<div class="modal modal-conteudo" id="modal-form" role="dialog" aria-modal="true"
+     aria-labelledby="modal-form-titulo" hidden>
+  <div class="modal-caixa modal-caixa--form">
+
+    <button type="button" class="modal-x" data-modal-fechar aria-label="Fechar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+
+    <p class="modal-eyebrow" data-modal-eyebrow hidden></p>
+    <h2 class="modal-form-titulo" id="modal-form-titulo" data-modal-form-titulo></h2>
+
+    <div class="modal-corpo" data-modal-corpo></div>
+
+    <div class="modal-rodape" data-modal-acoes hidden></div>
+  </div>
+</div>

@@ -1,0 +1,293 @@
+/* ==========================================================================
+   NAVEGAÇÃO
+
+   Barra superior fixa, links, selo de pendências e o menu do usuário.
+
+   Histórico: este arquivo foi reescrito porque o CSS antigo estilizava uma
+   marcação que o template já não usava (.nav-right, .nav-user, .nav-logout).
+   Como a navbar é um include presente em toda tela autenticada, o resultado
+   era uma barra sem estilo em todas elas. Se você renomear uma classe aqui,
+   renomeie também em views/partials/painel_nav.njk.
+
+   Faz parte do CSS do painel, carregado por views/layouts/painel.njk.
+   As variáveis usadas aqui vêm de tokens.css.
+   ========================================================================== */
+
+
+/* A barra é a mesma da página inicial: pílula flutuante que ganha corpo com o
+   fundo desfocado. `sticky` e não `fixed` porque o conteúdo do painel rola
+   dentro do fluxo normal — com `fixed` o topo da tela ficaria embaixo dela. */
+.painel-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 12px var(--gutter, 20px) 6px;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 1440px;
+  height: 58px;
+  margin: 0 auto;
+  padding: 0 10px 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(8, 8, 11, 0.72);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+}
+
+.nav-logo-link {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+}
+
+/* Sem moldura nem recorte: o logo já é um círculo desenhado com fundo
+   transparente, e arredondá-lo de novo comia a borda do traço. */
+.nav-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.nav-title {
+  font-family: var(--marca, var(--sans));
+  font-weight: 400;
+  font-size: 1.02rem;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.nav-links {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.nav-link {
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  white-space: nowrap;
+  transition: color 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+
+.nav-link:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link-alert {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ember);
+}
+
+.nav-link-alert:hover {
+  color: var(--ember-soft);
+  background: var(--ember-wash);
+}
+
+/* Contador de pendências em mono tabular, para não dançar ao mudar de número */
+.nav-badge {
+  min-width: 1.15rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: 99px;
+  background: var(--ember);
+  color: #1a0e02;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* `.nav-user-info`, `.nav-user-name`, `.nav-badge-cargo`, `.nav-logout-form` e
+   `.nav-link-logout` saíram junto com a marcação que os usava: o nome por
+   extenso e o botão "Sair" viraram o avatar e o menu dele, logo abaixo. */
+
+.nav-mobile-toggle {
+  display: none;
+  padding: 0.4rem;
+  background: none;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+
+.nav-mobile-toggle:hover {
+  color: var(--ember);
+  border-color: var(--ember-line);
+}
+
+/* ---- Menu do usuário: o mesmo da página inicial (gatilho em painel.js) ----
+
+   O avatar é contorno âmbar sobre lavagem, não um disco cheio: preenchido, ele
+   virava o alvo mais quente da barra e disputava com o que de fato é ação. */
+.user-menu {
+  position: relative;
+  margin-left: 6px;
+}
+
+.user-avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--ember-line);
+  border-radius: 50%;
+  background: var(--ember-wash);
+  color: var(--ember-soft);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+
+.user-avatar:hover {
+  background: rgba(242, 138, 31, 0.18);
+  border-color: var(--ember);
+}
+
+.user-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 216px;
+  padding: 7px;
+  background: rgba(16, 15, 20, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: var(--shadow-lift);
+  z-index: 60;
+}
+
+.user-dropdown.open {
+  display: block;
+}
+
+.user-dropdown-header {
+  padding: 11px 13px 12px;
+}
+
+.user-dropdown-header strong {
+  display: block;
+  font-family: var(--display, var(--sans));
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.user-dropdown-header span {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ember);
+}
+
+.user-dropdown-divider {
+  height: 1px;
+  margin: 5px 0;
+  background: var(--line);
+}
+
+.user-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 9px 13px;
+  background: none;
+  border: none;
+  border-radius: var(--r-sm);
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: background-color 0.15s var(--ease), color 0.15s var(--ease);
+}
+
+.user-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+.user-dropdown-logout {
+  color: var(--danger);
+}
+
+.user-dropdown-logout:hover {
+  background: var(--danger-wash);
+  color: var(--danger);
+}
+
+
+/* ---- Mobile: a lista recolhe atrás do hambúrguer ----
+
+   Antes o `.nav-mobile-toggle` era `display: none` em toda largura e a barra
+   virava um trilho rolável no celular: os links existiam, mas ficavam fora da
+   tela e ninguém rolava uma navbar horizontal para descobrir. Agora o botão
+   funciona e a lista abre empilhada sob a pílula. */
+@media (max-width: 860px) {
+  .nav-mobile-toggle {
+    display: grid;
+    place-items: center;
+    order: 3;
+  }
+
+  .user-menu {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 8px;
+    background: rgba(16, 15, 20, 0.97);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-link {
+    padding: 11px 14px;
+    border-radius: var(--r-sm);
+    font-size: 0.95rem;
+  }
+
+  /* A pílula precisa ser a referência do painel absoluto acima. */
+  .nav-container {
+    position: relative;
+  }
+}

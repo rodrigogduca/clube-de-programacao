@@ -1,0 +1,97 @@
+/* ==========================================================================
+   PAINEL — Clube de Programação
+   Área autenticada: painel, kanban, membros, setores, anexos e menu.
+
+   Identidade herdada do projeto: fundo quase preto com acento âmbar
+   (#F28A1F). Os neutros são enviesados para o quente em vez de cinza puro.
+   Instrument Sans conduz a interface — a mesma do site público, para o painel
+   não parecer outro produto; JetBrains Mono carrega números, datas e rótulos.
+
+   DUAS REGRAS DE USO, e elas explicam quase toda decisão de cor daqui:
+
+   1. Âmbar significa AÇÃO. Botão, link de ação, foco, aba ativa, filtro em
+      vigor. Um alvo âmbar por região visual. Quando tudo é o acento, nada é —
+      era o que acontecia antes, com âmbar em selo de cargo, hover de filtro e
+      avatar de todo mundo ao mesmo tempo.
+   2. Cor semântica significa ESTADO. Status, prioridade, prazo, carga.
+      Um elemento nunca carrega os dois: cargo é identidade, não estado nem
+      ação, então cargo se distingue por peso e traço, não por cor.
+
+   Tema único (escuro), por escolha: acompanha a identidade existente
+   (grade de fundo, partículas, mascote).
+   ========================================================================== */
+
+/*
+  A PALETA É A DA PÁGINA INICIAL, sob os nomes que o painel já usava.
+
+  Antes eram dois conjuntos de valores parecidos mas não iguais (#060608 contra
+  #08080b no fundo, #f4f1ec contra #f6f1e9 no texto), e a diferença aparecia na
+  troca de tela: o painel parecia outro produto, um tom mais frio. Agora
+  `site/tokens.css` é a fonte única e os nomes daqui são apelidos dela — mexer
+  numa cor da home muda o painel no mesmo commit.
+
+  Os nomes ficam porque são ~2.500 linhas de CSS do painel apontando para eles;
+  renomear tudo seria muito risco para nenhum ganho.
+*/
+:root {
+  /* Fundo e superfícies */
+  --ink: var(--breu);
+  --surface: var(--penumbra);
+  --surface-2: var(--sombra);
+  --surface-3: #1f1d26;
+
+  /* Acento */
+  --ember: var(--ambar);
+  --ember-soft: var(--gema);
+  --ember-deep: #c26a0f;
+  --ember-wash: var(--ambar-lavagem);
+  --ember-line: var(--ambar-traco);
+
+  /* Texto: branco e cinza quentes, puxados para o âmbar */
+  --text: var(--giz);
+  --text-dim: var(--fumaca);
+  --muted: var(--cinza);
+
+  /* Traços */
+  --line: var(--traco);
+  --line-strong: var(--traco-forte);
+
+  /* Semânticas — deliberadamente distintas do acento */
+  --ok: var(--verde);
+  --warn: #f5c244;
+  --danger: var(--vermelho);
+  --info: #5aa9f2;
+
+  --ok-wash: rgba(61, 214, 140, 0.12);
+  --warn-wash: rgba(245, 194, 68, 0.12);
+  --danger-wash: rgba(242, 86, 75, 0.12);
+  --info-wash: rgba(90, 169, 242, 0.12);
+
+  /* Forma */
+  --r-sm: 6px;
+  --r: 10px;
+  --r-lg: 16px;
+
+  --shadow-lift: 0 10px 30px -12px rgba(0, 0, 0, 0.8);
+  --nav-h: 60px;
+
+  --sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Escala de tipo. `rem` conta a partir da raiz (16px) — o `font-size: 15px`
+     do body não muda isso, então 0.68rem eram 10,9px de verdade.
+     PISO DE 11,5px: nada no painel desce de --t-mini. */
+  --t-h1: 1.65rem;      /* 26,4px  título da tela          */
+  --t-h2: 1.2rem;       /* 19,2px  título de seção         */
+  --t-corpo: 0.94rem;   /* 15,0px  leitura                 */
+  --t-meta: 0.8rem;     /* 12,8px  metadado, filtro        */
+  --t-mini: 0.72rem;    /* 11,5px  selo, contador, eyebrow */
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* Aliases do nome antigo, para qualquer trecho que ainda os use */
+  --primary: var(--ember);
+  --bg: var(--ink);
+  --border: var(--line);
+  --text-muted: var(--muted);
+}

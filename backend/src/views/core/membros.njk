@@ -1,0 +1,174 @@
+{% extends "layouts/painel.njk" %}
+{% import "partials/membros.njk" as pessoas with context %}
+
+{#
+  DIRETÓRIO DE MEMBROS — tela própria, aberta em outra aba a partir do painel.
+
+  Existe separada porque membros e tarefas disputavam a mesma tela: o painel
+  renderizava a lista de pessoas três vezes e o acordeão de cargos abria
+  recolhido só para o kanban não sair da dobra.
+
+  A pergunta que esta tela responde não é "quem faz parte do clube" — isso a
+  home responde, em `// diretoria`. É "quem está sobrecarregado e quem pode
+  pegar mais". Por isso a régua de carga, e por isso a ordenação padrão é por
+  carga e não por data de entrada.
+#}
+
+{% block titulo %}Membros - Clube de Programação{% endblock %}
+
+{% block classe_main %}painel-container membros-container{% endblock %}
+
+{% block conteudo %}
+<div class="painel-header">
+  <div>
+    <p class="eyebrow">membros</p>
+    <h1>Diretório</h1>
+  </div>
+
+  {% if can_create_member %}
+    <div class="painel-actions">
+      <a href="{{ url('adicionar_membro') }}" class="btn-primary">+ Novo membro</a>
+    </div>
+  {% endif %}
+</div>
+
+<div class="painel-linha">
+  <span class="painel-linha-item"><strong>{{ total_membros }}</strong> pessoa{{ total_membros|pluralize }}</span>
+  <span class="painel-linha-item"><strong>{{ setores|length }}</strong> setor{{ setores|pluralize("es") }}</span>
+  {% if total_sem_setor %}
+    <span class="painel-linha-item"><strong>{{ total_sem_setor }}</strong> sem setor</span>
+  {% endif %}
+  {# "Ir para o quadro" saiu: "Painel" é o primeiro link da navbar, visível
+     nesta mesma tela. A linha de situação é para números, não para atalho
+     redundante. #}
+</div>
+
+{#
+  Barra de controle. Tudo filtra no cliente, sobre os `data-*` do cartão —
+  mesmo padrão que o kanban já usa, e que já provou funcionar na escala do
+  clube.
+#}
+<div class="membros-barra" data-membros-barra>
+  <div class="kanban-busca">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <label class="sr-only" for="busca-membros">Buscar membro</label>
+    <input type="search" id="busca-membros" class="kanban-busca-input"
+           data-filtro="busca" placeholder="Buscar por nome, usuário ou setor…"
+           autocomplete="off">
+  </div>
+
+  <label class="sr-only" for="filtro-cargo">Filtrar por cargo</label>
+  <select id="filtro-cargo" class="filter-select" data-filtro="cargo">
+    <option value="">Todos os cargos</option>
+    <option value="presidente">Presidente</option>
+    <option value="vice_presidente">Vice-Presidente</option>
+    <option value="administrador">Administrador</option>
+    <option value="diretor">Diretor</option>
+    <option value="antiga_gestao">Antiga Gestão</option>
+    <option value="membro">Membro</option>
+  </select>
+
+  <label class="sr-only" for="filtro-setor">Filtrar por setor</label>
+  <select id="filtro-setor" class="filter-select" data-filtro="setor">
+    <option value="">Todos os setores</option>
+    {% for s in setores %}
+      <option value="{{ s.id }}" {% if setor_filtro == s.id|string %}selected{% endif %}>{{ s.nome }}</option>
+    {% endfor %}
+    <option value="0">Sem setor</option>
+  </select>
+
+  <button type="button" class="btn-small-outline" data-limpar-filtros hidden>Limpar filtros</button>
+
+  {#
+    Agrupar por. O servidor entrega a grade agrupada por cargo, que é o padrão;
+    trocar para setor ou para lista plana remonta os grupos movendo os mesmos
+    cartões. Sem JavaScript o controle não aparece e o agrupamento por cargo
+    fica de pé sozinho.
+  #}
+  <div class="membros-agrupar" role="group" aria-label="Agrupar por" data-agrupar-grupo hidden>
+    <span class="membros-agrupar-rotulo" aria-hidden="true">agrupar</span>
+    <button type="button" class="visao-btn active" data-agrupar="cargo" aria-pressed="true">cargo</button>
+    <button type="button" class="visao-btn" data-agrupar="setor" aria-pressed="false">setor</button>
+    <button type="button" class="visao-btn" data-agrupar="nenhum" aria-pressed="false">nenhum</button>
+  </div>
+
+  {# Grade e tabela mostram os mesmos dados; a tabela serve para varrer o clube
+     inteiro de uma vez. #}
+  <div class="membros-visao" role="group" aria-label="Modo de visualização">
+    <button type="button" class="visao-btn active" data-visao="grade" aria-pressed="true" title="Grade">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span class="sr-only">Grade</span>
+    </button>
+    <button type="button" class="visao-btn" data-visao="tabela" aria-pressed="false" title="Tabela">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      <span class="sr-only">Tabela</span>
+    </button>
+  </div>
+</div>
+
+{#
+  Diz de quem é a lista. Sem isto, um diretor com quatro pessoas no setor acha
+  que o clube tem quatro pessoas — o número no topo não distingue "o clube" de
+  "o meu setor".
+#}
+{% if escopo_reduzido %}
+  <p class="membros-aviso">
+    {% if escopo_setor %}
+      Você está vendo o setor de {{ escopo_setor.nome }}.
+    {% else %}
+      Você está vendo quem não tem setor.
+    {% endif %}
+  </p>
+{% endif %}
+
+{% if membros %}
+
+  {# -------------------------------------------------------------- grade -- #}
+  <div data-visao-painel="grade">
+    {#
+      Grupos abrem expandidos: o motivo de estarem recolhidos era a disputa com
+      o kanban, que nesta tela não existe.
+    #}
+    {% for cargo_label, membros_cargo in membros_por_cargo %}
+      <section class="painel-section" data-grupo>
+        <p class="eyebrow">{{ cargo_label | lower }} <span class="eyebrow-conta">{{ membros_cargo|length }}</span></p>
+        <div class="cards-grid">
+          {% for m in membros_cargo %}
+            {{ pessoas.cartao(m, membro, can_edit_member, true) }}
+          {% endfor %}
+        </div>
+      </section>
+    {% endfor %}
+  </div>
+
+  {# ------------------------------------------------------------- tabela -- #}
+  <div data-visao-painel="tabela" hidden>
+    <div class="tabela-rolagem">
+      <table class="tabela-membros">
+        <thead>
+          <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Cargo</th>
+            <th scope="col">Setor</th>
+            <th scope="col" class="tabela-num">Abertas</th>
+            <th scope="col" class="tabela-num">Atrasadas</th>
+            <th scope="col">Desde</th>
+            <th scope="col"><span class="sr-only">Ações</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in membros %}
+            {{ pessoas.linha(m, membro, can_edit_member) }}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {# Revelado pelo JS quando nenhum cartão passa nos filtros. #}
+  <p class="empty-state" data-vazio-filtro hidden>Ninguém com esse nome.</p>
+
+{% else %}
+  <p class="empty-state">Nenhum membro cadastrado ainda.</p>
+{% endif %}
+{% endblock %}

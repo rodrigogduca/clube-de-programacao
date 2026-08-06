@@ -1,0 +1,47 @@
+{% extends "layouts/painel.njk" %}
+
+{#
+  O `<script>` que vivia no fim deste arquivo foi removido: era uma cópia do
+  embrulhador de `<input type=file>` do `painel.js`, e esta tela nem tem campo
+  de arquivo — o formulário só edita nome e endereço.
+#}
+
+{% block titulo %}Editar anexo - {{ anexo.nome }}{% endblock %}
+
+{% block conteudo %}
+<div class="form-page">
+  <div class="painel-header">
+    <div>
+      <p class="eyebrow">anexos</p>
+      <h1>Editar anexo</h1>
+      <p class="painel-sub"><strong>{{ anexo.nome }}</strong> em {{ tarefa.titulo }}</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form method="POST">
+      {{ csrf_token() | safe }}
+
+      <div class="form-group">
+        <label for="id_nome" class="form-label">Nome</label>
+        <input type="text" name="nome" id="id_nome" class="form-input" value="{{ anexo.nome|default('') }}" required>
+        <p class="form-ajuda">É o texto que aparece na lista de anexos da tarefa.</p>
+      </div>
+
+      {# O campo de endereço só faz sentido para anexo do tipo link: um arquivo
+         enviado tem a URL definida pelo armazenamento, não por quem edita. #}
+      {% if anexo.tipo == 'link' %}
+        <div class="form-group">
+          <label for="id_url" class="form-label">Endereço</label>
+          <input type="url" name="url" id="id_url" class="form-input" value="{{ anexo.url|default('') }}" required>
+        </div>
+      {% endif %}
+
+      <div class="form-buttons">
+        <button type="submit" class="btn-primary">Salvar alterações</button>
+        <a href="{{ url('gerenciar_anexos', tarefa.id) }}" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

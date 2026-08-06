@@ -1,0 +1,24 @@
+{% extends "layouts/painel.njk" %}
+
+{#
+  O formulário em si vive em partials/form_tarefa.njk, compartilhado com a tela
+  de edição e com o pop-up. Esta página é só a moldura.
+#}
+
+{% block titulo %}Nova tarefa - Clube de Programação{% endblock %}
+
+{% block conteudo %}
+<div class="form-page">
+  <div class="painel-header">
+    <div>
+      <p class="eyebrow">tarefas</p>
+      <h1>Nova tarefa</h1>
+      <p class="painel-sub">O setor vem do responsável que você escolher. A tarefa nasce pendente.</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    {% include "partials/form_tarefa.njk" %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,124 @@
+/* ==========================================================================
+   SELOS
+
+   Cargo, status e prioridade.
+
+   DUAS FAMÍLIAS DE SELO, e a diferença entre elas é a regra de cor do painel:
+
+   - Cargo (`.badge-presidente` … `.badge-membro`) é IDENTIDADE. Não é ação nem
+     estado, então não usa âmbar nem cor semântica: a hierarquia é lida no peso
+     do traço e do texto. Antes, três cargos usavam âmbar e um selo de
+     "Presidente" gritava mais que o botão "Criar tarefa" ao lado.
+   - Status e prioridade são ESTADO, e aí a cor semântica é a informação.
+
+   Cargo também sai do mono: "Vice-Presidente" é um nome, não um dado.
+   O mono fica para o que se conta e para o que se endereça.
+
+   Faz parte do CSS do painel, carregado por views/layouts/painel.njk.
+   As variáveis usadas aqui vêm de tokens.css.
+   ========================================================================== */
+
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.14rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 99px;
+  font-size: var(--t-mini);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------- cargo */
+
+/* A escada é de peso, não de cor: quanto mais alto o cargo, mais firme o
+   traço e mais claro o texto. Funciona em preto e branco, que é o teste. */
+.badge-presidente {
+  background: var(--surface-3);
+  border-color: var(--line-strong);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.badge-vice_presidente,
+.badge-administrador,
+.badge-admin {
+  background: var(--surface-2);
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.badge-diretor {
+  background: var(--surface-2);
+  border-color: var(--line);
+  color: var(--text-dim);
+}
+
+.badge-antiga_gestao {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--muted);
+}
+
+.badge-membro {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--text-dim);
+}
+
+/* --------------------------------------------------------- status e estado */
+
+/* Aqui a cor É a informação, então o mono volta: status é dado de operação. */
+.badge-pendente,
+.badge-em_andamento,
+.badge-concluida {
+  font-family: var(--mono);
+  letter-spacing: 0.03em;
+}
+
+.badge-pendente {
+  background: var(--warn-wash);
+  border-color: rgba(245, 194, 68, 0.32);
+  color: var(--warn);
+}
+
+.badge-em_andamento {
+  background: var(--info-wash);
+  border-color: rgba(90, 169, 242, 0.32);
+  color: var(--info);
+}
+
+.badge-concluida {
+  background: var(--ok-wash);
+  border-color: rgba(61, 214, 140, 0.32);
+  color: var(--ok);
+}
+
+.badge-arquivo,
+.badge-link {
+  background: var(--surface-2);
+  border-color: var(--line);
+  color: var(--text-dim);
+}
+
+.status-badge {
+  display: inline-flex;
+  padding: 0.14rem 0.5rem;
+  border-radius: 99px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-weight: 600;
+}
+
+.status-aprovada {
+  background: var(--ok-wash);
+  color: var(--ok);
+}
+
+.status-rejeitada {
+  background: var(--danger-wash);
+  color: var(--danger);
+}
+

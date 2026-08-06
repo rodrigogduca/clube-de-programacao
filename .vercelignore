@@ -1,0 +1,29 @@
+# O que NÃO sobe para a Vercel.
+#
+# Vale tanto para o deploy por Git quanto para `vercel deploy` da máquina — e
+# no segundo caso importa mais, porque a CLI envia até arquivo não versionado.
+# O `backup-chat-*.json` é exatamente esse caso: conversas exportadas do
+# recurso de chat que foi removido, com mensagem de gente real dentro.
+
+backup-chat-*.json
+*.log
+
+# Reconstruídos no build da Vercel.
+# O `dist/` sai daqui de propósito: quem o cria é o `postinstall`, já no
+# ambiente Linux da Vercel. Subir o `dist/` da máquina de quem desenvolve
+# levaria o engine do Prisma do Windows junto.
+node_modules
+dist
+.nestjs
+
+# Não fazem parte do que é servido
+docs
+specs
+.claude
+backend/test
+backend/render-check.cjs
+LICENSE
+README.md
+
+# ATENÇÃO: `backend/scripts/` NÃO pode entrar nesta lista — o `postinstall`
+# chama `scripts/build-no-vercel.js`, e sem ele não há build.

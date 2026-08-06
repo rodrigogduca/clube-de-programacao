@@ -1,0 +1,789 @@
+/* ==========================================================================
+   KANBAN
+
+   Barra de busca e filtros, ferramentas de CSV, colunas, cartões de tarefa e
+   os estados de arraste.
+
+   Faz parte do CSS do painel, carregado por views/layouts/painel.njk.
+   As variáveis usadas aqui vêm de tokens.css.
+   ========================================================================== */
+
+
+.kanban-container {
+  max-width: 1600px;
+}
+
+
+/* --------------------------------------------------- barra de ferramentas */
+
+.kanban-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+
+/* A busca puxa o espaço sobrando; os seletores ficam no tamanho do conteúdo */
+.kanban-busca {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 240px;
+  min-width: 180px;
+}
+
+.kanban-busca svg {
+  position: absolute;
+  left: 0.6rem;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.kanban-busca-input {
+  width: 100%;
+  padding: 0.4rem 0.6rem 0.4rem 2rem;
+  background: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.83rem;
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+
+/* #6b665f dava 3,6:1 sobre --ink e reprovava o AA de 4,5:1. Placeholder é
+   texto e conta. Este valor dá 5,5:1 e continua bem mais apagado que o que
+   for digitado. */
+.kanban-busca-input::placeholder {
+  color: #8a847c;
+}
+
+.kanban-busca-input:focus {
+  outline: none;
+  border-color: var(--ember);
+  box-shadow: 0 0 0 3px var(--ember-wash);
+}
+
+/* Remove o "x" nativo do type=search, que não combina com o tema */
+.kanban-busca-input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.filter-select,
+.kanban-select {
+  padding: 0.38rem 0.55rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s var(--ease);
+}
+
+/* Hover não usa âmbar: passar o mouse não é agir. O âmbar volta no foco e
+   quando o filtro está em vigor, que aí é informação — "há filtro ativo". */
+.filter-select:hover,
+.kanban-select:hover {
+  border-color: var(--line-strong);
+}
+
+.filter-select:focus,
+.kanban-select:focus {
+  outline: none;
+  border-color: var(--ember);
+}
+
+.filter-select.is-ativo {
+  border-color: var(--ember-line);
+  background: var(--ember-wash);
+  color: var(--text);
+}
+
+.kanban-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.6rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.15s var(--ease), color 0.15s var(--ease);
+}
+
+.kanban-check:hover {
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.kanban-check input {
+  accent-color: var(--ember);
+  cursor: pointer;
+}
+
+.kanban-check:has(input:checked) {
+  border-color: var(--ember-line);
+  background: var(--ember-wash);
+  color: var(--ember);
+}
+
+.kanban-limpar-filtros[hidden] {
+  display: none;
+}
+
+
+/* ----------------------------------------------------- ferramentas de CSV */
+
+.kanban-csv {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.kanban-csv-import {
+  display: inline-flex;
+}
+
+/* O <label> é o botão; o input dentro está hidden e recebe o clique por ele */
+.kanban-csv-label {
+  cursor: pointer;
+}
+
+.kanban-csv-modelo {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+  transition: color 0.15s var(--ease);
+}
+
+.kanban-csv-modelo:hover {
+  color: var(--ember);
+}
+
+
+/* ---------------------------------------------------------------- colunas */
+
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.kanban-column {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+
+/* A faixa no topo codifica o status em cor e posição, não só no texto */
+.kanban-column-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.kanban-column-header::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: var(--muted);
+}
+
+.kanban-header-pendente::before {
+  background: var(--warn);
+}
+
+.kanban-header-em_andamento::before {
+  background: var(--info);
+}
+
+.kanban-header-concluida::before {
+  background: var(--ok);
+}
+
+.kanban-column-header h3 {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.kanban-dot {
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.dot-pendente {
+  background: var(--warn);
+  box-shadow: 0 0 0 3px var(--warn-wash);
+}
+
+.dot-em_andamento {
+  background: var(--info);
+  box-shadow: 0 0 0 3px var(--info-wash);
+}
+
+.dot-concluida {
+  background: var(--ok);
+  box-shadow: 0 0 0 3px var(--ok-wash);
+}
+
+.kanban-count {
+  padding: 0.05rem 0.45rem;
+  border-radius: 99px;
+  background: var(--surface-3);
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-variant-numeric: tabular-nums;
+}
+
+/* O `+` da coluna: cria a tarefa já naquele status. Discreto até o mouse
+   chegar na coluna — é uma ação de conveniência, não a principal. */
+.kanban-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-sm);
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 0.15s var(--ease), color 0.15s var(--ease),
+    background-color 0.15s var(--ease);
+}
+
+.kanban-column:hover .kanban-add,
+.kanban-add:focus-visible {
+  opacity: 1;
+}
+
+.kanban-add:hover {
+  background: var(--ember-wash);
+  color: var(--ember);
+}
+
+/* No toque não existe hover: ali o botão fica sempre visível. */
+@media (hover: none) {
+  .kanban-add {
+    opacity: 1;
+  }
+}
+
+.kanban-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.7rem;
+  /* Altura mínima para a coluna vazia ainda ser um alvo de soltura decente */
+  min-height: 90px;
+  max-height: 70vh;
+  overflow-y: auto;
+  transition: background-color 0.15s var(--ease),
+    box-shadow 0.15s var(--ease);
+}
+
+/* Coluna sob o cartão arrastado */
+.kanban-cards.is-alvo {
+  background: var(--ember-wash);
+  box-shadow: inset 0 0 0 1px var(--ember-line);
+}
+
+/* Coluna de onde o cartão saiu: soltar aqui não faz nada */
+.kanban-cards.is-recusa {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+
+/* --------------------------------------------------------------- cartões */
+
+.kanban-card {
+  position: relative;
+  padding: 0.7rem 0.8rem 0.7rem 0.95rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  transition: border-color 0.15s var(--ease), background-color 0.15s var(--ease),
+    box-shadow 0.15s var(--ease), opacity 0.15s var(--ease);
+}
+
+/* A listra à esquerda carrega a prioridade */
+.kanban-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 2px;
+  border-radius: 0 2px 2px 0;
+  background: var(--line-strong);
+}
+
+.kanban-card:hover {
+  background: var(--surface-3);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-lift);
+}
+
+/* O título abre o pop-up de leitura */
+.kanban-card-link {
+  transition: color 0.15s var(--ease);
+}
+
+.kanban-card-link:hover {
+  color: var(--ember);
+}
+
+/*
+   O ÚNICO MOMENTO ORQUESTRADO DO PAINEL.
+
+   O cartão criado pelo pop-up entra na coluna com um realce que se dissolve.
+   Responde uma pergunta real — "para onde foi a tarefa que acabei de criar?" —
+   especialmente quando ela nasce numa coluna fora do olho. Nada mais anima:
+   o painel é aberto dezenas de vezes por semana, e o que encanta na primeira
+   vez irrita na vigésima.
+*/
+.kanban-card.is-nova {
+  animation: cartao-chega 0.7s var(--ease);
+}
+
+@keyframes cartao-chega {
+  0% {
+    background: var(--ember-wash);
+    border-color: var(--ember-line);
+    transform: translateY(-4px);
+  }
+  100% {
+    background: var(--surface-2);
+    border-color: var(--line);
+    transform: none;
+  }
+}
+
+.kanban-card[data-arrastavel] {
+  cursor: grab;
+  /* Sem isto o Chrome no toque interpreta o gesto como rolagem e dispara
+     pointercancel no meio do arraste. `pan-y` mantém a rolagem vertical da
+     coluna funcionando e libera o movimento horizontal para o arraste. */
+  touch-action: pan-y;
+}
+
+.kanban-card[data-arrastavel]:active {
+  cursor: grabbing;
+}
+
+.kanban-card:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 2px;
+}
+
+/* Alça de arraste: aparece no hover para não competir com o conteúdo */
+.kanban-grip {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.4rem;
+  display: flex;
+  color: var(--line-strong);
+  opacity: 0;
+  transition: opacity 0.15s var(--ease), color 0.15s var(--ease);
+}
+
+.kanban-card:hover .kanban-grip,
+.kanban-card:focus-visible .kanban-grip {
+  opacity: 1;
+  color: var(--muted);
+}
+
+/* O original fica como marcador do buraco enquanto o fantasma segue o cursor */
+.kanban-card.is-arrastando {
+  opacity: 0.32;
+  border-style: dashed;
+}
+
+.kanban-card.is-arrastando:hover {
+  box-shadow: none;
+}
+
+/* Cópia que acompanha o ponteiro */
+.kanban-fantasma {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 120;
+  margin: 0;
+  pointer-events: none;
+  opacity: 0.95;
+  transform-origin: top left;
+  rotate: 1.5deg;
+  box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.85);
+  border-color: var(--ember-line);
+}
+
+/* Enquanto salva no servidor: sinal de que ainda não está confirmado */
+.kanban-card.is-salvando {
+  opacity: 0.6;
+}
+
+.kanban-card.is-salvando::after {
+  content: "";
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 9px;
+  height: 9px;
+  border: 1.5px solid var(--ember-line);
+  border-top-color: var(--ember);
+  border-radius: 50%;
+  animation: kanban-girando 0.6s linear infinite;
+}
+
+@keyframes kanban-girando {
+  to { transform: rotate(360deg); }
+}
+
+/* Escondido pelos filtros. `display` e não `visibility`: a coluna precisa
+   encolher, e os contadores contam quem não tem esta classe. */
+.kanban-card.is-oculta {
+  display: none;
+}
+
+/* Impede seleção de texto e rolagem acidental durante o arraste */
+body.kanban-arrastando {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body.kanban-arrastando .kanban-card {
+  cursor: grabbing;
+}
+
+.kanban-card-titulo {
+  padding-right: 1rem; /* espaço da alça */
+  font-size: 0.87rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.kanban-card-desc {
+  margin-top: 0.3rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.kanban-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.28rem;
+  margin-top: 0.5rem;
+}
+
+.kanban-card-tags:empty {
+  display: none;
+}
+
+.kanban-card-prioridade,
+.kanban-card-funcao,
+.kanban-card-projeto {
+  padding: 0.08rem 0.42rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.prioridade-baixa {
+  color: var(--muted);
+}
+
+.prioridade-media {
+  background: var(--info-wash);
+  border-color: rgba(90, 169, 242, 0.3);
+  color: var(--info);
+}
+
+.prioridade-alta {
+  background: var(--warn-wash);
+  border-color: rgba(245, 194, 68, 0.32);
+  color: var(--warn);
+}
+
+.prioridade-urgente {
+  background: var(--danger-wash);
+  border-color: rgba(242, 86, 75, 0.4);
+  color: var(--danger);
+}
+
+/* A listra do cartão acompanha a prioridade */
+.kanban-card:has(.prioridade-media)::before {
+  background: var(--info);
+}
+
+.kanban-card:has(.prioridade-alta)::before {
+  background: var(--warn);
+}
+
+.kanban-card:has(.prioridade-urgente)::before {
+  background: var(--danger);
+}
+
+.kanban-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.65rem;
+  margin-top: 0.55rem;
+  font-size: 0.74rem;
+  color: var(--text-dim);
+}
+
+.kanban-card-pessoa {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.kanban-card-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  border: 1px solid var(--line-strong);
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.kanban-prazo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.kanban-prazo-aviso {
+  padding: 0.02rem 0.3rem;
+  border-radius: var(--r-sm);
+  background: var(--danger-wash);
+  color: var(--danger);
+  font-family: var(--sans);
+  font-size: 0.66rem;
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* Atraso vence a prioridade na listra: é a informação mais urgente do cartão */
+.kanban-card.is-atrasada::before,
+.kanban-card.is-atrasada:has(.prioridade-baixa)::before {
+  background: var(--danger);
+}
+
+.kanban-card.is-atrasada .kanban-prazo {
+  color: var(--danger);
+}
+
+.kanban-card.is-proxima .kanban-prazo {
+  color: var(--warn);
+}
+
+.kanban-card-rodape {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-top: 0.6rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+}
+
+.kanban-card-anexos {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  color: var(--muted);
+  transition: color 0.15s var(--ease);
+}
+
+.kanban-card-anexos:hover {
+  color: var(--ember);
+}
+
+.kanban-card-acoes {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+/* Antes eram links de texto sem preenchimento: ~17px de altura de alvo, abaixo
+   do mínimo de 24x24 da WCAG 2.2 AA (2.5.8) — e "Excluir" colado em "Editar".
+   O preenchimento resolve o alvo; o espaço extra antes do excluir separa a
+   ação sem volta das demais. */
+.kbn-edit,
+.kbn-delete {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0.2rem 0.45rem;
+  border-radius: var(--r-sm);
+  color: var(--muted);
+  transition: color 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+
+.kbn-delete {
+  margin-left: 0.35rem;
+}
+
+.kbn-edit:hover {
+  background: var(--ember-wash);
+  color: var(--ember);
+}
+
+.kbn-delete:hover {
+  background: var(--danger-wash);
+  color: var(--danger);
+}
+
+/* O arraste é o gesto principal; este seletor é a alternativa acessível — para
+   teclado, toque e quem está sem JS. Fica discreto para não virar o elemento
+   mais pesado do cartão, e ganha contorno no hover/foco. */
+.kanban-status-form {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.kanban-status-form .kanban-select {
+  min-width: 0;
+  padding: 0.15rem 0.3rem;
+  background: transparent;
+  border-color: transparent;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+}
+
+.kanban-status-form .kanban-select:hover,
+.kanban-status-form .kanban-select:focus {
+  background: var(--surface);
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.kanban-mover[hidden] {
+  display: none;
+}
+
+
+/* ---------------------------------------------------------- estados vazios */
+
+.kanban-empty {
+  padding: 1.1rem 0.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.kanban-empty[hidden] {
+  display: none;
+}
+
+/* Com o aviso de filtro no ar, "Nada aqui." três vezes só ecoa o óbvio. */
+.kanban-board.is-sem-resultado .kanban-empty {
+  display: none;
+}
+
+/*
+   O QUADRO INTEIRAMENTE VAZIO — e o único lugar do painel onde o pato aparece.
+
+   É o estado mais raro e o mais desanimador; os outros vazios se resolvem com
+   uma frase. Repetir o mascote em cada um deles o transformaria em papel de
+   parede, que é a mesma disciplina do --brasa: aparece na origem, não
+   espalhado.
+*/
+.kanban-vazio-total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 2.5rem 1rem 3rem;
+  text-align: center;
+}
+
+.kanban-vazio-total img {
+  width: 96px;
+  height: auto;
+  opacity: 0.85;
+}
+
+.kanban-vazio-total p {
+  font-size: var(--t-corpo);
+  color: var(--text-dim);
+}
+
+/* Vazio por filtro é outra conversa: o problema não é a falta de tarefa, é o
+   recorte — então a saída oferecida é desfazer o recorte. */
+.kanban-vazio-filtro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 1.5rem 1rem;
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r);
+  font-size: var(--t-meta);
+  color: var(--muted);
+}
+
+.kanban-vazio-filtro[hidden] {
+  display: none;
+}
+
+.empty-state {
+  padding: 2.5rem 1rem;
+  background: var(--surface);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--r);
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+}

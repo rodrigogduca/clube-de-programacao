@@ -1,0 +1,58 @@
+{% extends "layouts/painel.njk" %}
+{% import "partials/kanban.njk" as kanban with context %}
+
+{% block titulo %}Minha Área - Clube de Programação{% endblock %}
+
+{% block classe_main %}painel-container kanban-container{% endblock %}
+
+{% block conteudo %}
+<div class="painel-header">
+  <div>
+    <p class="eyebrow">quadro</p>
+    <h1>Minha área</h1>
+    <p class="painel-role">{{ membro.cargo_label }}</p>
+  </div>
+</div>
+
+{#
+  Mesma linha de situação do painel completo, pelo mesmo motivo: os números por
+  status já estão nos contadores das colunas, e ali eles reagem aos filtros.
+
+  As contagens vêm prontas do controller. Não tente somar as listas aqui: em
+  Nunjucks `lista_a + lista_b` NÃO concatena — faz coerção para string, e o
+  filtro seguinte estoura. Era exatamente esse o bug que derrubava esta tela.
+#}
+<div class="painel-linha">
+  {% if total_atrasadas %}
+    <span class="painel-linha-item painel-linha-alerta">
+      <strong>{{ total_atrasadas }}</strong> atrasada{{ total_atrasadas|pluralize }}
+    </span>
+    <span class="painel-linha-item">{{ total_minhas }} no total</span>
+  {% else %}
+    <span class="painel-linha-ok">nada atrasado. {{ total_minhas }} tarefa{{ total_minhas|pluralize }} suas.</span>
+  {% endif %}
+
+  {# Diz de que setor são as tarefas, sem virar um botão: "Membros" já está na
+     navbar desta mesma tela, e um link chamado "Colegas de Design" levando
+     para uma lista chamada "Diretório" prometia uma tela que não existe. #}
+  {% if membro.setor %}
+    <span class="painel-linha-item">{{ membro.setor.nome | lower }}</span>
+  {% endif %}
+</div>
+
+<section class="painel-section">
+  <p class="eyebrow">minhas tarefas</p>
+
+  {#
+    Sem filtro de setor nem de responsável: são todas do mesmo membro e do
+    mesmo setor, então esses controles não separariam nada.
+  #}
+  {{ kanban.filtros('minhas', [], [], false) }}
+
+  {#
+    pode_gerir falso — o membro não edita nem exclui. pode_mover verdadeiro:
+    TasksService.updateStatus deixa o responsável mover a própria tarefa.
+  #}
+  {{ kanban.quadro(tarefas_pendente, tarefas_em_andamento, tarefas_concluida, false, true) }}
+</section>
+{% endblock %}

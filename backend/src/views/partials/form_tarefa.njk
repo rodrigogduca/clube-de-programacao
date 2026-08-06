@@ -1,0 +1,152 @@
+{#
+  FORMULÁRIO DE TAREFA — definição única.
+
+  Serve quatro consumidores: as páginas de criar e editar, e o pop-up nos dois
+  modos (que busca este mesmo trecho com `?parcial=1`). Um campo novo é escrito
+  aqui uma vez e aparece nos quatro lugares — antes eram dois arquivos com o
+  mesmo formulário, e manter os dois em dia era manual.
+
+  `old` traz o que foi enviado quando o servidor recusa o formulário, para o
+  usuário corrigir um campo em vez de digitar tudo outra vez. Vem vazio no
+  primeiro acesso, então o `default` assume: `old` vence o banco, o banco vence
+  o vazio.
+
+  O `action` aponta para a rota de página. O pop-up intercepta o submit e
+  chama a API JSON; sem JavaScript o formulário posta para cá e o fluxo antigo
+  segue igual.
+#}
+
+{% set edicao = tarefa is defined and tarefa %}
+
+<form method="POST"
+      id="form-tarefa"
+      class="form-tarefa"
+      action="{{ url('editar_tarefa', tarefa.id) if edicao else url('criar_tarefa') }}"
+      data-form-tarefa
+      data-modo="{{ 'editar' if edicao else 'criar' }}"
+      {% if edicao %}data-tarefa-id="{{ tarefa.id }}"{% endif %}>
+
+  {{ csrf_token() | safe }}
+
+  <div class="form-group">
+    <label for="id_titulo" class="form-label">Título</label>
+    <input type="text" name="titulo" id="id_titulo" class="form-input"
+           value="{{ old.titulo | default(tarefa.titulo | default('')) }}"
+           maxlength="200" required autocomplete="off">
+  </div>
+
+  <div class="form-group">
+    <label for="id_descricao" class="form-label">Descrição</label>
+    <textarea name="descricao" id="id_descricao" class="form-input" rows="4">{{ old.descricao | default(tarefa.descricao | default('')) }}</textarea>
+  </div>
+
+  <div class="form-linha">
+    <div class="form-group">
+      <label for="id_responsavel" class="form-label">Responsável</label>
+      {% set responsavel_atual = old.responsavelId | default(tarefa.responsavel.id | default('') | string) %}
+      {#
+        `data-setor` em cada opção é o que permite ao espelho abaixo mudar de
+        texto na hora, sem ida ao servidor. Quem decide de verdade continua
+        sendo o TasksService.
+      #}
+      <select name="responsavelId" id="id_responsavel" class="form-input" required
+              data-responsavel>
+        <option value="" data-setor="">Selecione um membro</option>
+        {% for m in membros %}
+          <option value="{{ m.id }}"
+                  data-setor="{{ m.setor.nome | default('Sem setor') }}"
+                  {% if responsavel_atual == m.id|string %}selected{% endif %}>{{ m.usuario.get_full_name|default(m.usuario.username) }}</option>
+        {% endfor %}
+      </select>
+
+      {#
+        O SETOR NÃO É MAIS UM CAMPO — é uma consequência.
+
+        Era um <select> que podia contradizer o responsável: dava para criar
+        uma tarefa de Design atribuída a alguém de Desenvolvimento, e aí a aba
+        de setor do painel mostrava uma pessoa que não era de lá. Agora o setor
+        é o de quem assume, e isto aqui só mostra qual será.
+      #}
+      <p class="form-espelho" data-setor-espelho>
+        setor:
+        <strong>{{ tarefa.setor.nome | default('—') if edicao else '—' }}</strong>
+      </p>
+    </div>
+
+    <div class="form-group">
+      <label for="id_prazo" class="form-label">Prazo</label>
+      {#
+        `date_utc` e não `date`: prazo é data sem hora gravada como meia-noite
+        UTC — no fuso do Brasil o filtro local traria o dia anterior para
+        dentro do campo.
+      #}
+      <input type="date" name="prazo" id="id_prazo" class="form-input"
+             value="{{ old.prazo | default(tarefa.prazo | date_utc('Y-m-d') | default('')) }}">
+    </div>
+  </div>
+
+  {#
+    O resto é opcional e fica recolhido. O formulário mostrava oito campos de
+    uma vez e sete deles eram opcionais — a prioridade já tem padrão, e o
+    padrão está certo.
+  #}
+  <details class="form-mais" {% if old.funcao or old.projeto or (edicao and (tarefa.funcao or tarefa.projeto)) %}open{% endif %}>
+    <summary>Mais campos</summary>
+
+    <div class="form-linha">
+      <div class="form-group">
+        <label for="id_prioridade" class="form-label">Prioridade</label>
+        {% set prioridade_atual = old.prioridade | default(tarefa.prioridade | default('media')) %}
+        <select name="prioridade" id="id_prioridade" class="form-input">
+          {% for valor, rotulo in [['baixa','Baixa'],['media','Média'],['alta','Alta'],['urgente','Urgente']] %}
+            <option value="{{ valor }}" {% if prioridade_atual == valor %}selected{% endif %}>{{ rotulo }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      {# Prioridade e função dividem a linha que era de setor e prioridade. #}
+      <div class="form-group">
+        <label for="id_funcao" class="form-label">Função</label>
+        {% set funcao_atual = old.funcao | default(tarefa.funcao | default('')) %}
+        <select name="funcao" id="id_funcao" class="form-input">
+          <option value="">Nenhuma</option>
+          {% for valor, rotulo in [['design','Design'],['desenvolvimento','Desenvolvimento'],['marketing','Marketing'],['gestao','Gestão'],['pesquisa','Pesquisa'],['outro','Outro']] %}
+            <option value="{{ valor }}" {% if funcao_atual == valor %}selected{% endif %}>{{ rotulo }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="form-linha">
+      <div class="form-group">
+        <label for="id_projeto" class="form-label">Projeto</label>
+        <input type="text" name="projeto" id="id_projeto" class="form-input"
+               value="{{ old.projeto | default(tarefa.projeto | default('')) }}" maxlength="120" autocomplete="off">
+      </div>
+    </div>
+
+    {% if edicao %}
+      <div class="form-group">
+        <label for="id_status" class="form-label">Status</label>
+        {% set status_atual = old.status | default(tarefa.status) %}
+        <select name="status" id="id_status" class="form-input">
+          {% for valor, rotulo in tarefa.STATUS_CHOICES %}
+            <option value="{{ valor }}" {% if status_atual == valor %}selected{% endif %}>{{ rotulo }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    {% else %}
+      {# O `+` da coluna manda o status; sem ele nasce pendente. #}
+      <input type="hidden" name="status" value="{{ status_inicial | default('pendente') }}">
+    {% endif %}
+  </details>
+
+  {#
+    O pop-up esconde estes botões por CSS e põe os seus no rodapé fixo, usando
+    `form="form-tarefa"` para enviar este mesmo formulário de fora dele.
+  #}
+  <div class="form-buttons" data-form-acoes>
+    <button type="submit" class="btn-primary">{{ 'Salvar alterações' if edicao else 'Criar tarefa' }}</button>
+    <a href="{{ url('painel') }}" class="btn-secondary">Cancelar</a>
+  </div>
+</form>

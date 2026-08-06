@@ -1,0 +1,33 @@
+{#
+  MODAL DE CONFIRMAÇÃO — um só para todas as telas autenticadas.
+
+  Vem vazio; o public/js/ui.js preenche título, detalhe e rótulo do botão a
+  partir dos `data-confirm*` do elemento clicado. Sem JS ele nunca abre, e os
+  links de exclusão seguem para a tela de confirmação de sempre.
+
+  O campo de palavra só aparece em ações sem volta (limpar todas as tarefas).
+#}
+<div class="modal" id="modal-confirmar" role="dialog" aria-modal="true"
+     aria-labelledby="modal-confirmar-titulo" hidden>
+  <div class="modal-caixa">
+    <div class="modal-icone" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+    </div>
+
+    <h2 class="modal-titulo" id="modal-confirmar-titulo" data-modal-titulo>Confirmar ação</h2>
+    <p class="modal-detalhe" data-modal-detalhe hidden></p>
+
+    <div class="modal-palavra" data-modal-palavra-grupo hidden>
+      <label class="form-label" for="modal-confirmar-palavra">
+        Digite <strong data-modal-palavra-rotulo>LIMPAR</strong> para liberar o botão
+      </label>
+      <input type="text" class="form-input" id="modal-confirmar-palavra"
+             data-modal-palavra autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="modal-acoes">
+      <button type="button" class="btn-secondary" data-modal-cancelar>Cancelar</button>
+      <button type="button" class="btn-danger" data-modal-confirmar>Confirmar</button>
+    </div>
+  </div>
+</div>

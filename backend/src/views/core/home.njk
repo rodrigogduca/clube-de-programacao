@@ -1,0 +1,684 @@
+{#
+  Página inicial pública — a landing do clube.
+
+  Tem navbar e CSS próprios (style_home.css), por isso herda direto de
+  `layouts/base.njk` em vez de `layouts/painel.njk`.
+#}
+{% extends "layouts/base.njk" %}
+
+{% block titulo %}Clube de Programação - Universidade SENAI CIMATEC | Iniciativa Estudantil de Tecnologia{% endblock %}
+
+{% block meta %}
+<meta name="description" content="Clube de Programação - Universidade SENAI CIMATEC | Iniciativa estudantil sem fins lucrativos. Aprenda programação na prática com projetos, workshops, hackathons, IA, cibersegurança e jogos. Mais de 60 membros ativos.">
+  <meta name="keywords" content="Clube de Programação, Clube de Programação - Universidade SENAI CIMATEC, Clube de Programação Senai Cimatec, programação SENAI, iniciativa estudantil CIMATEC, aprender programação Salvador, SEMCOMP, clube de IA, clube de cibersegurança, clube de jogos, hackathon SENAI, workshop programação, projetos tecnologia CIMATEC, SENAI CIMATEC, Universidade SENAI CIMATEC">
+  <meta name="author" content="Clube de Programação - Universidade SENAI CIMATEC">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  {# A verificação do Google saiu daqui para o `layouts/base.njk`, alimentada
+     pela variável GOOGLE_SITE_VERIFICATION. Fixa neste arquivo ela valia só
+     para a home; no layout vale para o site inteiro, e trocar o código passa a
+     ser mudar uma variável na Vercel em vez de publicar código. O valor é o
+     mesmo de antes, então a verificação já feita continua de pé. #}
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="sitemap" type="application/xml" href="{{ site_url }}/sitemap.xml">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:site_name" content="Clube de Programação - Universidade SENAI CIMATEC">
+  <meta property="og:title" content="Clube de Programação - Universidade SENAI CIMATEC - Aprenda, Crie e Evolua com Tecnologia">
+  <meta property="og:description" content="Iniciativa estudantil sem fins lucrativos da Universidade SENAI CIMATEC que une pessoas apaixonadas por tecnologia. Projetos, workshops, hackathons e mais de 60 membros ativos.">
+  <meta property="og:image" content="{{ site_url }}{{ static('images/logo.png') }}">
+  <meta property="og:locale" content="pt_BR">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Clube de Programação - Universidade SENAI CIMATEC - Aprenda, Crie e Evolua com Tecnologia">
+  <meta name="twitter:description" content="Iniciativa estudantil sem fins lucrativos da Universidade SENAI CIMATEC. Projetos, workshops, hackathons e mais de 60 membros ativos.">
+  <meta name="twitter:image" content="{{ site_url }}{{ static('images/logo.png') }}">
+{% endblock %}
+
+{% block fontes %}
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block estilos %}
+  {# O pato é a primeira coisa que aparece; sem preload ele chega depois do texto. #}
+  <link rel="preload" as="image" href="{{ static('images/pato.png') }}">
+  {# A fonte da marca desenha o título do herói: sem preload o texto aparece na
+     fonte de reserva e salta quando ela chega. #}
+  <link rel="preload" as="font" type="font/ttf" crossorigin
+        href="{{ static('fonts/BryndanWriteBook-nGPM.ttf') }}">
+  <link rel="stylesheet" href="{{ static('css/site/tokens.css') }}">
+  <link rel="stylesheet" href="{{ static('css/site/fontes.css') }}">
+  <link rel="stylesheet" href="{{ static('css/style_home.css') }}">
+{% endblock %}
+
+{% block corpo %}
+<!-- BACKGROUND GRID -->
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <!-- CURSOR GLOW -->
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="{{ url('home') }}" class="nav-logo">
+      <img src="{{ static('images/logo.png') }}" alt="Logo Clube de Programação SENAI CIMATEC">
+      <span>Clube de Programação</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#sobre">Quem Somos</a></li>
+      <li><a href="#diretores">Diretores</a></li>
+      <li><a href="#semcomp">SEMCOMP</a></li>
+      <li><a href="#ferramentas">Ferramentas</a></li>
+      <li><a href="#contato" class="nav-cta">Participe</a></li>
+      {% if user.is_authenticated %}
+      <li>
+        <div class="user-menu">
+          <button class="user-avatar" type="button">{{ membro.usuario.first_name|make_list|first|default("?") }}{{ membro.usuario.last_name|make_list|first|default("") }}</button>
+          <div class="user-dropdown">
+            <div class="user-dropdown-header">
+              <strong>{{ membro.usuario.get_full_name|default(membro.usuario.username) }}</strong>
+              <span>{{ membro.cargo_label }}</span>
+            </div>
+            {# Só o que não está a um clique daqui: "Página Inicial" era um link
+               para esta mesma página, e "Menu" para uma tela que já não existe. #}
+            <div class="user-dropdown-divider"></div>
+            <a href="{{ url('painel') }}" class="user-dropdown-item">Painel</a>
+            <div class="user-dropdown-divider"></div>
+            <form method="POST" action="{{ url('logout') }}">
+              {{ csrf_token() | safe }}
+              <button type="submit" class="user-dropdown-item user-dropdown-logout">Sair</button>
+            </form>
+          </div>
+        </div>
+      </li>
+      {% else %}
+      {# `nav-ghost` e não `nav-cta`: duas pílulas âmbar lado a lado disputavam
+         a mesma atenção. "Participe" é o objetivo da página; entrar na conta é
+         serviço para quem já é membro. #}
+      <li><a href="{{ url('login') }}" class="nav-ghost">Login</a></li>
+      {% endif %}
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Abrir menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#sobre">Quem Somos</a>
+    <a href="#diretores">Diretores</a>
+    <a href="#semcomp">SEMCOMP</a>
+    <a href="#ferramentas">Ferramentas</a>
+    <a href="#contato">Participe</a>
+    {% if user.is_authenticated %}
+    <a href="{{ url('painel') }}">Painel</a>
+    <form method="POST" action="{{ url('logout') }}" style="margin:0;">
+      {{ csrf_token() | safe }}
+      <button type="submit" class="mobile-logout-btn">Sair</button>
+    </form>
+    {% else %}
+    <a href="{{ url('login') }}" class="nav-cta">Login</a>
+    {% endif %}
+  </div>
+
+  <!--
+    HERO — o pato é a fonte de luz da página.
+
+    O mascote não é enfeite de canto: o brilho âmbar sai dele e é o mesmo
+    brilho que reaparece, mais fraco, na chamada final. O nome do clube fica
+    dentro do <h1> como sobrelinha para não perder o termo de busca.
+  -->
+  <header class="hero">
+    <div class="container hero-grid">
+
+      <div class="hero-say">
+        <h1 class="hero-title fade-in">
+          <span class="hero-brand">Clube de Programação</span>
+          <span class="hero-statement">Transformando código em<br><span class="highlight">história</span></span>
+        </h1>
+        <p class="hero-line fade-in"><span class="hero-typing" data-text="aprender, criar e evoluir juntos — sem custo e sem pré-requisito."></span></p>
+        <div class="hero-buttons fade-in">
+          <a href="#contato" class="btn-primary">Quero participar</a>
+          <a href="#sobre" class="btn-secondary">Ver o que fazemos</a>
+        </div>
+      </div>
+
+      <div class="hero-duck fade-in">
+        <div class="duck-light" aria-hidden="true"></div>
+        <img src="{{ static('images/pato.png') }}" alt="O pato, mascote do Clube de Programação" class="duck-mark" fetchpriority="high" width="880" height="765">
+      </div>
+
+    </div>
+
+    <div class="container">
+      <div class="hero-stats fade-in">
+        <div class="stat-item">
+          <div class="stat-number">500<span>+</span></div>
+          <div class="stat-label">Membros ativos</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">5<span>+</span></div>
+          <div class="stat-label">Anos de clube</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">10<span>+</span></div>
+          <div class="stat-label">Projetos</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-fixed">Salvador — BA</div>
+          <div class="stat-label">SENAI CIMATEC</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- QUEM SOMOS -->
+  <section id="sobre">
+    <div class="container">
+      <span class="section-label fade-in">// quem somos</span>
+      <h2 class="section-title fade-in">Transformando curiosidade<br>em conhecimento real</h2>
+      <p class="section-desc fade-in">Somos estudantes que acreditam no poder da colaboração para aprender programação de forma prática e acessível.</p>
+
+      <div class="about-grid">
+        <div class="about-text fade-in-left">
+          <p>
+            O <strong>Clube de Programação</strong> nasceu da vontade de criar um espaço onde estudantes pudessem <strong>aprender programação na prática</strong>, sem barreiras e sem custos. Acreditamos que o conhecimento se constrói melhor quando compartilhado.
+          </p>
+          <p>
+            Organizamos <strong>eventos, cursos, projetos colaborativos</strong> e uma comunidade onde todos podem contribuir, independentemente do nível de experiência. Do iniciante ao avançado, todo mundo tem algo para ensinar e aprender.
+          </p>
+          <p>
+            Temos várias vertentes que giram em torno do clube principal, são elas: <strong>Clube de IA, Clube de Cibersegurança</strong> e o <strong>Clube de Jogos</strong>, que exploram as mais diversas tecnologias conforme o interesse dos membros. O importante é a vontade de aprender.
+          </p>
+        </div>
+        <div class="about-values stagger-children fade-in-right">
+          <div class="value-card">
+            <div class="value-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F28A1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>
+            </div>
+            <h3>Aprender fazendo</h3>
+            <p>Projetos reais desde o primeiro dia. Nada de ficar só na teoria.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F28A1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h3>Comunidade aberta</h3>
+            <p>Sem fins lucrativos, sem pré-requisitos. Todos são bem-vindos.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F28A1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+            </div>
+            <h3>Evolução constante</h3>
+            <p>Cada membro cresce no seu ritmo com o apoio de toda a equipe.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container"><hr class="divider"></div>
+
+  <!-- DIRETORES -->
+  <section id="diretores" class="directors">
+    <div class="container">
+      <span class="section-label fade-in">// diretoria</span>
+      <h2 class="section-title fade-in">Quem está por trás<br>do clube</h2>
+      {# "Estudante de Engenharia da Computação" abria as sete biografias, uma
+         atrás da outra. É um fato da seção, não de cada pessoa: dito uma vez
+         aqui, cada cartão fica só com o que diferencia quem está nele. #}
+      <p class="section-desc fade-in">Sete estudantes de Engenharia da Computação que organizam e mantêm o clube funcionando, voluntariamente.</p>
+
+      {#
+        Um cartão por diretor, gerado da lista abaixo. Antes eram sete blocos
+        copiados; trocar o formato do cartão significava editar os sete.
+
+        A lista está em ordem de hierarquia e é fatiada em dois grupos: os dois
+        primeiros (presidência) entram em cartões largos, os cinco seguintes numa
+        fileira. Sete cartões iguais caíam em 4+3 e deixavam um buraco no fim da
+        segunda linha; assim a divisão da página passa a ser a divisão real do
+        clube, e nenhuma linha fica órfã.
+
+        `cargo` sem abreviar: "Dir." existia porque o cartão era estreito. Com a
+        fileira de cinco cabe o cargo inteiro, e "Diretor Financeiro" é como se
+        diz — "Dir. do Financeiro" não era português.
+
+        `foto` aponta para images/diretores/, os recortes 4:5 de 560px gerados
+        por scripts/otimizar-imagens.py. As originais têm 6 MB cada e somariam
+        ~44 MB nesta seção.
+      #}
+      {% set diretores = [
+        { nome: 'Luiz Antunes',      cargo: 'Presidente',           foto: 'luiz',    bio: 'Apaixonado por programação e um verdadeiro pato.' },
+        { nome: 'Mateus Salmeron',   cargo: 'Vice-Presidente',      foto: 'mateus',  bio: 'Focado em projetos de ensino e em conhecimento de C.' },
+        { nome: 'Rodrigo Gandarela', cargo: 'Diretor de Marketing', foto: 'rodrigo', bio: 'Entusiasta de sistemas web, com Python e diversos frameworks.' },
+        { nome: 'Isaque Escorêdo',   cargo: 'Diretor de Eventos',   foto: 'isaque',  bio: 'Organiza os workshops e hackathons.' },
+        { nome: 'Davi Brito',        cargo: 'Diretor Financeiro',   foto: 'davi',    bio: 'Cuida das finanças do clube.' },
+        { nome: 'Artur Silveira',    cargo: 'Diretor de Projetos',  foto: 'artur',   bio: 'Coordena os projetos do clube.' },
+        { nome: 'Gabriel Petersen',  cargo: 'Diretor Acadêmico',    foto: 'gabriel', bio: 'Coordena os cursos de algoritmos.' }
+      ] %}
+
+      <div class="directors-lead stagger-children">
+        {% for d in diretores.slice(0, 2) %}
+          <article class="director-lead fade-in">
+            <div class="director-plate">
+              <img src="{{ static('images/diretores/' ~ d.foto ~ '.jpg') }}"
+                   alt="{{ d.nome }}, {{ d.cargo }} do Clube de Programação"
+                   class="director-foto" width="560" height="700"
+                   loading="lazy" decoding="async">
+            </div>
+            <div class="director-corpo">
+              <div class="director-name">{{ d.nome }}</div>
+              <div class="director-role">{{ d.cargo }}</div>
+              <p class="director-bio">{{ d.bio }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      <div class="directors-grid stagger-children">
+        {% for d in diretores.slice(2) %}
+          <article class="director-card fade-in">
+            <div class="director-plate">
+              <img src="{{ static('images/diretores/' ~ d.foto ~ '.jpg') }}"
+                   alt="{{ d.nome }}, {{ d.cargo }} do Clube de Programação"
+                   class="director-foto" width="560" height="700"
+                   loading="lazy" decoding="async">
+            </div>
+            <div class="director-corpo">
+              <div class="director-name">{{ d.nome }}</div>
+              <div class="director-role">{{ d.cargo }}</div>
+              <p class="director-bio">{{ d.bio }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <div class="container"><hr class="divider"></div>
+
+  <!-- PROJETOS & EVENTOS -->
+  <section id="projetos">
+    <div class="container">
+      <span class="section-label fade-in">// projetos & eventos</span>
+      <h2 class="section-title fade-in">O que estamos<br>construindo</h2>
+      <p class="section-desc fade-in">Conheça nossos projetos e nosso principal evento.</p>
+
+      {#
+        SEMCOMP destaque — um cartaz, não um cartão com uma tarja no pé.
+
+        A arte da SEMCOMP é um letreiro de neon: um pato dentro de uma lâmpada
+        acesa. É literalmente a ideia da página (o pato é a fonte de luz), então
+        ela entra como o título do bloco em vez de virar faixa decorativa. O
+        arquivo é `semcomp-2026.png`, o recorte com alfa gerado por
+        `scripts/otimizar-imagens.py` — o original tem 70% de preto morto em
+        volta e era isso que fazia a arte parecer solta aqui dentro.
+      #}
+      <div class="event-highlight fade-in" id="semcomp">
+        <div class="event-say">
+          <span class="event-badge">Evento principal</span>
+
+          {# O logo É o título: o `alt` carrega o texto do h3 que estava aqui. #}
+          <h3 class="event-marca">
+            <img src="{{ static('images/semcomp/semcomp-2026.png') }}"
+                 alt="SEMCOMP 2026 — Semana da Computação, 5 anos"
+                 class="event-logo" width="767" height="308"
+                 loading="lazy" decoding="async">
+          </h3>
+
+          <p>A Semana da Computação é o maior evento organizado pelo Clube de Programação. Uma semana inteira de palestras, workshops e hackathons voltados para tecnologia e inovação.</p>
+
+          <dl class="event-meta">
+            <div>
+              <dt>Ano</dt>
+              <dd>2026</dd>
+            </div>
+            {# Sem "· Salvador": na coluna de 150px o ponto sobrava no fim da
+               linha e a cidade caía sozinha embaixo. Salvador já está na faixa
+               de números do herói. #}
+            <div>
+              <dt>Onde</dt>
+              <dd>Universidade SENAI CIMATEC</dd>
+            </div>
+            <div>
+              <dt>Formato</dt>
+              <dd>Palestras, workshops e hackathons</dd>
+            </div>
+          </dl>
+
+          <div class="event-acoes">
+            <button class="btn-primary" id="btnSemcomp" type="button">Quero me inscrever na SEMCOMP</button>
+            <a class="btn-outline" href="https://www.instagram.com/semcompcimatec"
+               target="_blank" rel="noopener noreferrer">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+              @semcompcimatec
+            </a>
+          </div>
+        </div>
+
+        {#
+          Foto de grupo do hackathon (1600x1200, 4:3). O arquivo do celular era
+          um HEIC — formato que nenhum navegador desktop abre —, então ele foi
+          convertido para JPEG de verdade; trocar a extensão do nome não basta.
+
+          Sendo foto e não letreiro, aqui vale o `cover` padrão da `.event-foto`:
+          o recorte só tira moldura em volta do grupo. A variante `--arte`, com
+          `contain`, era do banner de 4:1 que ocupava este slot antes.
+        #}
+        <figure class="event-foto">
+          <img src="{{ static('images/semcomp/hackathon.jpg') }}"
+               alt="Participantes do hackathon da SEMCOMP reunidos no auditório"
+               width="1600" height="1200" loading="lazy" decoding="async">
+          <figcaption>O hackathon que fecha a semana.</figcaption>
+        </figure>
+      </div>
+
+      {#
+        Grid de clubes. Os logos vêm de images/clubes/, normalizados em 320px —
+        antes os `src` apontavam para logo_ia.jpeg, logo_cyber.jpeg e
+        logo_jogos.jpeg, que não existem mais, e as três imagens quebravam.
+      #}
+      {#
+        `instagram` guarda só o @: a URL e o texto visível saem os dois daqui, e
+        assim não existe o caso de o link apontar para um perfil e a legenda
+        mostrar outro.
+
+        ATENÇÃO ao mexer: o par IA/Cyber é fácil de trocar. `clubedeia` é o
+        Clube de IA e `clubedecybercimatec` é o de Cibersegurança — conferir
+        pelo nome do perfil, não pela ordem da lista.
+      #}
+      {% set clubes = [
+        { slug: 'ia',    nome: 'Clube de IA',              instagram: 'clubedeia',            desc: 'Exploramos inteligência artificial, machine learning e suas aplicações práticas.' },
+        { slug: 'cyber', nome: 'Clube de Cibersegurança',  instagram: 'clubedecybercimatec',  desc: 'Estudamos segurança da informação, CTFs e proteção de sistemas.' },
+        { slug: 'jogos', nome: 'Clube de Jogos',           instagram: 'clubedejogoscimatec',  desc: 'Desenvolvemos jogos e exploramos engines, design e programação interativa.' }
+      ] %}
+
+      {#
+        As três artes são quadradas e cheias de detalhe de canto — o foguete e
+        o controle no Jogos, o hexágono no Cyber. Antes entravam num quadradinho
+        de 84px, que jogava fora quase tudo. Aqui ocupam a largura inteira do
+        cartão, no formato em que foram desenhadas: nenhum recorte.
+      #}
+      <div class="projects-grid stagger-children">
+        {% for c in clubes %}
+          <div class="project-card fade-in">
+            <div class="project-arte">
+              <img src="{{ static('images/clubes/' ~ c.slug ~ '.jpg') }}"
+                   alt="Arte do {{ c.nome }}" class="project-logo"
+                   width="640" height="640" loading="lazy" decoding="async">
+            </div>
+            <div class="project-corpo">
+              <h3>{{ c.nome }}</h3>
+              <p>{{ c.desc }}</p>
+              {# `aria-label` porque "@clubedeia" sozinho não diz para onde vai
+                 quando o link é lido fora do contexto do cartão. #}
+              <a class="project-instagram"
+                 href="https://www.instagram.com/{{ c.instagram }}"
+                 target="_blank" rel="noopener noreferrer"
+                 aria-label="{{ c.nome }} no Instagram">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                <span>@{{ c.instagram }}</span>
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <div class="container"><hr class="divider"></div>
+
+  <!-- FERRAMENTAS ACADEMICAS -->
+  <section id="ferramentas">
+    <div class="container">
+      <span class="section-label fade-in">// ferramentas acadêmicas</span>
+      <h2 class="section-title fade-in">Calculadoras<br>do estudante</h2>
+      <p class="section-desc fade-in">As duas contas que todo mundo do CIMATEC faz de cabeça no fim do semestre. O resultado sai enquanto você digita.</p>
+
+      {#
+        As duas calculadoras não têm mais botão "Calcular": a conta sai a cada
+        tecla, e o `<div class="tool-result">` é `aria-live` para quem usa leitor
+        de tela ouvir o resultado novo sem procurar. O `Limpar` só aparece quando
+        há algo para limpar.
+
+        Também saiu a fileira de selos "AV1: 25% · AV2: 25% · ..." que ficava
+        acima dos campos: era exatamente a mesma informação dos rótulos logo
+        abaixo, dita duas vezes.
+      #}
+      <div class="tools-grid">
+
+        <!-- PASSEI SENAI? -->
+        <div class="tool-card fade-in">
+          <div class="tool-header">
+            <div class="tool-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F28A1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <h3>Passei SENAI</h3>
+            <p class="tool-desc">Sua média do semestre, com os pesos do CIMATEC. O que deixar em branco ela resolve: diz quanto você precisa tirar ali para passar.</p>
+          </div>
+          <div class="tool-body">
+            {# Os quatro campos só diferem no rótulo e no peso. O peso vai no
+               `data-peso` para o JS ler a regra daqui em vez de repeti-la. #}
+            {% set avaliacoes = [
+              { id: 'notaAV1',  rotulo: 'AV1',  peso: 25 },
+              { id: 'notaAV2',  rotulo: 'AV2',  peso: 25 },
+              { id: 'notaAV3',  rotulo: 'AV3',  peso: 30 },
+              { id: 'notaEDAG', rotulo: 'EDAG', peso: 20 }
+            ] %}
+            <div class="tool-notas-grid">
+              {% for a in avaliacoes %}
+                <div class="tool-field">
+                  <label for="{{ a.id }}">{{ a.rotulo }} <span class="tool-peso-label">{{ a.peso }}%</span></label>
+                  <div class="tool-number-wrap">
+                    <input type="number" id="{{ a.id }}" class="tool-input js-nota"
+                           min="0" max="10" step="0.1" placeholder="0 a 10"
+                           inputmode="decimal" autocomplete="off"
+                           data-peso="{{ a.peso }}" data-rotulo="{{ a.rotulo }}">
+                    <div class="tool-number-btns">
+                      <button type="button" class="tool-number-btn" data-dir="up" aria-label="Aumentar {{ a.rotulo }}"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8L6 4L10 8"/></svg></button>
+                      <button type="button" class="tool-number-btn" data-dir="down" aria-label="Diminuir {{ a.rotulo }}"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 4L6 8L10 4"/></svg></button>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            <div id="resultadoMedia" class="tool-result" role="status" aria-live="polite"></div>
+            <button type="button" id="btnLimparMedia" class="tool-limpar" hidden>Limpar notas</button>
+          </div>
+        </div>
+
+        <!-- CALCULADORA DE FALTAS -->
+        <div class="tool-card fade-in">
+          <div class="tool-header">
+            <div class="tool-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F28A1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <h3>Calculadora de Faltas</h3>
+            <p class="tool-desc">Quanto você ainda pode faltar, contando por dia ou pelas faltas do portal. Cada dia letivo vale 2 aulas de 50min e a presença mínima é 75%.</p>
+          </div>
+          <div class="tool-body">
+            <div class="tool-field">
+              <label for="cargaHoraria">Carga horária da disciplina</label>
+              <div class="tool-select-wrap">
+                <select id="cargaHoraria" class="tool-input">
+                  {# O `data-encontros` diz o que a carga significa na grade da
+                     semana — é assim que a pessoa reconhece a disciplina dela,
+                     não pelo número de horas. O JS repete o texto no resultado. #}
+                  <option value="" disabled selected>Selecione a carga horária</option>
+                  <option value="30"  data-encontros="1 aula por semana">30 horas — 1 aula por semana</option>
+                  <option value="60"  data-encontros="2 aulas por semana">60 horas — 2 aulas por semana</option>
+                  <option value="90"  data-encontros="3 aulas por semana">90 horas — 3 aulas por semana</option>
+                  <option value="105" data-encontros="Práticas integradas">105 horas — práticas integradas</option>
+                </select>
+                <div class="tool-select-arrow">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+              </div>
+            </div>
+            {# Duas maneiras de contar a mesma coisa: o dia em que a pessoa não
+               foi, ou a falta como o portal lança (2 por dia, uma por aula de
+               50min). Cada um tem um dos dois números na cabeça; o JS converte
+               tudo para aulas internamente e devolve na unidade escolhida. #}
+            <div class="tool-field">
+              <span class="tool-field-label" id="modoFaltaLabel">Como você quer contar</span>
+              <div class="tool-toggle" role="radiogroup" aria-labelledby="modoFaltaLabel">
+                <label class="tool-toggle-opt">
+                  <input type="radio" name="modoFalta" value="dias" class="js-modo-falta" checked>
+                  <span>Por dia</span>
+                </label>
+                <label class="tool-toggle-opt">
+                  <input type="radio" name="modoFalta" value="aulas" class="js-modo-falta">
+                  <span>Por falta lançada</span>
+                </label>
+              </div>
+            </div>
+            <div class="tool-field">
+              <label for="faltasAtuais" id="faltasLabel">Dias que você faltou</label>
+              <div class="tool-number-wrap">
+                <input type="number" id="faltasAtuais" class="tool-input"
+                       min="0" max="500" value="0" placeholder="ex: 3"
+                       inputmode="numeric" autocomplete="off">
+                <div class="tool-number-btns">
+                  <button type="button" class="tool-number-btn" data-dir="up" aria-label="Aumentar faltas"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8L6 4L10 8"/></svg></button>
+                  <button type="button" class="tool-number-btn" data-dir="down" aria-label="Diminuir faltas"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 4L6 8L10 4"/></svg></button>
+                </div>
+              </div>
+            </div>
+            <div id="resultadoFaltas" class="tool-result" role="status" aria-live="polite"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="container"><hr class="divider"></div>
+
+  <!-- CTA -->
+  <section id="contato" class="cta-section">
+    <div class="container">
+      {# A luz do hero reaparece aqui, mais fraca: é o fim da página. #}
+      <div class="cta-box fade-in">
+        <img src="{{ static('images/pato.png') }}" alt="" aria-hidden="true" class="cta-duck" loading="lazy" decoding="async">
+        <span class="section-label">// junte-se a nós</span>
+        <h2 class="section-title">Bora ser um membro?</h2>
+        <p class="section-desc">O clube é uma das maiores Iniciativas Estudantis do SENAI CIMATEC e está aberto para todos, de qualquer curso e nível de experiência.</p>
+        <div class="cta-buttons">
+          <button class="btn-primary" id="btnContato">Nossas Redes</button>
+          <button class="btn-outline" id="btnProsel">Inscrição para a ADM</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL PROSEL (agradecimento ao voltar do Tally) -->
+  <div class="modal-overlay" id="modalProsel">
+    <div class="modal-card">
+      <button class="modal-close" id="modalProselClose" aria-label="Fechar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div class="modal-header">
+        <img src="{{ static('images/logo.png') }}" alt="Logo" class="modal-logo" loading="lazy" decoding="async">
+        <h2>Obrigado!</h2>
+        <p>Sua inscrição no PROSEL foi enviada com sucesso! Fique atento às nossas redes sociais para acompanhar o resultado.</p>
+      </div>
+      <div class="modal-links">
+        <a href="https://www.instagram.com/clubedeprogramacaocimatec" target="_blank" rel="noopener noreferrer" class="modal-link modal-link-instagram">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          Siga no Instagram
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CONTATO -->
+  <div class="modal-overlay" id="modalContato">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose" aria-label="Fechar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div class="modal-header">
+        <img src="{{ static('images/logo.png') }}" alt="Logo" class="modal-logo" loading="lazy" decoding="async">
+        <h2>Clube de Programação</h2>
+        <p>Iniciativa estudantil sem fins lucrativos do SENAI CIMATEC. Aprendemos programação na prática através de projetos, workshops e muita colaboração.</p>
+      </div>
+      <div class="modal-links">
+        <a href="https://chat.whatsapp.com/KMe3tc8wW38DVmymqQvoKP" target="_blank" rel="noopener noreferrer" class="modal-link modal-link-whatsapp">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>
+        <a href="https://www.instagram.com/clubedeprogramacaocimatec" target="_blank" rel="noopener noreferrer" class="modal-link modal-link-instagram">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          Instagram
+        </a>
+        <a href="https://discord.gg/myDYj6hN" target="_blank" rel="noopener noreferrer" class="modal-link modal-link-discord">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+          Discord
+        </a>
+        <a href="https://www.linkedin.com/company/clube-de-programa%C3%A7%C3%A3o" target="_blank" rel="noopener noreferrer" class="modal-link modal-link-linkedin">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <img src="{{ static('images/logo.png') }}" alt="Clube de Programação SENAI CIMATEC" aria-hidden="true" loading="lazy" decoding="async">
+        <span>Clube de Programação &mdash; Iniciativa Estudantil do SENAI CIMATEC</span>
+      </div>
+      <span class="footer-tech">Feito por Rodrigo Gandarela</span>
+    </div>
+  </footer>
+
+  <!-- Schema.org Structured Data -->
+{% endblock %}
+
+{% block scripts %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Clube de Programação",
+    "alternateName": ["Clube de Programação SENAI CIMATEC", "Clube de Programação Cimatec"],
+    "url": "{{ site_url }}/",
+    "logo": "{{ site_url }}{{ static('images/logo.png') }}",
+    "description": "Iniciativa estudantil sem fins lucrativos do SENAI CIMATEC que une pessoas apaixonadas por tecnologia para aprender, criar e evoluir juntos. Programação, IA, cibersegurança e jogos.",
+    "foundingDate": "2021",
+    "numberOfEmployees": {
+      "@type": "QuantitativeValue",
+      "value": 60,
+      "unitText": "membros ativos"
+    },
+    "memberOf": {
+      "@type": "EducationalOrganization",
+      "name": "SENAI CIMATEC",
+      "url": "https://www.senaicimatec.com.br"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Salvador",
+      "addressRegion": "BA",
+      "addressCountry": "BR"
+    },
+    "sameAs": [
+      "https://www.instagram.com/clubedeprogramacaocimatec",
+      "https://www.linkedin.com/company/clube-de-programa%C3%A7%C3%A3o"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Clube de Programação SENAI CIMATEC",
+    "url": "{{ site_url }}/"
+  }
+  </script>
+  <script src="{{ static('js/main.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends "layouts/painel.njk" %}
+
+{#
+  ANEXOS DE UMA TAREFA.
+
+  Três coisas mudaram aqui, e todas eram a mesma coisa: a tela não usava o
+  sistema.
+
+  1. Estilo dentro do HTML. Havia `style="margin-bottom: 1rem"`,
+     `style="font-size: 0.8rem"` e `style="margin-top: 1.5rem"` espalhados —
+     medidas inventadas na hora, que não vinham de token nenhum e que só esta
+     tela conhecia. Saíram todas.
+  2. Títulos `<h3>` soltos onde o resto do painel usa o eyebrow `//`.
+  3. Um `<script>` no fim do arquivo que embrulhava os `<input type=file>` —
+     exatamente o que o `painel.js` já faz para todas as telas, e sem a
+     verificação que ele tem de não embrulhar duas vezes.
+
+  "Voltar ao Painel" também saiu: quem está aqui veio de uma tarefa e volta
+  para ela, não para o quadro. O caminho de volta agora é o cabeçalho.
+#}
+
+{% block titulo %}Anexos - {{ tarefa.titulo }}{% endblock %}
+
+{% block conteudo %}
+<div class="form-page">
+  <div class="painel-header">
+    <div>
+      <p class="eyebrow">anexos</p>
+      <h1>Anexos</h1>
+      <p class="painel-sub"><strong>{{ tarefa.titulo }}</strong></p>
+    </div>
+    <div class="painel-actions">
+      <a href="{{ url('ver_tarefa', tarefa.id) }}" class="btn-secondary">Voltar à tarefa</a>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <p class="eyebrow">
+      no arquivo
+      {% if anexos %}<span class="eyebrow-conta">{{ anexos|length }}</span>{% endif %}
+    </p>
+
+    {% if anexos %}
+      <div class="anexos-list">
+        {% for anexo in anexos %}
+          <div class="anexo-item">
+            <div class="anexo-info">
+              {% if anexo.tipo == 'link' %}
+                <div class="anexo-header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                  <a href="{{ anexo.url }}" target="_blank" rel="noopener">{{ anexo.nome }}</a>
+                </div>
+                <span class="anexo-url" title="{{ anexo.url }}">{{ anexo.url }}</span>
+              {% else %}
+                <div class="anexo-header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                  <a href="{{ anexo.download_url }}" target="_blank" rel="noopener">{{ anexo.nome }}</a>
+                </div>
+                {% if anexo.is_image %}
+                  <img src="{{ anexo.download_url }}" alt="{{ anexo.nome }}" class="anexo-thumbnail" loading="lazy">
+                {% endif %}
+              {% endif %}
+
+              {# Quem e quando, em mono: é metadado, como no cartão do kanban #}
+              <span class="card-meta">
+                {% if anexo.enviado_por %}
+                  <span>{{ anexo.enviado_por.usuario.get_full_name|default(anexo.enviado_por.usuario.username) }}</span>
+                {% endif %}
+                <span>{{ anexo.data_upload|date("d/m/Y H:i") }}</span>
+              </span>
+            </div>
+            <div class="anexo-actions">
+              <a href="{{ url('editar_anexo', anexo.id) }}" class="btn-small-outline">Editar</a>
+              <a href="{{ url('excluir_anexo', anexo.id) }}" class="btn-small-outline btn-outline-danger"
+                 data-confirm="Excluir anexo?"
+                 data-confirm-detalhe="{{ anexo.nome }}"
+                 data-confirm-acao="Excluir">Excluir</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="empty-state">Nenhum anexo nesta tarefa ainda.</p>
+    {% endif %}
+  </div>
+
+  {#
+    UM cartão para anexar, com as duas formas dentro.
+
+    Eram dois cartões idênticos, empilhados, cada um com o próprio botão
+    "Enviar" — a tela tinha três blocos de mesma aparência e a pessoa lia os
+    três para descobrir que dois faziam a mesma coisa por caminhos diferentes.
+    Anexar é uma ação só; o que muda é a origem do anexo.
+  #}
+  <div class="form-card">
+    <p class="eyebrow">anexar</p>
+
+    <form method="POST" enctype="multipart/form-data" class="anexo-form">
+      {{ csrf_token() | safe }}
+      <input type="hidden" name="action" value="upload_arquivo">
+
+      <div class="form-group">
+        <label for="id_nome_arquivo" class="form-label">Nome do arquivo</label>
+        <input type="text" name="nome" id="id_nome_arquivo" class="form-input"
+               {% if not upload_habilitado %}disabled{% endif %} required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_arquivo" class="form-label">Arquivo</label>
+        {# O `painel.js` embrulha este input em `.file-upload-wrapper` #}
+        <input type="file" name="arquivo" id="id_arquivo" class="form-input"
+               {% if not upload_habilitado %}disabled{% endif %} required>
+        {% if not upload_habilitado %}
+          <p class="form-ajuda">O envio de arquivos está desativado neste ambiente. Use o link abaixo.</p>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn-primary" {% if not upload_habilitado %}disabled{% endif %}>Enviar arquivo</button>
+    </form>
+
+    <div class="anexo-form-ou"><span>ou</span></div>
+
+    <form method="POST" class="anexo-form">
+      {{ csrf_token() | safe }}
+      <input type="hidden" name="action" value="add_link">
+
+      <div class="form-group">
+        <label for="id_nome_link" class="form-label">Nome do link</label>
+        <input type="text" name="nome" id="id_nome_link" class="form-input" required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_url" class="form-label">Endereço</label>
+        <input type="url" name="url" id="id_url" class="form-input" placeholder="https://..." required>
+      </div>
+
+      <button type="submit" class="btn-primary">Adicionar link</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

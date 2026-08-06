@@ -1,0 +1,142 @@
+{% extends "layouts/painel.njk" %}
+
+{#
+  SOLICITAÇÕES DE CADASTRO — a fila de triagem.
+
+  Era a tela mais fora do padrão do painel: tinha barra de filtro própria
+  (`filter-bar`), três classes de botão que não existiam em lugar nenhum
+  (`btn-aprovar`, `btn-rejeitar`, `btn-editar`) e cartões feitos de seis linhas
+  de "Rótulo: valor". Passou a usar a barra de abas do quadro, o vocabulário de
+  botões do painel e a linha de metadados em mono dos outros cartões.
+
+  A pergunta que esta tela responde é "quem entra no clube": cada cartão tem de
+  dar, num olhar, quem é a pessoa e para onde ela vai. Por isso nome em
+  destaque, cargo como selo (identidade) e o resto como metadado.
+#}
+
+{% block titulo %}Solicitações - Clube de Programação{% endblock %}
+
+{% block conteudo %}
+<div class="painel-header">
+  <div>
+    <p class="eyebrow">cadastro</p>
+    <h1>Solicitações</h1>
+    <p class="painel-sub">Aprovar cria a conta e a pessoa já entra com o usuário e a senha que escolheu.</p>
+  </div>
+</div>
+
+{# Mesma linha de situação do quadro e do diretório: só o que pede ação. #}
+<div class="painel-linha">
+  {% if solicitacoes_pendentes %}
+    <span class="painel-linha-item"><strong>{{ solicitacoes_pendentes }}</strong> esperando decisão</span>
+  {% else %}
+    <span class="painel-linha-ok">nenhuma solicitação esperando.</span>
+  {% endif %}
+</div>
+
+{#
+  A barra de abas do quadro, não uma barra de filtro só desta tela. São links
+  com `?status=` em vez de botões, porque aqui a troca é uma navegação de
+  verdade — a lista vem do servidor e a URL tem de poder ser colada no chat.
+#}
+<div class="tabs-bar" role="tablist">
+  <a href="?status=pendente" class="tab-btn {% if filtro_atual == 'pendente' %}active{% endif %}"
+     {% if filtro_atual == 'pendente' %}aria-current="page"{% endif %}>Pendentes</a>
+  <a href="?status=aprovada" class="tab-btn {% if filtro_atual == 'aprovada' %}active{% endif %}"
+     {% if filtro_atual == 'aprovada' %}aria-current="page"{% endif %}>Aprovadas</a>
+  <a href="?status=rejeitada" class="tab-btn {% if filtro_atual == 'rejeitada' %}active{% endif %}"
+     {% if filtro_atual == 'rejeitada' %}aria-current="page"{% endif %}>Rejeitadas</a>
+</div>
+
+{% for sol in solicitacoes %}
+  <div class="solicitacao-card">
+    <div class="solicitacao-info">
+      <div class="solicitacao-titulo">
+        <h3>{{ sol.first_name }} {{ sol.last_name }}</h3>
+        {# Cargo é identidade, então é selo — a mesma regra do diretório. #}
+        <span class="badge badge-{{ sol.cargo }}">{{ sol.cargo_label }}</span>
+        {% if filtro_atual == 'aprovada' %}
+          <span class="status-badge status-aprovada">Aprovada</span>
+        {% elif filtro_atual == 'rejeitada' %}
+          <span class="status-badge status-rejeitada">Rejeitada</span>
+        {% endif %}
+      </div>
+
+      {#
+        Seis parágrafos "Rótulo: valor" viraram uma linha de metadados. Os
+        rótulos saíram porque o formato já diz o que é a coisa: `@` é usuário,
+        arroba com ponto é e-mail, e o setor é o único nome próprio que sobra.
+      #}
+      <div class="card-meta">
+        <span>@{{ sol.username }}</span>
+        <span>{{ sol.email }}</span>
+        {% if sol.setor %}<span>{{ sol.setor.nome }}</span>{% endif %}
+        <span>{{ sol.data_solicitacao|date("d/m/Y H:i") }}</span>
+      </div>
+
+      {#
+        A senha escolhida no cadastro, para quem administra o sistema poder
+        socorrer alguém que não consegue entrar.
+
+        Fica FECHADA por padrão: antes era um `<p>` sempre aberto, e o painel é
+        usado em reunião e com a tela projetada. Continua sendo a mesma
+        informação para as mesmas pessoas — só deixou de ficar exposta para
+        quem estiver olhando a tela por cima do ombro.
+      #}
+      {% if filtro_atual == 'pendente' and sol.senha_plain and membro.is_superadmin %}
+        <details class="solicitacao-senha">
+          <summary>Ver a senha escolhida</summary>
+          <code>{{ sol.senha_plain }}</code>
+        </details>
+      {% endif %}
+    </div>
+
+    {% if filtro_atual == 'pendente' %}
+      {#
+        Aprovar é a ação da tela, então é a única em âmbar. Rejeitar é
+        destrutivo mas se repete em toda linha, então vai contornado: vermelho
+        cheio numa lista deixa de avisar e vira listra.
+      #}
+      <div class="solicitacao-actions">
+        <form method="POST" action="{{ url('aprovar_solicitacao', sol.id) }}">
+          {{ csrf_token() | safe }}
+          <button type="submit" class="btn-primary">Aprovar</button>
+        </form>
+        <a href="{{ url('editar_solicitacao', sol.id) }}" class="btn-secondary">Editar</a>
+        <form method="POST" action="{{ url('rejeitar_solicitacao', sol.id) }}"
+              data-confirm="Rejeitar solicitação?"
+              data-confirm-detalhe="{{ sol.first_name }} {{ sol.last_name|default('') }} não terá a conta criada."
+              data-confirm-acao="Rejeitar">
+          {{ csrf_token() | safe }}
+          <button type="submit" class="btn-danger-ghost">Rejeitar</button>
+        </form>
+      </div>
+    {% else %}
+      <div class="solicitacao-actions">
+        <form method="POST" action="{{ url('excluir_solicitacao', sol.id) }}"
+              data-confirm="Excluir do histórico?"
+              data-confirm-detalhe="A solicitação de {{ sol.first_name }} {{ sol.last_name|default('') }} sai da lista."
+              data-confirm-acao="Excluir">
+          {{ csrf_token() | safe }}
+          <button type="submit" class="btn-danger-ghost">Excluir</button>
+        </form>
+      </div>
+    {% endif %}
+  </div>
+{% else %}
+  {#
+    Fila vazia em "Pendentes" é boa notícia, não ausência de dado — e a frase
+    diz isso. Nas outras duas abas é só um fato, e a saída oferecida é voltar
+    para a aba onde há trabalho.
+  #}
+  <p class="empty-state">
+    {% if filtro_atual == 'pendente' %}
+      Fila limpa. Nenhuma solicitação esperando decisão.
+    {% elif filtro_atual == 'aprovada' %}
+      Nenhuma solicitação aprovada ainda.
+    {% else %}
+      Nenhuma solicitação rejeitada.
+    {% endif %}
+  </p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,65 @@
+/* ==========================================================================
+   AVISOS
+
+   Mensagens flash e blocos de erro.
+
+   Faz parte do CSS do painel, carregado por views/layouts/painel.njk.
+   As variáveis usadas aqui vêm de tokens.css.
+   ========================================================================== */
+
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.alert {
+  padding: 0.7rem 0.95rem;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-left-width: 2px;
+  border-radius: var(--r-sm);
+  font-size: 0.86rem;
+  color: var(--text-dim);
+}
+
+.alert-success {
+  background: var(--ok-wash);
+  border-left-color: var(--ok);
+  color: #9fe9c4;
+}
+
+.alert-error {
+  background: var(--danger-wash);
+  border-left-color: var(--danger);
+  color: #ff9a92;
+}
+
+.alert-warning {
+  background: var(--warn-wash);
+  border-left-color: var(--warn);
+  color: #f7dd9a;
+}
+
+.alert-info {
+  background: var(--info-wash);
+  border-left-color: var(--info);
+  color: #a9d2f8;
+}
+
+.error-messages {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  background: var(--danger-wash);
+  border: 1px solid rgba(242, 86, 75, 0.3);
+  border-radius: var(--r-sm);
+}
+
+.error-messages li {
+  padding: 0.15rem 0;
+  font-size: 0.85rem;
+  color: #ff9a92;
+}
+

@@ -1,0 +1,41 @@
+{# Edição de setor. `setor` vem de PanelController.editarSetorForm. #}
+{% extends "layouts/painel.njk" %}
+
+{% block titulo %}Editar setor - Clube de Programação{% endblock %}
+
+{% block conteudo %}
+  <div class="form-page">
+    <div class="painel-header">
+      <div>
+        <p class="eyebrow">setores</p>
+        <h1>Editar setor</h1>
+        <p class="painel-sub"><strong>{{ setor.nome }}</strong></p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form method="POST">
+        {{ csrf_token() | safe }}
+
+        {# `old` vence o banco: é o que o usuário digitou e foi recusado. #}
+        <div class="form-group">
+          <label for="id_nome" class="form-label">Nome</label>
+          <input type="text" name="nome" id="id_nome" class="form-input"
+                 value="{{ old.nome | default(setor.nome|default('')) }}"
+                 minlength="2" maxlength="60" required>
+        </div>
+
+        <div class="form-group">
+          <label for="id_descricao" class="form-label">Descrição</label>
+          <textarea name="descricao" id="id_descricao" class="form-input" rows="3">{{ old.descricao | default(setor.descricao|default('')) }}</textarea>
+          <p class="form-ajuda">Uma linha sobre o que o setor faz. Aparece no topo da aba dele.</p>
+        </div>
+
+        <div class="form-buttons">
+          <button type="submit" class="btn-primary">Salvar alterações</button>
+          <a href="{{ url('painel') }}" class="btn-secondary">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

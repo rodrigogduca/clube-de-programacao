@@ -1,0 +1,54 @@
+{#
+  Confirmação de exclusão de setor.
+
+  A tela diz a mesma coisa UMA vez: o título pergunta, o poço mostra o que vai
+  sumir, a linha vermelha diz a consequência e o botão responde. Antes o aviso
+  aparecia três vezes — no subtítulo, no poço e num segundo bloco vermelho.
+#}
+{% extends "layouts/painel.njk" %}
+
+{% block titulo %}Excluir setor - Clube de Programação{% endblock %}
+
+{% block conteudo %}
+<div class="form-page">
+  <div class="painel-header">
+    <div>
+      <p class="eyebrow">setores</p>
+      <h1>Excluir {{ setor.nome }}?</h1>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="confirm-info">
+      <h3>{{ setor.nome }}</h3>
+      {% if setor.descricao %}
+        <p class="card-desc">{{ setor.descricao }}</p>
+      {% endif %}
+      {# O tamanho do estrago, em número: `sectorInclude` já traz as duas
+         relações, então isto não custa consulta nenhuma. #}
+      {% set n_membros = setor.membros|length %}
+      {% set n_tarefas = setor.tarefas|length %}
+      <div class="card-meta">
+        <span><strong>{{ n_membros }}</strong> membro{{ n_membros|pluralize }}</span>
+        <span><strong>{{ n_tarefas }}</strong> tarefa{{ n_tarefas|pluralize }}</span>
+      </div>
+    </div>
+
+    {# A consequência concreta, não "tem certeza?". A pergunta já está no h1. #}
+    <p class="confirm-warning">
+      Os membros do setor ficam sem setor e as tarefas perdem o vínculo. As pessoas
+      e as tarefas continuam no sistema; só o agrupamento some. Não dá para desfazer.
+    </p>
+
+    <form method="POST">
+      {{ csrf_token() | safe }}
+      {# O botão repete o verbo do título. "Sim, Excluir" respondia a uma
+         pergunta que a tela não fazia mais. #}
+      <div class="form-buttons">
+        <button type="submit" class="btn-danger">Excluir setor</button>
+        <a href="{{ url('painel') }}" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

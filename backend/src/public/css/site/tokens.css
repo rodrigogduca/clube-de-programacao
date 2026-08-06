@@ -1,0 +1,89 @@
+/* ==========================================================================
+   SITE PÚBLICO — Clube de Programação
+   Variáveis compartilhadas pela home, pelo login, pela solicitação de
+   cadastro e pela página de erro.
+
+   A identidade vem do mascote. `images/pato.png` é um pato desenhado à mão
+   num laranja quente (#FF4D00) — é a coisa mais característica que o clube
+   tem, e ela dita a paleta inteira: o pato é a fonte de luz, o âmbar é o que
+   essa luz espalha pela página, e o resto é o escuro em volta.
+
+   Por isso existem duas laranjas e não uma. `--brasa` só aparece no ponto de
+   origem da luz (o pato e o núcleo do brilho atrás dele); `--ambar` é o
+   acento de interface. Usar `--brasa` em botão ou link quebra a lógica.
+
+   Os neutros são enviesados para o quente — cinza puro ao lado de âmbar
+   parece azulado.
+
+   Tema único (escuro), acompanhando o painel. O painel tem os seus próprios
+   tokens em `css/painel/tokens.css`: mesma família, escala diferente.
+   ========================================================================== */
+
+:root {
+  /* Escuro */
+  --breu: #08080b;          /* fundo da página */
+  --penumbra: #100f14;      /* cartões e superfícies elevadas */
+  --sombra: #17161d;        /* campos, poços, estados pressionados */
+
+  /* Luz */
+  --brasa: #ff4d00;         /* a cor do traço do pato — só na fonte de luz */
+  --ambar: #f28a1f;         /* o acento de interface */
+  --gema: #ffc46b;          /* âmbar claro: hover, realce de texto */
+  --ambar-lavagem: rgba(242, 138, 31, 0.09);
+  --ambar-traco: rgba(242, 138, 31, 0.3);
+
+  /* Texto */
+  --giz: #f6f1e9;           /* branco quente */
+  --fumaca: #9d968d;        /* secundário */
+  --cinza: #6b665f;         /* terciário: rótulos, metadados */
+
+  /* Traços */
+  --traco: rgba(255, 255, 255, 0.07);
+  --traco-forte: rgba(255, 255, 255, 0.14);
+
+  /* Semânticas — as calculadoras dependem delas */
+  --verde: #3dd68c;
+  --vermelho: #f2564b;
+
+  /* Tipografia
+     Bricolage Grotesque para display: é uma grotesca variável com armadilhas
+     de tinta e larguras irregulares — desenhada, não neutra, do mesmo jeito
+     que o mascote é desenhado e não vetorizado.
+     Instrument Sans para leitura: estreita o suficiente para não brigar com
+     a display, e mais quente que a Inter.
+     JetBrains Mono para número, rótulo e código — herdada do painel. */
+  --display: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif;
+  --texto: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* A voz da marca: mesmo lettering à mão do logo (ver css/site/fontes.css).
+     Fica nos títulos e no nome do clube, nunca em texto corrido — tem um peso
+     só e não tem travessão, então texto longo e pontuação rica ficam na
+     `--texto`. Cai na `--display` enquanto o arquivo não chega. */
+  --marca: "Bryndan Write", "Bricolage Grotesque", system-ui, sans-serif;
+
+  /* Escala fluida. O salto entre h1 e h2 é grande de propósito: a página tem
+     uma afirmação e o resto é apoio. */
+  /* Menor do que a escala pedia para a grotesca: a `--marca` é manuscrita e
+     bem mais larga por caractere. A 6.25rem a frase do herói quebrava em cinco
+     linhas e jogava os botões de "quero participar" abaixo da dobra. */
+  --t-hero: clamp(2.5rem, 6.2vw, 4.5rem);
+  --t-secao: clamp(2rem, 4.4vw, 3.1rem);
+  --t-sub: clamp(1.15rem, 1.9vw, 1.45rem);
+  --t-corpo: 1.0625rem;
+  --t-mini: 0.75rem;
+
+  /* Forma. Raio contido: o único elemento realmente arredondado da página é
+     o pato, e ele é redondo porque foi desenhado à mão. */
+  --r-sm: 6px;
+  --r: 12px;
+  --r-lg: 20px;
+
+  /* Ritmo */
+  --largura: 1140px;
+  --gutter: clamp(20px, 5vw, 40px);
+  --secao-y: clamp(88px, 12vw, 150px);
+
+  --transicao: 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+  --elevacao: 0 24px 60px -28px rgba(0, 0, 0, 0.9);
+}

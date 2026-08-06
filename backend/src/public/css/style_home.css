@@ -1,0 +1,2195 @@
+/* ==========================================================================
+   HOME — Clube de Programação SENAI CIMATEC
+
+   As variáveis vêm de `css/site/tokens.css`, carregado antes deste arquivo.
+
+   A página tem uma ideia só: o pato é a fonte de luz. O brilho âmbar nasce
+   atrás do mascote no topo, a grade de fundo clareia perto dele, e o mesmo
+   brilho volta mais fraco na chamada final — a luz vai apagando conforme se
+   desce. Todo o resto é escuro, quieto e alinhado, para que sobre atenção
+   para esse único gesto.
+
+   Ordem: base · fundo · navegação · estrutura de seção · botões · hero ·
+   quem somos · diretoria · projetos · ferramentas · chamada · modais ·
+   rodapé · responsivo · movimento reduzido.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* A navbar flutua sobre o conteúdo; sem isto as âncoras param embaixo dela. */
+  scroll-padding-top: 96px;
+  -webkit-text-size-adjust: 100%;
+  /* Precisa estar aqui e não só no body: o body sozinho não segura a rolagem
+     horizontal, porque o overflow do viewport é decidido no elemento raiz. Em
+     celular o brilho do pato (`.duck-light`, 712px) e o `.cta-duck` passavam da
+     largura da tela e a página andava de lado.
+     `clip` em vez de `hidden` para não criar um contêiner de rolagem, o que
+     quebraria qualquer `position: sticky` dentro da página. */
+  overflow-x: clip;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--breu);
+  color: var(--giz);
+  font-family: var(--texto);
+  font-size: var(--t-corpo);
+  line-height: 1.62;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ambar);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+::selection {
+  background: var(--ambar);
+  color: #1c0e02;
+}
+
+/* O <select> nativo herda o fundo do sistema; no escuro fica ilegível. */
+option {
+  background: var(--sombra);
+  color: var(--giz);
+}
+
+/* Conteúdo acima das camadas de luz do fundo. */
+nav,
+.mobile-menu,
+.hero,
+section,
+footer,
+.modal-overlay {
+  position: relative;
+  z-index: 1;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--largura);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+
+/* ==========================================================================
+   FUNDO — as duas camadas de luz
+
+   A grade não é uniforme: a máscara a concentra no canto onde o pato está,
+   então ela parece iluminada por ele e some no resto da página.
+   ========================================================================== */
+
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 62% 55% at 74% 16%, #000 0%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse 62% 55% at 74% 16%, #000 0%, transparent 72%);
+}
+
+.cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 400px;
+  height: 400px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(242, 138, 31, 0.06), transparent 62%);
+  will-change: transform;
+}
+
+
+/* ==========================================================================
+   NAVEGAÇÃO
+   ========================================================================== */
+
+nav {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: calc(100% - 28px);
+  max-width: var(--largura);
+  height: 58px;
+  padding: 0 10px 0 16px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  transition: background var(--transicao), border-color var(--transicao),
+    backdrop-filter var(--transicao);
+}
+
+/* Sem rolagem a barra some no fundo; ela só ganha corpo quando passa a
+   flutuar sobre o conteúdo. */
+nav.scrolled {
+  background: rgba(8, 8, 11, 0.72);
+  border-color: var(--traco);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex-shrink: 0;
+}
+
+/* Sem border-radius nem moldura: o logo já é um círculo desenhado com o fundo
+   transparente, e recortá-lo de novo só comia a borda do traço. */
+.nav-logo img {
+  width: 36px;
+  height: 36px;
+}
+
+.nav-logo span {
+  font-family: var(--marca);
+  font-weight: 400;
+  font-size: 1.06rem;
+  letter-spacing: 0;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.nav-links li a {
+  display: block;
+  padding: 9px 14px;
+  border-radius: 999px;
+  color: var(--fumaca);
+  font-size: 0.875rem;
+  font-weight: 500;
+  /* Sem isto "Quem Somos" quebra em duas linhas quando a barra aperta, e a
+     altura da pílula cresce junto — a barra inteira sai do lugar. */
+  white-space: nowrap;
+  transition: color var(--transicao), background var(--transicao);
+}
+
+.nav-links li a:hover {
+  color: var(--giz);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Selector com o `li` incluído para vencer a regra acima sem !important. */
+.nav-links li a.nav-cta,
+.mobile-menu a.nav-cta {
+  background: var(--ambar);
+  color: #170c02;
+  font-weight: 600;
+  padding: 9px 20px;
+}
+
+.nav-links li a.nav-cta:hover,
+.mobile-menu a.nav-cta:hover {
+  background: var(--gema);
+  color: #170c02;
+}
+
+/* Pílula de contorno: mesma forma da CTA, sem o peso do preenchimento. */
+.nav-links li a.nav-ghost {
+  padding: 9px 18px;
+  border: 1px solid var(--traco-forte);
+  color: var(--giz);
+  font-weight: 500;
+}
+
+.nav-links li a.nav-ghost:hover {
+  border-color: var(--ambar-traco);
+  color: var(--gema);
+  background: var(--ambar-lavagem);
+}
+
+/* ---- Menu do usuário logado ---- */
+
+.user-menu {
+  position: relative;
+  margin-left: 6px;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--ambar-traco);
+  background: var(--ambar-lavagem);
+  color: var(--gema);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  transition: background var(--transicao), border-color var(--transicao);
+}
+
+.user-avatar:hover {
+  background: rgba(242, 138, 31, 0.18);
+  border-color: var(--ambar);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 216px;
+  padding: 7px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: rgba(16, 15, 20, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--elevacao);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity var(--transicao), transform var(--transicao),
+    visibility var(--transicao);
+}
+
+.user-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.user-dropdown-header {
+  padding: 11px 13px 12px;
+}
+
+.user-dropdown-header strong {
+  display: block;
+  font-family: var(--display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.user-dropdown-header span {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ambar);
+}
+
+.user-dropdown-divider {
+  height: 1px;
+  margin: 5px 0;
+  background: var(--traco);
+}
+
+.user-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 9px 13px;
+  border-radius: var(--r-sm);
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--fumaca);
+  transition: color var(--transicao), background var(--transicao);
+}
+
+.user-dropdown-item:hover {
+  color: var(--giz);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.user-dropdown-logout:hover {
+  color: var(--vermelho);
+  background: rgba(242, 86, 75, 0.1);
+}
+
+/* ---- Hambúrguer e menu mobile ---- */
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  z-index: 101;
+}
+
+.hamburger span {
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--giz);
+  transition: transform 0.3s var(--transicao), opacity 0.2s ease;
+}
+
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 80px;
+  left: 14px;
+  right: 14px;
+  z-index: 99;
+  padding: 10px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r-lg);
+  background: rgba(8, 8, 11, 0.96);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: var(--elevacao);
+  animation: menuDesce 0.26s var(--transicao);
+}
+
+.mobile-menu.open {
+  display: block;
+}
+
+@keyframes menuDesce {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mobile-menu a,
+.mobile-logout-btn {
+  display: block;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--r-sm);
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--fumaca);
+  transition: color var(--transicao), background var(--transicao);
+}
+
+.mobile-menu a:hover,
+.mobile-logout-btn:hover {
+  color: var(--giz);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mobile-menu a.nav-cta {
+  margin-top: 6px;
+  border-radius: var(--r-sm);
+  text-align: center;
+}
+
+.mobile-logout-btn {
+  color: var(--vermelho);
+}
+
+
+/* ==========================================================================
+   ESTRUTURA DE SEÇÃO
+   ========================================================================== */
+
+section {
+  padding: var(--secao-y) 0;
+}
+
+.divider {
+  height: 1px;
+  border: 0;
+  /* Some nas pontas: o filete marca a pausa sem cortar a página em fatias. */
+  background: linear-gradient(90deg, transparent, var(--traco) 18%, var(--traco) 82%, transparent);
+}
+
+/* O rótulo `// alguma coisa` é a voz do clube — comentário de código. O
+   filete à esquerda o ancora na margem em vez de deixá-lo solto. */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+.section-label::before {
+  content: "";
+  width: 26px;
+  height: 1px;
+  background: var(--ambar);
+  opacity: 0.55;
+}
+
+/* Títulos na fonte da marca (--marca). Ela é escrita à mão, então não leva o
+   aperto de tracking que a grotesca pedia: letra manuscrita apertada embola. */
+.section-title {
+  margin: 22px 0 20px;
+  font-family: var(--marca);
+  font-size: var(--t-secao);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.section-desc {
+  max-width: 56ch;
+  margin-bottom: 58px;
+  font-size: var(--t-sub);
+  line-height: 1.55;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+
+/* ==========================================================================
+   REVELAÇÃO NA ROLAGEM
+   As classes são adicionadas por main.js via IntersectionObserver.
+   ========================================================================== */
+
+.fade-in,
+.fade-in-left,
+.fade-in-right {
+  opacity: 0;
+  transition: opacity 0.7s var(--transicao), transform 0.7s var(--transicao);
+}
+
+.fade-in       { transform: translateY(22px); }
+.fade-in-left  { transform: translateX(-26px); }
+.fade-in-right { transform: translateX(26px); }
+
+.fade-in.visible,
+.fade-in-left.visible,
+.fade-in-right.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Filhos entram em cascata, não todos de uma vez. */
+.stagger-children.visible > *:nth-child(1) { transition-delay: 0.05s; }
+.stagger-children.visible > *:nth-child(2) { transition-delay: 0.12s; }
+.stagger-children.visible > *:nth-child(3) { transition-delay: 0.19s; }
+.stagger-children.visible > *:nth-child(4) { transition-delay: 0.26s; }
+.stagger-children.visible > *:nth-child(5) { transition-delay: 0.33s; }
+.stagger-children.visible > *:nth-child(6) { transition-delay: 0.4s; }
+.stagger-children.visible > *:nth-child(7) { transition-delay: 0.47s; }
+
+
+/* ==========================================================================
+   BOTÕES
+   ========================================================================== */
+
+.btn-primary,
+.btn-secondary,
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 14px 26px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-family: var(--texto);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  transition: background var(--transicao), border-color var(--transicao),
+    color var(--transicao), transform var(--transicao), box-shadow var(--transicao);
+}
+
+.btn-primary {
+  background: var(--ambar);
+  color: #170c02;
+  box-shadow: 0 0 0 rgba(242, 138, 31, 0);
+}
+
+.btn-primary:hover {
+  background: var(--gema);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -10px rgba(242, 138, 31, 0.55);
+}
+
+/* Botão que ainda não tem para onde ir (ex.: inscrição do evento antes de o
+   formulário existir). Perde o âmbar para não parecer clicável e mantém o
+   contorno para continuar sendo lido como botão. */
+.btn-primary:disabled {
+  background: var(--sombra);
+  border-color: var(--traco-forte);
+  color: var(--fumaca);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-primary:disabled:hover {
+  background: var(--sombra);
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--traco-forte);
+  color: var(--giz);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--traco-forte);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  border-color: var(--ambar-traco);
+  color: var(--ambar);
+}
+
+.btn-outline:hover {
+  background: var(--ambar-lavagem);
+  border-color: var(--ambar);
+  color: var(--gema);
+  transform: translateY(-2px);
+}
+
+
+/* ==========================================================================
+   HERO — o pato é a fonte de luz
+
+   Assimétrico de propósito: a afirmação ocupa a esquerda em caixa baixa e o
+   mascote ocupa a direita, grande, com o brilho saindo de trás dele.
+   ========================================================================== */
+
+.hero {
+  padding: 168px 0 0;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.82fr);
+  align-items: center;
+  gap: clamp(24px, 5vw, 64px);
+  min-height: min(72vh, 620px);
+}
+
+.hero-brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 26px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+.hero-brand::before {
+  content: "";
+  width: 32px;
+  height: 1px;
+  background: var(--ambar);
+  opacity: 0.55;
+}
+
+.hero-title {
+  font-weight: 400;
+}
+
+.hero-statement {
+  display: block;
+  font-family: var(--marca);
+  font-size: var(--t-hero);
+  font-weight: 400;
+  /* Manuscrita tem ascendente e descendente longos; 0.94 fazia as linhas se
+     tocarem. */
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+.hero-statement .highlight {
+  color: var(--ambar);
+}
+
+.hero-line {
+  margin-top: 30px;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: var(--fumaca);
+  min-height: 2.6em;
+}
+
+.hero-line::before {
+  content: "> ";
+  color: var(--ambar);
+}
+
+/* Cursor piscando enquanto main.js digita; `.done` chega no fim. */
+.hero-typing::after {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -0.14em;
+  background: var(--ambar);
+  animation: pisca 1.05s steps(2, start) infinite;
+}
+
+.hero-typing.done::after {
+  display: none;
+}
+
+@keyframes pisca {
+  to { visibility: hidden; }
+}
+
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+  margin-top: 38px;
+}
+
+/* ---- O mascote e a luz ---- */
+
+.hero-duck {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.duck-light {
+  position: absolute;
+  inset: -42% -34%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 46%,
+    rgba(255, 77, 0, 0.33) 0%,
+    rgba(242, 138, 31, 0.15) 27%,
+    rgba(242, 138, 31, 0.045) 47%,
+    transparent 70%
+  );
+  filter: blur(8px);
+  animation: respira 7.5s ease-in-out infinite;
+}
+
+.duck-mark {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  /* O halo é a mesma luz do `.duck-light`, mas colada no traço do desenho. */
+  filter:
+    drop-shadow(0 0 54px rgba(255, 77, 0, 0.42))
+    drop-shadow(0 0 16px rgba(255, 180, 90, 0.22));
+  animation: bico 9s ease-in-out infinite;
+}
+
+@keyframes respira {
+  0%, 100% { transform: scale(1);    opacity: 0.86; }
+  50%      { transform: scale(1.07); opacity: 1; }
+}
+
+@keyframes bico {
+  0%, 100% { transform: translateY(0)     rotate(0deg); }
+  50%      { transform: translateY(-14px) rotate(-1.1deg); }
+}
+
+/* ---- Faixa de números ---- */
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: clamp(56px, 8vw, 90px);
+  border-top: 1px solid var(--traco);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 30px 26px 4px;
+  border-left: 1px solid var(--traco);
+}
+
+.stat-item:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.stat-number,
+.stat-fixed {
+  display: flex;
+  align-items: flex-end;
+  min-height: 2.4rem;
+  font-family: var(--mono);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--giz);
+}
+
+.stat-number {
+  font-size: clamp(1.9rem, 3.4vw, 2.35rem);
+  letter-spacing: -0.04em;
+}
+
+.stat-number span {
+  color: var(--ambar);
+  font-size: 0.62em;
+  margin-left: 1px;
+}
+
+.stat-fixed {
+  font-size: clamp(1.05rem, 1.9vw, 1.2rem);
+  letter-spacing: -0.02em;
+}
+
+.stat-label {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+
+/* ==========================================================================
+   QUEM SOMOS
+   ========================================================================== */
+
+.about-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  gap: clamp(40px, 6vw, 76px);
+  align-items: start;
+}
+
+.about-text p {
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+.about-text p + p {
+  margin-top: 20px;
+}
+
+/* Primeiro parágrafo maior: dá um ponto de entrada para a leitura. */
+.about-text p:first-child {
+  font-size: 1.15rem;
+  line-height: 1.58;
+  color: var(--giz);
+}
+
+.about-text strong {
+  color: var(--giz);
+  font-weight: 600;
+}
+
+/* Sem caixas: os três valores são separados por filete, como itens de uma
+   lista, e não competem com os cartões que vêm depois na página. */
+.about-values {
+  display: flex;
+  flex-direction: column;
+}
+
+.value-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 18px;
+  padding: 26px 0;
+  border-top: 1px solid var(--traco);
+}
+
+.about-values > .value-card:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.value-icon {
+  grid-row: span 2;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--ambar-traco);
+  border-radius: var(--r-sm);
+  background: var(--ambar-lavagem);
+}
+
+.value-card h3 {
+  align-self: center;
+  font-family: var(--display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.value-card p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--fumaca);
+}
+
+
+/* ==========================================================================
+   DIRETORIA
+   ========================================================================== */
+
+/* Dois grupos, uma anatomia. O cartão de diretor tem a mesma estrutura do
+   cartão de clube em `#projetos` — chapa de imagem sangrando até a borda,
+   filete, corpo de texto — para a página ter um sistema de cartão só em vez de
+   três invenções diferentes.
+
+   A presidência entra em dois cartões largos (retrato ao lado do texto) e as
+   cinco diretorias numa fileira (retrato em cima). Sete cartões iguais caíam em
+   4+3 numa grade de 248px e a segunda linha ficava com um buraco no fim. */
+.directors-lead {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.directors-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.director-lead,
+.director-card {
+  display: flex;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+  overflow: hidden;
+  transition: border-color var(--transicao), transform var(--transicao);
+}
+
+.director-card {
+  flex-direction: column;
+}
+
+.director-lead:hover,
+.director-card:hover {
+  border-color: var(--ambar-traco);
+  transform: translateY(-3px);
+}
+
+/* A chapa do retrato. `flex-shrink: 0` no cartão largo para o retrato não ser
+   comprimido quando o nome é longo. */
+.director-plate {
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--sombra);
+}
+
+.director-card .director-plate {
+  border-bottom: 1px solid var(--traco);
+}
+
+.director-lead .director-plate {
+  width: 46%;
+  max-width: 258px;
+  border-right: 1px solid var(--traco);
+}
+
+/* Retrato 4:5 em vez do selo quadrado de 104px: os arquivos em
+   images/diretores/ são recortes em pé de 560x700 gerados por
+   backend/scripts/otimizar-imagens.py a partir das fotos de câmera de
+   4000x6000. */
+.director-foto {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  /* O fundo do estúdio é cinza-claro e, em sete retratos grandes, virava a
+     coisa mais acesa da página — mais que o letreiro da SEMCOMP, que é onde a
+     luz deveria estar. O contraste com brilho abaixo de 1 derruba o cinza sem
+     apagar o rosto. Não vai além de 0.9: em 0.78 o fundo assenta melhor, mas
+     os rostos começam a perder detalhe, e escurecer a cara de alguém para
+     servir a paleta é a troca errada. */
+  filter: saturate(1.08) contrast(1.1) brightness(0.9);
+  transition: transform var(--transicao), filter var(--transicao);
+}
+
+.director-lead .director-foto {
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+/* No hover o retrato acende: é a única coisa que ganha luz ao ser apontada. */
+.director-lead:hover .director-foto,
+.director-card:hover .director-foto {
+  transform: scale(1.03);
+  filter: saturate(1.12) contrast(1.06) brightness(1);
+}
+
+.director-corpo {
+  padding: 20px 20px 24px;
+}
+
+.director-lead .director-corpo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 26px 28px;
+}
+
+.director-name {
+  font-family: var(--marca);
+  font-size: 1.22rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+.director-lead .director-name {
+  font-size: clamp(1.3rem, 2.2vw, 1.65rem);
+}
+
+.director-role {
+  margin-top: 7px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  line-height: 1.35;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+/* Na fileira de cinco, "DIRETOR DE MARKETING" e "DIRETOR DE PROJETOS" quebram
+   em duas linhas e os outros três não — o que empurrava a biografia de cada
+   cartão para uma altura diferente. Reservar duas linhas alinha todas, e a
+   sobra embaixo dos cargos curtos fica igual em todos, lendo como um campo de
+   metadado e não como erro. Tracking a 0.1em em vez de 0.13em para caber mais
+   nomes numa linha só antes de precisar da segunda. */
+.director-card .director-role {
+  min-height: 2.7em;
+}
+
+.director-bio {
+  margin-top: 14px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+
+/* ==========================================================================
+   PROJETOS E EVENTOS
+   ========================================================================== */
+
+/* A SEMCOMP é o maior evento do clube — ganha um cartaz, com o letreiro de
+   neon no lugar do título e uma foto em pé do outro lado.
+
+   O brilho do painel nasce onde a lâmpada do letreiro está (topo da coluna de
+   texto), e não no canto do cartão: é a mesma lógica do herói, onde a luz sai
+   de dentro do desenho em vez de ser um degradê aplicado por cima. */
+.event-highlight {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.62fr);
+  align-items: stretch;
+  gap: clamp(28px, 4vw, 52px);
+  margin-bottom: 22px;
+  padding: clamp(30px, 4.4vw, 52px);
+  border: 1px solid var(--ambar-traco);
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(ellipse 54% 62% at 14% 22%, rgba(255, 77, 0, 0.16), transparent 66%),
+    var(--penumbra);
+  overflow: hidden;
+}
+
+.event-say {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* O h3 não desenha nada: quem desenha é o letreiro dentro dele. Sem
+   `font-size: 0` de propósito — se o PNG não carregar, o `alt` ainda precisa
+   ser lido na página, e a imagem é `display: block` pela base, então não sobra
+   folga de linha para esconder. */
+.event-marca {
+  margin: 26px 0 4px;
+  font-family: var(--marca);
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+/* O letreiro é neon, então o halo é literal e não enfeite: a mesma luz que
+   sai do pato no topo da página, só que aqui ela já vem pintada no arquivo e
+   o `drop-shadow` só a estende para fora do traço. */
+.event-logo {
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  filter: drop-shadow(0 0 34px rgba(255, 77, 0, 0.34));
+}
+
+.event-badge {
+  display: inline-block;
+  padding: 7px 14px;
+  border: 1px solid var(--ambar-traco);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+.event-highlight p {
+  max-width: 52ch;
+  margin-top: 22px;
+  font-size: var(--t-sub);
+  line-height: 1.55;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+/* Ficha do evento. Filete em cima de cada par, como a faixa de números do
+   herói — é a mesma ideia de "dado solto ancorado numa linha". */
+.event-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0 22px;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.event-meta > div {
+  padding: 14px 0 0;
+  border-top: 1px solid var(--traco);
+}
+
+.event-meta dt {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.event-meta dd {
+  margin-top: 6px;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: var(--giz);
+}
+
+/* `margin-top: auto` cola as ações no pé da coluna, alinhadas com a base da
+   foto ao lado, em vez de deixá-las flutuando no meio. */
+.event-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin-top: 34px;
+  padding-top: 4px;
+}
+
+.event-nota {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.04em;
+  color: var(--cinza);
+}
+
+/* A foto em pé equilibra a coluna de texto. Sangra até as bordas do cartão do
+   lado direito para não virar um retângulo flutuando dentro de uma margem. */
+.event-foto {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: calc(-1 * clamp(30px, 4.4vw, 52px));
+  margin-left: 0;
+  border-left: 1px solid var(--traco);
+  background: var(--breu);
+}
+
+.event-foto img {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 340px;
+  object-fit: cover;
+  /* O grupo ocupa a faixa central da foto; embaixo é só cadeira vazia e o teto
+     come o topo. Ancorar em 45% mantém os rostos no quadro no recorte alto. */
+  object-position: center 45%;
+}
+
+.event-foto figcaption {
+  padding: 13px 18px;
+  border-top: 1px solid var(--traco);
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.06em;
+  color: var(--cinza);
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+  overflow: hidden;
+  transition: border-color var(--transicao), transform var(--transicao),
+    background var(--transicao);
+}
+
+.project-card:hover {
+  border-color: var(--ambar-traco);
+  background: var(--sombra);
+  transform: translateY(-3px);
+}
+
+/* As artes são quadradas e desenhadas com detalhe até os cantos. Ocupam a
+   largura do cartão no formato original — `aspect-ratio: 1` em vez de um
+   quadradinho de 84px, que jogava fora o desenho inteiro. */
+.project-arte {
+  aspect-ratio: 1;
+  border-bottom: 1px solid var(--traco);
+  overflow: hidden;
+  background: var(--breu);
+}
+
+.project-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transicao);
+}
+
+.project-card:hover .project-logo {
+  transform: scale(1.035);
+}
+
+/* Coluna que cresce: com `margin-top: auto` no link do Instagram, os três
+   cartões alinham o @ na mesma altura mesmo com descrições de tamanhos
+   diferentes. */
+.project-corpo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 24px 26px 26px;
+}
+
+.project-card h3 {
+  font-family: var(--display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.project-card p {
+  margin-top: 11px;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+/* O @ de cada clube. Fica quieto no pé do cartão — o rosa do Instagram só
+   aparece no hover, do mesmo jeito que na lista de redes do modal de contato. */
+.project-instagram {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 18px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.06em;
+  color: var(--cinza);
+  transition: color var(--transicao);
+}
+
+.project-instagram svg {
+  flex-shrink: 0;
+}
+
+.project-instagram:hover {
+  color: #e1306c;
+}
+
+/* O cartão inteiro não é link, então o @ precisa reagir quando o cartão é
+   apontado — senão parece texto morto. */
+.project-card:hover .project-instagram {
+  color: var(--fumaca);
+}
+
+.project-card:hover .project-instagram:hover {
+  color: #e1306c;
+}
+
+
+/* ==========================================================================
+   FERRAMENTAS ACADÊMICAS
+
+   É a parte da página que as pessoas realmente usam. Nada de brilho aqui:
+   campo legível, número em mono e resultado que se lê de longe.
+   ========================================================================== */
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.tool-card {
+  border: 1px solid var(--traco);
+  border-radius: var(--r-lg);
+  background: var(--penumbra);
+  overflow: hidden;
+}
+
+.tool-header {
+  padding: 28px 28px 24px;
+  border-bottom: 1px solid var(--traco);
+}
+
+.tool-icon {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+  border: 1px solid var(--ambar-traco);
+  border-radius: var(--r-sm);
+  background: var(--ambar-lavagem);
+}
+
+.tool-header h3 {
+  font-family: var(--display);
+  font-size: 1.28rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.tool-desc {
+  margin-top: 9px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--fumaca);
+}
+
+/* Coluna para o "Limpar" poder se alinhar à esquerda no pé do cartão. */
+.tool-body {
+  display: flex;
+  flex-direction: column;
+  padding: 26px 28px 30px;
+}
+
+.tool-notas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.tool-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tool-field + .tool-field {
+  margin-top: 16px;
+}
+
+/* Dentro da grade de notas o espaçamento é da própria grade. */
+.tool-notas-grid .tool-field + .tool-field {
+  margin-top: 0;
+}
+
+.tool-field label {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fumaca);
+}
+
+.tool-peso-label {
+  color: var(--ambar);
+}
+
+/* Rótulo de um grupo (o radiogroup do modo de contagem), que não pode ser um
+   `<label>` porque não aponta para um campo só. Mesma pinta do `label`. */
+.tool-field-label {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fumaca);
+}
+
+/* Segmentado: dois radios de verdade (teclado e leitor de tela funcionam),
+   com o input escondido e o `<span>` fazendo o papel do botão. */
+.tool-toggle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r-sm);
+  background: var(--sombra);
+}
+
+.tool-toggle-opt input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tool-toggle-opt span {
+  display: block;
+  padding: 9px 10px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: var(--cinza);
+  cursor: pointer;
+  transition: color var(--transicao), background var(--transicao);
+}
+
+.tool-toggle-opt span:hover {
+  color: var(--giz);
+}
+
+.tool-toggle-opt input:checked + span {
+  color: var(--ambar);
+  background: var(--ambar-lavagem);
+}
+
+/* O foco vive no input escondido, então o anel tem que aparecer no `<span>`. */
+.tool-toggle-opt input:focus-visible + span {
+  outline: 1px solid var(--ambar);
+  outline-offset: 1px;
+}
+
+.tool-input {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r-sm);
+  background: var(--sombra);
+  color: var(--giz);
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  transition: border-color var(--transicao), background var(--transicao);
+}
+
+.tool-input::placeholder {
+  color: var(--cinza);
+}
+
+.tool-input:focus {
+  outline: none;
+  border-color: var(--ambar);
+  background: #1b1921;
+}
+
+.tool-input:focus-visible {
+  outline: none;
+}
+
+/* Some as setas nativas do number — as nossas ficam à direita, empilhadas. */
+.tool-number-wrap input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  padding-right: 42px;
+}
+
+.tool-number-wrap input[type="number"]::-webkit-outer-spin-button,
+.tool-number-wrap input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.tool-number-wrap,
+.tool-select-wrap {
+  position: relative;
+}
+
+.tool-number-btns {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  bottom: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tool-number-btn {
+  flex: 1;
+  width: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  color: var(--cinza);
+  transition: color var(--transicao), background var(--transicao);
+}
+
+.tool-number-btn svg {
+  width: 11px;
+  height: 11px;
+}
+
+.tool-number-btn:hover {
+  color: var(--ambar);
+  background: var(--ambar-lavagem);
+}
+
+.tool-select-wrap select.tool-input {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.tool-select-arrow {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--cinza);
+  display: flex;
+}
+
+/* Campo com nota fora de 0–10. Antes o valor era cortado em silêncio e a
+   pessoa via a média de um número que não digitou. */
+.tool-input.invalido {
+  border-color: var(--vermelho);
+  background: rgba(242, 86, 75, 0.07);
+}
+
+.tool-input.invalido:focus {
+  border-color: var(--vermelho);
+}
+
+/* Substitui o antigo "Calcular": a conta é ao vivo, então o único botão que
+   sobra é o de desfazer. Discreto e só aparece quando há algo preenchido. */
+.tool-limpar {
+  align-self: flex-start;
+  margin-top: 16px;
+  padding: 8px 0;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cinza);
+  transition: color var(--transicao);
+}
+
+.tool-limpar:hover {
+  color: var(--ambar);
+}
+
+/* ---- Resultado ---- */
+
+.tool-result {
+  margin-top: 22px;
+  padding: 24px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--breu);
+}
+
+/* O convite, antes de haver resultado. Sem caixa: uma linha de texto não deve
+   fingir ser um painel de resultado vazio. */
+.tool-result.vazio {
+  padding: 16px 0 0;
+  border: 0;
+  border-top: 1px solid var(--traco);
+  border-radius: 0;
+  background: none;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  line-height: 1.75;
+  letter-spacing: 0.04em;
+  color: var(--cinza);
+  text-transform: none;
+}
+
+.result-value {
+  font-family: var(--mono);
+  font-size: 3rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: var(--giz);
+}
+
+.result-value.aprovado   { color: var(--verde); }
+.result-value.final,
+.result-value.final-nota { color: var(--ambar); }
+.result-value.reprovado  { color: var(--vermelho); }
+
+.result-title {
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.result-status {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.aprovado-bg  { background: rgba(61, 214, 140, 0.13); color: var(--verde); }
+.final-bg     { background: var(--ambar-lavagem);     color: var(--ambar); }
+.reprovado-bg { background: rgba(242, 86, 75, 0.13);  color: var(--vermelho); }
+
+.result-detail {
+  margin-top: 14px;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--fumaca);
+}
+
+.result-detail strong {
+  color: var(--giz);
+  font-family: var(--mono);
+  font-weight: 500;
+}
+
+.result-formula {
+  margin-top: 14px;
+  padding: 11px 14px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r-sm);
+  background: var(--sombra);
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--fumaca);
+}
+
+.result-divider {
+  height: 1px;
+  margin: 24px 0;
+  background: var(--traco);
+}
+
+.result-table {
+  width: 100%;
+  margin-top: 18px;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+}
+
+.result-table th {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--traco);
+  text-align: left;
+  font-size: var(--t-mini);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.result-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--traco);
+  color: var(--fumaca);
+}
+
+.result-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.result-table td:first-child {
+  color: var(--giz);
+}
+
+/* A mesma quantidade na outra unidade ("4 dias (9 faltas)"): é apoio, não pode
+   competir com o número principal da linha. */
+.result-td-fraco {
+  color: var(--cinza);
+}
+
+.result-bar {
+  position: relative;
+  height: 5px;
+  margin-top: 20px;
+  border-radius: 999px;
+  background: var(--sombra);
+}
+
+.result-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.8s var(--transicao);
+}
+
+/* Medida com escala: rótulo, barra e legenda compartilham o `--minimo` definido
+   no JS, para o risco e o texto "mínimo 75%" nunca saírem de sincronia. */
+.result-medida {
+  margin-top: 22px;
+}
+
+/* Risco na presença mínima. A barra sozinha era só uma faixa colorida sem
+   escala: não dava para saber se aquele comprimento passava ou não. O risco
+   marca os 75% e a barra passa a ter significado. */
+.result-bar.com-minimo::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  left: var(--minimo);
+  width: 1px;
+  background: var(--giz);
+  opacity: 0.55;
+}
+
+.result-bar-rotulo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.result-bar-rotulo strong {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: var(--giz);
+}
+
+/* Posicionamento absoluto e não flex: com `space-between` o rótulo do meio só
+   cai no centro se "0%" e "100%" tiverem a mesma largura — não têm, e o
+   "mínimo 75%" saía alguns pixels do risco. Ancorado em `--minimo` ele fica
+   exatamente embaixo. */
+.result-bar-escala {
+  position: relative;
+  height: 1.1em;
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--cinza);
+}
+
+.result-bar-escala span {
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+}
+
+.result-bar-escala span:nth-child(1) { left: 0; }
+
+.result-bar-escala span:nth-child(2) {
+  left: var(--minimo);
+  transform: translateX(-50%);
+  color: var(--fumaca);
+}
+
+.result-bar-escala span:nth-child(3) { right: 0; }
+
+.result-bar-fill.green  { background: var(--verde); }
+.result-bar-fill.orange { background: var(--ambar); }
+.result-bar-fill.red    { background: var(--vermelho); }
+
+
+/* ==========================================================================
+   CHAMADA FINAL — a luz apagando
+   ========================================================================== */
+
+.cta-section {
+  padding: var(--secao-y) 0 clamp(96px, 12vw, 140px);
+}
+
+.cta-box {
+  position: relative;
+  padding: clamp(48px, 7vw, 84px) clamp(28px, 5vw, 64px);
+  border: 1px solid var(--traco);
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(ellipse 62% 100% at 84% 8%, rgba(255, 77, 0, 0.12), transparent 64%),
+    var(--penumbra);
+  overflow: hidden;
+}
+
+/* Mesmo pato do topo, menor e mais apagado: fecha a página onde ela começou. */
+.cta-duck {
+  position: absolute;
+  top: -26px;
+  right: -32px;
+  width: clamp(180px, 26vw, 280px);
+  opacity: 0.14;
+  transform: rotate(8deg);
+  pointer-events: none;
+}
+
+.cta-box .section-title {
+  font-size: clamp(2.3rem, 5.4vw, 3.6rem);
+}
+
+.cta-box .section-desc {
+  margin-bottom: 38px;
+}
+
+.cta-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+}
+
+
+/* ==========================================================================
+   MODAIS
+   ========================================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: rgba(4, 4, 6, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transicao), visibility var(--transicao);
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 432px;
+  max-height: calc(100vh - 44px);
+  overflow-y: auto;
+  padding: 40px 32px 32px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r-lg);
+  background: var(--penumbra);
+  box-shadow: var(--elevacao);
+  transform: translateY(14px) scale(0.98);
+  transition: transform var(--transicao);
+}
+
+.modal-overlay.open .modal-card {
+  transform: none;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--cinza);
+  transition: color var(--transicao), background var(--transicao);
+}
+
+.modal-close:hover {
+  color: var(--giz);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.modal-logo {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+}
+
+.modal-header h2 {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.032em;
+}
+
+.modal-header p {
+  margin-top: 11px;
+  font-size: 0.925rem;
+  line-height: 1.55;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+.modal-links {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.modal-link {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 17px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r-sm);
+  background: var(--sombra);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: border-color var(--transicao), background var(--transicao),
+    color var(--transicao), transform var(--transicao);
+}
+
+.modal-link:hover {
+  transform: translateX(3px);
+}
+
+/* Cada rede puxa a própria cor só no hover — no repouso a lista fica calma. */
+.modal-link-whatsapp:hover  { border-color: rgba(37, 211, 102, 0.5);  color: #25d366; }
+.modal-link-instagram:hover { border-color: rgba(225, 48, 108, 0.5);  color: #e1306c; }
+.modal-link-discord:hover   { border-color: rgba(88, 101, 242, 0.5);  color: #5865f2; }
+.modal-link-linkedin:hover  { border-color: rgba(10, 102, 194, 0.55); color: #3b9ae1; }
+
+
+/* ==========================================================================
+   RODAPÉ
+   ========================================================================== */
+
+footer {
+  padding: 34px 0 44px;
+  border-top: 1px solid var(--traco);
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  font-size: 0.875rem;
+  color: var(--fumaca);
+}
+
+.footer-left img {
+  width: 34px;
+  height: 34px;
+  opacity: 0.75;
+}
+
+.footer-tech {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+
+/* ==========================================================================
+   RESPONSIVO
+   ========================================================================== */
+
+/* Entre 860px (onde entra o hambúrguer) e ~1080px a barra tem seis links mais
+   duas pílulas e começava a empurrar o nome do clube. Aperta o respiro dos
+   links antes de recorrer ao menu. */
+@media (max-width: 1080px) {
+  .nav-links li a {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .nav-links li a.nav-cta {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .nav-links li a.nav-ghost {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
+
+@media (max-width: 980px) {
+  .hero {
+    padding-top: 132px;
+  }
+
+  /* O cartaz da SEMCOMP empilha: letreiro e texto primeiro, foto no pé
+     sangrando até as bordas do cartão. */
+  .event-highlight {
+    grid-template-columns: 1fr;
+  }
+
+  .event-foto {
+    margin: 0 calc(-1 * clamp(30px, 4.4vw, 52px))
+              calc(-1 * clamp(30px, 4.4vw, 52px));
+    border-left: 0;
+    border-top: 1px solid var(--traco);
+  }
+
+  /* Em pé e de largura cheia a foto ficaria com dois metros de altura, então
+     empilhada ela vira uma faixa deitada. `min-height: 0` derruba os 340px que
+     só fazem sentido ao lado da coluna de texto. */
+  .event-foto img {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+    object-position: center 45%;
+  }
+
+  /* No celular o pato vem primeiro: a luz precisa chegar antes do texto. */
+  .hero-grid {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    gap: 34px;
+  }
+
+  .hero-duck {
+    order: -1;
+  }
+
+  .duck-mark {
+    max-width: min(58vw, 250px);
+  }
+
+  .duck-light {
+    inset: -55% -45%;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Cinco retratos em fileira não cabem: a partir daqui a fileira volta a ser
+     grade e se reacomoda sozinha (4, depois 3, depois 2 colunas). */
+  .directors-grid {
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  /* A presidência empilha e os cartões largos viram cartões normais: com menos
+     de 620px o retrato lateral fica estreito demais para valer a pena. */
+  .directors-lead {
+    grid-template-columns: 1fr;
+  }
+
+  .director-lead {
+    flex-direction: column;
+  }
+
+  .director-lead .director-plate {
+    width: 100%;
+    max-width: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--traco);
+  }
+
+  .director-lead .director-foto {
+    height: auto;
+    aspect-ratio: 4 / 5;
+  }
+
+  .director-lead .director-corpo {
+    padding: 20px 20px 24px;
+  }
+}
+
+/* 980px e não 860px: com a entrada de SEMCOMP a barra passou a ter seis links
+   mais duas pílulas, e entre 860 e 980 isso só cabia comprimindo tudo. 980
+   também é onde o herói e o cartaz do evento empilham, então a navegação passa
+   para o menu no mesmo ponto em que a página muda de forma. */
+@media (max-width: 980px) {
+  .nav-links {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  nav {
+    padding-right: 6px;
+  }
+}
+
+@media (max-width: 860px) {
+  .hero-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Em duas colunas, quem começa linha não leva filete à esquerda. */
+  .stat-item {
+    padding: 24px 20px 4px;
+  }
+
+  .stat-item:nth-child(odd) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .stat-item:nth-child(n + 3) {
+    border-top: 1px solid var(--traco);
+    margin-top: 4px;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero-buttons .btn-primary,
+  .hero-buttons .btn-secondary,
+  .cta-buttons .btn-primary,
+  .cta-buttons .btn-outline,
+  .event-acoes .btn-primary,
+  .event-acoes .btn-outline {
+    flex: 1 1 100%;
+  }
+
+  /* A ficha do evento vira uma lista de filetes, um dado por linha. */
+  .event-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-notas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-header,
+  .tool-body {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .result-value {
+    font-size: 2.5rem;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+
+/* ==========================================================================
+   MOVIMENTO REDUZIDO
+   O pato para de flutuar, o brilho para de respirar e nada mais entra
+   deslizando — o conteúdo aparece direto, já no lugar.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .fade-in,
+  .fade-in-left,
+  .fade-in-right {
+    opacity: 1;
+    transform: none;
+  }
+
+  .cursor-glow {
+    display: none;
+  }
+}

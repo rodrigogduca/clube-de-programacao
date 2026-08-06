@@ -1,0 +1,178 @@
+{#
+  MEMBROS — cartão de pessoa e régua de carga.
+
+  O mesmo bloco aparecia quatro vezes em painel_admin.njk, com pequenas
+  diferenças acidentais entre as cópias (uma mostrava a data de entrada, outra
+  não). Aqui as diferenças são argumentos explícitos.
+
+  Importe `with context` para `url()` funcionar dentro da macro.
+#}
+
+
+{#
+  RÉGUA DE CARGA — a assinatura do diretório.
+
+  Responde de relance a pergunta que faz alguém abrir esta tela: quem está
+  sobrecarregado e quem pode pegar mais. Sai de dados que o sistema já tem
+  (MembersService.listComResumo) e usa só cor semântica — nenhum âmbar, porque
+  carga é estado e âmbar é ação.
+
+  A largura é relativa ao maior total aberto do clube, então a comparação
+  acontece entre pessoas, na horizontal, sem ler número nenhum.
+
+  Concluída não entra: a régua mede o que a pessoa tem na mão agora.
+
+  TRÊS SEGMENTOS que somam exatamente o aberto da pessoa: pendente no prazo,
+  em andamento no prazo e atrasada. Uma tarefa atrasada também é pendente ou
+  em andamento, então o service já a desconta dos dois primeiros — senão a
+  barra passaria do próprio total.
+
+  A régua não é enfeite, é navegação: cada segmento leva ao quadro já filtrado
+  por aquela pessoa e aquele recorte. Sem JavaScript continuam sendo links
+  normais para /painel com query string.
+#}
+{% macro regua(carga, maximo, membro_id) %}
+  {% set aberto = carga.aberto | default(0) %}
+  {% set escala = maximo if maximo and maximo > 0 else 1 %}
+  {% set quadro = url('painel') ~ '?responsavel=' ~ membro_id %}
+
+  {% if aberto > 0 %}
+    {#
+      A largura total do traço é a fatia que esta pessoa ocupa do maior; os
+      segmentos dentro dela dividem esse espaço entre os recortes.
+    #}
+    <div class="regua" style="--ocupacao: {{ (aberto / escala * 100) | round }}%"
+         role="img"
+         aria-label="{{ carga.pendente }} pendente{{ carga.pendente | pluralize }}, {{ carga.em_andamento }} em andamento{% if carga.atrasada %}, {{ carga.atrasada }} atrasada{{ carga.atrasada | pluralize }}{% endif %}">
+      {% if carga.pendente_no_prazo %}
+        <a class="regua-parte regua-pendente" style="flex: {{ carga.pendente_no_prazo }}"
+           href="{{ quadro }}&status=pendente"
+           tabindex="-1" aria-hidden="true"></a>
+      {% endif %}
+      {% if carga.andamento_no_prazo %}
+        <a class="regua-parte regua-andamento" style="flex: {{ carga.andamento_no_prazo }}"
+           href="{{ quadro }}&status=em_andamento"
+           tabindex="-1" aria-hidden="true"></a>
+      {% endif %}
+      {% if carga.atrasada %}
+        <a class="regua-parte regua-atrasada" style="flex: {{ carga.atrasada }}"
+           href="{{ quadro }}&atrasada=1"
+           tabindex="-1" aria-hidden="true"></a>
+      {% endif %}
+    </div>
+
+    {#
+      A legenda é o caminho de teclado para o mesmo destino: os segmentos são
+      alvos de 4px de altura, inúteis para quem não usa mouse.
+    #}
+    <p class="regua-legenda">
+      <a href="{{ quadro }}">{{ aberto }} aberta{{ aberto | pluralize }}</a>
+      {% if carga.atrasada %}
+        <a class="regua-atraso" href="{{ quadro }}&atrasada=1">{{ carga.atrasada }} atrasada{{ carga.atrasada | pluralize }}</a>
+      {% endif %}
+    </p>
+  {% else %}
+    {# Régua vazia é informação, não ausência de informação. #}
+    <div class="regua regua-vazia" role="img" aria-label="Sem tarefas abertas"></div>
+    <p class="regua-legenda regua-livre">livre</p>
+  {% endif %}
+{% endmacro %}
+
+
+{#
+  Argumentos:
+    m               o membro exibido
+    atual           quem está logado — o avatar dele é o único em âmbar
+    pode_editar     mostra o botão de editar
+    mostrar_setor   exibe a linha de setor (falso nas abas já filtradas por setor)
+    setor_fixo      nome do setor a exibir quando a aba já define qual é
+
+  "Excluir" não está aqui de propósito: saiu do cartão e vive só no pop-up de
+  perfil, onde existe contexto sobre o que a exclusão leva junto (as tarefas
+  atribuídas ao membro). Excluir alguém não é ação de passagem.
+#}
+{% macro cartao(m, atual, pode_editar, mostrar_setor, setor_fixo) %}
+  {% set nome = m.usuario.get_full_name | default(m.usuario.username) %}
+  {#
+    `data-cargo-label` e `data-setor-nome` existem para o "agrupar por" do
+    diretório: o JS remonta os grupos movendo estes mesmos cartões, em vez de
+    a página renderizar três árvores de DOM para as três formas de agrupar.
+  #}
+  <article class="card card-membro"
+           data-membro-id="{{ m.id }}"
+           data-cargo="{{ m.cargo }}"
+           data-cargo-label="{{ m.cargo_label }}"
+           data-setor-id="{{ m.setorId | default(0) }}"
+           data-setor-nome="{{ m.setor.nome | default('Sem setor') }}"
+           data-busca="{{ (nome ~ ' ' ~ m.usuario.username ~ ' ' ~ (m.setor.nome | default('')) ~ ' ' ~ m.cargo_label) | lower }}">
+
+    <div class="card-avatar{% if m.id == atual.id %} card-avatar--eu{% endif %}" aria-hidden="true">
+      {{- m.usuario.first_name | make_list | first | default('?') -}}
+      {{- m.usuario.last_name | make_list | first | default('') -}}
+    </div>
+
+    <div class="card-info">
+      <h3>
+        {#
+          O nome abre o perfil. Continua um link de verdade para a tela de
+          edição, então sem JavaScript o clique leva a algum lugar útil.
+        #}
+        <a href="{{ url('editar_membro', m.id) }}" class="card-nome" data-perfil="{{ m.id }}">{{ nome }}</a>
+      </h3>
+
+      <span class="badge badge-{{ m.cargo }}">{{ m.cargo_label }}</span>
+
+      {% if setor_fixo %}
+        <p class="card-setor">{{ setor_fixo }}</p>
+      {% elif mostrar_setor %}
+        {% if m.setor %}
+          <p class="card-setor">{{ m.setor.nome }}</p>
+        {% elif m.cargo != 'presidente' and m.cargo != 'vice_presidente' %}
+          <p class="card-setor card-setor-vazio">Sem setor</p>
+        {% endif %}
+      {% endif %}
+
+      {% if m.carga %}
+        {{ regua(m.carga, m.carga_maxima, m.id) }}
+      {% endif %}
+    </div>
+
+    {% if pode_editar %}
+      <div class="card-actions">
+        <a href="{{ url('editar_membro', m.id) }}" class="btn-action btn-edit" title="Editar {{ nome }}" aria-label="Editar {{ nome }}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+        </a>
+      </div>
+    {% endif %}
+  </article>
+{% endmacro %}
+
+
+{#
+  Linha da visão em tabela. Mesmos dados do cartão, densidade maior — serve
+  para quem quer varrer o clube inteiro de uma vez.
+#}
+{% macro linha(m, atual, pode_editar) %}
+  {% set nome = m.usuario.get_full_name | default(m.usuario.username) %}
+  <tr data-membro-id="{{ m.id }}"
+      data-cargo="{{ m.cargo }}"
+      data-setor-id="{{ m.setorId | default(0) }}"
+      data-busca="{{ (nome ~ ' ' ~ m.usuario.username ~ ' ' ~ (m.setor.nome | default('')) ~ ' ' ~ m.cargo_label) | lower }}">
+    <td>
+      <a href="{{ url('editar_membro', m.id) }}" class="card-nome" data-perfil="{{ m.id }}">{{ nome }}</a>
+      <span class="tabela-usuario">@{{ m.usuario.username }}</span>
+    </td>
+    <td><span class="badge badge-{{ m.cargo }}">{{ m.cargo_label }}</span></td>
+    <td class="tabela-setor">{{ m.setor.nome | default('—') }}</td>
+    <td class="tabela-num">{{ m.carga.aberto | default(0) }}</td>
+    <td class="tabela-num{% if m.carga.atrasada %} tabela-atraso{% endif %}">{{ m.carga.atrasada | default(0) }}</td>
+    <td class="tabela-data">{{ m.data_entrada | date("d/m/Y") }}</td>
+    <td class="tabela-acoes">
+      {% if pode_editar %}
+        <a href="{{ url('editar_membro', m.id) }}" class="btn-action btn-edit" aria-label="Editar {{ nome }}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+        </a>
+      {% endif %}
+    </td>
+  </tr>
+{% endmacro %}

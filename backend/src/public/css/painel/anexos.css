@@ -1,0 +1,136 @@
+/* ==========================================================================
+   ANEXOS
+
+   Lista de anexos de tarefa, miniatura e ações.
+
+   Faz parte do CSS do painel, carregado por views/layouts/painel.njk.
+   As variáveis usadas aqui vêm de tokens.css.
+   ========================================================================== */
+
+
+.anexos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.anexo-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem;
+  background: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  transition: border-color 0.15s var(--ease);
+}
+
+.anexo-item:hover {
+  border-color: var(--line-strong);
+}
+
+.anexo-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.anexo-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.87rem;
+  font-weight: 550;
+}
+
+.anexo-header svg {
+  flex-shrink: 0;
+  color: var(--muted);
+}
+
+.anexo-info a {
+  word-break: break-word;
+  transition: color 0.15s var(--ease);
+}
+
+.anexo-info a:hover {
+  color: var(--ember);
+}
+
+/*
+  O endereço do link, abaixo do nome.
+
+  Estava com `style="font-size: 0.8rem"` no HTML e `truncatewords(60)` — que
+  corta por PALAVRA, e uma URL é uma palavra só, então o filtro nunca cortava
+  nada e o endereço inteiro esticava o cartão. Agora corta no CSS, que é onde
+  largura se resolve, e o `title` do link continua entregando o endereço
+  completo a quem passa o mouse.
+*/
+.anexo-url {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  color: var(--muted);
+}
+
+.anexo-thumbnail {
+  max-width: 200px;
+  margin-top: 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+
+.anexo-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+/*
+  AS DUAS FORMAS DE ANEXAR, NUM CARTÃO SÓ.
+
+  Eram dois cartões empilhados, de aparência idêntica à da lista logo acima —
+  três blocos iguais, e era preciso ler os três títulos para descobrir que dois
+  deles faziam a mesma coisa por caminhos diferentes.
+
+  O "ou" no meio é o que faz o trabalho: diz que são alternativas, não etapas.
+  Sem ele, dois formulários empilhados leem-se como um formulário de duas
+  partes que se preenche inteiro antes de enviar.
+*/
+.anexo-form-ou {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 1.5rem 0;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  color: var(--muted);
+}
+
+.anexo-form-ou::before,
+.anexo-form-ou::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+/* Campo e botão desabilitados quando o ambiente não tem armazenamento
+   configurado: continuam legíveis, mas dizem pelo cursor que não vão responder */
+.anexo-form .form-input:disabled,
+.anexo-form .btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.anexo-form .form-input:disabled:hover {
+  border-color: var(--line-strong);
+}
+

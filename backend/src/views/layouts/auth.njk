@@ -1,0 +1,73 @@
+{#
+  LAYOUT DE AUTENTICAÇÃO — telas fora do painel: login, solicitação de cadastro
+  e página de erro.
+
+  Não tem navbar (quem está aqui pode nem estar logado) e usa o fundo animado
+  com partículas em vez da grade do painel.
+
+  Blocos:
+    titulo        herdado de base.njk
+    cabecalho     logo + título + subtítulo
+    conteudo      o cartão central
+    rodape        link de voltar
+    scripts_extra <script> além do auth.js
+#}
+{% extends "layouts/base.njk" %}
+
+{% block estilos %}
+  {#
+    `site/tokens.css` ANTES de `style_login.css`, pela mesma razão que no
+    painel: estas telas passaram a derivar a paleta da paleta da home em vez de
+    carregar uma terceira cópia com valores parecidos mas diferentes (#060608
+    contra #08080b no fundo, #F0F0F2 contra #f6f1e9 no texto). Era a última
+    ilha de cor do projeto — o painel já tinha sido trazido.
+  #}
+  <link rel="stylesheet" href="{{ static('css/site/tokens.css') }}">
+  <link rel="stylesheet" href="{{ static('css/site/fontes.css') }}">
+  <link rel="stylesheet" href="{{ static('css/style_login.css') }}">
+  {# Só o necessário para as mensagens de campo do ui.js; o resto do CSS do
+     painel não se aplica a estas telas. #}
+  <link rel="stylesheet" href="{{ static('css/painel/validacao.css') }}">
+{% endblock %}
+
+{% block fundo %}
+  <div class="bg-scene" aria-hidden="true">
+    <div class="bg-glow"></div>
+    <div class="bg-grid"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+{% endblock %}
+
+{% block corpo %}
+  <div class="login-container">
+
+    <div class="login-header">
+      <img src="{{ static('images/logo.png') }}" alt="Logo Clube de Programação" class="login-logo">
+      {% block cabecalho %}{% endblock %}
+    </div>
+
+    {% block conteudo %}{% endblock %}
+
+    <div style="text-align: center;">
+      {% block rodape %}
+        <a href="{{ url('home') }}" class="back-to-home">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          Voltar para a página inicial
+        </a>
+      {% endblock %}
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ static('js/auth.js') }}"></script>
+  {# Traz a validação inline para login e cadastro. Os outros blocos do ui.js
+     (modal, kanban) saem cedo porque os elementos não existem aqui. #}
+  <script src="{{ static('js/ui.js') }}"></script>
+  {% block scripts_extra %}{% endblock %}
+{% endblock %}

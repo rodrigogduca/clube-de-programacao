@@ -1,0 +1,162 @@
+generator client {
+  provider = "prisma-client-js"
+
+  // `native` e a maquina de quem desenvolve. `rhel-openssl-3.0.x` e o Amazon
+  // Linux 2023 em que a Vercel roda as funcoes Node 20/22 — sem ele o deploy
+  // sobe e quebra na primeira consulta com "Query engine binary for current
+  // platform could not be found", porque o `prisma generate` do build so teria
+  // baixado o engine da maquina de build.
+  //
+  // Se um dia a Vercel mudar de runtime, o erro diz qual alvo falta.
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Cargo {
+  presidente
+  vice_presidente
+  administrador
+  diretor
+  antiga_gestao
+  membro
+}
+
+enum TarefaStatus {
+  pendente
+  em_andamento
+  concluida
+}
+
+enum TarefaPrioridade {
+  baixa
+  media
+  alta
+  urgente
+}
+
+enum TarefaFuncao {
+  design
+  desenvolvimento
+  marketing
+  gestao
+  pesquisa
+  outro
+}
+
+enum AnexoTipo {
+  arquivo
+  link
+}
+
+enum SolicitacaoStatus {
+  pendente
+  aprovada
+  rejeitada
+}
+
+model User {
+  id             Int              @id @default(autoincrement())
+  username       String           @unique
+  email          String           @unique
+  passwordHash   String
+  firstName      String
+  lastName       String?
+  isActive       Boolean          @default(true)
+  sessionVersion Int              @default(1)
+  lastLogin      DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  member         Member?
+  signupResponses SignupRequest[] @relation("SignupResponse")
+
+  @@map("users")
+}
+
+model Sector {
+  id       Int           @id @default(autoincrement())
+  nome     String        @unique
+  descricao String?
+  criadoEm DateTime      @default(now())
+  membros  Member[]
+  tarefas  Task[]
+  solicitacoes SignupRequest[]
+
+  @@map("sectors")
+}
+
+model Member {
+  id           Int                 @id @default(autoincrement())
+  userId       Int                 @unique
+  cargo        Cargo               @default(membro)
+  setorId      Int?
+  bio          String?
+  dataEntrada  DateTime            @default(now())
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  setor        Sector?             @relation(fields: [setorId], references: [id], onDelete: SetNull)
+  tarefas      Task[]              @relation("Responsavel")
+  tarefasCriadas Task[]            @relation("CriadoPor")
+  anexosEnviados TaskAttachment[]
+
+  @@map("members")
+}
+
+model Task {
+  id            Int             @id @default(autoincrement())
+  titulo        String
+  descricao     String?
+  responsavelId Int
+  criadoPorId   Int?
+  setorId       Int?
+  status        TarefaStatus    @default(pendente)
+  dataCriacao   DateTime        @default(now())
+  prazo         DateTime?
+  prioridade    TarefaPrioridade @default(media)
+  funcao        TarefaFuncao?
+  projeto       String?
+  responsavel   Member          @relation("Responsavel", fields: [responsavelId], references: [id], onDelete: Cascade)
+  criadoPor     Member?         @relation("CriadoPor", fields: [criadoPorId], references: [id], onDelete: SetNull)
+  setor         Sector?         @relation(fields: [setorId], references: [id], onDelete: SetNull)
+  anexos        TaskAttachment[]
+
+  @@map("tasks")
+}
+
+model TaskAttachment {
+  id             Int      @id @default(autoincrement())
+  tarefaId       Int
+  tipo           AnexoTipo
+  nome           String
+  arquivoUrl     String?
+  arquivoPublicId String?
+  url            String?
+  enviadoPorId   Int?
+  dataUpload     DateTime @default(now())
+  tarefa         Task     @relation(fields: [tarefaId], references: [id], onDelete: Cascade)
+  enviadoPor     Member?  @relation(fields: [enviadoPorId], references: [id], onDelete: SetNull)
+
+  @@map("task_attachments")
+}
+
+model SignupRequest {
+  id              Int               @id @default(autoincrement())
+  username        String
+  firstName       String
+  lastName        String?
+  email           String
+  setorId         Int?
+  cargo           Cargo             @default(membro)
+  senhaHash       String
+  senhaPlain      String?
+  status          SolicitacaoStatus @default(pendente)
+  dataSolicitacao DateTime          @default(now())
+  dataResposta    DateTime?
+  respondidoPorId Int?
+  setor           Sector?           @relation(fields: [setorId], references: [id], onDelete: SetNull)
+  respondidoPor   User?             @relation("SignupResponse", fields: [respondidoPorId], references: [id], onDelete: SetNull)
+
+  @@map("signup_requests")
+}

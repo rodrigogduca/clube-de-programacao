@@ -1,0 +1,186 @@
+{% extends "layouts/painel.njk" %}
+{% import "partials/kanban.njk" as kanban with context %}
+
+{#
+  O PAINEL É O QUADRO DE TRABALHO.
+
+  As listas de membros saíram daqui. Antes esta tela renderizava as pessoas
+  três vezes — na aba "Todos", em cada aba de setor e em "Sem Setor" — e a
+  mesma pessoa aparecia duas vezes; o acordeão de cargos abria recolhido só
+  para o kanban não sair da dobra.
+
+  Agora elas têm tela própria em /painel/membros, na mesma aba. O que ficou
+  aqui é o trabalho.
+#}
+
+{% block titulo %}Painel - Clube de Programação{% endblock %}
+
+{% block classe_main %}painel-container kanban-container{% endblock %}
+
+{% block conteudo %}
+<div class="painel-header">
+  <div>
+    <p class="eyebrow">quadro</p>
+    <h1>
+      {%- if membro.is_admin %}Painel do Administrador
+      {%- elif membro.is_diretor %}Painel do Diretor
+      {%- elif membro.is_antiga_gestao %}Painel - Antiga Gestão
+      {%- else %}Painel{% endif -%}
+    </h1>
+    <p class="painel-role">{{ membro.cargo_label }}</p>
+  </div>
+
+  <div class="painel-actions">
+    {#
+      SOBROU UMA COISA AQUI, E ELA NÃO EXISTE EM MAIS NENHUM LUGAR.
+
+      Eram quatro blocos. Três foram embora porque a navbar, dez pixels acima,
+      já levava aos mesmos três lugares:
+
+        "Membros (12)"  → a navbar tem "Membros". O número foi para a tela do
+                          diretório, que é onde ele vira informação em vez de
+                          enfeite de botão.
+        "+ Novo setor"  → criar não é navegar, e setor se cria uma vez por
+                          gestão. Desceu para a barra de abas, que é o único
+                          lugar da tela onde setores aparecem.
+        "N solicitações
+         pendentes"     → a navbar já mostra "Solicitações" com o contador em
+                          âmbar quando há fila. O botão repetia o mesmo número
+                          na mesma dobra, com um ícone a mais.
+
+      Ficaram as ferramentas de planilha: exportar, baixar modelo e importar em
+      lote não têm outra porta no sistema inteiro.
+
+      Sem "+ Nova tarefa" aqui: o `+` no cabeçalho de cada coluna já cria, e
+      cria melhor — a tarefa nasce no status daquela coluna em vez de nascer
+      pendente e precisar ser arrastada em seguida.
+    #}
+    {% if can_manage_tasks %}
+      {{ kanban.ferramentas_csv(can_manage_setores) }}
+    {% endif %}
+  </div>
+</div>
+
+{#
+  LINHA DE SITUAÇÃO — só o que está fora do lugar.
+
+  No lugar da faixa de cinco números que abria o painel. Três daqueles números
+  já estavam na tela, nos contadores das colunas, e a faixa mentia sob filtro:
+  as colunas reagiam aos filtros e ela não, então a mesma tela mostrava dois
+  totais diferentes para a mesma coisa.
+#}
+<div class="painel-linha">
+  {% if total_atrasadas %}
+    <span class="painel-linha-item painel-linha-alerta">
+      <strong>{{ total_atrasadas }}</strong> tarefa{{ total_atrasadas|pluralize }} atrasada{{ total_atrasadas|pluralize }}
+    </span>
+  {% endif %}
+  {% if total_sem_prazo %}
+    <span class="painel-linha-item"><strong>{{ total_sem_prazo }}</strong> sem prazo</span>
+  {% endif %}
+  {% if not total_atrasadas and not total_sem_prazo %}
+    <span class="painel-linha-ok">nada atrasado. {{ tarefas|length }} tarefa{{ tarefas|length|pluralize }} no quadro.</span>
+  {% else %}
+    <span class="painel-linha-item">{{ tarefas|length }} no total</span>
+  {% endif %}
+</div>
+
+{#
+  Num painel restrito a um setor, "Sem Setor" seria o balde de outra gente e a
+  aba do próprio setor repetiria a aba "Todos" — as duas listas são a mesma.
+  Então a barra só aparece para quem enxerga o clube inteiro.
+#}
+{% if not escopo_restrito %}
+  <div class="tabs-bar" role="tablist" {% if setor_ativo %}data-active-setor="{{ setor_ativo.id }}"{% endif %}>
+    <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-tab="tab-todos">Todos</button>
+    {% for setor in setores %}
+      <button type="button" class="tab-btn{% if setor_ativo and setor_ativo.id == setor.id %} active{% endif %}" role="tab" aria-selected="false" data-tab="tab-setor-{{ setor.id }}">{{ setor.nome }}</button>
+    {% endfor %}
+    <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="tab-sem-setor">Sem setor</button>
+
+    {#
+      "+ Novo setor" desceu da navbar e do cabeçalho para cá, no fim da fila de
+      abas — que é a única lista de setores que existe na tela. Criar mora onde
+      a coisa criada vai aparecer, e o que vai aparecer é mais uma aba, ao lado
+      desta.
+
+      Fora do `role="tablist"` visualmente ele continua na barra, mas é um link
+      e não uma aba: `role="presentation"` no invólucro impede que o leitor de
+      tela o anuncie como "aba 5 de 5".
+    #}
+    {% if can_manage_setores %}
+      <span class="tabs-bar-acao" role="presentation">
+        <a href="{{ url('criar_setor') }}" class="tab-btn-novo" title="Criar um setor">
+          <span aria-hidden="true">+</span> setor
+        </a>
+      </span>
+    {% endif %}
+  </div>
+{% endif %}
+
+{# ==================== ABA: TODOS ==================== #}
+<div id="tab-todos" class="tab-panel active" role="tabpanel">
+
+  <section class="painel-section">
+    <p class="eyebrow">
+      {%- if escopo_restrito -%}
+        tarefas de {{ escopo_setor.nome | lower | default('sem setor') }}
+      {%- else -%}
+        todas as tarefas
+      {%- endif -%}
+    </p>
+
+    {{ kanban.filtros('todos', membros, setores, true) }}
+    {{ kanban.quadro(todas_tarefas_pendente, todas_tarefas_em_andamento, todas_tarefas_concluida, can_manage_tasks, can_manage_tasks) }}
+  </section>
+
+</div>
+
+{# ==================== ABAS: UMA POR SETOR ==================== #}
+{% for setor in setores if not escopo_restrito %}
+  {% set grupo = tarefas_por_setor[setor.id] %}
+  <div id="tab-setor-{{ setor.id }}" class="tab-panel" role="tabpanel">
+
+    <div class="setor-tab-header">
+      <div>
+        <h2>{{ setor.nome }}</h2>
+        {% if setor.descricao %}<p>{{ setor.descricao }}</p>{% endif %}
+      </div>
+      {# Excluir em contorno e não em vermelho sólido: numa fileira de ações de
+         mesmo peso, o bloco de cor cheia rouba o clique que deveria ir para a
+         ação comum. O sólido fica para a tela de confirmação, onde excluir é a
+         única coisa que se está fazendo. #}
+      <div class="setor-tab-actions">
+        <a href="{{ url('listar_membros') }}?setor={{ setor.id }}" class="btn-secondary">Ver membros</a>
+        {% if setor.id in setores_gerenciaveis and can_manage_setores %}
+          <a href="{{ url('editar_setor', setor.id) }}" class="btn-secondary">Editar setor</a>
+          <a href="{{ url('excluir_setor', setor.id) }}" class="btn-danger-ghost"
+             data-confirm="Excluir setor?"
+             data-confirm-detalhe="{{ setor.nome }} — os membros ficam sem setor e as tarefas perdem o vínculo."
+             data-confirm-acao="Excluir">Excluir setor</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <section class="painel-section">
+      <p class="eyebrow">tarefas de {{ setor.nome | lower }}</p>
+      {{ kanban.filtros('setor-' ~ setor.id, setor.membros, setores, false) }}
+      {{ kanban.quadro(grupo.pendente, grupo.em_andamento, grupo.concluida, can_manage_tasks, can_manage_tasks) }}
+    </section>
+
+  </div>
+{% endfor %}
+
+{# ==================== ABA: SEM SETOR ==================== #}
+{% if not escopo_restrito %}
+<div id="tab-sem-setor" class="tab-panel" role="tabpanel">
+
+  <section class="painel-section">
+    <p class="eyebrow">tarefas sem setor</p>
+    {{ kanban.filtros('sem-setor', membros, setores, false) }}
+    {{ kanban.quadro(tarefas_sem_setor_pendente, tarefas_sem_setor_em_andamento, tarefas_sem_setor_concluida, can_manage_tasks, can_manage_tasks) }}
+  </section>
+
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,123 @@
+{#
+  Solicitação de cadastro — única tela pública que grava algo.
+
+  Cria um SignupRequest com status "pendente"; a conta de verdade só nasce
+  quando alguém da diretoria aprova. A senha é guardada apenas como hash.
+#}
+{% extends "layouts/auth.njk" %}
+
+{% block titulo %}Solicitar Cadastro - Clube de Programação{% endblock %}
+
+{% block meta %}
+  <meta name="description" content="Solicite seu cadastro no Clube de Programacao SENAI CIMATEC e participe da comunidade e dos projetos.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Solicitar Cadastro - Clube de Programacao">
+  <meta property="og:description" content="Solicite seu cadastro no Clube de Programacao SENAI CIMATEC e participe da comunidade e dos projetos.">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:image" content="{{ site_url }}{{ static('images/logo.png') }}">
+{% endblock %}
+
+{% block cabecalho %}
+  {# Diz o que acontece depois de enviar. A frase anterior ("Preencha seus
+     dados para solicitar acesso") descrevia o formulário, que a pessoa já
+     está vendo, e escondia a única coisa que ela não sabe: que alguém
+     precisa aprovar antes de a conta existir. #}
+  <h1>Solicitar cadastro</h1>
+  <p>A diretoria revisa o pedido e libera o acesso. Você entra com o usuário e a senha escolhidos aqui.</p>
+{% endblock %}
+
+{% block conteudo %}
+  <div class="login-card">
+
+    {% if messages %}
+      <div class="error-messages">
+        <ul>
+          {% for message in messages %}
+            <li>{{ message.text }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <form method="POST">
+      {{ csrf_token() | safe }}
+
+      {# `old` devolve o que foi digitado quando o servidor recusa o envio — as
+         senhas ficam de fora de propósito (ver src/common/flash.ts). #}
+      <div class="form-group">
+        <label for="id_first_name" class="form-label">Nome</label>
+        <input type="text" name="first_name" id="id_first_name" class="form-input"
+               placeholder="Seu nome" value="{{ old.first_name | default('') }}"
+               maxlength="80" required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_last_name" class="form-label">Sobrenome</label>
+        <input type="text" name="last_name" id="id_last_name" class="form-input"
+               placeholder="Seu sobrenome" value="{{ old.last_name | default('') }}"
+               maxlength="80">
+      </div>
+
+      <div class="form-group">
+        <label for="id_username" class="form-label">Nome de usuário</label>
+        <input type="text" name="username" id="id_username" class="form-input"
+               placeholder="ex: joao.silva" value="{{ old.username | default('') }}"
+               minlength="3" maxlength="40" required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_email" class="form-label">E-mail</label>
+        <input type="email" name="email" id="id_email" class="form-input"
+               placeholder="seu@email.com" value="{{ old.email | default('') }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_setor" class="form-label">Setor</label>
+        <select name="setorId" id="id_setor" class="form-input">
+          <option value="">Nenhum</option>
+          {% for s in setores %}
+            <option value="{{ s.id }}" {% if old.setorId == s.id|string %}selected{% endif %}>{{ s.nome }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="id_cargo" class="form-label">Cargo desejado</label>
+        {% set cargo_atual = old.cargo | default('membro') %}
+        <select name="cargo" id="id_cargo" class="form-input">
+          {% for valor, rotulo in [['membro','Membro'],['diretor','Diretor']] %}
+            <option value="{{ valor }}" {% if cargo_atual == valor %}selected{% endif %}>{{ rotulo }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="id_senha" class="form-label">Senha</label>
+        <div class="password-wrapper">
+          <input type="password" name="senha" id="id_senha" class="form-input" placeholder="Mínimo 8 caracteres" required minlength="8">
+          <button type="button" class="password-toggle" onclick="togglePassword('id_senha', this)" aria-label="Mostrar senha">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="id_confirmar_senha" class="form-label">Confirmar senha</label>
+        <div class="password-wrapper">
+          <input type="password" name="confirmar_senha" id="id_confirmar_senha" class="form-input" placeholder="Repita a senha" required minlength="8">
+          <button type="button" class="password-toggle" onclick="togglePassword('id_confirmar_senha', this)" aria-label="Mostrar senha">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login">Enviar solicitação</button>
+    </form>
+
+    <div class="login-footer">
+      Já tem uma conta? <a href="{{ url('login') }}">Entrar</a>
+    </div>
+  </div>
+{% endblock %}

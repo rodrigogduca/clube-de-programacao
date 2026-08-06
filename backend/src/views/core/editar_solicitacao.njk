@@ -1,0 +1,64 @@
+{% extends "layouts/painel.njk" %}
+
+{% block titulo %}Editar solicitação - Clube de Programação{% endblock %}
+
+{% block conteudo %}
+<div class="form-page">
+  <div class="painel-header">
+    <div>
+      <p class="eyebrow">cadastro</p>
+      <h1>Editar solicitação</h1>
+      <p class="painel-sub">Corrija os dados antes de aprovar — é com eles que a conta é criada.</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form method="POST">
+      {{ csrf_token() | safe }}
+
+      <div class="form-group">
+        <label for="id_first_name" class="form-label">Nome</label>
+        <input type="text" name="firstName" id="id_first_name" class="form-input" value="{{ solicitacao.firstName|default(solicitacao.first_name) }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_last_name" class="form-label">Sobrenome</label>
+        <input type="text" name="lastName" id="id_last_name" class="form-input" value="{{ solicitacao.lastName|default(solicitacao.last_name) }}">
+      </div>
+
+      <div class="form-group">
+        <label for="id_username" class="form-label">Nome de usuário</label>
+        <input type="text" name="username" id="id_username" class="form-input" value="{{ solicitacao.username|default('') }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_email" class="form-label">E-mail</label>
+        <input type="email" name="email" id="id_email" class="form-input" value="{{ solicitacao.email|default('') }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_cargo" class="form-label">Cargo</label>
+        <select name="cargo" id="id_cargo" class="form-input">
+          <option value="membro" {% if solicitacao.cargo == 'membro' %}selected{% endif %}>Membro</option>
+          <option value="diretor" {% if solicitacao.cargo == 'diretor' %}selected{% endif %}>Diretor</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="id_setor" class="form-label">Setor</label>
+        <select name="setorId" id="id_setor" class="form-input">
+          <option value="">Nenhum</option>
+          {% for s in setores %}
+            <option value="{{ s.id }}" {% if solicitacao.setor and s.id == solicitacao.setor.id %}selected{% endif %}>{{ s.nome }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-buttons">
+        <button type="submit" class="btn-primary">Salvar alterações</button>
+        <a href="{{ url('listar_solicitacoes') }}" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

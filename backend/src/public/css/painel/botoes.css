@@ -1,0 +1,197 @@
+/* ==========================================================================
+   BOTÕES
+
+   O VOCABULÁRIO INTEIRO SÃO SEIS CLASSES, e cada uma responde a uma pergunta
+   diferente. Antes eram dez, e três delas (`btn-aprovar`, `btn-rejeitar`,
+   `btn-editar`) existiam para uma tela só — a de solicitações tinha o próprio
+   jogo de botões, com outra altura e outro tamanho de fonte que o resto do
+   painel, o que fazia aquela tela parecer de outro sistema.
+
+     btn-primary        a ação da tela. UMA por região visual.
+     btn-secondary      as outras ações, inclusive cancelar.
+     btn-danger         sólido: a confirmação final, numa tela só dela.
+     btn-danger-ghost   contornado: destruir entre pares, numa lista.
+     btn-small(-outline) ações dentro de um cartão ou linha de tabela.
+     btn-action         ícone de 28px: editar/excluir no cartão do kanban.
+
+   A diferença entre `btn-danger` e `btn-danger-ghost` é o contexto, não a
+   gravidade: vermelho sólido repetido em toda linha de uma lista deixa de ser
+   aviso e vira listra.
+
+   Faz parte do CSS do painel, carregado por views/layouts/painel.njk.
+   As variáveis usadas aqui vêm de tokens.css.
+   ========================================================================== */
+
+
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-danger-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease),
+    color 0.15s var(--ease), transform 0.1s var(--ease);
+}
+
+.btn-primary:active,
+.btn-secondary:active,
+.btn-danger:active,
+.btn-danger-ghost:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--ember);
+  color: #1a0e02;
+}
+
+.btn-primary:hover {
+  background: var(--ember-soft);
+}
+
+.btn-secondary {
+  background: var(--surface-2);
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-3);
+  border-color: var(--ember-line);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #23060a;
+}
+
+.btn-danger:hover {
+  background: #ff6f64;
+}
+
+.btn-danger-ghost {
+  background: transparent;
+  border-color: rgba(242, 86, 75, 0.35);
+  color: var(--danger);
+}
+
+.btn-danger-ghost:hover {
+  background: var(--danger-wash);
+  border-color: var(--danger);
+  color: #ff6f64;
+}
+
+.btn-small,
+.btn-small-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease),
+    color 0.15s var(--ease);
+}
+
+.btn-small {
+  background: var(--ember);
+  color: #1a0e02;
+}
+
+.btn-small:hover {
+  background: var(--ember-soft);
+}
+
+.btn-small-outline {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--text-dim);
+}
+
+.btn-small-outline:hover {
+  background: var(--surface-2);
+  border-color: var(--ember-line);
+  color: var(--text);
+}
+
+.btn-small-outline.btn-outline-danger {
+  color: var(--danger);
+  border-color: rgba(242, 86, 75, 0.35);
+}
+
+.btn-small-outline.btn-outline-danger:hover {
+  background: var(--danger-wash);
+  border-color: var(--danger);
+  color: #ff6f64;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.btn-action {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s var(--ease), border-color 0.15s var(--ease),
+    background-color 0.15s var(--ease);
+}
+
+/* O botão continua com 28px de desenho, mas o alvo de toque vai a 40px. No
+   dedo, 28px com 4,8px de folga ao lado de um botão de excluir é erro
+   esperando acontecer. */
+.btn-action::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+}
+
+.btn-action.btn-edit:hover {
+  color: var(--ember);
+  border-color: var(--ember-line);
+  background: var(--ember-wash);
+}
+
+.btn-action.btn-delete:hover {
+  color: var(--danger);
+  border-color: rgba(242, 86, 75, 0.4);
+  background: var(--danger-wash);
+}
+
+/*
+  `btn-aprovar`, `btn-rejeitar` e `btn-editar` foram removidos daqui.
+
+  Eram três classes para uma tela só (solicitações de cadastro), com 0.8rem de
+  fonte e 0.4rem de padding contra os 0.85rem e 0.55rem de todo o resto — a
+  mesma decisão, "aprovar ou não", desenhada num tamanho que não existia em
+  nenhuma outra tela.
+
+  Aprovar virou `btn-primary`, porque é a ação da tela; rejeitar virou
+  `btn-danger-ghost`, porque é destrutivo mas se repete em toda linha; editar
+  virou `btn-secondary`, que é o que ele sempre foi.
+*/
+

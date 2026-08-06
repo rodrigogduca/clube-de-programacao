@@ -1,0 +1,45 @@
+{# Criação de setor. POST para a própria URL (/painel/criar-setor). #}
+{% extends "layouts/painel.njk" %}
+
+{% block titulo %}Novo setor - Clube de Programação{% endblock %}
+
+{% block conteudo %}
+  <div class="form-page">
+    {# Mesmo cabeçalho das outras telas do painel: o eyebrow diz de que objeto
+       a tela trata, o h1 diz o que se faz com ele. #}
+    <div class="painel-header">
+      <div>
+        <p class="eyebrow">setores</p>
+        <h1>Novo setor</h1>
+        <p class="painel-sub">Um setor agrupa membros e recebe as tarefas deles. Ele vira uma aba no quadro.</p>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <form method="POST">
+        {{ csrf_token() | safe }}
+
+        {# `old` devolve o que foi digitado quando o servidor recusa o envio. #}
+        <div class="form-group">
+          <label for="id_nome" class="form-label">Nome</label>
+          <input type="text" name="nome" id="id_nome" class="form-input"
+                 value="{{ old.nome | default('') }}"
+                 minlength="2" maxlength="60" required>
+        </div>
+
+        <div class="form-group">
+          <label for="id_descricao" class="form-label">Descrição</label>
+          <textarea name="descricao" id="id_descricao" class="form-input" rows="3">{{ old.descricao | default('') }}</textarea>
+          <p class="form-ajuda">Uma linha sobre o que o setor faz. Aparece no topo da aba dele.</p>
+        </div>
+
+        {# O botão repete o verbo do título: quem entrou em "Novo setor" termina
+           em "Criar setor", não em "Enviar". #}
+        <div class="form-buttons">
+          <button type="submit" class="btn-primary">Criar setor</button>
+          <a href="{{ url('painel') }}" class="btn-secondary">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

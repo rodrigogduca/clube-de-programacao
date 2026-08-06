@@ -1,0 +1,74 @@
+{% extends "layouts/painel.njk" %}
+
+{% block titulo %}Editar membro - Clube de Programação{% endblock %}
+
+{% block conteudo %}
+{# `old` vence o valor do banco: é o que o usuário acabou de digitar e o
+   servidor recusou. Vazio no acesso normal, então o banco assume. #}
+<div class="form-page">
+  <div class="painel-header">
+    <div>
+      <p class="eyebrow">membros</p>
+      <h1>Editar membro</h1>
+      <p class="painel-sub"><strong>{{ membro_alvo.usuario.get_full_name|default(membro_alvo.usuario.username) }}</strong></p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form method="POST">
+      {{ csrf_token() | safe }}
+
+      <div class="form-group">
+        <label for="id_first_name" class="form-label">Nome</label>
+        <input type="text" name="first_name" id="id_first_name" class="form-input"
+               value="{{ old.first_name | default(membro_alvo.usuario.first_name|default('')) }}" maxlength="80" required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_last_name" class="form-label">Sobrenome</label>
+        <input type="text" name="last_name" id="id_last_name" class="form-input"
+               value="{{ old.last_name | default(membro_alvo.usuario.last_name|default('')) }}" maxlength="80">
+      </div>
+
+      <div class="form-group">
+        <label for="id_username" class="form-label">Nome de usuário</label>
+        <input type="text" name="username" id="id_username" class="form-input"
+               value="{{ old.username | default(membro_alvo.usuario.username|default('')) }}"
+               minlength="3" maxlength="40" required>
+      </div>
+
+      <div class="form-group">
+        <label for="id_cargo" class="form-label">Cargo</label>
+        {% set cargo_atual = old.cargo | default(membro_alvo.cargo) %}
+        <select name="cargo" id="id_cargo" class="form-input">
+          {% for valor, rotulo in [['membro','Membro'],['diretor','Diretor'],['administrador','Administrador'],['antiga_gestao','Antiga Gestão']] %}
+            <option value="{{ valor }}" {% if cargo_atual == valor %}selected{% endif %}>{{ rotulo }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="id_setor" class="form-label">Setor</label>
+        {% set setor_atual = old.setorId | default(membro_alvo.setor.id | default('') | string) %}
+        <select name="setorId" id="id_setor" class="form-input">
+          <option value="">Nenhum</option>
+          {% for s in setores %}
+            <option value="{{ s.id }}" {% if setor_atual == s.id|string %}selected{% endif %}>{{ s.nome }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="id_bio" class="form-label">Bio</label>
+        <textarea name="bio" id="id_bio" class="form-input" rows="3">{{ old.bio | default(membro_alvo.bio|default('')) }}</textarea>
+        <p class="form-ajuda">Uma frase sobre a pessoa. Aparece no cartão dela no diretório.</p>
+      </div>
+
+      <div class="form-buttons">
+        <button type="submit" class="btn-primary">Salvar alterações</button>
+        <a href="{{ url('listar_membros') }}" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{#
+  LAYOUT BASE — esqueleto HTML de todas as telas.
+
+  Nenhuma tela escreve <html>, <head> ou <body> por conta própria: todas herdam
+  daqui com {% extends %}. Antes desta camada, os 23 templates repetiam o mesmo
+  cabeçalho, o que significava alterar 23 arquivos para trocar uma fonte.
+
+  Blocos disponíveis (todos opcionais):
+
+    titulo        Texto do <title>. Já vem com o sufixo do clube.
+    meta          <meta>/<link> extras: canonical, Open Graph, robots.
+    fontes        As famílias carregadas do Google Fonts. O padrão serve o
+                  painel; as telas públicas trocam por outro conjunto.
+    estilos       Folhas de estilo da tela.
+    fundo         Elementos decorativos de fundo (grade, orbs, partículas).
+    corpo         O conteúdo da página. É o bloco que toda tela preenche.
+    scripts       <script> no fim do body.
+
+  Quem herda daqui normalmente não usa `base` direto, e sim um dos layouts
+  especializados: `layouts/painel.njk` ou `layouts/auth.njk`.
+#}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {# O mesmo valor de `--breu` em css/site/tokens.css. Estava em #060608, do
+     conjunto de cores antigo do login — a barra do navegador no celular ficava
+     um tom mais fria que a página que ela emoldura. #}
+  <meta name="theme-color" content="#08080b">
+
+  {# Sem isto o navegador pede /favicon.ico em toda página e leva 404. #}
+  <link rel="icon" href="{{ static('images/logo.png') }}" type="image/png">
+  <link rel="apple-touch-icon" href="{{ static('images/logo.png') }}">
+
+  {# Prova de posse para o Google Search Console. Só aparece quando a variável
+     GOOGLE_SITE_VERIFICATION existe (ver bootstrap.ts). #}
+  {% if google_site_verification %}
+  <meta name="google-site-verification" content="{{ google_site_verification }}">
+  {% endif %}
+
+  {# Cada tela acrescenta canonical, Open Graph e diretivas de robots #}
+  {% block meta %}{% endblock %}
+
+  <title>{% block titulo %}Clube de Programação{% endblock %}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  {#
+    Padrão do painel: Instrument Sans conduz a interface e JetBrains Mono
+    carrega números, datas e rótulos. As telas públicas sobrescrevem este bloco
+    — carregar as famílias das duas identidades em toda página seria pagar duas
+    vezes por fontes que nunca aparecem juntas.
+
+    Instrument Sans e não Inter: é a mesma fonte de leitura do site público, o
+    que faz o painel parecer o mesmo produto. É uma família no lugar da outra,
+    sem pedido de rede a mais, e a variável cobre de 400 a 700 — inclusive o
+    peso 650 dos títulos.
+  #}
+  {% block fontes %}
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  {% endblock %}
+
+  {% block estilos %}{% endblock %}
+</head>
+{#
+  As permissões descem para o `<body>` como `data-*` porque o JavaScript
+  precisa delas para montar cartões e ações sem recarregar a página — e o
+  servidor continua sendo a autoridade: estes atributos decidem o que aparece,
+  os services decidem o que acontece.
+#}
+<body{% block corpo_dados %}{% endblock %}>
+
+  {% block fundo %}{% endblock %}
+
+  {% block corpo %}{% endblock %}
+
+  {% block scripts %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+{#
+  DETALHE DA TAREFA — modo de leitura.
+
+  Definição única: serve a página `/painel/tarefa/:id` e o corpo do pop-up,
+  que busca este mesmo trecho com `?parcial=1`. Um campo novo é escrito uma vez
+  e aparece nos dois lugares.
+
+  Ler a tarefa não existia no sistema: o cartão corta a descrição em 15
+  palavras e o único caminho para o resto era o formulário de edição — para
+  LER era preciso entrar em modo de ESCRITA.
+
+  O prazo usa `date_utc`, nunca `date`: é data sem hora gravada como
+  meia-noite UTC, e o filtro local mostra o dia anterior no fuso do Brasil.
+
+  DUAS ABAS, não duas seções empilhadas: os anexos são o assunto secundário e
+  empurravam as ações para fora da caixa. As abas seguem o padrão ARIA — o
+  ui.js dá as setas e o roving tabindex, e sem JavaScript os dois painéis
+  ficam visíveis, que é o comportamento certo numa página inteira.
+#}
+
+<div class="detalhe" data-detalhe-tarefa="{{ tarefa.id }}">
+
+  {#
+    Nasce escondida e o `ligarAbas` a revela. Sem JavaScript uma barra de abas
+    é decoração que não obedece ao clique — melhor não existir, e aí os dois
+    painéis ficam empilhados, que é a leitura correta numa página inteira.
+  #}
+  <div class="detalhe-abas" role="tablist" aria-label="Seções da tarefa" data-abas hidden>
+    <button type="button" role="tab" class="detalhe-aba active"
+            id="aba-detalhes-{{ tarefa.id }}"
+            aria-controls="painel-detalhes-{{ tarefa.id }}"
+            aria-selected="true">
+      detalhes
+    </button>
+    <button type="button" role="tab" class="detalhe-aba"
+            id="aba-anexos-{{ tarefa.id }}"
+            aria-controls="painel-anexos-{{ tarefa.id }}"
+            aria-selected="false" tabindex="-1">
+      anexos <span class="eyebrow-conta" data-anexos-conta>{{ anexos | length }}</span>
+    </button>
+  </div>
+
+  {# ----------------------------------------------------------- detalhes -- #}
+  <div role="tabpanel" id="painel-detalhes-{{ tarefa.id }}"
+       aria-labelledby="aba-detalhes-{{ tarefa.id }}" tabindex="0">
+
+  {% if tarefa.descricao %}
+    <p class="detalhe-descricao">{{ tarefa.descricao }}</p>
+  {% else %}
+    <p class="detalhe-descricao detalhe-vazio">Sem descrição.</p>
+  {% endif %}
+
+  <dl class="detalhe-dados">
+    <dt>responsável</dt>
+    <dd>
+      <span class="detalhe-pessoa">
+        <span class="detalhe-avatar" aria-hidden="true">{{ tarefa.responsavel.usuario.first_name | make_list | first | default('?') }}</span>
+        {{ tarefa.responsavel.usuario.get_full_name | default(tarefa.responsavel.usuario.username) | default('—') }}
+      </span>
+    </dd>
+
+    <dt>setor</dt>
+    <dd>{{ tarefa.setor.nome | default('—') }}</dd>
+
+    <dt>prazo</dt>
+    <dd>
+      {% if tarefa.prazo %}
+        <span class="detalhe-data">{{ tarefa.prazo | date_utc("d/m/Y") }}</span>
+        {#
+          Ninguém calcula data de cabeça. O número fica em mono, a distância em
+          palavras fica na fonte de leitura.
+        #}
+        {% if tarefa.status == 'concluida' %}
+          <span class="detalhe-distancia">concluída</span>
+        {% elif tarefa.atrasada %}
+          <span class="detalhe-distancia detalhe-atraso">atrasada há {{ (0 - tarefa.dias_restantes) }} dia{{ (0 - tarefa.dias_restantes) | pluralize }}</span>
+        {% elif tarefa.dias_restantes == 0 %}
+          <span class="detalhe-distancia detalhe-hoje">vence hoje</span>
+        {% else %}
+          <span class="detalhe-distancia">faltam {{ tarefa.dias_restantes }} dia{{ tarefa.dias_restantes | pluralize }}</span>
+        {% endif %}
+      {% else %}
+        <span class="detalhe-vazio">sem prazo</span>
+      {% endif %}
+    </dd>
+
+    <dt>prioridade</dt>
+    <dd><span class="kanban-card-prioridade prioridade-{{ tarefa.prioridade }}">{{ tarefa.prioridade_label }}</span></dd>
+
+    {% if tarefa.funcao %}
+      <dt>função</dt>
+      <dd>{{ tarefa.funcao_label }}</dd>
+    {% endif %}
+
+    {% if tarefa.projeto %}
+      <dt>projeto</dt>
+      <dd>{{ tarefa.projeto }}</dd>
+    {% endif %}
+
+    <dt>criada por</dt>
+    <dd>
+      {{ tarefa.criado_por.usuario.get_full_name | default('—') }}
+      <span class="detalhe-data">{{ tarefa.data_criacao | date("d/m/Y") }}</span>
+    </dd>
+  </dl>
+
+  </div>{# fim do painel de detalhes #}
+
+  {# ------------------------------------------------------------- anexos -- #}
+  <div role="tabpanel" id="painel-anexos-{{ tarefa.id }}"
+       aria-labelledby="aba-anexos-{{ tarefa.id }}" tabindex="0"
+       class="detalhe-anexos" data-painel-anexos>
+
+    <div data-anexos-lista>
+      {% include "partials/lista_anexos.njk" %}
+    </div>
+
+    {#
+      ENVIO DENTRO DO POP-UP.
+
+      É `multipart/form-data`, e o middleware de CSRF não lê corpo multipart —
+      quem valida é o próprio handler, com `assertCsrf(req)` na primeira linha.
+      Uma rota nova que receba multipart e esqueça isso fica sem proteção.
+
+      Continua um <form> de verdade, com action e method: sem JavaScript ele
+      posta e o servidor redireciona para a tela de anexos de sempre.
+    #}
+    {% if can_manage_tasks %}
+      <form class="detalhe-anexo-form" method="POST"
+            action="{{ url('gerenciar_anexos', tarefa.id) }}"
+            enctype="multipart/form-data" data-form-anexo>
+        {{ csrf_token() | safe }}
+
+        <div class="detalhe-anexo-campos">
+          <label class="sr-only" for="anexo-nome-{{ tarefa.id }}">Nome do anexo</label>
+          <input class="form-input" type="text" id="anexo-nome-{{ tarefa.id }}"
+                 name="nome" placeholder="Nome" required>
+
+          <label class="sr-only" for="anexo-url-{{ tarefa.id }}">Endereço do link</label>
+          <input class="form-input" type="url" id="anexo-url-{{ tarefa.id }}"
+                 name="url" placeholder="https://…">
+
+          {% if upload_habilitado %}
+            <label class="btn-small-outline detalhe-anexo-arquivo">
+              Escolher arquivo
+              <input type="file" name="arquivo" hidden data-anexo-arquivo>
+            </label>
+          {% endif %}
+
+          {# O handler decide por `action`: com link vira addLink, sem ele
+             vira addFile. O JS troca este valor conforme o que foi preenchido. #}
+          <input type="hidden" name="action" value="add_link" data-anexo-acao>
+
+          <button type="submit" class="btn-small">Anexar</button>
+        </div>
+
+        {% if not upload_habilitado %}
+          <p class="detalhe-vazio">Envio de arquivo desativado — só links.</p>
+        {% endif %}
+      </form>
+
+      <a href="{{ url('gerenciar_anexos', tarefa.id) }}" class="detalhe-anexo-gerir">Gerenciar anexos</a>
+    {% endif %}
+  </div>
+</div>

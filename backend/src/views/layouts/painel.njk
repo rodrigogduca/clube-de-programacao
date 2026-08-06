@@ -1,0 +1,105 @@
+{#
+  LAYOUT DO PAINEL — todas as telas autenticadas.
+
+  Entrega o que essas telas têm em comum: grade de fundo, navbar, container,
+  mensagens flash e o painel.js. A tela preenche apenas {% block conteudo %}.
+
+  Blocos:
+    titulo          herdado de base.njk
+    classe_main     classes do <main>. Padrão: "painel-container".
+                    O kanban usa "painel-container kanban-container".
+    conteudo        o miolo da tela
+    estilos_extra   folhas de estilo adicionais
+    scripts_extra   <script> além do painel.js
+
+  Exemplo mínimo:
+
+    {% extends "layouts/painel.njk" %}
+    {% block titulo %}Criar Setor{% endblock %}
+    {% block conteudo %}
+      <h1>Criar Setor</h1>
+    {% endblock %}
+#}
+{% extends "layouts/base.njk" %}
+
+{#
+  As mesmas famílias da página inicial: a Bricolage Grotesque dos títulos entra
+  aqui porque o painel passou a falar a mesma língua visual da home. Sem este
+  bloco o painel carregaria só Instrument Sans e os títulos cairiam na fonte de
+  reserva.
+#}
+{% block fontes %}
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block estilos %}
+  {#
+    A ordem importa: `tokens` define as variáveis que todos os outros usam, e
+    `responsivo` vem por último porque sobrescreve. São arquivos separados em
+    vez de um só de 2.500 linhas para caber na cabeça de quem for editar.
+
+    `site/tokens.css` vem ANTES do `painel/tokens.css` de propósito: o painel
+    agora deriva a paleta dele da paleta da home (mesmas cores, mesma fonte de
+    título), e para isso precisa que as variáveis da home já existam.
+  #}
+  <link rel="stylesheet" href="{{ static('css/site/tokens.css') }}">
+  <link rel="stylesheet" href="{{ static('css/site/fontes.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/tokens.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/base.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/nav.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/layout.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/botoes.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/selos.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/cards.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/kanban.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/membros.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/detalhe.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/formularios.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/validacao.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/avisos.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/solicitacoes.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/anexos.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/modal.css') }}">
+  <link rel="stylesheet" href="{{ static('css/painel/responsivo.css') }}">
+  {% block estilos_extra %}{% endblock %}
+{% endblock %}
+
+{#
+  O JavaScript monta cartão e ações sem recarregar, então precisa saber o que
+  este usuário pode fazer. O servidor continua decidindo de verdade: os
+  services recusam o que não é permitido, independentemente do que o DOM diga.
+#}
+{% block corpo_dados %} data-pode-gerir-tarefas="{{ 'sim' if can_manage_tasks else 'nao' }}" data-pode-editar-membro="{{ 'sim' if can_edit_member else 'nao' }}" data-pode-excluir-membro="{{ 'sim' if can_delete_member else 'nao' }}" data-membro-atual="{{ membro.id }}"{% endblock %}
+
+{% block fundo %}
+  <div class="bg-grid" aria-hidden="true"></div>
+  {% block fundo_extra %}{% endblock %}
+{% endblock %}
+
+{% block corpo %}
+  {% include "partials/painel_nav.njk" %}
+
+  <main class="{% block classe_main %}painel-container{% endblock %}">
+    {% include "partials/mensagens.njk" %}
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  {% include "partials/modal_confirmar.njk" %}
+  {% include "partials/modal_form.njk" %}
+{% endblock %}
+
+{% block scripts %}
+  {#
+    A ordem importa duas vezes:
+    - ui.js primeiro, porque o kanban.js usa o PainelUI.toast dele e os demais
+      usam o PainelUI.abrirModal;
+    - kanban.js antes do tarefas-modal.js, porque este chama o PainelKanban
+      que aquele expõe para inserir e substituir cartão sem recarregar.
+  #}
+  <script src="{{ static('js/ui.js') }}"></script>
+  <script src="{{ static('js/painel.js') }}"></script>
+  <script src="{{ static('js/kanban.js') }}"></script>
+  <script src="{{ static('js/tarefas-modal.js') }}"></script>
+  <script src="{{ static('js/membros.js') }}"></script>
+  {% block scripts_extra %}{% endblock %}
+{% endblock %}

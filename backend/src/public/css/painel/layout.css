@@ -1,0 +1,327 @@
+/* ==========================================================================
+   ESTRUTURA DE PÁGINA
+
+   Container, cabeçalho da tela, seções e títulos.
+
+   Faz parte do CSS do painel, carregado por views/layouts/painel.njk.
+   As variáveis usadas aqui vêm de tokens.css.
+   ========================================================================== */
+
+
+.painel-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 5rem;
+}
+
+/*
+  CABEÇALHO DE TELA — um só, para as vinte telas do painel.
+
+  Antes eram três padrões concorrentes: `painel-header` com h1 e cargo (quadro,
+  solicitações), `painel-header` com eyebrow e h1 (diretório) e um h1 solto com
+  parágrafo cinza (as dez telas de formulário e confirmação). Trocar de tela
+  trocava a régua, e a mesma hierarquia aparecia de três alturas diferentes.
+
+  O do diretório venceu porque carrega uma informação a mais de graça: o
+  eyebrow diz DE QUE OBJETO a tela trata (`// setores`, `// anexos`) e o h1 diz
+  o que se faz com ele. Junto com o `//` da home, é a mesma língua nas duas
+  metades do site.
+
+  A ordem é sempre eyebrow → h1 → uma linha de apoio (opcional), e as ações da
+  tela ficam do outro lado do mesmo eixo.
+*/
+.painel-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Dentro do cabeçalho o eyebrow encosta no h1: a distância que ele guarda
+   quando encabeça uma seção sobraria aqui. */
+.painel-header .eyebrow {
+  margin-bottom: 0.35rem;
+}
+
+/* Eyebrow em mono: mesmo tratamento dos demais metadados */
+.painel-role {
+  margin-top: 0.3rem;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/*
+  A linha de apoio do cabeçalho: uma frase, não um rótulo.
+
+  Diferente do `painel-role`, que é mono e caixa alta porque nomeia um cargo.
+  Esta é prosa — diz o que a tela faz ou sobre qual registro ela está — e por
+  isso fica na fonte de leitura. Tem um teto de medida porque descrição de
+  formulário largo vira linha de 140 caracteres.
+*/
+.painel-sub {
+  margin-top: 0.35rem;
+  max-width: 62ch;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+/* O nome do registro em edição é o dado, não a moldura */
+.painel-sub strong {
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.painel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/*
+  LINHA DE SITUAÇÃO — o que está fora do lugar, e só isso.
+
+  No lugar da faixa de cinco números grandes que abria o painel. Dois motivos
+  para ela ter saído:
+
+  1. Três daqueles números já estavam na tela — cada coluna do kanban carrega o
+     seu contador, atualizado ao vivo pelo kanban.js.
+  2. Ela mentia sob filtro: os contadores das colunas reagem aos filtros, a
+     faixa não. Com um filtro em vigor, a mesma tela mostrava dois totais
+     diferentes para a mesma coisa.
+
+  O que sobra é uma linha que responde "o que precisa de mim agora". Quando não
+  há nada errado, ela diz isso — e some do caminho.
+*/
+.painel-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+  padding: 0.6rem 0.85rem;
+  margin-bottom: 1.75rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  font-family: var(--mono);
+  font-size: var(--t-meta);
+}
+
+.painel-linha::before {
+  content: "//";
+  color: var(--muted);
+}
+
+.painel-linha-item {
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.painel-linha-item strong {
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* Só o que está errado ganha cor. Zero atrasadas não é um número vermelho
+   valendo zero: é uma linha que não aparece. */
+.painel-linha-alerta strong,
+.painel-linha-alerta {
+  color: var(--danger);
+}
+
+.painel-linha-ok {
+  color: var(--muted);
+}
+
+/* Empurra a ação para a direita da linha */
+.painel-linha-acao {
+  margin-left: auto;
+}
+
+.painel-section {
+  margin-bottom: 2.5rem;
+}
+
+.section-title {
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+/*
+  EYEBROW `//` — o rótulo de seção do site público, trazido para o painel.
+
+  A home marca toda seção com um comentário de código (`// diretoria`,
+  css/site/style_home.css). É o clube falando a língua de quem programa, e é o
+  que faltava aqui para as duas metades parecerem o mesmo produto.
+
+  Duas diferenças em relação à home, e as duas vêm da densidade:
+  sem o letter-spacing de 0.16em, que custa largura numa tela cheia, e em
+  --text-dim em vez de âmbar — rótulo de seção não é clicável, e âmbar é ação.
+*/
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+
+.eyebrow::before {
+  content: "//";
+  color: var(--muted);
+}
+
+.eyebrow::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+/* Quando o eyebrow encabeça a seção, o título abaixo não repete a distância */
+.eyebrow + .section-title {
+  margin-top: -0.25rem;
+}
+
+.section-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.section-header-row .section-title {
+  margin-bottom: 0;
+}
+
+
+.tabs-bar {
+  display: flex;
+  gap: 0.2rem;
+  padding: 0.25rem;
+  margin-bottom: 1.75rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* `.tab-btn-novo` entra aqui pela forma — mesma altura e mesmo ritmo da fila —
+   mas não pela classe `.tab-btn`: o painel.js delega o clique por ela e
+   chamaria `activateTab(null)` num link que só navega. */
+.tab-btn,
+.tab-btn-novo {
+  flex: 0 0 auto;
+  padding: 0.45rem 0.9rem;
+  background: transparent;
+  border: none;
+  border-radius: var(--r-sm);
+  color: var(--muted);
+  font-size: 0.83rem;
+  font-weight: 550;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s var(--ease), background-color 0.15s var(--ease),
+    border-color 0.15s var(--ease);
+}
+
+.tab-btn:hover {
+  color: var(--text);
+}
+
+.tab-btn.active {
+  background: var(--surface-3);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+/*
+  A ação de criar setor, encostada no fim da fila de abas.
+
+  `margin-left: auto` a empurra para a direita quando sobra espaço e a deixa
+  logo depois da última aba quando não sobra — na barra que rola, ela é a
+  última coisa que se encontra ao chegar ao fim, que é exatamente quando se
+  conclui que o setor procurado não existe.
+*/
+.tabs-bar-acao {
+  display: flex;
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding-left: 0.5rem;
+}
+
+/* Contorno tracejado: é o único item da barra que não seleciona nada, e o
+   traço interrompido diz isso antes da leitura. */
+.tab-btn-novo {
+  border: 1px dashed var(--line-strong);
+  color: var(--text-dim);
+}
+
+.tab-btn-novo:hover {
+  border-color: var(--ember-line);
+  color: var(--ember);
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+  animation: fade-in 0.25s var(--ease);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.setor-tab-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.setor-tab-header p {
+  margin-top: 0.25rem;
+  max-width: 65ch;
+  font-size: 0.87rem;
+  color: var(--muted);
+}
+
+.setor-tab-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+

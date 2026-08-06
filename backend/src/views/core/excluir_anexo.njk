@@ -1,0 +1,55 @@
+{#
+  Confirmação de exclusão de anexo. Mesmo formato das outras três telas de
+  excluir.
+#}
+{% extends "layouts/painel.njk" %}
+
+{% block titulo %}Excluir anexo - {{ anexo.nome }}{% endblock %}
+
+{% block conteudo %}
+<div class="form-page">
+  <div class="painel-header">
+    <div>
+      <p class="eyebrow">anexos</p>
+      <h1>Excluir {{ anexo.nome }}?</h1>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="confirm-info">
+      <h3>{{ anexo.nome }}</h3>
+      <span class="badge badge-{{ anexo.tipo }}">{{ 'Link' if anexo.tipo == 'link' else 'Arquivo' }}</span>
+      {% if anexo.tipo == 'link' %}
+        <p class="anexo-url" title="{{ anexo.url }}">{{ anexo.url }}</p>
+      {% endif %}
+      <div class="card-meta">
+        <span>{{ tarefa.titulo }}</span>
+        {% if anexo.enviado_por %}
+          <span>{{ anexo.enviado_por.usuario.get_full_name|default(anexo.enviado_por.usuario.username) }}</span>
+        {% endif %}
+        <span>{{ anexo.data_upload|date("d/m/Y H:i") }}</span>
+      </div>
+    </div>
+
+    {# A consequência muda com o tipo, e a diferença importa: apagar um link
+       não apaga nada do outro lado dele. #}
+    <p class="confirm-warning">
+      {% if anexo.tipo == 'link' %}
+        O link sai da tarefa. A página para onde ele aponta continua existindo.
+      {% else %}
+        O arquivo sai da tarefa e do armazenamento. Se não houver outra cópia,
+        ele se perde.
+      {% endif %}
+      Não dá para desfazer.
+    </p>
+
+    <form method="POST">
+      {{ csrf_token() | safe }}
+      <div class="form-buttons">
+        <button type="submit" class="btn-danger">Excluir anexo</button>
+        <a href="{{ url('gerenciar_anexos', tarefa.id) }}" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
