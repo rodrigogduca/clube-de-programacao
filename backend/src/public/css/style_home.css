@@ -418,8 +418,13 @@ nav.scrolled {
   background: rgba(255, 255, 255, 0.05);
 }
 
+/* O `padding: 9px 20px` vem da regra da pílula da barra, lá em cima, e ela
+   desenha um alvo para o mouse. Aqui dentro ele deixava o Login com 44px de
+   altura no meio de itens de 54px — e logo o item DESTACADO era o menor e o
+   mais difícil de acertar com o polegar. O respiro do menu vale para todos. */
 .mobile-menu a.nav-cta {
   margin-top: 6px;
+  padding: 14px 16px;
   border-radius: var(--r-sm);
   text-align: center;
 }
@@ -2005,9 +2010,18 @@ footer {
   }
 
   /* O cartaz da SEMCOMP empilha: letreiro e texto primeiro, foto no pé
-     sangrando até as bordas do cartão. */
+     sangrando até as bordas do cartão.
+
+     `minmax(0, 1fr)` e não `1fr`: o `1fr` sozinho é `minmax(auto, 1fr)`, e esse
+     `auto` é um PISO de min-content. O botão "Quero me inscrever na SEMCOMP" é
+     `white-space: nowrap`, então o min-content da coluna era a largura inteira
+     do rótulo — 292px dentro de um cartão de 280. A coluna estourava o cartão,
+     o `overflow: hidden` do cartaz cortava o que sobrava, e o resultado em
+     320px era o botão principal da seção com o fim do texto decepado (junto do
+     parágrafo e dos valores da ficha). O `0` remove o piso; a linha de baixo
+     cuida de o rótulo caber. A versão larga desta regra já usava minmax. */
   .event-highlight {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .event-foto {
@@ -2128,6 +2142,17 @@ footer {
 }
 
 @media (max-width: 560px) {
+  /*
+    Um por linha, cada um da largura da coluna.
+
+    E aqui o `white-space: nowrap` dos botões deixa de valer. Ele existe para a
+    barra e para as filas deitadas, onde um rótulo que quebra faz a pílula
+    crescer e desalinha a fileira inteira. Num botão que já ocupa a linha toda
+    não há fileira para desalinhar, e o que o nowrap fazia era garantir que
+    "Quero me inscrever na SEMCOMP" — 292px de rótulo numa coluna de 220 —
+    passasse por baixo da borda em vez de virar duas linhas. Rótulo de CTA em
+    dois andares é normal no celular; rótulo cortado não é.
+  */
   .hero-buttons .btn-primary,
   .hero-buttons .btn-secondary,
   .cta-buttons .btn-primary,
@@ -2135,6 +2160,7 @@ footer {
   .event-acoes .btn-primary,
   .event-acoes .btn-outline {
     flex: 1 1 100%;
+    white-space: normal;
   }
 
   /* A ficha do evento vira uma lista de filetes, um dado por linha. */

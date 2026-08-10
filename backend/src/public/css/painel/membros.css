@@ -437,7 +437,11 @@
     padding: 0.5rem;
   }
 
-  .membros-visao {
+  /* Sem o empurrão para a direita: numa barra empilhada ele deixava os dois
+     controles pendurados na borda oposta à dos filtros logo acima, com um vão
+     de 150px no meio da linha. */
+  .membros-visao,
+  .membros-agrupar {
     margin-left: 0;
   }
 

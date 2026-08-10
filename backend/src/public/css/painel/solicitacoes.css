@@ -57,10 +57,18 @@
 }
 
 /* A linha de metadados quebra em duas quando o e-mail é longo, e o `min-width`
-   do pai impede que ela empurre os botões para fora do cartão. */
+   do pai impede que ela empurre os botões para fora do cartão.
+
+   `overflow-wrap: anywhere` é o que faz o e-mail caber numa tela de 320px: sem
+   ele, `fernanda.vasconcelos@estudante.universidade.edu.br` é UMA palavra de
+   346px, a linha não tem onde quebrar e o cartão inteiro cresce até caber a
+   palavra — levando a página junto. O endereço passa a quebrar no meio, que é
+   feio e é melhor do que a tela rolar para o lado. */
 .solicitacao-info .card-meta {
   flex-wrap: wrap;
   gap: 0.2rem 0.85rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 /*

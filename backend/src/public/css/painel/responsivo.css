@@ -41,18 +41,48 @@
     align-items: stretch;
   }
 
+  /*
+    A BARRA VIRA COLUNA, E COM ELA O EIXO PRINCIPAL VIRA O VERTICAL.
+
+    A busca declara `flex: 1 1 240px` para puxar a largura sobrando na barra
+    deitada. Em coluna, esses 240px passam a ser a BASE DE ALTURA: o campo de
+    31px nascia dentro de uma caixa de 240px e abria um buraco vazio do tamanho
+    de meia tela entre o rótulo da seção e o primeiro filtro.
+
+    `flex: 0 0 auto` devolve a altura ao conteúdo. A largura já vem do
+    `align-items: stretch` acima.
+  */
+  .kanban-busca {
+    flex: 0 0 auto;
+  }
+
   .kanban-toolbar .filter-select,
   .kanban-check {
     width: 100%;
   }
 
+  /*
+    As ferramentas de planilha se acomodam pelo próprio tamanho e quebram a
+    linha quando não cabem. Antes cada uma levava `flex: 1` — quatro itens
+    dividindo 291px davam ~70px cada, e o rótulo quebrava dentro do botão
+    ("Exportar / CSV" em dois andares, o ícone perdido no meio). Com o
+    `white-space: nowrap` de botoes.css, o botão passa a ser indivisível e a
+    fileira quebra ENTRE os botões, que é onde ela deve quebrar.
+  */
   .kanban-csv {
     width: 100%;
   }
 
   .kanban-csv > * {
-    flex: 1;
-    justify-content: center;
+    flex: 0 1 auto;
+  }
+
+  /* O link do modelo não é botão, mas divide a fileira com três: sem uma altura
+     comparável ele fica um alvo de toque de 17px no meio de alvos de 28px. */
+  .kanban-csv-modelo {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.2rem;
   }
 
   .modal-caixa {
@@ -70,23 +100,25 @@
   }
 }
 
+/*
+  SOBROU DAQUI SÓ O NOME DO CLUBE, E ELE SOME PORQUE NÃO CABE.
+
+  Este bloco descrevia a navbar ANTERIOR — a que virava um trilho rolável no
+  celular. Ela já não existe: em 860px o `nav.css` recolhe a lista atrás do
+  hambúrguer e a empilha sob a pílula, com 11px de respiro e 0.95rem de corpo
+  para dar um alvo de toque decente.
+
+  Como esta folha é carregada DEPOIS do `nav.css`, o que estava aqui vencia por
+  ordem: os itens do menu voltavam a 0.4rem de respiro e 0.8rem de corpo, e o
+  `gap: 0` os deixava colados. Na prática, um menu de itens de 33px — abaixo do
+  mínimo de toque — desenhado por regras escritas para outro componente.
+
+  `.nav-user-name` e `.nav-user-info` saíram junto: as duas classes deixaram de
+  existir no template quando o nome por extenso virou o avatar e o menu dele.
+*/
 @media (max-width: 860px) {
-  .nav-title,
-  .nav-user-name {
+  .nav-title {
     display: none;
-  }
-
-  .nav-user-info {
-    padding-left: 0.5rem;
-  }
-
-  .nav-links {
-    gap: 0;
-  }
-
-  .nav-link {
-    padding: 0.4rem 0.5rem;
-    font-size: 0.8rem;
   }
 }
 
@@ -103,14 +135,33 @@
     padding: 0 0.9rem;
   }
 
-  /* A barra vira um trilho rolável em vez de quebrar linha */
-  .nav-links {
-    overflow-x: auto;
-    scrollbar-width: none;
+  /* O `overflow-x: auto` que ficava aqui era o resto do trilho rolável antigo.
+     Aplicado ao painel empilhado de hoje ele só cria uma área de rolagem que
+     nunca rola — e que recorta a sombra do menu. */
+
+  /*
+    A FILA DE ABAS QUEBRA A LINHA EM VEZ DE ROLAR.
+
+    Na tela larga ela rola de lado, e ali isso funciona: sobra pouca coisa para
+    fora e o corte fica evidente. Em 320px sobra quase tudo — de cinco abas
+    apenas "Todos" e meia palavra da seguinte cabiam, e o nome do setor
+    terminava cortado rente à borda, que é o desenho de uma tela quebrada e não
+    o de uma lista que continua. A rolagem lateral dentro de uma página que já
+    rola na vertical também é o gesto que menos gente descobre no celular.
+
+    Quebrando a linha, todo setor fica visível e alcançável sem gesto nenhum. É
+    o único lugar da tela por onde se chega a um setor.
+  */
+  .tabs-bar {
+    flex-wrap: wrap;
+    overflow-x: visible;
   }
 
-  .nav-links::-webkit-scrollbar {
-    display: none;
+  /* Sem o empurrão para a direita: numa fila que quebra, ele abriria um vão até
+     a borda no fim da última linha. Aqui ele só segue a última aba. */
+  .tabs-bar-acao {
+    margin-left: 0;
+    padding-left: 0;
   }
 
   .painel-header {
@@ -135,9 +186,39 @@
     padding: 1.1rem;
   }
 
+  /*
+    A CAUSA DE A PÁGINA ROLAR PARA O LADO NO CELULAR.
+
+    Os dois cartões são flex com `align-items: flex-start`, o que em linha só
+    encosta os blocos no topo. Virando COLUNA, o mesmo `flex-start` passa a
+    valer na horizontal: cada filho encolhe até o próprio conteúdo — e o
+    conteúdo é uma palavra que não quebra (o e-mail da solicitação, o endereço
+    do anexo). O filho ficava com 560px dentro de um cartão de 291px, a página
+    inteira ganhava 600px de largura em uma tela de 320 e tudo o mais aparecia
+    espremido à esquerda, com a borda direita dos cartões fora da tela.
+
+    `stretch` prende os filhos à largura do cartão; o corte por reticências do
+    `.anexo-url` e a quebra do `.card-meta` só funcionam quando existe uma
+    largura para respeitar.
+  */
   .solicitacao-card,
   .anexo-item {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  /*
+    `stretch` sozinho não bastava: ele estica os filhos até a LINHA do flex, e a
+    linha de um contêiner em coluna cresce até o filho mais largo — que era
+    justamente o endereço de 560px. O `max-width` é uma porcentagem, e
+    porcentagem resolve contra a largura definida do cartão (254px), não contra
+    o conteúdo. É ele que devolve ao `.anexo-url` uma largura em que cortar por
+    reticências, em vez de esticar a página.
+  */
+  .solicitacao-card > *,
+  .anexo-item > * {
+    max-width: 100%;
+    min-width: 0;
   }
 
   /* No celular o cabeçalho vira uma coluna, então o botão de ação da tela
