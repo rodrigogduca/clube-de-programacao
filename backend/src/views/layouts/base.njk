@@ -29,9 +29,13 @@
      um tom mais fria que a página que ela emoldura. #}
   <meta name="theme-color" content="#08080b">
 
-  {# Sem isto o navegador pede /favicon.ico em toda página e leva 404. #}
-  <link rel="icon" href="{{ static('images/logo.png') }}" type="image/png">
-  <link rel="apple-touch-icon" href="{{ static('images/logo.png') }}">
+  {# Sem isto o navegador pede /favicon.ico em toda página e leva 404.
+
+     `logo-256.png` e não `logo.png`: o ícone é desenhado com 16 a 32px na aba
+     e 180px no atalho do iOS, e o original de 864px pesava 147 KB — baixados
+     em TODA página, inclusive nas do painel, só para caber num quadradinho. #}
+  <link rel="icon" href="{{ static('images/logo-256.png') }}" type="image/png">
+  <link rel="apple-touch-icon" href="{{ static('images/logo-256.png') }}">
 
   {# Prova de posse para o Google Search Console. Só aparece quando a variável
      GOOGLE_SITE_VERIFICATION existe (ver bootstrap.ts). #}

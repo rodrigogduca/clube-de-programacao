@@ -88,6 +88,26 @@ NEON = {
     'SEMCOMP 2026.png': 'semcomp-2026.png',
 }
 
+# O LOGO DO CLUBE, NO TAMANHO EM QUE ELE APARECE.
+#
+# `logo.png` tem 864x864 e 147 KB, e era ele que ia para a tela em TODO uso:
+# 34px no rodapé, 36px na navbar, 63px no pop-up, 84px no login e ainda como
+# favicon. Ou seja, 147 KB para desenhar um selo de 36 pixels — vinte e quatro
+# vezes maior do que precisa ser em cada dimensão.
+#
+# Num 3G de 400 kbps isso deixava o logo em branco por ~14 segundos enquanto o
+# resto da página já estava lida e rolável. Não é que ele não carregasse: é que
+# chegava depois de quem estava olhando desistir.
+#
+# 256px cobre o maior uso na tela (os 84px do login) com folga para telas 3x.
+# O original FICA e continua servindo o que precisa de tamanho: a imagem de
+# compartilhamento (og:image, twitter:image) e o `logo` do JSON-LD, que são
+# lidos por robô e não por navegador.
+LOGO = {
+    'logo.png': 'logo-256.png',
+}
+
+LADO_LOGO = 256        # maior uso na tela são os 84px do login; cobre telas 3x
 LARGURA_RETRATO = 560  # exibido entre 215px e 250px; cobre telas 2x
 LADO_CLUBE = 640       # exibido do tamanho do cartão (~360px); cobre telas 2x
 LARGURA_GALERIA = 1400
@@ -213,6 +233,25 @@ def salvar_png(im, destino):
     return os.path.getsize(destino) / 1024
 
 
+def png_reduzido(origem, lado):
+    """Reduz um PNG quadrado preservando o alfa.
+
+    Sem `convert('RGB')` como o `salvar()` faz: o logo é um círculo desenhado
+    com fundo transparente, e achatar o alfa colocaria um quadrado branco atrás
+    dele em toda tela escura do projeto.
+
+    Sem quantizar para paleta, também: a 256 cores o arquivo cairia de 27 KB
+    para ~6 KB e a diferença é invisível no tamanho em que o logo aparece — mas
+    é a marca do clube, e o ganho de 21 KB não paga o risco de sujar a borda
+    antisserrilhada do círculo num tamanho que ninguém revisou.
+    """
+    im = ImageOps.exif_transpose(Image.open(origem)).convert('RGBA')
+    if im.size[0] <= lado:
+        return im
+    altura = round(im.size[1] * lado / im.size[0])
+    return im.resize((lado, altura), Image.LANCZOS)
+
+
 def largura_fixa(origem, largura):
     im = ImageOps.exif_transpose(Image.open(origem))
     if im.size[0] <= largura:
@@ -232,6 +271,10 @@ def main():
         ('semcomp', SOLTAS, lambda o: largura_fixa(o, LARGURA_SOLTA), salvar),
         # PNG e não JPEG: o alfa é o ponto todo, e JPEG não tem canal alfa.
         ('semcomp', NEON, lambda o: neon(o, MARGEM_NEON), salvar_png),
+        # Pasta vazia: entrada e saída moram as duas em images/, porque o
+        # original aqui não é arquivo de câmera — é o logo, e ele continua
+        # sendo servido em tamanho cheio para os robôs de compartilhamento.
+        ('', LOGO, lambda o: png_reduzido(o, LADO_LOGO), salvar_png),
     )
 
     antes_total = depois_total = 0

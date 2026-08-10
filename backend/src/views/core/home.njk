@@ -43,9 +43,22 @@
   {# O pato é a primeira coisa que aparece; sem preload ele chega depois do texto. #}
   <link rel="preload" as="image" href="{{ static('images/pato.png') }}">
   {# A fonte da marca desenha o título do herói: sem preload o texto aparece na
-     fonte de reserva e salta quando ela chega. #}
+     fonte de reserva e salta quando ela chega.
+
+     ENDEREÇO ESCRITO À MÃO, E NÃO `static()`, DE PROPÓSITO.
+
+     O preload só é aproveitado quando a URL bate BYTE A BYTE com a que o
+     navegador vai pedir depois. Quem pede a fonte de verdade é o `@font-face`
+     de `css/site/fontes.css`, com um `url()` relativo — e relativo não passa
+     pelo `static()`, então chega sem o `?v=`. Com `static()` aqui, o preload
+     buscava `...ttf?v=abc123` e o CSS buscava `...ttf`: dois endereços, dois
+     downloads, 167 KB baixados DUAS VEZES em toda primeira visita (334 KB, no
+     celular, para uma fonte só). O Chrome avisava no console — "preloaded but
+     not used within a few seconds" — e o aviso passou despercebido.
+
+     Se o prefixo `/static` mudar no bootstrap.ts, esta linha muda junto. #}
   <link rel="preload" as="font" type="font/ttf" crossorigin
-        href="{{ static('fonts/BryndanWriteBook-nGPM.ttf') }}">
+        href="/static/fonts/BryndanWriteBook-nGPM.ttf">
   <link rel="stylesheet" href="{{ static('css/site/tokens.css') }}">
   <link rel="stylesheet" href="{{ static('css/site/fontes.css') }}">
   <link rel="stylesheet" href="{{ static('css/style_home.css') }}">
@@ -61,7 +74,11 @@
   <!-- NAVBAR -->
   <nav id="navbar">
     <a href="{{ url('home') }}" class="nav-logo">
-      <img src="{{ static('images/logo.png') }}" alt="Logo Clube de Programação SENAI CIMATEC">
+      {# `logo-256.png` e não `logo.png`: aqui ele é desenhado com 36px, e o
+         original de 864px/147 KB levava ~14s para pintar num 3G — a marca
+         entrava na tela depois de a página inteira já estar lida. O grande
+         continua nas metas de compartilhamento, que é onde tamanho é útil. #}
+      <img src="{{ static('images/logo-256.png') }}" alt="Logo Clube de Programação SENAI CIMATEC">
       <span>Clube de Programação</span>
     </a>
     <ul class="nav-links">
@@ -580,7 +597,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
       <div class="modal-header">
-        <img src="{{ static('images/logo.png') }}" alt="Logo" class="modal-logo" loading="lazy" decoding="async">
+        <img src="{{ static('images/logo-256.png') }}" alt="Logo" class="modal-logo" loading="lazy" decoding="async">
         <h2>Obrigado!</h2>
         <p>Sua inscrição no PROSEL foi enviada com sucesso! Fique atento às nossas redes sociais para acompanhar o resultado.</p>
       </div>
@@ -600,7 +617,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
       <div class="modal-header">
-        <img src="{{ static('images/logo.png') }}" alt="Logo" class="modal-logo" loading="lazy" decoding="async">
+        <img src="{{ static('images/logo-256.png') }}" alt="Logo" class="modal-logo" loading="lazy" decoding="async">
         <h2>Clube de Programação</h2>
         <p>Iniciativa estudantil sem fins lucrativos do SENAI CIMATEC. Aprendemos programação na prática através de projetos, workshops e muita colaboração.</p>
       </div>
@@ -629,7 +646,7 @@
   <footer>
     <div class="container footer-inner">
       <div class="footer-left">
-        <img src="{{ static('images/logo.png') }}" alt="Clube de Programação SENAI CIMATEC" aria-hidden="true" loading="lazy" decoding="async">
+        <img src="{{ static('images/logo-256.png') }}" alt="Clube de Programação SENAI CIMATEC" aria-hidden="true" loading="lazy" decoding="async">
         <span>Clube de Programação &mdash; Iniciativa Estudantil do SENAI CIMATEC</span>
       </div>
       <span class="footer-tech">Feito por Rodrigo Gandarela</span>
