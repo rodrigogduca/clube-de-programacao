@@ -1,8 +1,7 @@
 # Backend
 
-Aplicação NestJS. A especificação do sistema está em
-[`../specs/sistema.md`](../specs/sistema.md) e a documentação técnica em
-[`../docs/`](../docs/); o README raiz fica [aqui](../README.md).
+Aplicação NestJS. A documentação técnica está em [`../docs/`](../docs/) e o
+README raiz, com a estrutura do repositório, fica [aqui](../README.md).
 
 ## Começando
 
@@ -36,8 +35,9 @@ cada uma.
 ## Mapa do código
 
 ```
-api/index.ts        Handler serverless da Vercel
+api/index.js        Handler serverless da Vercel
 prisma/             schema.prisma
+scripts/            Manutenção: imagens, criação de admin, build
 src/
 ├── bootstrap.ts    Monta o app: Nunjucks, helmet, pipes, filtro de erros
 ├── app.module.ts   Módulo raiz e ordem dos middlewares

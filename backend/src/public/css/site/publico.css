@@ -752,6 +752,43 @@ section {
   box-shadow: 0 10px 30px -10px rgba(242, 138, 31, 0.55);
 }
 
+/* O CTA prioritário: um só na página inteira, no pé do PROSEL.
+
+   Cresce por padding e por corpo de letra, e ganha um anel que respira. O anel
+   é `box-shadow` e não `outline` nem elemento extra: `box-shadow` não ocupa
+   espaço no layout, então o botão pode pulsar sem empurrar o `.btn-outline` ao
+   lado dele a cada quadro.
+
+   A animação é `box-shadow` pura — sem `transform`, que é o jeito barato de
+   pulsar mas borraria a letra do botão duas vezes por segundo em tela comum.
+
+   O ANEL PARADO ESTÁ NA REGRA, não só no quadro 100% da animação, e isso é o
+   que faz o botão sobreviver a `prefers-reduced-motion`. A regra universal lá
+   no fim do arquivo não CANCELA animação: ela encurta a duração para 0,01ms e
+   prende a contagem em 1. A animação roda inteira num piscar e termina — e
+   como o `animation-fill-mode` é `none`, o estilo computado volta ao que a
+   folha declara. Se o anel existisse só dentro do `@keyframes`, o que sobraria
+   para quem pediu menos movimento seria o `box-shadow` transparente herdado do
+   `.btn-primary`: nenhum anel. Declarado aqui, ele fica. */
+.btn-primary--grande {
+  padding: 18px 34px;
+  font-size: 1.03rem;
+  box-shadow: 0 0 0 4px rgba(242, 138, 31, 0.22);
+  animation: anel-pulsante 2.8s ease-in-out infinite;
+}
+
+/* No ponteiro o botão para de chamar — quem já o encontrou não precisa mais
+   ser chamado, e aí vale o `box-shadow` de elevação do `.btn-primary:hover`
+   (que ganha por especificidade, classe + pseudo-classe). */
+.btn-primary--grande:hover {
+  animation: none;
+}
+
+@keyframes anel-pulsante {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(242, 138, 31, 0.22); }
+  55%      { box-shadow: 0 0 0 14px rgba(242, 138, 31, 0); }
+}
+
 /* Aqui existia um `.btn-primary:disabled` para o botão de inscrição enquanto o
    formulário do evento não existia. Ninguém mais desabilita botão nenhum: sem
    link, o template não desenha o botão — no lugar dele entra a `.event-nota`
@@ -1433,6 +1470,36 @@ section {
   color: var(--fumaca);
 }
 
+/* ---- O item em destaque ----
+
+   O PROSEL é o quarto de quatro, e o último de uma fileira é o que menos se
+   olha. O filete acende (o mesmo que os outros três só ganham no `hover`), o
+   nome vira âmbar e entra um selo dizendo em que pé está a inscrição.
+
+   O `border-top` é 1px como o dos vizinhos, e não 2: engrossar o filete
+   desalinharia o texto deste item em um pixel em relação aos outros três, e
+   uma fileira desalinhada chama mais atenção do que o destaque pretendia. */
+.indice-item--destaque a {
+  border-color: var(--ambar);
+}
+
+.indice-item--destaque .indice-nome {
+  color: var(--gema);
+}
+
+.indice-selo {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--ambar-lavagem);
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
 
 /* ==========================================================================
    PROSEL — o cartaz
@@ -1446,6 +1513,45 @@ section {
    evento vive num modal, e o que ele reaproveita daqui é só o selo pulsante e
    a ficha.
    ========================================================================== */
+
+/* ---- A seção inteira em destaque ----
+
+   O cartaz sempre foi âmbar, mas a SEÇÃO em volta dele era idêntica às outras
+   três: mesmo fundo, mesmo respiro, mesmo tamanho de título. Numa rolagem
+   rápida a página entregava quatro paradas de peso igual, e o degrau que ela
+   existe para empurrar era o último — o de menor chance de ser visto.
+
+   O fundo é o mesmo escuro com uma lavagem âmbar por cima, e não uma cor nova:
+   o efeito precisa ser "esta parte da página está acesa", não "esta parte é de
+   outro site". Os dois filetes nas bordas fazem o papel que o `<hr class=
+   "divider">` faz entre as seções normais — por isso a marca não leva divider
+   antes dela no template, seria filete sobre filete.
+
+   `overflow: hidden` contém o brilho; sem ele o `radial-gradient` de 120% de
+   altura empurra a barra de rolagem horizontal em telas estreitas. */
+.prosel-section--destaque {
+  position: relative;
+  border-top: 1px solid var(--ambar-traco);
+  border-bottom: 1px solid var(--ambar-traco);
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 0%, var(--ambar-lavagem), transparent 70%),
+    var(--breu);
+  overflow: hidden;
+}
+
+/* O número na margem para de ser metadado apagado e passa a marcar a chegada.
+   Nos outros três ele fica em `opacity: 0.7`. */
+.prosel-section--destaque .secao-indice {
+  opacity: 1;
+  color: var(--gema);
+}
+
+/* Um degrau acima do `--t-secao` das outras seções, e ainda abaixo do
+   `--t-pagina` do herói: a hierarquia da página continua sendo herói > PROSEL
+   > demais seções, que é a ordem certa de importância. */
+.section-title--destaque {
+  font-size: clamp(2.4rem, 5.6vw, 4.1rem);
+}
 
 .prosel-cartaz {
   position: relative;
@@ -1466,6 +1572,26 @@ section {
     var(--penumbra);
   box-shadow: 0 0 90px -50px rgba(255, 77, 0, 0.9);
   overflow: hidden;
+}
+
+/* O cartaz dentro da seção acesa precisa continuar sendo a coisa mais forte da
+   tela — se ele mantivesse o traço de 0.42 sobre o fundo que agora também é
+   âmbar, a moldura se dissolveria no próprio destaque e o cartão pareceria ter
+   perdido a borda. Sobe o traço, sobe o brilho, sobe o respiro. */
+.prosel-cartaz--destaque {
+  padding: clamp(30px, 5vw, 60px);
+  border-color: rgba(242, 138, 31, 0.6);
+  box-shadow:
+    0 0 120px -50px rgba(255, 77, 0, 0.95),
+    0 30px 70px -40px rgba(0, 0, 0, 0.9);
+}
+
+/* A foto sangra até a borda do cartão, então a margem negativa dela tem de
+   acompanhar o `padding` novo — senão sobra uma faixa do fundo do cartaz entre
+   a imagem e a moldura, exatamente do tamanho da diferença. */
+.prosel-cartaz--destaque .prosel-foto {
+  margin: calc(-1 * clamp(30px, 5vw, 60px));
+  margin-left: 0;
 }
 
 .prosel-say {
@@ -1501,6 +1627,13 @@ section {
   line-height: 1.05;
   letter-spacing: -0.01em;
   color: var(--giz);
+}
+
+/* "PROSEL 2026" é o nome do que se está vendendo, e passa a ser lido antes do
+   parágrafo em vez de junto com ele. Fica acima do `--t-secao` do título da
+   seção porque, dentro do cartaz, é ele o título. */
+.prosel-titulo--destaque {
+  font-size: clamp(2.5rem, 5.6vw, 4rem);
 }
 
 .prosel-titulo span {
@@ -2291,11 +2424,20 @@ section {
   transform: scale(1.04);
 }
 
-/* ---- Banner de largura cheia ---- */
+/* ---- Banner de largura cheia ----
 
+   A margem virou modificador porque o único banner que restou fecha uma seção
+   em vez de abri-la. O `margin-bottom: 56px` fixo era do banner do laboratório
+   na /seja-membro, que vinha ANTES do conteúdo da seção de competições; aquele
+   bloco saiu (virou a foto do destaque da OBI) e o que existe hoje é o do
+   corredor da SEMCOMP, embaixo dos quatro formatos. Com a margem presa embaixo
+   ele encostava no grid acima e sobrava um vão até o divisor. */
 .banner {
   aspect-ratio: 16 / 9;
-  margin-bottom: 56px;
+}
+
+.banner--pe {
+  margin-top: 56px;
 }
 
 /* ---- Foto ao lado de texto (Sobre o Evento) ---- */
@@ -2640,9 +2782,12 @@ section {
 }
 
 /* AS MODALIDADES DO ARENA DAY reaproveitam o `.formato-card` inteiro e mudam
-   só a largura mínima da coluna: são CINCO cartões, e com os 250px dos
-   formatos eles caíam em 4+1 — uma linha cheia e um cartão órfão embaixo. Com
-   320px a grade fecha em três colunas e a divisão vira 3+2. */
+   só a largura mínima da coluna. Com os 250px dos formatos os cartões caíam em
+   4+1 — uma linha cheia e um órfão embaixo. Com 320px a grade fecha em três
+   colunas, e desde que a Copa de E-Sports entrou são SEIS cartões: 3+3, duas
+   fileiras cheias. (Eram cinco, e a divisão 3+2 já era a razão do valor; com
+   seis ela só melhorou. Se uma sétima modalidade aparecer, a conta volta a ser
+   3+3+1 e vale reconsiderar os 320px.) */
 .arena-grid {
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
@@ -3075,6 +3220,91 @@ section {
   margin-top: 28px;
 }
 
+/* ---- O mapa do local ----
+
+   Um iframe do Google dentro de uma página com identidade fechada é o elemento
+   mais difícil de assentar do site: ele chega claro, com a tipografia de outra
+   pessoa, e não aceita uma linha de CSS nossa por dentro.
+
+   A moldura é a mesma das fotos (`.foto-quadro`): filete, `--r` de raio e
+   `overflow: hidden`. É o que faz o mapa ser lido como mais um quadro do
+   conjunto em vez de um retângulo colado de fora.
+
+   O MAPA NÃO LEVA O `filter` DE REPOUSO QUE AS FOTOS LEVAM. Foto apagada que
+   acende no ponteiro funciona porque foto é ilustração — ela convive com o
+   texto quando não é o assunto. Mapa é instrumento: quem olha está procurando
+   uma rua, e escurecer o que a pessoa veio ler para "combinar com a paleta"
+   troca legibilidade por decoração. Ele fica claro, e é para ficar. */
+.mapa {
+  margin-top: 32px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--breu);
+}
+
+/* `display: block` mata o vão de ~4px que o iframe herda de ser `inline` — o
+   espaço da linha de base, que aqui apareceria como uma listra do fundo entre
+   o mapa e a legenda.
+
+   PROPORÇÃO E TETO, os dois. `aspect-ratio` sozinho não serve porque este
+   elemento vive em duas larguras muito diferentes: na coluna da inscrição ele
+   tem ~376px, e abaixo de 980px o grid empilha e ele passa a ter a largura
+   inteira do container (até 1140px). Em 4:3 isso daria 855px de altura — um
+   mapa com mais de uma tela de celular de altura, que a pessoa rola por dentro
+   sem querer no meio da página.
+
+   Então a altura é uma FAIXA e não um número: 4:3 manda no meio, o
+   `max-height` assume quando a coluna estica (o mapa vira faixa deitada em vez
+   de poço) e o `min-height` assume quando ela aperta — em 320px o 4:3 puro
+   daria 162px, altura em que o mapa mostra um quarteirão e a marca do Google
+   ocupa um terço dele.
+
+   `height: auto` NÃO É REDUNDANTE, e foi o que estava faltando. O `<iframe>`
+   leva `width`/`height` como atributos de HTML, e eles viram dica de
+   apresentação com peso próprio na cascata. O `width: 100%` daqui vence o
+   atributo de largura, mas sem declarar `height` o `height="480"` do HTML
+   ficava valendo e o `aspect-ratio` não tinha o que calcular: o mapa saía com
+   480px fixos em qualquer viewport, virando um retrato estreito no celular. */
+.mapa iframe {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  min-height: 240px;
+  max-height: 420px;
+  border: 0;
+}
+
+/* A legenda é o par acessível do mapa: o endereço em texto e a saída para o
+   aplicativo. Filete em cima, como toda ficha da página. */
+.mapa-pe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 18px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--traco);
+  background: var(--penumbra);
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.04em;
+  color: var(--cinza);
+}
+
+.mapa-pe a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ambar);
+  transition: color var(--transicao);
+}
+
+.mapa-pe a:hover {
+  color: var(--gema);
+}
+
 /* ---- FAQ em <details> nativo ---- */
 
 .faq {
@@ -3240,11 +3470,20 @@ section {
 /* ==========================================================================
    COMPETIÇÕES
 
-   Os logotipos da SBC e da OBI são arte de terceiros desenhada para fundo
-   BRANCO. A plaquinha branca é a forma honesta de mostrá-los aqui: não altera
-   a marca de ninguém e não deixa traço escuro sobre página escura. O papagaio
-   do MFP tem alfa e traço claro, então dispensa plaquinha e vai direto ao
-   escuro — daí o `--claro` ser modificador e não o padrão.
+   A PLAQUINHA BRANCA SAIU DAQUI, e com ela o modificador `--claro`.
+
+   A SBC e a OBI são arte de terceiros desenhada para fundo branco, e a
+   plaquinha era a solução honesta enquanto o site as servia como vieram: não
+   alterava a marca de ninguém e não deixava traço escuro sobre página escura.
+   Custava duas coisas, porém — eram os únicos dois retângulos brancos de um
+   site inteiramente escuro, e o `padding` da plaquinha encolhia o desenho para
+   ~48px dentro de um selo de 72, ao lado de um papagaio que ocupava os 72.
+
+   Hoje quem resolve isso é o pipeline: `scripts/otimizar-imagens.py` entrega
+   as duas em mono claro com alfa (`logo_mono`) e o papagaio aparado pela caixa
+   do desenho (`logo_alfa`), os três com o mesmo respiro interno. Aqui em cima
+   sobrou uma regra só, sem exceção — que é o sinal de que a diferença estava
+   no arquivo e não na folha de estilo.
    ========================================================================== */
 
 .competicao-grid {
@@ -3270,24 +3509,19 @@ section {
   transform: translateY(-3px);
 }
 
+/* 84px e não mais 72: sem a plaquinha, o selo não precisa reservar espaço para
+   moldura nenhuma, e o desenho pode ocupar o quadro inteiro. */
 .competicao-selo {
   display: grid;
   place-items: center;
-  width: 72px;
-  height: 72px;
-  border-radius: var(--r-sm);
+  width: 84px;
+  height: 84px;
 }
 
 .competicao-selo img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-}
-
-.competicao-selo--claro {
-  padding: 6px;
-  background: #fff;
-  box-shadow: 0 6px 22px -10px rgba(0, 0, 0, 0.9);
 }
 
 .competicao-card h3 {
@@ -3308,13 +3542,37 @@ section {
 }
 
 
-/* ---- Destaque do MFP ----
+/* ---- Destaque de competição — OBI e MFP ----
 
-   O único bloco do site que não é âmbar. A identidade da Maratona Feminina é
-   roxa e rosa, e repintá-la de laranja para "combinar com o site" apagaria
-   justamente o que a distingue. O roxo entra só aqui, contido dentro de uma
-   moldura — o resto da página continua sendo o que era. */
-.mfp {
+   UMA CONSTRUÇÃO, DUAS CORES.
+
+   Isto nasceu como `.mfp`, bloco único e com o roxo escrito em cada regra.
+   Quando a OBI pediu o mesmo tratamento, havia duas saídas: copiar as catorze
+   regras trocando as cores, ou tirar as cores das regras. A segunda, porque a
+   primeira é como um dos dois blocos fica com o `hover` que o outro ganhou
+   depois — o bug que ninguém vê até já estar no ar.
+
+   Então a cor virou variável e o resto é comum. O modificador declara três
+   tokens e não toca em mais nada:
+
+     --acento-rgb   traço, selo e brilho do bloco — em CANAIS, não em cor
+     --acento-forte texto do selo e do link (precisa passar no contraste)
+     --acento-par-rgb  o segundo foco de luz, no canto oposto
+
+   OS DOIS ACENTOS SÃO "168, 85, 214" E NÃO "#a855d6" de propósito. Cada um
+   deles é usado em cinco opacidades diferentes (0.12 do brilho ao 0.45 do
+   selo), e a forma de variar a opacidade de uma variável de cor é passar os
+   canais para o `rgba()`. A sintaxe `rgb(from var(--x) r g b / 0.35)` faria o
+   mesmo em uma linha, mas onde ela não é suportada a declaração inteira é
+   descartada — e o que se perde não é a transparência, é o `background` do
+   bloco, que volta a transparente. Canal cru não tem esse precipício.
+
+   O MFP É O ÚNICO BLOCO DO SITE QUE NÃO É ÂMBAR, e continua sendo. A
+   identidade da Maratona Feminina é roxa e rosa; repintá-la de laranja para
+   "combinar com o site" apagaria justamente o que a distingue. A OBI, ao
+   contrário, é da casa — usa o âmbar da página, e é por isso que ela pode ser
+   o segundo bloco sem o efeito de circo que duas cores novas causariam. */
+.comp-destaque {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
@@ -3322,18 +3580,36 @@ section {
   gap: clamp(26px, 4vw, 48px);
   margin-top: 44px;
   padding: clamp(30px, 4vw, 48px);
-  border: 1px solid rgba(168, 85, 214, 0.35);
+  border: 1px solid rgba(var(--acento-rgb), 0.35);
   border-radius: var(--r-lg);
   background:
-    radial-gradient(ellipse 60% 70% at 12% 20%, rgba(168, 85, 214, 0.22), transparent 68%),
-    radial-gradient(ellipse 50% 50% at 88% 90%, rgba(240, 110, 150, 0.12), transparent 70%),
+    radial-gradient(ellipse 60% 70% at 12% 20%, rgba(var(--acento-rgb), 0.22), transparent 68%),
+    radial-gradient(ellipse 50% 50% at 88% 90%, rgba(var(--acento-par-rgb), 0.12), transparent 70%),
     var(--penumbra);
   overflow: hidden;
 }
 
-/* O papagaio faz aqui o que o pato faz no herói: fica grande, cortado pela
-   borda e apagado, sendo a fonte da luz do bloco em vez de um ícone. */
-.mfp-arara {
+/* O roxo e o rosa da Maratona Feminina. Não existem em tokens.css: são cor de
+   marca de terceiro e valem dentro desta moldura, não na paleta do site. */
+.comp-destaque--mfp {
+  --acento-rgb: 168, 85, 214;
+  --acento-par-rgb: 240, 110, 150;
+  --acento-forte: #d9a6f0;
+}
+
+/* Estes três SÃO da casa — os mesmos --ambar, --brasa e --gema de tokens.css,
+   escritos em canal porque é assim que o bloco os consome. Se a paleta mudar,
+   mudam aqui junto (e o comentário é o lembrete de que são cópia). */
+.comp-destaque--obi {
+  --acento-rgb: 242, 138, 31;
+  --acento-par-rgb: 255, 77, 0;
+  --acento-forte: var(--gema);
+}
+
+/* A marca de fundo faz aqui o que o pato faz no herói: fica grande, cortada
+   pela borda e apagada, sendo a fonte da luz do bloco em vez de um ícone.
+   O papagaio do MFP é a mesma arte do selo lá em cima; a da OBI também. */
+.comp-destaque-fundo {
   position: absolute;
   top: -40px;
   right: -30px;
@@ -3343,38 +3619,47 @@ section {
   pointer-events: none;
 }
 
-.mfp-say {
+.comp-destaque-say {
   position: relative;
 }
 
-.mfp-selo {
+.comp-destaque-selo {
   display: inline-block;
   padding: 5px 11px;
-  border: 1px solid rgba(168, 85, 214, 0.45);
+  border: 1px solid rgba(var(--acento-rgb), 0.45);
   border-radius: 999px;
   font-family: var(--mono);
   font-size: var(--t-mini);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #d9a6f0;
+  color: var(--acento-forte);
 }
 
-/* A marca em branco É o título. O <h3> não desenha nada; quem desenha é a
-   imagem dentro dele, e o `alt` carrega o texto. */
-.mfp-marca {
+/* A marca É o título. O <h3> não desenha nada; quem desenha é a imagem dentro
+   dele, e o `alt` carrega o texto.
+
+   `--marca-largura` porque as duas artes têm formato diferente: o MFP é
+   wordmark deitado (480x280 depois do aparo) e a OBI é lockup quadrado. Com
+   um número só, ou a lettering do MFP ficava pequena ou o círculo da OBI virava
+   um segundo logotipo do tamanho de um título. */
+.comp-destaque-marca {
   margin: 20px 0 0;
   font-size: 1rem;
   font-weight: 400;
 }
 
-.mfp-marca img {
+.comp-destaque-marca img {
   width: 100%;
-  max-width: 260px;
+  max-width: var(--marca-largura, 260px);
   height: auto;
-  filter: drop-shadow(0 0 26px rgba(168, 85, 214, 0.5));
+  filter: drop-shadow(0 0 26px rgba(var(--acento-rgb), 0.5));
 }
 
-.mfp-say p {
+.comp-destaque--obi {
+  --marca-largura: 132px;
+}
+
+.comp-destaque-say p {
   max-width: 46ch;
   margin-top: 18px;
   font-size: 0.975rem;
@@ -3383,30 +3668,30 @@ section {
   text-wrap: pretty;
 }
 
-/* O botão do modal herda `.link-seta`, que é âmbar; aqui ele acompanha o roxo
-   do bloco. `border: 0` porque `.link-seta` também veste <button>. */
-.mfp .link-seta {
+/* O botão do modal herda `.link-seta`, que é âmbar; aqui ele acompanha o
+   acento do bloco. `border: 0` porque `.link-seta` também veste <button>. */
+.comp-destaque .link-seta {
   border: 0;
   background: none;
   padding: 0;
   font-family: var(--mono);
   cursor: pointer;
-  color: #d9a6f0;
+  color: var(--acento-forte);
 }
 
-.mfp .link-seta:hover {
-  color: #f0c9ff;
+.comp-destaque .link-seta:hover {
+  color: var(--giz);
 }
 
-.mfp-foto {
+.comp-destaque-foto {
   position: relative;
-  border: 1px solid rgba(168, 85, 214, 0.3);
+  border: 1px solid rgba(var(--acento-rgb), 0.3);
   border-radius: var(--r);
   overflow: hidden;
   background: var(--breu);
 }
 
-.mfp-foto img {
+.comp-destaque-foto img {
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
@@ -3414,7 +3699,7 @@ section {
   transition: filter 0.5s var(--transicao);
 }
 
-.mfp-foto:hover img {
+.comp-destaque-foto:hover img {
   filter: none;
 }
 
@@ -3763,6 +4048,16 @@ footer {
     border-top: 1px solid var(--traco);
   }
 
+  /* Empilhado, a sangria da foto muda de eixo — e o cartaz em destaque tem o
+     seu próprio `padding`, então a margem negativa dele precisa repetir a
+     mesma `clamp`. Um número solto aqui reapareceria como uma faixa do fundo
+     do cartaz entre a foto e a borda, só nas larguras em que as duas `clamp`
+     divergem. */
+  .prosel-cartaz--destaque .prosel-foto {
+    margin: 0 calc(-1 * clamp(30px, 5vw, 60px))
+              calc(-1 * clamp(30px, 5vw, 60px));
+  }
+
   /* Em pé e de largura cheia a foto ficaria com dois metros de altura, então
      empilhada ela vira uma faixa deitada. `min-height: 0` derruba os 340px que
      só fazem sentido ao lado da coluna de texto. */
@@ -3806,7 +4101,7 @@ footer {
   .sobre-evento,
   .inscricao-grid,
   .alcance,
-  .mfp {
+  .comp-destaque {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -3818,7 +4113,7 @@ footer {
 
   /* Empilhado, o texto vem primeiro e a foto fecha o bloco — a ordem em que se
      lê, e não a ordem em que os dois estão no HTML da versão larga. */
-  .mfp-foto {
+  .comp-destaque-foto {
     order: 2;
   }
 
@@ -4037,10 +4332,73 @@ footer {
     align-items: flex-start;
   }
 
-  /* O número grande atrás da etapa some: numa coluna estreita ele deixa de ser
-     marca-d'água e passa a atravessar o texto. */
+  /*
+    ==========================================================================
+    O NÚMERO DA ETAPA — de marca-d'água a selo
+
+    O BUG: em telas estreitas (Mobile S, 320px) os números 1..4 dos cartões do
+    PROSEL apareciam cortados ou não apareciam.
+
+    Eram três causas somadas, e nenhuma delas isolada explicava tudo:
+
+    1. `position: absolute; top: -14px; right: 6px` tira o número do fluxo e o
+       ancora FORA da borda de cima do cartão. O `.passo` tem `overflow:
+       hidden`, então a parte que sobe além da borda é recortada — de propósito,
+       porque o efeito pretendido era o de um número sangrando pelo canto.
+    2. Esse número tem `font-size: 5.5rem` (88px) e não encolhe com a tela. Num
+       cartão de 320px menos as margens, ele passava a ocupar quase um terço da
+       largura e metade da altura útil.
+    3. `opacity: 0.14` só funciona como marca-d'água quando há área de sobra em
+       volta do texto. Sem essa sobra, o "1" gigante e apagado passava POR TRÁS
+       do título e do parágrafo — legível nem como número nem como fundo.
+
+    A correção anterior era `display: none`, que resolvia a ilegibilidade
+    apagando a informação: o número É o conteúdo aqui (a ordem das etapas é o
+    assunto da lista), e some justamente na tela em que a `<ol>` mais parece um
+    monte de cartões soltos.
+
+    A CORREÇÃO: abaixo de 560px o número deixa de ser marca-d'água e vira selo.
+
+      · `position: static` devolve o número ao fluxo — some o recorte, porque
+        não há mais nada para fora da caixa, e o `overflow: hidden` do cartão
+        deixa de importar.
+      · `font-size: 1.05rem` e opacidade cheia: em 88px translúcido ele era
+        textura; em 17px opaco ele é um número que se lê.
+      · `display: grid; place-items: center` numa caixa quadrada de 34px o
+        centraliza nos dois eixos, e o `flex-shrink: 0` impede que a caixa
+        aperte se o título ao lado crescer.
+      · `margin-bottom` no lugar do `top` negativo, que era o que empurrava o
+        número para debaixo da borda.
+
+    Vale de 560px para baixo e não só em 320: entre 380 e 560 o número já
+    encostava no título, e o selo é melhor nos dois casos.
+    ========================================================================== */
+  .passo {
+    padding: 22px 20px 24px;
+  }
+
   .passo-num {
-    display: none;
+    position: static;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 14px;
+    border: 1px solid var(--ambar-traco);
+    border-radius: 999px;
+    background: var(--ambar-lavagem);
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    line-height: 1;
+    color: var(--gema);
+    opacity: 1;
+  }
+
+  /* O `:hover` que clareava a marca-d'água não se aplica a um selo opaco — e
+     em tela de toque não há ponteiro para disparar ele de todo jeito. */
+  .passo:hover .passo-num {
+    opacity: 1;
   }
 }
 

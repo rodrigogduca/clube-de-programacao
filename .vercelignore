@@ -25,5 +25,20 @@ backend/render-check.cjs
 LICENSE
 README.md
 
+# OS ORIGINAIS DE CÂMERA — 14,6 MB que nunca são servidos.
+#
+# `assets/originais/` guarda os arquivos de que `backend/scripts/otimizar-
+# imagens.py` gera os derivados de `src/public/images/`. Quem vai para o ar é o
+# derivado; o original fica no repositório só como fonte para recortar de novo.
+#
+# Sem esta linha eles subiam em todo deploy: são HEIC de 2,7 MB e JPEG de câmera
+# de 6 MB que o lambda nunca abre — a `includeFiles` do vercel.json já não os
+# leva para dentro da função, mas o upload da CLI carregava tudo assim mesmo.
+#
+# Com a barra na frente: `assets` solto casaria com QUALQUER pasta de nome
+# `assets` em qualquer nível, inclusive uma que viesse a existir dentro de
+# `backend/src/public/` — e aí o deploy subiria sem os estáticos dela.
+/assets
+
 # ATENÇÃO: `backend/scripts/` NÃO pode entrar nesta lista — o `postinstall`
 # chama `scripts/build-no-vercel.js`, e sem ele não há build.

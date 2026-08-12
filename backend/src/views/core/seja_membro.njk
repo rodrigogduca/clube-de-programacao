@@ -67,6 +67,11 @@
         O índice é navegação de verdade (âncoras), não decoração: a página é
         longa e os três blocos respondem a perguntas diferentes. Quem já sabe
         que veio pelo PROSEL não deveria rolar por dois blocos até achá-lo.
+
+        O QUARTO ITEM É MARCADO. Ele fecha a lista, e numa fileira de quatro
+        cartões iguais o último é o que menos se olha — justamente o degrau que
+        a página existe para empurrar. O `--destaque` acende o filete, o nome e
+        acrescenta o selo; a ordem de leitura não muda.
       #}
       <ol class="pagina-indice fade-in">
         <li>
@@ -90,11 +95,12 @@
             <span class="indice-desc">Treinar e competir</span>
           </a>
         </li>
-        <li>
+        <li class="indice-item--destaque">
           <a href="#prosel">
             <span class="indice-num" aria-hidden="true">04</span>
             <span class="indice-nome">PROSEL</span>
             <span class="indice-desc">Entrar para a diretoria</span>
+            <span class="indice-selo">Inscrições {% if links.prosel %}abertas{% else %}em breve{% endif %}</span>
           </a>
         </li>
       </ol>
@@ -284,10 +290,15 @@
     clube: é metade do que ele faz — e as três provas abaixo têm calendário,
     treino próprio e turma própria.
 
-    O BANNER ENTRA ANTES DO TEXTO, e é a única foto de largura cheia da página.
-    Descrever treino de maratona em palavras não passa a sensação de uma sala
-    inteira em silêncio com trinta pessoas olhando para o monitor; a foto passa
-    em um segundo.
+    A SEÇÃO TERMINA EM DOIS BLOCOS DE DESTAQUE — OBI e MFP —, e não mais num
+    banner de largura cheia com a foto do laboratório. O banner mostrava treino
+    de maratona antes de a página dizer que competição existe, e a foto (que
+    continua na galeria da home) não dizia de qual das três provas era.
+
+    Os dois blocos têm a MESMA construção, `.comp-destaque`, e diferem só na
+    cor: âmbar na OBI, roxo no MFP. São as duas provas em que a conversa não
+    acaba na descrição do cartão — a OBI porque é a porta de entrada de quem
+    nunca competiu, o MFP porque a participação depende de quem a pessoa é.
     ==========================================================================
   #}
   <section id="competicoes">
@@ -301,39 +312,32 @@
         </div>
       </div>
 
-      {# Sem legenda: a descrição da seção, logo acima, já diz que o clube treina
-         toda semana — o filete sobre a foto repetia a frase por cima dela. #}
-      <figure class="banner fade-in">
-        <img src="{{ static('images/galeria/maratona-lab.jpg') }}"
-             alt="Laboratório do SENAI CIMATEC cheio de estudantes durante um treino da maratona de programação"
-             width="1600" height="900" loading="lazy" decoding="async">
-      </figure>
-
       {#
         As três provas.
 
         `logo` aponta para images/competicoes/, gerado por
-        scripts/otimizar-imagens.py. `claro: true` diz que a arte foi desenhada
-        para fundo BRANCO (azul da SBC, preto e âmbar da OBI) e por isso vai
-        sobre uma plaquinha branca — deixar o branco transparente ali só
-        esconderia o traço escuro contra a página escura. O papagaio do MFP já
-        vem com alfa e traço claro, então assenta direto no escuro.
+        scripts/otimizar-imagens.py. OS TRÊS SELOS AGORA TÊM ALFA e assentam
+        direto no escuro: a SBC e a OBI vinham em JPEG de fundo branco e a
+        página as apoiava numa plaquinha branca, os únicos dois retângulos
+        claros de um site escuro. Hoje o script as entrega em mono claro (ver
+        `logo_mono`), com a mesma geometria do papagaio do MFP — daí não haver
+        mais nenhum modificador de fundo aqui.
       #}
       {% set competicoes = [
         {
-          slug: 'sbc', claro: true,
+          slug: 'sbc',
           nome: 'Maratona SBC de Programação',
           sigla: 'Maratona SBC',
           desc: 'A principal competição universitária do país, organizada pela Sociedade Brasileira de Computação. Times de três resolvem problemas de algoritmos contra o relógio; quem passa na regional vai para a final brasileira.'
         },
         {
-          slug: 'obi', claro: true,
+          slug: 'obi',
           nome: 'Olimpíada Brasileira de Informática',
           sigla: 'OBI',
           desc: 'A porta de entrada de quem está começando. Tem fase por nível e não exige experiência prévia — muita gente do clube resolveu o primeiro problema de programação numa prova da OBI.'
         },
         {
-          slug: 'mfp', claro: false,
+          slug: 'mfp',
           nome: 'Maratona Feminina de Programação',
           sigla: 'MFP',
           desc: 'Competição voltada a meninas e mulheres, com o mesmo formato da maratona tradicional. O clube monta e treina times todo ano.'
@@ -343,7 +347,7 @@
       <div class="competicao-grid stagger-children">
         {% for c in competicoes %}
         <article class="competicao-card fade-in">
-          <span class="competicao-selo{% if c.claro %} competicao-selo--claro{% endif %}">
+          <span class="competicao-selo">
             <img src="{{ static('images/competicoes/' ~ c.slug ~ '.png') }}"
                  alt="Logotipo da {{ c.nome }}"
                  width="480" height="480" loading="lazy" decoding="async">
@@ -352,6 +356,50 @@
           <p>{{ c.desc }}</p>
         </article>
         {% endfor %}
+      </div>
+
+      {#
+        DESTAQUE DA OBI.
+
+        Mesma construção do MFP abaixo — `.comp-destaque`, com a cor trocada
+        pelo modificador. Ganha bloco próprio pelo motivo oposto ao do MFP: o
+        MFP é a prova em que a participação depende de quem a pessoa é, e a OBI
+        é a única em que ela não depende de nada. Ela é a resposta à objeção
+        que aparece no direct toda vez que a página fala de competição ("não
+        sei o suficiente para competir"), e essa resposta não cabe num cartão
+        de três linhas na fileira acima.
+
+        A FOTO É A DO LABORATÓRIO, que era o banner de largura cheia desta
+        seção. Ali ela ilustrava "competições" em geral, sem dizer de qual
+        prova era; aqui ela ilustra treino — que é exatamente o que o bloco
+        oferece a quem está começando. O arquivo continua o mesmo e segue em
+        uso na galeria da home.
+      #}
+      <div class="comp-destaque comp-destaque--obi fade-in">
+        <img src="{{ static('images/competicoes/obi.png') }}" alt="" aria-hidden="true"
+             class="comp-destaque-fundo" width="480" height="480" loading="lazy" decoding="async">
+
+        <div class="comp-destaque-say">
+          <span class="comp-destaque-selo">Para quem está começando</span>
+          <h3 class="comp-destaque-marca">
+            <img src="{{ static('images/competicoes/obi.png') }}"
+                 alt="Olimpíada Brasileira de Informática"
+                 width="480" height="480" loading="lazy" decoding="async">
+          </h3>
+          <p>A OBI tem fase por nível e não cobra experiência nenhuma na entrada. É onde boa parte do clube resolveu o primeiro problema de programação da vida — e o treino para ela é o mesmo que abre a porta das outras duas provas.</p>
+          {% if links.maratonaNovatos or links.maratonaExperientes %}
+          <button type="button" class="link-seta" data-modal="modalComunidade">
+            Entrar num grupo de treino
+            {{ ic.icone('seta', 16) }}
+          </button>
+          {% endif %}
+        </div>
+
+        <figure class="comp-destaque-foto">
+          <img src="{{ static('images/galeria/maratona-lab.jpg') }}"
+               alt="Laboratório do SENAI CIMATEC cheio de estudantes durante um treino de maratona de programação"
+               width="1600" height="900" loading="lazy" decoding="async">
+        </figure>
       </div>
 
       {#
@@ -366,16 +414,16 @@
         (`mfp.png`) fica atrás, grande e cortado pela borda, como o pato faz no
         herói da home. Os dois têm alfa, então vão direto sobre o roxo.
       #}
-      <div class="mfp fade-in">
+      <div class="comp-destaque comp-destaque--mfp fade-in">
         <img src="{{ static('images/competicoes/mfp.png') }}" alt="" aria-hidden="true"
-             class="mfp-arara" width="480" height="480" loading="lazy" decoding="async">
+             class="comp-destaque-fundo" width="480" height="480" loading="lazy" decoding="async">
 
-        <div class="mfp-say">
-          <span class="mfp-selo">Competição</span>
-          <h3 class="mfp-marca">
+        <div class="comp-destaque-say">
+          <span class="comp-destaque-selo">Competição</span>
+          <h3 class="comp-destaque-marca">
             <img src="{{ static('images/competicoes/mfp-marca.png') }}"
                  alt="Maratona Feminina de Programação"
-                 width="480" height="480" loading="lazy" decoding="async">
+                 width="480" height="280" loading="lazy" decoding="async">
           </h3>
           <p>Meninas e mulheres do CIMATEC treinando e competindo juntas. O clube monta os times, organiza os treinos e acompanha a prova — e quem nunca competiu entra do mesmo jeito.</p>
           {% if links.maratonaNovatos %}
@@ -386,7 +434,7 @@
           {% endif %}
         </div>
 
-        <figure class="mfp-foto">
+        <figure class="comp-destaque-foto">
           <img src="{{ static('images/galeria/maratona-feminina.jpg') }}"
                alt="Participantes da Maratona Feminina de Programação reunidas na sala, com balões e o quadro escrito 'Bem vindas à MFP'"
                width="1400" height="1050" loading="lazy" decoding="async">
@@ -411,24 +459,34 @@
     O último degrau e o único com moldura âmbar cheia: é o que a página
     empurra com mais força, e é o único bloco com prazo.
 
+    E AGORA A SEÇÃO INTEIRA CARREGA ISSO, não só o cartaz.
+
+    O problema era de vizinhança: um cartaz âmbar dentro de uma seção que, do
+    lado de fora, é igual às outras três — mesmo fundo, mesmo `padding`, mesmo
+    título. Quem rola rápido passa por quatro blocos de mesmo peso e o quarto,
+    por ser o último, é o que menos recebe atenção. `--destaque` acende o fundo
+    da seção, o número na margem e o título, e o cartaz cresce dentro dela; o
+    percurso 01→04 continua o mesmo, o degrau final é que deixa de se disfarçar
+    de parada intermediária.
+
     A ficha e as etapas dizem só o que o clube já afirma em outros pontos do
     site (nenhum pré-requisito, aberto a qualquer curso, resultado nas redes).
     Datas não entram: são a parte que muda a cada edição, e data errada numa
     página é pior do que data ausente.
     ==========================================================================
   #}
-  <section id="prosel" class="prosel-section">
+  <section id="prosel" class="prosel-section prosel-section--destaque">
     <div class="container">
       <div class="secao-topo fade-in">
         <span class="secao-indice" aria-hidden="true">04</span>
         <div class="secao-corpo">
           <span class="section-label">// processo seletivo</span>
-          <h2 class="section-title">Faça o clube<br>acontecer</h2>
+          <h2 class="section-title section-title--destaque">Faça o clube<br>acontecer</h2>
           <p class="section-desc">O PROSEL é como se entra na administração do clube — quem organiza os eventos, dá as aulas e toca os projetos. Sem pré-requisito técnico: vontade basta.</p>
         </div>
       </div>
 
-      <div class="prosel-cartaz fade-in">
+      <div class="prosel-cartaz prosel-cartaz--destaque fade-in">
         <div class="prosel-say">
           {% if links.prosel %}
           <span class="event-badge event-badge--vivo">
@@ -439,7 +497,7 @@
           <span class="event-badge">Processo seletivo</span>
           {% endif %}
 
-          <h3 class="prosel-titulo">PROSEL <span>2026</span></h3>
+          <h3 class="prosel-titulo prosel-titulo--destaque">PROSEL <span>2026</span></h3>
 
           <p>Toda semana de curso, toda competição e toda edição da SEMCOMP saem de estudantes que se inscreveram num processo como este. Você escolhe a área que quer tocar — eventos, ensino, projetos, marketing, finanças — e passa a construir o clube em vez de só frequentá-lo.</p>
 
@@ -495,7 +553,7 @@
         </li>
         <li class="passo fade-in">
           <span class="passo-num" aria-hidden="true">2</span>
-          <h4>Conversa</h4>
+          <h4>Entrevista</h4>
           <p>Um bate-papo com a diretoria da área que você escolheu. Não é prova técnica.</p>
         </li>
         <li class="passo fade-in">
@@ -510,9 +568,13 @@
         </li>
       </ol>
 
+      {# O CTA prioritário da página inteira. `--grande` só existe aqui: é o
+         único botão que a /seja-membro precisa que seja achado sem procura, e
+         um segundo botão do mesmo tamanho em qualquer outro ponto acabaria com
+         a diferença que este tira do tamanho. #}
       <div class="prosel-acoes fade-in">
         {% if links.prosel %}
-        <a class="btn-primary" href="{{ links.prosel }}" target="_blank" rel="noopener noreferrer">
+        <a class="btn-primary btn-primary--grande" href="{{ links.prosel }}" target="_blank" rel="noopener noreferrer">
           Fazer minha inscrição
           {{ ic.icone('externo', 15) }}
         </a>

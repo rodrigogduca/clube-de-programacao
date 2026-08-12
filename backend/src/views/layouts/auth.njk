@@ -16,15 +16,21 @@
 
 {% block estilos %}
   {#
-    `site/tokens.css` ANTES de `style_login.css`, pela mesma razão que no
+    `site/tokens.css` ANTES de `auth/login.css`, pela mesma razão que no
     painel: estas telas passaram a derivar a paleta da paleta da home em vez de
     carregar uma terceira cópia com valores parecidos mas diferentes (#060608
     contra #08080b no fundo, #F0F0F2 contra #f6f1e9 no texto). Era a última
     ilha de cor do projeto — o painel já tinha sido trazido.
+
+    `auth/login.css` ERA `css/style_login.css`, solto na raiz de `css/` enquanto
+    todo o resto já morava numa pasta por área (`site/`, `painel/`). O nome
+    também mentia por dois terços: a folha veste login, solicitação de cadastro
+    e página de erro — as três telas deste layout. Agora a pasta acompanha o
+    layout que a carrega.
   #}
   <link rel="stylesheet" href="{{ static('css/site/tokens.css') }}">
   <link rel="stylesheet" href="{{ static('css/site/fontes.css') }}">
-  <link rel="stylesheet" href="{{ static('css/style_login.css') }}">
+  <link rel="stylesheet" href="{{ static('css/auth/login.css') }}">
   {# Só o necessário para as mensagens de campo do ui.js; o resto do CSS do
      painel não se aplica a estas telas. #}
   <link rel="stylesheet" href="{{ static('css/painel/validacao.css') }}">

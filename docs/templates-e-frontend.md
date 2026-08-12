@@ -150,7 +150,7 @@ Eram 2.500 linhas num arquivo só. Ao acrescentar um módulo, lembre de adiciona
 o `<link>` no layout — é o único lugar onde a ordem da cascata está declarada.
 
 **Uma paleta só, declarada num lugar só.** A fonte é `css/site/tokens.css`, a
-mesma folha que a página inicial usa; `painel/tokens.css` e `style_login.css`
+mesma folha que a página inicial usa; `painel/tokens.css` e `auth/login.css`
 apenas dão apelidos a ela (`--ink: var(--breu)`, `--bg: var(--breu)`). Mexer numa
 cor da home muda o painel e o login no mesmo commit.
 
@@ -280,12 +280,19 @@ e que deixou `.form-ajuda` e `.form-fixo` sem estilo nenhum.
 
 Servidos de `src/public/` sob o prefixo `/static`.
 
+**Uma pasta por área, e o nome da pasta é o do layout que a carrega:**
+`css/site/` ↔ `layouts/site.njk`, `css/painel/` ↔ `layouts/painel.njk`,
+`css/auth/` ↔ `layouts/auth.njk`. Folha nova entra na pasta da área, nunca na
+raiz de `css/`.
+
 | Arquivo | Onde atua |
 | --- | --- |
-| `css/style_home.css` | Página inicial |
-| `css/style_login.css` | Login, solicitação de cadastro e página de erro |
+| `css/site/tokens.css` | A paleta, a tipografia e o ritmo — a fonte de verdade das três áreas |
+| `css/site/fontes.css` | O `@font-face` da fonte da marca |
+| `css/site/publico.css` | As três páginas públicas: `/`, `/seja-membro` e `/semcomp` |
+| `css/auth/login.css` | Login, solicitação de cadastro e página de erro |
 | `css/painel/*.css` | Todo o painel, um arquivo por assunto (`tokens`, `kanban`, `membros`, `detalhe`, `modal`, …) carregados por `layouts/painel.njk`. `tokens` vem primeiro e `responsivo` por último |
-| `js/main.js` | Página inicial |
+| `js/main.js` | As três páginas públicas |
 | `js/auth.js` | Mostrar/ocultar senha |
 | `js/painel.js` | Cargo × setor, campo de senha, upload, abas de setor, menu do usuário |
 | `js/kanban.js` | Arraste, filtros e troca de status do kanban; expõe `window.PainelKanban` para o pop-up inserir e substituir cartão |

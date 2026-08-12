@@ -3,11 +3,30 @@
 Documentação técnica do sistema. Comece por [Instalação](docs/instalacao.md) se
 você só quer rodar o projeto.
 
-## Especificação
+## Estrutura do repositório
 
-| Documento | Para quê |
-| --- | --- |
-| [Especificação do sistema](specs/sistema.md) | Visão completa: escopo, arquitetura, cargos, dados e rotas |
+```
+.
+├── assets/originais/     Arquivos de câmera e arte como vieram. FONTE, não é
+│                         servido: `backend/scripts/otimizar-imagens.py` gera
+│                         os derivados de `src/public/images/` a partir daqui.
+├── backend/              A aplicação inteira (NestJS + Nunjucks + Prisma).
+│   ├── api/index.js      Ponto de entrada da função na Vercel.
+│   ├── prisma/           Schema do banco.
+│   ├── scripts/          Utilitários de manutenção (imagens, admin, build).
+│   ├── src/              Código, templates (`views/`) e estáticos (`public/`).
+│   └── test/             Testes e2e.
+├── docs/                 Documentação técnica — o índice abaixo.
+│   └── interno/          Material da diretoria. Git-ignorado de propósito.
+└── vercel.json           Build e roteamento do deploy.
+```
+
+Duas regras que explicam por que as pastas estão assim:
+
+- **Original nunca fica em `src/public/`.** O que está lá é servido; foto de
+  6 MB de câmera não pode estar ao alcance de um `<img>`.
+- **Documento interno nunca é commitado.** O repositório é público, e
+  `docs/interno/` existe justamente para o material que não pode ir junto.
 
 ## Índice
 

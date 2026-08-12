@@ -419,9 +419,10 @@ Tudo que não estiver no `schema.prisma` será dropado sem aviso individual.
 
 ## Diretório de membros e pop-ups de tarefa — 31/07/2026
 
-Implementação das specs [`sistema-interno-melhorias.md`](../specs/sistema-interno-melhorias.md)
-(comportamento) e [`ui-ux-sistema-interno.md`](../specs/ui-ux-sistema-interno.md)
-(aparência). São dois eixos independentes, entregues juntos.
+Implementação das specs `sistema-interno-melhorias.md` (comportamento) e
+`ui-ux-sistema-interno.md` (aparência). São dois eixos independentes, entregues
+juntos. As duas viviam numa pasta `specs/` que não está mais no repositório — o
+que ficou delas é o que este documento registra.
 
 ### O problema
 

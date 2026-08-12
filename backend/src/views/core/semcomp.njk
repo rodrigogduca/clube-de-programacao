@@ -91,8 +91,30 @@
     local: 'Universidade SENAI CIMATEC',
     endereco: 'Av. Orlando Gomes, 1845 — Piatã, Salvador/BA',
     cep: '41650-010',
-    mapa: 'https://www.google.com/maps/search/?api=1&query=SENAI+CIMATEC+Av.+Orlando+Gomes+1845+Piat%C3%A3+Salvador+BA'
+    consulta: 'Universidade SENAI CIMATEC, Av. Orlando Gomes, 1845 - Piatã, Salvador - BA, 41650-010'
   } %}
+
+  {#
+    OS DOIS ENDEREÇOS DO GOOGLE, DERIVADOS DE UMA CONSULTA SÓ.
+
+    `evento.consulta` é o texto que vai para o buscador do Google — e ele NÃO é
+    o `evento.endereco` que a página mostra. O de mostrar usa travessão e barra
+    ("Piatã, Salvador/BA") porque é assim que se escreve endereço em português;
+    o de buscar usa hífen e vírgula, que é o que o geocodificador entende, e
+    ainda leva o nome da universidade e o CEP na frente para não cair numa
+    Orlando Gomes de outra cidade.
+
+    São dois `set` separados e não dois campos dentro de `evento` porque um
+    literal de objeto do Nunjucks não pode referenciar a si mesmo enquanto está
+    sendo montado — `consulta` ainda não existe na hora de montar `mapa`.
+
+    O QUE ISTO EVITA: o mapa que a pessoa vê e o link que ela clica saírem de
+    duas strings escritas à mão. Eram exatamente o tipo de par que muda em um
+    lugar e fica velho no outro, e o sintoma seria o pior possível — o cartão
+    apontando para o campus certo e o botão levando a outro lugar.
+  #}
+  {% set evento_mapa = 'https://www.google.com/maps/search/?api=1&query=' ~ (evento.consulta | urlencode) %}
+  {% set evento_mapa_incorporado = 'https://maps.google.com/maps?output=embed&hl=pt-BR&z=16&q=' ~ (evento.consulta | urlencode) %}
 
   {#
     ==========================================================================
@@ -308,6 +330,25 @@
         </article>
         {% endfor %}
       </div>
+
+      {#
+        O CORREDOR, logo depois do cartão que fala dele.
+
+        Dos quatro formatos, três a pessoa consegue imaginar pelo nome —
+        palestra é palestra, workshop é workshop, competição é competição. O
+        quarto ("Estandes — o corredor") é o que precisa de imagem: quem nunca
+        foi lê "estandes" e pensa em feira de empresa, não em parceiro
+        distribuindo lata entre uma atividade e outra.
+
+        É a segunda foto da página, e a outra (`galeria/stand.jpg`, na seção 01)
+        mostra o outro lado do mesmo corredor: lá é o clube ATRÁS da bancada,
+        aqui é quem passa NA FRENTE dela. Sem legenda, como a de cima.
+      #}
+      <figure class="banner banner--pe fade-in">
+        <img src="{{ static('images/semcomp/estande.jpg') }}"
+             alt="Dois participantes da SEMCOMP conversando e rindo no corredor do evento, com latas distribuídas por um dos parceiros nas mãos"
+             width="1600" height="900" loading="lazy" decoding="async">
+      </figure>
     </div>
   </section>
 
@@ -505,6 +546,21 @@
         </div>
       </div>
 
+      {#
+        SEIS MODALIDADES.
+
+        A COPA DE E-SPORTS ENTRA SEM OS TÍTULOS, e de propósito — é a mesma
+        regra dos patrocinadores na seção 03. Qual jogo entra numa copa é a
+        primeira coisa que a pessoa procura e a última que a comissão fecha:
+        depende de licença, de máquina disponível e de quantas equipes se
+        inscrevem. Anunciar um título que sai depois é uma dívida que alguém
+        cobra na hora do chaveamento. Quando estiver fechado, o lugar deles é
+        na `desc` do cartão — e a `nota` deixa de precisar mandar ao Even3.
+
+        Ela fica entre a Game Jam e os jogos presenciais porque a leitura da
+        fileira desce do teclado para o controle: programar jogo, jogar jogo
+        eletrônico, jogar sem computador nenhum.
+      #}
       {% set modalidades = [
         {
           selo: 'OCC',
@@ -529,6 +585,12 @@
           titulo: 'Game Jam',
           desc: 'Desenvolvimento de jogos contra o relógio, promovido pelo Clube de Jogos: um tema, um prazo e um jogo jogável no fim.',
           nota: 'Em equipe &middot; Clube de Jogos'
+        },
+        {
+          selo: 'E-Sports',
+          titulo: 'Copa de E-Sports',
+          desc: 'O torneio de jogos eletrônicos da semana, disputado no sábado junto com as outras modalidades. Os títulos e o formato das chaves saem no Even3, com o regulamento.',
+          nota: 'Em equipe &middot; títulos definidos no Even3'
         },
         {
           selo: 'Presenciais',
@@ -595,7 +657,7 @@
               <dt>Onde</dt>
               <dd>
                 {{ evento.local }}<br>
-                <a href="{{ evento.mapa }}" target="_blank" rel="noopener noreferrer">
+                <a href="{{ evento_mapa }}" target="_blank" rel="noopener noreferrer">
                   {{ evento.endereco }}
                   {{ ic.icone('externo', 13) }}
                 </a>
@@ -621,6 +683,56 @@
               @semcompcimatec
             </a>
           </div>
+
+          {#
+            O MAPA.
+
+            "Av. Orlando Gomes, 1845" só serve a quem já sabe onde isso fica.
+            O campus tem várias entradas e fica numa avenida longa; a linha de
+            endereço responde "qual o endereço", e a pergunta real de quem vem
+            de fora é "como isso se parece e por onde eu entro".
+
+            FICA DEPOIS DOS BOTÕES, e não junto da linha "Onde" lá em cima. No
+            meio da ficha ele empurraria o "Fazer minha inscrição" — que é o que
+            esta seção existe para entregar — uns 380px para baixo. Aqui ele
+            fecha a coluna e ainda equilibra a altura contra o FAQ ao lado, que
+            tem oito perguntas.
+
+            SEM CHAVE DE API. O `output=embed` do maps.google.com é a forma
+            keyless; a Embed API oficial (`/maps/embed/v1/place`) faria a mesma
+            coisa, mas exige chave, e chave exige cota, restrição de referrer e
+            um segredo a mais para rodar em produção — três coisas para desenhar
+            um mapa que ninguém vai clicar duas vezes.
+
+            `loading="lazy"` porque o iframe traz o runtime de mapas do Google
+            inteiro, e ele está bem abaixo da dobra: sem isso a página passaria
+            a baixar algumas centenas de KB de terceiro no primeiro carregamento
+            para desenhar uma coisa que a maioria não rola até ver.
+
+            O `title` NÃO É DECORAÇÃO: é o nome acessível do iframe, e sem ele o
+            leitor de tela anuncia só "quadro". A legenda embaixo repete o
+            endereço em texto — quem não pode usar o mapa continua tendo o dado,
+            e quem pode ganha o botão para abri-lo no aplicativo.
+
+            `width`/`height` são 640x480 para casar com o `aspect-ratio: 4/3` do
+            CSS: eles reservam o espaço antes de a folha chegar, e um par em
+            outra proporção faria a página dar um pulo quando ela chegasse.
+          #}
+          <figure class="mapa fade-in">
+            <iframe
+              src="{{ evento_mapa_incorporado }}"
+              title="Mapa do local da SEMCOMP 2026: {{ evento.local }}, {{ evento.endereco }}"
+              width="640" height="480"
+              loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen></iframe>
+            <figcaption class="mapa-pe">
+              <span>{{ evento.local }} &middot; CEP {{ evento.cep }}</span>
+              <a href="{{ evento_mapa }}" target="_blank" rel="noopener noreferrer">
+                Abrir no Google Maps
+                {{ ic.icone('externo', 13) }}
+              </a>
+            </figcaption>
+          </figure>
         </div>
 
         {% set duvidas = [
