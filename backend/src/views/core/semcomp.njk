@@ -1,0 +1,460 @@
+{#
+  SEMCOMP — a página do maior evento do clube.
+
+    herói ilustrado · sobre o evento · o que acontece · programação ·
+    inscrição e dúvidas
+
+  ERA UM MODAL. Um diálogo não tem endereço: não dava para mandar o link do
+  evento no grupo, o Google não indexava uma linha dele, e a semana inteira —
+  palestras, workshops, hackathon — vivia espremida numa caixa de 760px que já
+  precisava rolar por dentro. Agora é página, com `og:image` própria, entrada
+  no sitemap e espaço para a grade crescer.
+
+  SOBRE A PROGRAMAÇÃO: a lista `programacao` abaixo nasce vazia de propósito.
+  Enquanto ela estiver assim, a seção mostra honestamente que a grade sai no
+  Even3 — em vez de uma tabela de mentira com horário e palestrante inventados.
+  Preencher a lista é o suficiente para a grade aparecer; nada de CSS ou de
+  template precisa mudar.
+
+  A moldura (fundo, navbar, modal da Comunidade, rodapé) vem de
+  `layouts/site.njk`.
+#}
+{% extends "layouts/site.njk" %}
+{% import "partials/icones.njk" as ic %}
+
+{% block titulo %}SEMCOMP 2026 | Semana da Computação — Clube de Programação SENAI CIMATEC{% endblock %}
+
+{% block meta %}
+  <meta name="description" content="SEMCOMP 2026 — a Semana da Computação da Universidade SENAI CIMATEC, organizada pelo Clube de Programação. Uma semana de palestras, workshops e hackathons, aberta a quem quiser assistir. Inscrições pelo Even3.">
+  <meta name="keywords" content="SEMCOMP, SEMCOMP 2026, SEMCOMP CIMATEC, Semana da Computação, Semana da Computação SENAI CIMATEC, hackathon Salvador, workshop programação Salvador, evento de tecnologia Bahia, Clube de Programação, SENAI CIMATEC">
+  <meta name="author" content="Clube de Programação - Universidade SENAI CIMATEC">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="sitemap" type="application/xml" href="{{ site_url }}/sitemap.xml">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:site_name" content="Clube de Programação - Universidade SENAI CIMATEC">
+  <meta property="og:title" content="SEMCOMP 2026 — Semana da Computação | SENAI CIMATEC">
+  <meta property="og:description" content="Uma semana inteira de palestras, workshops e hackathons na Universidade SENAI CIMATEC. Aberta a quem quiser assistir.">
+  {# A foto do hackathon e não o logo do clube: o que se compartilha aqui é o
+     evento, e uma sala cheia de gente vende a semana melhor que um selo. #}
+  <meta property="og:image" content="{{ site_url }}{{ static('images/semcomp/hackathon.jpg') }}">
+  <meta property="og:locale" content="pt_BR">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SEMCOMP 2026 — Semana da Computação | SENAI CIMATEC">
+  <meta name="twitter:description" content="Uma semana inteira de palestras, workshops e hackathons na Universidade SENAI CIMATEC.">
+  <meta name="twitter:image" content="{{ site_url }}{{ static('images/semcomp/hackathon.jpg') }}">
+{% endblock %}
+
+{% block conteudo %}
+
+  {#
+    ==========================================================================
+    HERÓI ILUSTRADO
+
+    A foto do hackathon ocupa a largura da tela e o letreiro de neon fica por
+    cima dela. Duas camadas de degradê entre uma coisa e outra fazem o texto ser
+    legível sem apagar a foto — ver `.capa-veu` no CSS. É o mesmo raciocínio do
+    pato na home: a luz nasce de dentro da imagem, não é um filtro por cima.
+    ==========================================================================
+  #}
+  <header class="capa">
+    <img src="{{ static('images/semcomp/hackathon.jpg') }}"
+         alt="" aria-hidden="true" class="capa-foto"
+         width="1600" height="1200" fetchpriority="high" decoding="async">
+    <div class="capa-veu" aria-hidden="true"></div>
+
+    <div class="container capa-corpo">
+      <a href="{{ url('home') }}" class="pagina-voltar fade-in">
+        <span aria-hidden="true">&larr;</span> Clube de Programação
+      </a>
+
+      {% if links.semcomp %}
+      <span class="event-badge event-badge--vivo fade-in">
+        <span class="aviso-ponto" aria-hidden="true"></span>
+        Inscrições abertas
+      </span>
+      {% else %}
+      <span class="event-badge fade-in">Evento principal do clube</span>
+      {% endif %}
+
+      {# O letreiro É o <h1>: o `alt` carrega o texto, e a `.sr-only` dentro
+         dele dá ao título um texto de verdade para leitor de tela e para o
+         índice do Google — `alt` de imagem dentro de heading é lido, mas um
+         texto explícito não depende de a imagem carregar. #}
+      <h1 class="capa-titulo fade-in">
+        <span class="sr-only">SEMCOMP 2026 — Semana da Computação da Universidade SENAI CIMATEC</span>
+        <img src="{{ static('images/semcomp/semcomp-2026.png') }}"
+             alt="SEMCOMP 2026 — Semana da Computação, 5 anos"
+             class="capa-logo" width="767" height="308" fetchpriority="high">
+      </h1>
+
+      <p class="capa-linha fade-in">Uma semana inteira de palestras, workshops e hackathons na Universidade SENAI CIMATEC — organizada por estudantes, aberta a quem quiser assistir.</p>
+
+      <div class="capa-acoes fade-in">
+        {% if links.semcomp %}
+        <a class="btn-primary" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
+          Quero me inscrever
+          {{ ic.icone('externo', 15) }}
+        </a>
+        {% else %}
+        <a class="btn-primary" href="#inscricao">Como participar</a>
+        {% endif %}
+        <a class="btn-secondary" href="#sobre">O que é a SEMCOMP</a>
+      </div>
+
+      <dl class="capa-ficha fade-in">
+        <div>
+          <dt>Edição</dt>
+          <dd>2026 &mdash; 5 anos</dd>
+        </div>
+        <div>
+          <dt>Onde</dt>
+          <dd>Universidade SENAI CIMATEC</dd>
+        </div>
+        <div>
+          <dt>Formato</dt>
+          <dd>Palestras, workshops e hackathons</dd>
+        </div>
+        <div>
+          <dt>Quem pode</dt>
+          <dd>Aberto ao público</dd>
+        </div>
+      </dl>
+    </div>
+  </header>
+
+  {#
+    ==========================================================================
+    01 — SOBRE O EVENTO
+    ==========================================================================
+  #}
+  <section id="sobre">
+    <div class="container">
+      <div class="secao-topo fade-in">
+        <span class="secao-indice" aria-hidden="true">01</span>
+        <div class="secao-corpo">
+          <span class="section-label">// sobre o evento</span>
+          <h2 class="section-title">A semana em que<br>o campus vira código</h2>
+          <p class="section-desc">A Semana da Computação é o maior evento organizado pelo Clube de Programação, e em 2026 ela chega à quinta edição.</p>
+        </div>
+      </div>
+
+      <div class="sobre-evento">
+        <div class="sobre-texto fade-in-left">
+          <p>
+            A SEMCOMP nasceu da mesma ideia que sustenta o clube: <strong>conhecimento se constrói melhor quando é compartilhado</strong>. Durante uma semana, o campus recebe gente de fora e de dentro para falar do que está fazendo — em palestra, em oficina de mão na massa ou em competição.
+          </p>
+          <p>
+            Tudo é organizado por estudantes voluntários. Quem monta a grade, fala com os palestrantes, cuida do credenciamento e corrige o hackathon é a diretoria do clube — a mesma que entra por <a href="{{ url('seja_membro') }}#prosel">processo seletivo</a>.
+          </p>
+          <p>
+            <strong>Não é preciso ser membro do clube nem estudar computação</strong> para participar. A semana é aberta, e boa parte de quem aparece está justamente descobrindo se a área é para si.
+          </p>
+        </div>
+
+        {#
+          A foto do stand estava sem uso desde que a home encolheu. É o clube
+          recebendo gente no corredor — exatamente o que a SEMCOMP é do lado de
+          fora do auditório.
+        #}
+        <figure class="foto-quadro fade-in-right">
+          <img src="{{ static('images/galeria/stand.jpg') }}"
+               alt="Membros do Clube de Programação no estande do evento, com o banner do clube ao fundo"
+               width="1400" height="933" loading="lazy" decoding="async">
+          <figcaption>O estande do clube durante a semana.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="container"><hr class="divider"></div>
+
+  {#
+    ==========================================================================
+    02 — O QUE ACONTECE
+
+    Os quatro formatos que a semana tem. É a informação que decide se vale ir:
+    "palestras, workshops e hackathons" numa linha só não diz a quem serve cada
+    coisa nem quanto tempo custa.
+    ==========================================================================
+  #}
+  <section id="atividades">
+    <div class="container">
+      <div class="secao-topo fade-in">
+        <span class="secao-indice" aria-hidden="true">02</span>
+        <div class="secao-corpo">
+          <span class="section-label">// o que acontece</span>
+          <h2 class="section-title">Quatro formatos,<br>uma semana</h2>
+          <p class="section-desc">Dá para ir a tudo, e dá para ir a uma coisa só. Cada formato pede um tipo diferente de disponibilidade.</p>
+        </div>
+      </div>
+
+      {% set formatos = [
+        {
+          selo: 'Palestra',
+          titulo: 'Quem já está lá fora',
+          desc: 'Profissionais e pesquisadores contando o que fazem de verdade no dia a dia — a parte que não aparece na ementa da disciplina.',
+          nota: 'Sente e assista &middot; sem pré-requisito'
+        },
+        {
+          selo: 'Workshop',
+          titulo: 'Mão no teclado',
+          desc: 'Oficinas práticas em turma pequena. Você sai com alguma coisa rodando no seu computador, não com um slide.',
+          nota: 'Traga o notebook &middot; vagas limitadas'
+        },
+        {
+          selo: 'Hackathon',
+          titulo: 'A maratona que fecha a semana',
+          desc: 'Times resolvendo um desafio real contra o relógio. É o ponto alto da SEMCOMP e o que mais gente leva para o currículo.',
+          nota: 'Em equipe &middot; inscrição à parte'
+        },
+        {
+          selo: 'Estandes',
+          titulo: 'O corredor',
+          desc: 'Os clubes temáticos, os projetos em andamento e os parceiros ficam de portas abertas entre uma atividade e outra.',
+          nota: 'Circulação livre &middot; o dia inteiro'
+        }
+      ] %}
+
+      <div class="formato-grid stagger-children">
+        {% for f in formatos %}
+        <article class="formato-card fade-in">
+          <span class="formato-selo">{{ f.selo }}</span>
+          <h3>{{ f.titulo }}</h3>
+          <p>{{ f.desc }}</p>
+          <span class="formato-nota">{{ f.nota | safe }}</span>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <div class="container"><hr class="divider"></div>
+
+  {#
+    ==========================================================================
+    03 — PROGRAMAÇÃO
+
+    COMO PREENCHER A GRADE: acrescente objetos à lista `programacao` abaixo, um
+    por dia. Cada dia tem `dia` (rótulo curto), `data` (opcional) e `itens`, e
+    cada item tem `hora`, `titulo`, `tipo` e `quem` (opcional).
+
+      {% raw %}{% set programacao = [
+        {
+          dia: 'Segunda', data: '20 de abril',
+          itens: [
+            { hora: '19h', tipo: 'Palestra', titulo: 'Abertura', quem: 'Diretoria do clube' },
+            { hora: '20h', tipo: 'Palestra', titulo: 'IA na indústria', quem: 'Fulana de Tal' }
+          ]
+        }
+      ] %}{% endraw %}
+
+    ENQUANTO ELA ESTIVER VAZIA a seção mostra o aviso honesto de que a grade sai
+    no Even3. Isso é de propósito: uma tabela com horário e nome inventados para
+    "preencher o layout" é pior do que nenhuma tabela — as pessoas se organizam
+    a partir dela.
+    ==========================================================================
+  #}
+  <section id="programacao">
+    <div class="container">
+      <div class="secao-topo fade-in">
+        <span class="secao-indice" aria-hidden="true">03</span>
+        <div class="secao-corpo">
+          <span class="section-label">// programação</span>
+          <h2 class="section-title">A grade<br>da semana</h2>
+          <p class="section-desc">Cada dia tem um tema e um ritmo diferente. A grade fechada é divulgada junto com a abertura das inscrições.</p>
+        </div>
+      </div>
+
+      {% set programacao = [] %}
+
+      {% if programacao.length %}
+      <div class="grade stagger-children">
+        {% for d in programacao %}
+        <section class="grade-dia fade-in">
+          <header class="grade-cabecalho">
+            <h3>{{ d.dia }}</h3>
+            {% if d.data %}<span class="grade-data">{{ d.data }}</span>{% endif %}
+          </header>
+          <ol class="grade-itens">
+            {% for i in d.itens %}
+            <li class="grade-item">
+              <span class="grade-hora">{{ i.hora }}</span>
+              <span class="grade-corpo">
+                <span class="grade-tipo">{{ i.tipo }}</span>
+                <strong>{{ i.titulo }}</strong>
+                {% if i.quem %}<span class="grade-quem">{{ i.quem }}</span>{% endif %}
+              </span>
+            </li>
+            {% endfor %}
+          </ol>
+        </section>
+        {% endfor %}
+      </div>
+      {% else %}
+      {#
+        Estado vazio honesto. Ele diz três coisas: que a grade ainda não saiu,
+        onde ela vai sair e o que dá para fazer agora — que é o mínimo que um
+        vazio deve fazer para não ser só um buraco na página.
+      #}
+      <div class="vazio fade-in">
+        <span class="vazio-icone" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        </span>
+        <h3>A grade ainda não foi publicada</h3>
+        <p>Palestras, workshops e horários saem no Even3 e no Instagram da SEMCOMP assim que fecharem. Quem já se inscreveu recebe o aviso por lá.</p>
+        <div class="vazio-acoes">
+          {% if links.semcomp %}
+          <a class="btn-outline" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
+            Ver no Even3
+            {{ ic.icone('externo', 15) }}
+          </a>
+          {% endif %}
+          <a class="btn-outline" href="{{ links.instagramSemcomp }}" target="_blank" rel="noopener noreferrer">
+            {{ ic.icone('instagram', 16) }}
+            @semcompcimatec
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <div class="container"><hr class="divider"></div>
+
+  {#
+    ==========================================================================
+    04 — INSCRIÇÃO E DÚVIDAS
+
+    O FAQ RESPONDE SÓ O QUE O CLUBE JÁ AFIRMA em outros pontos do site. Falta
+    aqui, de propósito, a pergunta mais frequente de todas — "é pago?" — e a do
+    certificado: nenhuma das duas tem resposta escrita em lugar nenhum deste
+    repositório, e chutar num FAQ é criar uma promessa que alguém vai cobrar no
+    credenciamento. Quando a diretoria definir, acrescente os pares na lista
+    `duvidas`.
+    ==========================================================================
+  #}
+  <section id="inscricao">
+    <div class="container">
+      <div class="secao-topo fade-in">
+        <span class="secao-indice" aria-hidden="true">04</span>
+        <div class="secao-corpo">
+          <span class="section-label">// inscrição</span>
+          <h2 class="section-title">Como participar</h2>
+          <p class="section-desc">A inscrição é feita no Even3, a plataforma que emite a lista de participantes do evento.</p>
+        </div>
+      </div>
+
+      <div class="inscricao-grid">
+        <div class="inscricao-cta fade-in-left">
+          <span class="inscricao-marca" aria-hidden="true">
+            <img src="{{ static('images/semcomp/semcomp-2026.png') }}" alt=""
+                 width="767" height="308" loading="lazy" decoding="async">
+          </span>
+          <h3>SEMCOMP 2026</h3>
+          <p>Universidade SENAI CIMATEC &middot; Salvador &mdash; BA</p>
+          <div class="inscricao-acoes">
+            {% if links.semcomp %}
+            <a class="btn-primary" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
+              Fazer minha inscrição
+              {{ ic.icone('externo', 15) }}
+            </a>
+            {% else %}
+            <span class="event-nota">As inscrições ainda não abriram — avisamos no Instagram.</span>
+            {% endif %}
+            <a class="btn-outline" href="{{ links.instagramSemcomp }}" target="_blank" rel="noopener noreferrer">
+              {{ ic.icone('instagram', 17) }}
+              @semcompcimatec
+            </a>
+          </div>
+        </div>
+
+        {% set duvidas = [
+          {
+            p: 'Preciso ser membro do clube para ir?',
+            r: 'Não. A SEMCOMP é aberta ao público — dá para assistir sem nenhum vínculo com o clube. Se depois você quiser entrar, a <a href="' ~ url('seja_membro') ~ '">membresia também é gratuita</a>.'
+          },
+          {
+            p: 'Preciso estudar computação?',
+            r: 'Não. Boa parte de quem aparece está justamente descobrindo se a área serve para si, e as palestras são pensadas para quem chega de fora.'
+          },
+          {
+            p: 'Onde acontece?',
+            r: 'Na Universidade SENAI CIMATEC, em Salvador. As salas de cada atividade saem junto com a grade.'
+          },
+          {
+            p: 'Preciso levar computador?',
+            r: 'Só para os workshops, que são práticos. Palestras e estandes não pedem nada além de aparecer.'
+          },
+          {
+            p: 'Quem organiza?',
+            r: 'O Clube de Programação — estudantes voluntários da própria universidade. A diretoria entra por <a href="' ~ url('seja_membro') ~ '#prosel">processo seletivo</a>, e organizar a SEMCOMP é parte do trabalho.'
+          }
+        ] %}
+
+        {#
+          `<details>` nativo e não um acordeão em JavaScript: ele já abre e
+          fecha sozinho, já é anunciado como expansível pelo leitor de tela, já
+          responde ao teclado e ainda é encontrado pelo Ctrl+F do navegador
+          mesmo fechado. Um acordeão feito à mão custa umas quarenta linhas de
+          JS para chegar pior nessas quatro coisas.
+        #}
+        <div class="faq fade-in-right">
+          {% for d in duvidas %}
+          <details class="faq-item">
+            <summary>
+              {{ d.p }}
+              <span class="faq-sinal" aria-hidden="true"></span>
+            </summary>
+            <p>{{ d.r | safe }}</p>
+          </details>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
+
+{% block schema_pagina %}
+  {#
+    Schema de evento. `eventAttendanceMode` presencial e `eventStatus` agendado
+    são o que o Google usa para montar o cartão de evento na busca.
+
+    SEM `startDate`: o schema.org exige data ISO, e a do evento ainda não está
+    definida em lugar nenhum deste repositório. Um `startDate` chutado alimenta
+    o rich result com uma data errada — que é pior do que não ter cartão.
+    Quando a data existir, acrescente `"startDate": "2026-04-20"` e
+    `"endDate"`.
+  #}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    "name": "SEMCOMP 2026 — Semana da Computação",
+    "url": "{{ canonical_url }}",
+    "description": "Uma semana inteira de palestras, workshops e hackathons na Universidade SENAI CIMATEC, organizada pelo Clube de Programação.",
+    "image": "{{ site_url }}{{ static('images/semcomp/hackathon.jpg') }}",
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+    "eventStatus": "https://schema.org/EventScheduled",
+    "location": {
+      "@type": "Place",
+      "name": "Universidade SENAI CIMATEC",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Salvador",
+        "addressRegion": "BA",
+        "addressCountry": "BR"
+      }
+    },
+    "organizer": {
+      "@type": "Organization",
+      "name": "Clube de Programação",
+      "url": "{{ site_url }}/"
+    }
+  }
+  </script>
+{% endblock %}

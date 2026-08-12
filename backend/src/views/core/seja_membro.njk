@@ -1,13 +1,13 @@
 {#
   SEJA MEMBRO — tudo o que é "entrar no clube", numa página só.
 
-    herói da página · comunidade · clubes temáticos · PROSEL
+    herói da página · comunidade · clubes temáticos · competições · PROSEL
 
   A ordem é de compromisso crescente, e é o funil real do clube: entra-se na
-  comunidade (não custa nada), escolhe-se uma vertente (custa tempo), e só
-  então aparece o processo seletivo da diretoria (custa responsabilidade). A
-  home antiga misturava os três degraus em seções distantes umas das outras e
-  pedia os três ao mesmo tempo.
+  comunidade (não custa nada), escolhe-se uma vertente (custa tempo), treina-se
+  para competir (custa madrugada) e só então aparece o processo seletivo da
+  diretoria (custa responsabilidade). A home antiga misturava esses degraus em
+  seções distantes umas das outras e pedia todos ao mesmo tempo.
 
   As duas coisas com prazo — PROSEL e camisas — ficam onde a pessoa já decidiu
   entrar, e não no primeiro contato com o clube.
@@ -61,7 +61,7 @@
         Seja<br><span class="highlight">membro</span>
       </h1>
 
-      <p class="pagina-linha fade-in">Três degraus, do mais leve ao mais sério. Você pode parar no primeiro — a maioria para, e continua fazendo parte.</p>
+      <p class="pagina-linha fade-in">Quatro degraus, do mais leve ao mais sério. Você pode parar no primeiro — a maioria para, e continua fazendo parte.</p>
 
       {#
         O índice é navegação de verdade (âncoras), não decoração: a página é
@@ -84,8 +84,15 @@
           </a>
         </li>
         <li>
-          <a href="#prosel">
+          <a href="#competicoes">
             <span class="indice-num" aria-hidden="true">03</span>
+            <span class="indice-nome">Competições</span>
+            <span class="indice-desc">Treinar e competir</span>
+          </a>
+        </li>
+        <li>
+          <a href="#prosel">
+            <span class="indice-num" aria-hidden="true">04</span>
             <span class="indice-nome">PROSEL</span>
             <span class="indice-desc">Entrar para a diretoria</span>
           </a>
@@ -263,13 +270,134 @@
         {% endfor %}
       </div>
 
-      {# A maratona não é um dos três clubes: é um treino que atravessa todos.
-         Fica como nota de rodapé da seção, ligada ao modal que tem os dois
-         grupos por nível. #}
+    </div>
+  </section>
+
+  <div class="container"><hr class="divider"></div>
+
+  {#
+    ==========================================================================
+    03 — COMPETIÇÕES
+
+    Isto era uma frase solta no pé dos clubes temáticos ("tem também a Maratona
+    de Programação, ver os grupos"). Mas competição não é uma nota de rodapé do
+    clube: é metade do que ele faz — e as três provas abaixo têm calendário,
+    treino próprio e turma própria.
+
+    O BANNER ENTRA ANTES DO TEXTO, e é a única foto de largura cheia da página.
+    Descrever treino de maratona em palavras não passa a sensação de uma sala
+    inteira em silêncio com trinta pessoas olhando para o monitor; a foto passa
+    em um segundo.
+    ==========================================================================
+  #}
+  <section id="competicoes">
+    <div class="container">
+      <div class="secao-topo fade-in">
+        <span class="secao-indice" aria-hidden="true">03</span>
+        <div class="secao-corpo">
+          <span class="section-label">// competições</span>
+          <h2 class="section-title">Programação<br>também é esporte</h2>
+          <p class="section-desc">O clube treina e leva times para as três principais competições de programação do país. Não é preciso ser bom para começar — é preciso começar para ficar bom.</p>
+        </div>
+      </div>
+
+      <figure class="banner fade-in">
+        <img src="{{ static('images/galeria/maratona-lab.jpg') }}"
+             alt="Laboratório do SENAI CIMATEC cheio de estudantes durante um treino da maratona de programação"
+             width="1600" height="900" loading="lazy" decoding="async">
+        <figcaption class="banner-legenda">
+          <span>Treino de maratona no laboratório &mdash; toda semana, durante o semestre.</span>
+        </figcaption>
+      </figure>
+
+      {#
+        As três provas.
+
+        `logo` aponta para images/competicoes/, gerado por
+        scripts/otimizar-imagens.py. `claro: true` diz que a arte foi desenhada
+        para fundo BRANCO (azul da SBC, preto e âmbar da OBI) e por isso vai
+        sobre uma plaquinha branca — deixar o branco transparente ali só
+        esconderia o traço escuro contra a página escura. O papagaio do MFP já
+        vem com alfa e traço claro, então assenta direto no escuro.
+      #}
+      {% set competicoes = [
+        {
+          slug: 'sbc', claro: true,
+          nome: 'Maratona SBC de Programação',
+          sigla: 'Maratona SBC',
+          desc: 'A principal competição universitária do país, organizada pela Sociedade Brasileira de Computação. Times de três resolvem problemas de algoritmos contra o relógio; quem passa na regional vai para a final brasileira.'
+        },
+        {
+          slug: 'obi', claro: true,
+          nome: 'Olimpíada Brasileira de Informática',
+          sigla: 'OBI',
+          desc: 'A porta de entrada de quem está começando. Tem fase por nível e não exige experiência prévia — muita gente do clube resolveu o primeiro problema de programação numa prova da OBI.'
+        },
+        {
+          slug: 'mfp', claro: false,
+          nome: 'Maratona Feminina de Programação',
+          sigla: 'MFP',
+          desc: 'Competição voltada a meninas e mulheres, com o mesmo formato da maratona tradicional. O clube monta e treina times todo ano.'
+        }
+      ] %}
+
+      <div class="competicao-grid stagger-children">
+        {% for c in competicoes %}
+        <article class="competicao-card fade-in">
+          <span class="competicao-selo{% if c.claro %} competicao-selo--claro{% endif %}">
+            <img src="{{ static('images/competicoes/' ~ c.slug ~ '.png') }}"
+                 alt="Logotipo da {{ c.nome }}"
+                 width="480" height="480" loading="lazy" decoding="async">
+          </span>
+          <h3>{{ c.sigla }}</h3>
+          <p>{{ c.desc }}</p>
+        </article>
+        {% endfor %}
+      </div>
+
+      {#
+        DESTAQUE DO MFP.
+
+        Ganha um bloco próprio porque é o único cuja participação depende de
+        quem a pessoa é, e não de quanto ela treinou — e porque o clube tem
+        foto da própria turma, que é a prova de que a competição acontece aqui
+        e não só no site da organizadora.
+
+        A marca em branco (`mfp-marca.png`) faz o papel de título; o papagaio
+        (`mfp.png`) fica atrás, grande e cortado pela borda, como o pato faz no
+        herói da home. Os dois têm alfa, então vão direto sobre o roxo.
+      #}
+      <div class="mfp fade-in">
+        <img src="{{ static('images/competicoes/mfp.png') }}" alt="" aria-hidden="true"
+             class="mfp-arara" width="480" height="480" loading="lazy" decoding="async">
+
+        <div class="mfp-say">
+          <span class="mfp-selo">Competição</span>
+          <h3 class="mfp-marca">
+            <img src="{{ static('images/competicoes/mfp-marca.png') }}"
+                 alt="Maratona Feminina de Programação"
+                 width="480" height="480" loading="lazy" decoding="async">
+          </h3>
+          <p>Meninas e mulheres do CIMATEC treinando e competindo juntas. O clube monta os times, organiza os treinos e acompanha a prova — e quem nunca competiu entra do mesmo jeito.</p>
+          {% if links.maratonaNovatos %}
+          <button type="button" class="link-seta" data-modal="modalComunidade">
+            Entrar num grupo de treino
+            {{ ic.icone('seta', 16) }}
+          </button>
+          {% endif %}
+        </div>
+
+        <figure class="mfp-foto">
+          <img src="{{ static('images/galeria/maratona-feminina.jpg') }}"
+               alt="Participantes da Maratona Feminina de Programação reunidas na sala, com balões e o quadro escrito 'Bem vindas à MFP'"
+               width="1400" height="1050" loading="lazy" decoding="async">
+        </figure>
+      </div>
+
       {% if links.maratonaNovatos or links.maratonaExperientes %}
       <p class="secao-rodape fade-in">
-        Tem também a <strong>Maratona de Programação</strong>, com grupos de treino por nível.
-        <button type="button" class="link-botao" data-modal="modalComunidade">Ver os grupos</button>
+        Os treinos acontecem em dois grupos, por nível.
+        <button type="button" class="link-botao" data-modal="modalComunidade">Ver os grupos de estudo</button>
       </p>
       {% endif %}
     </div>
@@ -279,9 +407,9 @@
 
   {#
     ==========================================================================
-    03 — PROSEL
+    04 — PROSEL
 
-    O terceiro degrau e o único com moldura âmbar cheia: é o que a página
+    O último degrau e o único com moldura âmbar cheia: é o que a página
     empurra com mais força, e é o único bloco com prazo.
 
     A ficha e as etapas dizem só o que o clube já afirma em outros pontos do
@@ -293,7 +421,7 @@
   <section id="prosel" class="prosel-section">
     <div class="container">
       <div class="secao-topo fade-in">
-        <span class="secao-indice" aria-hidden="true">03</span>
+        <span class="secao-indice" aria-hidden="true">04</span>
         <div class="secao-corpo">
           <span class="section-label">// processo seletivo</span>
           <h2 class="section-title">Faça o clube<br>acontecer</h2>
@@ -333,15 +461,20 @@
         </div>
 
         {#
-          `galeria/evento.jpg` é retrato (1400×2100) e estava sem uso no
-          repositório. É um membro falando para a sala com o banner do clube
-          atrás — exatamente o que o PROSEL oferece a quem se inscreve, e o
-          formato em pé é o que o slot lateral do cartaz pede.
+          A TURMA INTEIRA, e não mais uma pessoa falando (`galeria/evento.jpg`).
+
+          O cartaz pede "faça parte disto", e disto é gente: esta é a foto de
+          encerramento de um processo seletivo, com quem entrou e quem já
+          estava, na sala, com o QR do clube ainda na projeção. Uma pessoa
+          sozinha no palco vende palestra; um grupo vende grupo.
+
+          `galeria/prosel.jpg` — 4:3 gerado por scripts/otimizar-imagens.py a
+          partir de um HEIC de 4284×5712 e 2,6 MB que nenhum navegador abre.
         #}
         <figure class="prosel-foto">
-          <img src="{{ static('images/galeria/evento.jpg') }}"
-               alt="Membro do clube apresentando para a plateia ao lado do banner do Clube de Programação"
-               width="1400" height="2100" loading="lazy" decoding="async">
+          <img src="{{ static('images/galeria/prosel.jpg') }}"
+               alt="Integrantes do Clube de Programação reunidos na sala ao fim de um processo seletivo"
+               width="1400" height="1050" loading="lazy" decoding="async">
           <figcaption>Quem entra pelo PROSEL é quem conduz.</figcaption>
         </figure>
       </div>

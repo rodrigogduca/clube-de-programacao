@@ -1,11 +1,12 @@
 {#
-  LAYOUT DO SITE PÚBLICO — a moldura que a home e a /seja-membro dividem.
+  LAYOUT DO SITE PÚBLICO — a moldura das três telas: `/`, `/seja-membro` e
+  `/semcomp`.
 
-  Tudo o que é igual nas duas telas mora aqui: as camadas de luz do fundo, a
-  navbar, o menu do celular, os três modais e o rodapé. Antes isso era o começo
-  e o fim de `core/home.njk`, e existia uma página pública só; com a segunda, a
-  alternativa a esta camada seria manter duas cópias da navbar em dia — que é
-  como um item de menu some de uma tela e fica na outra.
+  Tudo o que é igual nas três mora aqui: as camadas de luz do fundo, a navbar,
+  o menu do celular, os dois modais e o rodapé. Antes isso era o começo e o fim
+  de `core/home.njk`, e existia uma página pública só; a alternativa a esta
+  camada seria manter três cópias da navbar em dia — que é como um item de menu
+  some de uma tela e fica na outra.
 
   Blocos que as telas preenchem:
 
@@ -13,15 +14,20 @@
     meta            Canonical, Open Graph, robots (vem do base.njk).
     conteudo        O corpo da página. É o que cada tela realmente escreve.
 
-  A NAVBAR TEM QUATRO ITENS, e dois deles não navegam:
+  A NAVBAR TEM QUATRO ITENS, e só um deles não navega:
 
     Comunidade   abre modal
-    SEMCOMP      abre modal
+    SEMCOMP      vai para /semcomp
     Seja Membro  vai para /seja-membro
     Login        botão de destaque
 
-  Comunidade e SEMCOMP são `<button>` e não `<a href="#...">` de propósito: não
-  existe seção nenhuma para onde rolar, o conteúdo delas é o próprio modal.
+  A SEMCOMP ERA UM MODAL E VIROU PÁGINA. Um diálogo não tem endereço: não dava
+  para mandar o link do evento por WhatsApp, o Google não indexava nada dele, e
+  a grade de uma semana inteira de palestras não cabe numa caixa de 760px que
+  já precisava rolar por dentro.
+
+  Comunidade continua `<button>` e não `<a href="#...">` de propósito: não
+  existe seção nenhuma para onde rolar, o conteúdo dela é o próprio modal.
   Fingir de âncora deixaria o endereço com um `#comunidade` que não leva a
   lugar nenhum se o JavaScript falhar.
 #}
@@ -85,7 +91,8 @@
       {# `logo-256.png` e não `logo.png`: aqui ele é desenhado com 36px, e o
          original de 864px/147 KB levava ~14s para pintar num 3G. O grande
          continua nas metas de compartilhamento, que é onde tamanho é útil. #}
-      <img src="{{ static('images/logo-256.png') }}" alt="Logo Clube de Programação SENAI CIMATEC">
+      <img src="{{ static('images/logo-256.png') }}" alt="Logo Clube de Programação SENAI CIMATEC"
+           width="36" height="36">
       <span>Clube de Programação</span>
     </a>
 
@@ -93,7 +100,7 @@
       {# `data-modal` é o contrato com o js/main.js: qualquer elemento com ele
          abre o modal de mesmo id. Não há um listener por botão. #}
       <li><button type="button" class="nav-item" data-modal="modalComunidade">Comunidade</button></li>
-      <li><button type="button" class="nav-item" data-modal="modalSemcomp">SEMCOMP</button></li>
+      <li><a href="{{ url('semcomp') }}" class="nav-item">SEMCOMP</a></li>
       <li><a href="{{ url('seja_membro') }}" class="nav-item nav-destaque">Seja Membro</a></li>
       {% if user.is_authenticated %}
       <li>
@@ -132,7 +139,7 @@
 
   <div class="mobile-menu" id="mobileMenu">
     <button type="button" class="mobile-item" data-modal="modalComunidade">Comunidade</button>
-    <button type="button" class="mobile-item" data-modal="modalSemcomp">SEMCOMP</button>
+    <a href="{{ url('semcomp') }}" class="mobile-item">SEMCOMP</a>
     <a href="{{ url('seja_membro') }}" class="mobile-item">Seja Membro</a>
     {% if user.is_authenticated %}
     <a href="{{ url('painel') }}" class="mobile-item">Painel</a>
@@ -222,92 +229,6 @@
     </div>
   </div>
 
-  <!-- MODAL SEMCOMP -->
-  <div class="modal-overlay" id="modalSemcomp" role="dialog" aria-modal="true"
-       aria-labelledby="tituloSemcomp" hidden>
-    <div class="modal-card modal-card--largo">
-      <button class="modal-close" type="button" data-modal-fechar aria-label="Fechar">
-        {{ ic.icone('fechar') }}
-      </button>
-
-      {#
-        O letreiro de neon É o título do modal: um pato dentro de uma lâmpada
-        acesa, que é literalmente a ideia da marca (o pato é a fonte de luz). O
-        `alt` carrega o texto, e o <h2> fica na sombra para o leitor de tela
-        anunciar o modal com um nome — `aria-labelledby` precisa de texto, e
-        texto dentro de `alt` não serve para ele.
-      #}
-      <div class="modal-topo modal-topo--semcomp">
-        {% if links.semcomp %}
-        <span class="modal-selo modal-selo--vivo">
-          <span class="aviso-ponto" aria-hidden="true"></span>
-          Inscrições abertas
-        </span>
-        {% else %}
-        <span class="modal-selo">// evento principal</span>
-        {% endif %}
-
-        <h2 id="tituloSemcomp" class="sr-only">SEMCOMP 2026 — Semana da Computação</h2>
-        <img src="{{ static('images/semcomp/semcomp-2026.png') }}"
-             alt="SEMCOMP 2026 — Semana da Computação, 5 anos"
-             class="modal-semcomp-logo" width="767" height="308"
-             loading="lazy" decoding="async">
-        <p>A Semana da Computação é o maior evento organizado pelo Clube de Programação. Uma semana inteira de palestras, workshops e hackathons voltados para tecnologia e inovação — e é aberta a quem quiser assistir.</p>
-      </div>
-
-      <dl class="modal-ficha">
-        <div>
-          <dt>Ano</dt>
-          <dd>2026</dd>
-        </div>
-        <div>
-          <dt>Onde</dt>
-          <dd>Universidade SENAI CIMATEC</dd>
-        </div>
-        <div>
-          <dt>Formato</dt>
-          <dd>Palestras, workshops e hackathons</dd>
-        </div>
-      </dl>
-
-      {#
-        AS AÇÕES VÊM ANTES DA FOTO.
-
-        O modal inteiro mede ~1030px e a área útil de um notebook de 900px de
-        altura dá 854 para o cartão: com a foto no meio, o botão de inscrição —
-        que é a única razão de este modal existir — nascia abaixo da dobra, e
-        quem não pensasse em rolar dentro do diálogo não o via.
-
-        Trocada a ordem, a leitura continua fazendo sentido: o que é, quando é,
-        como se inscrever — e a foto fecha mostrando como aquilo se parece.
-
-        Sem link de inscrição o modal não promete o que não pode cumprir: no
-        lugar do botão entra a nota que manda acompanhar o Instagram.
-      #}
-      <div class="modal-acoes">
-        {% if links.semcomp %}
-        <a class="btn-primary" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
-          Quero me inscrever
-          {{ ic.icone('externo', 15) }}
-        </a>
-        {% else %}
-        <span class="modal-nota">As inscrições ainda não abriram — avisamos no Instagram.</span>
-        {% endif %}
-        <a class="btn-outline" href="{{ links.instagramSemcomp }}" target="_blank" rel="noopener noreferrer">
-          {{ ic.icone('instagram', 17) }}
-          @semcompcimatec
-        </a>
-      </div>
-
-      <figure class="modal-foto modal-foto--fecha">
-        <img src="{{ static('images/semcomp/hackathon.jpg') }}"
-             alt="Participantes do hackathon da SEMCOMP reunidos no auditório"
-             width="1600" height="1200" loading="lazy" decoding="async">
-        <figcaption>O hackathon que fecha a semana.</figcaption>
-      </figure>
-    </div>
-  </div>
-
   {#
     MODAL DE AGRADECIMENTO DO PROSEL.
 
@@ -324,7 +245,7 @@
         {{ ic.icone('fechar') }}
       </button>
       <div class="modal-topo modal-topo--centro">
-        <img src="{{ static('images/logo-256.png') }}" alt="" aria-hidden="true" class="modal-logo" loading="lazy" decoding="async">
+        <img src="{{ static('images/logo-256.png') }}" alt="" aria-hidden="true" class="modal-logo" width="64" height="64" loading="lazy" decoding="async">
         <h2 id="tituloProsel">Obrigado!</h2>
         <p>Sua inscrição no PROSEL foi enviada com sucesso. Fique atento às nossas redes para acompanhar o resultado.</p>
       </div>
@@ -341,11 +262,13 @@
   <footer>
     <div class="container footer-inner">
       <div class="footer-left">
-        <img src="{{ static('images/logo-256.png') }}" alt="Clube de Programação SENAI CIMATEC" aria-hidden="true" loading="lazy" decoding="async">
+        <img src="{{ static('images/logo-256.png') }}" alt="Clube de Programação SENAI CIMATEC" aria-hidden="true"
+             width="34" height="34" loading="lazy" decoding="async">
         <span>Clube de Programação &mdash; Iniciativa Estudantil do SENAI CIMATEC</span>
       </div>
       <div class="footer-right">
         <a href="{{ url('seja_membro') }}">Seja membro</a>
+        <a href="{{ url('semcomp') }}">SEMCOMP</a>
         <a href="{{ links.helpCimatec }}" target="_blank" rel="noopener noreferrer">Help CIMATEC</a>
         <span class="footer-tech">Feito por Rodrigo Gandarela</span>
       </div>

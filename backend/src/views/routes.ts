@@ -3,6 +3,10 @@ export const routes: Record<string, string> = {
   // Página pública que reúne comunidade, clubes temáticos e o PROSEL. Saiu da
   // home para que a landing volte a ter uma leitura só: quem somos e quem faz.
   seja_membro: '/seja-membro',
+  // A SEMCOMP saiu de um modal para uma página própria: o evento tem
+  // programação, atividades e inscrição, e nada disso cabe num diálogo —
+  // nem podia ser compartilhado por link, indexado ou aberto em nova aba.
+  semcomp: '/semcomp',
   painel: '/painel',
   listar_membros: '/painel/membros',
   adicionar_membro: '/painel/adicionar-membro',

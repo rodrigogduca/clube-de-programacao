@@ -2225,6 +2225,833 @@ section {
 
 
 /* ==========================================================================
+   IMAGENS — o tratamento comum
+
+   A página é escura e a fotografia é clara. Sem nada entre as duas, cada foto
+   vira um retângulo brilhante colado num fundo preto — o olho pula direto para
+   ela e o texto ao lado some. As três regras abaixo são o que faz a foto
+   pertencer à página:
+
+     1. Moldura de 1px do mesmo `--traco` de todos os cartões.
+     2. Raio `--r`, o mesmo dos cartões.
+     3. Um véu que escurece o pé da imagem, onde a legenda entra.
+
+   E todas descem levemente saturadas e escurecidas no repouso, voltando ao
+   normal no ponteiro (`filter`): assim elas convivem com o texto quando não
+   são o assunto, e acendem quando são.
+   ========================================================================== */
+
+.foto-quadro,
+.foto,
+.banner {
+  position: relative;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--breu);
+}
+
+.foto-quadro img,
+.foto img,
+.banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Repouso um pouco apagado, foco no texto. A transição é longa (0.5s) de
+     propósito: um `filter` rápido pisca. */
+  filter: saturate(0.85) brightness(0.86);
+  transition: filter 0.5s var(--transicao), transform 0.5s var(--transicao);
+}
+
+.foto-quadro:hover img,
+.foto:hover img,
+.banner:hover img {
+  filter: none;
+}
+
+/* ---- Legenda ----
+
+   Ela fica DENTRO da imagem, sobre um degradê que nasce do próprio pé dela.
+   Fora, num filete abaixo, a foto ganharia uma barra a mais e a fileira de
+   três ficaria com alturas diferentes conforme o tamanho do texto. */
+.foto figcaption,
+.banner-legenda {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 40px 18px 15px;
+  background: linear-gradient(180deg, transparent, rgba(8, 8, 11, 0.9) 62%);
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  line-height: 1.45;
+  letter-spacing: 0.04em;
+  color: var(--fumaca);
+  text-wrap: pretty;
+  pointer-events: none;
+}
+
+.foto:hover figcaption,
+.banner:hover .banner-legenda {
+  color: var(--giz);
+}
+
+/* A do `.foto-quadro` é filete de verdade, e não sobreposição: ali a foto está
+   ao lado de um texto e a legenda é parte da coluna, não da imagem. */
+.foto-quadro figcaption {
+  padding: 13px 18px;
+  border-top: 1px solid var(--traco);
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.06em;
+  color: var(--cinza);
+}
+
+/* ---- A fileira de três, na home ---- */
+
+.fotos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 64px;
+}
+
+.foto {
+  aspect-ratio: 4 / 3;
+}
+
+/* A do meio é retrato e mais alta: três retângulos idênticos lado a lado são
+   uma tabela, não uma fileira de fotos. O `translateY` negativo a levanta um
+   pouco acima das vizinhas — o mesmo desalinho de propósito do herói. */
+.foto--alta {
+  aspect-ratio: 3 / 4;
+  transform: translateY(-26px);
+}
+
+.foto:hover img {
+  transform: scale(1.04);
+}
+
+/* ---- Banner de largura cheia ---- */
+
+.banner {
+  aspect-ratio: 16 / 9;
+  margin-bottom: 56px;
+}
+
+.banner-legenda {
+  padding: 60px 26px 22px;
+  font-size: 0.8125rem;
+}
+
+/* ---- Foto ao lado de texto (Sobre o Evento) ---- */
+
+.sobre-evento {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+  align-items: start;
+  gap: clamp(28px, 4vw, 56px);
+}
+
+.sobre-texto p {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+.sobre-texto p + p {
+  margin-top: 20px;
+}
+
+.sobre-texto strong {
+  color: var(--giz);
+  font-weight: 600;
+}
+
+.sobre-texto a {
+  color: var(--ambar);
+  border-bottom: 1px solid var(--ambar-traco);
+  transition: color var(--transicao), border-color var(--transicao);
+}
+
+.sobre-texto a:hover {
+  color: var(--gema);
+  border-color: var(--gema);
+}
+
+.foto-quadro img {
+  aspect-ratio: 3 / 2;
+}
+
+
+/* ==========================================================================
+   CAPA DA SEMCOMP — a foto como fundo do herói
+
+   A foto do hackathon ocupa a tela toda atrás do letreiro de neon. O problema
+   clássico de texto sobre foto é o contraste: onde a imagem clareia, o texto
+   some. A solução aqui tem DUAS camadas e não uma:
+
+     1. Um degradê vertical que escurece de cima para baixo (o texto vive na
+        metade de baixo).
+     2. Uma lavagem âmbar por cima de tudo, fraca, que amarra a foto à paleta —
+        sem ela a foto é a única coisa neutra numa página inteira quente.
+
+   Por que `<img>` e não `background-image`: a foto é conteúdo do herói, então
+   ela merece `fetchpriority="high"` e as dimensões declaradas — o navegador
+   reserva o espaço e a página não pula quando ela chega. `background-image`
+   não aceita nem uma coisa nem outra e ainda começa a baixar tarde, depois do
+   CSS ser lido.
+   ========================================================================== */
+
+.capa {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  min-height: min(88vh, 780px);
+  padding: 160px 0 clamp(48px, 6vw, 76px);
+  overflow: hidden;
+  border-bottom: 1px solid var(--traco);
+}
+
+.capa-foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+  /* A foto é fundo: ela desce bem apagada para o letreiro aceso ficar sendo a
+     coisa mais clara da tela. */
+  filter: saturate(0.7) brightness(0.55);
+}
+
+.capa-veu {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(8, 8, 11, 0.82) 0%, rgba(8, 8, 11, 0.5) 38%, rgba(8, 8, 11, 0.96) 92%),
+    radial-gradient(ellipse 70% 60% at 22% 72%, rgba(255, 77, 0, 0.2), transparent 70%);
+}
+
+/*
+  Coluna, e não um <div> comum.
+
+  O link de voltar e o selo "inscrições abertas" são os dois `inline-flex`, e
+  num contexto de bloco normal eles fluem NA MESMA LINHA — o selo encostava no
+  fim do "← Clube de Programação" como se fosse continuação da frase. Empilhar
+  em `flex-direction: column` resolve os dois de uma vez, e o
+  `align-items: flex-start` impede que cada um estique até a largura do
+  contêiner (que é o padrão do flex e faria a pílula do selo virar uma barra de
+  ponta a ponta).
+*/
+.capa-corpo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.capa-titulo {
+  margin: 24px 0 0;
+  font-weight: 400;
+}
+
+.capa-logo {
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  /* O halo é literal: o letreiro é neon e o `drop-shadow` só estende a luz que
+     já vem pintada no arquivo para fora do traço. */
+  filter: drop-shadow(0 0 46px rgba(255, 77, 0, 0.45));
+}
+
+.capa .event-badge {
+  margin-top: 26px;
+}
+
+.capa-linha {
+  max-width: 54ch;
+  margin-top: 26px;
+  font-size: var(--t-sub);
+  line-height: 1.5;
+  color: var(--giz);
+  text-wrap: pretty;
+}
+
+.capa-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+  margin-top: 34px;
+}
+
+/* `width: 100%` porque o pai virou flex-column com `align-items: flex-start`:
+   sem isto a grade da ficha encolhe até o conteúdo e as quatro colunas se
+   amontoam à esquerda em vez de dividirem a largura. */
+.capa-ficha {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0 22px;
+  width: 100%;
+  margin-top: clamp(38px, 5vw, 56px);
+}
+
+.capa-ficha > div {
+  padding: 14px 0 0;
+  border-top: 1px solid var(--traco-forte);
+}
+
+.capa-ficha dt {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.capa-ficha dd {
+  margin-top: 6px;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: var(--giz);
+}
+
+
+/* ==========================================================================
+   FORMATOS DA SEMCOMP
+   ========================================================================== */
+
+.formato-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 14px;
+}
+
+.formato-card {
+  display: flex;
+  flex-direction: column;
+  padding: 28px 26px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+  transition: border-color var(--transicao), background var(--transicao),
+    transform var(--transicao);
+}
+
+.formato-card:hover {
+  border-color: var(--ambar-traco);
+  background: var(--sombra);
+  transform: translateY(-3px);
+}
+
+.formato-selo {
+  align-self: flex-start;
+  padding: 5px 11px;
+  border: 1px solid var(--ambar-traco);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+.formato-card h3 {
+  margin-top: 20px;
+  font-family: var(--display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--giz);
+}
+
+.formato-card p {
+  margin-top: 11px;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+.formato-nota {
+  margin-top: auto;
+  padding-top: 20px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.03em;
+  color: var(--cinza);
+}
+
+
+/* ==========================================================================
+   GRADE DA PROGRAMAÇÃO E O ESTADO VAZIO
+   ========================================================================== */
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.grade-dia {
+  padding: 26px 24px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+}
+
+.grade-cabecalho {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--traco);
+}
+
+.grade-cabecalho h3 {
+  font-family: var(--marca);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--giz);
+}
+
+.grade-data {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.08em;
+  color: var(--cinza);
+}
+
+.grade-itens {
+  list-style: none;
+}
+
+.grade-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--traco);
+}
+
+.grade-item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.grade-hora {
+  flex-shrink: 0;
+  min-width: 3.4em;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--ambar);
+}
+
+.grade-corpo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.grade-tipo {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.grade-corpo strong {
+  margin-top: 5px;
+  font-size: 0.975rem;
+  font-weight: 600;
+  color: var(--giz);
+}
+
+.grade-quem {
+  margin-top: 4px;
+  font-size: 0.875rem;
+  color: var(--fumaca);
+}
+
+/* Estado vazio: uma caixa tracejada, que é como interface diz "aqui vai
+   entrar coisa" sem fingir que já entrou. */
+.vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: clamp(40px, 6vw, 64px) 28px;
+  border: 1px dashed var(--traco-forte);
+  border-radius: var(--r-lg);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.vazio-icone {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border: 1px solid var(--ambar-traco);
+  border-radius: 50%;
+  background: var(--ambar-lavagem);
+  color: var(--ambar);
+}
+
+.vazio h3 {
+  margin-top: 22px;
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--giz);
+}
+
+.vazio p {
+  max-width: 52ch;
+  margin-top: 12px;
+  font-size: 0.975rem;
+  line-height: 1.6;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+.vazio-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+
+/* ==========================================================================
+   INSCRIÇÃO E FAQ
+   ========================================================================== */
+
+.inscricao-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(28px, 4vw, 52px);
+}
+
+.inscricao-cta {
+  padding: clamp(30px, 4vw, 42px);
+  border: 1px solid rgba(242, 138, 31, 0.42);
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(ellipse 70% 60% at 20% 12%, rgba(255, 77, 0, 0.2), transparent 70%),
+    var(--penumbra);
+  box-shadow: 0 0 90px -50px rgba(255, 77, 0, 0.9);
+}
+
+.inscricao-marca img {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  filter: drop-shadow(0 0 30px rgba(255, 77, 0, 0.3));
+}
+
+.inscricao-cta h3 {
+  margin-top: 24px;
+  font-family: var(--marca);
+  font-size: 1.7rem;
+  font-weight: 400;
+  color: var(--giz);
+}
+
+.inscricao-cta > p {
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.06em;
+  color: var(--cinza);
+}
+
+.inscricao-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+/* ---- FAQ em <details> nativo ---- */
+
+.faq {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.faq-item {
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+  transition: border-color var(--transicao), background var(--transicao);
+}
+
+.faq-item:hover,
+.faq-item[open] {
+  border-color: var(--ambar-traco);
+}
+
+.faq-item[open] {
+  background: var(--sombra);
+}
+
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 19px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--giz);
+  cursor: pointer;
+  /* Some o triângulo padrão do navegador — o sinal de + é desenhado abaixo, e
+     os dois juntos ficam com duas setas na mesma linha. */
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Um "+" que vira "−" ao abrir, feito de dois filetes. Sem SVG: são duas
+   linhas, e trocar uma delas de escala é mais barato que trocar um arquivo. */
+.faq-sinal {
+  position: relative;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.faq-sinal::before,
+.faq-sinal::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--ambar);
+  transform: translateY(-50%);
+  transition: transform var(--transicao), opacity var(--transicao);
+}
+
+.faq-sinal::after {
+  transform: translateY(-50%) rotate(90deg);
+}
+
+.faq-item[open] .faq-sinal::after {
+  transform: translateY(-50%) rotate(90deg) scaleX(0);
+  opacity: 0;
+}
+
+.faq-item p {
+  padding: 0 22px 22px;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+.faq-item p a {
+  color: var(--ambar);
+  border-bottom: 1px solid var(--ambar-traco);
+  transition: color var(--transicao), border-color var(--transicao);
+}
+
+.faq-item p a:hover {
+  color: var(--gema);
+  border-color: var(--gema);
+}
+
+
+/* ==========================================================================
+   COMPETIÇÕES
+
+   Os logotipos da SBC e da OBI são arte de terceiros desenhada para fundo
+   BRANCO. A plaquinha branca é a forma honesta de mostrá-los aqui: não altera
+   a marca de ninguém e não deixa traço escuro sobre página escura. O papagaio
+   do MFP tem alfa e traço claro, então dispensa plaquinha e vai direto ao
+   escuro — daí o `--claro` ser modificador e não o padrão.
+   ========================================================================== */
+
+.competicao-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.competicao-card {
+  display: flex;
+  flex-direction: column;
+  padding: 28px 26px 30px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+  transition: border-color var(--transicao), background var(--transicao),
+    transform var(--transicao);
+}
+
+.competicao-card:hover {
+  border-color: var(--ambar-traco);
+  background: var(--sombra);
+  transform: translateY(-3px);
+}
+
+.competicao-selo {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--r-sm);
+}
+
+.competicao-selo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.competicao-selo--claro {
+  padding: 6px;
+  background: #fff;
+  box-shadow: 0 6px 22px -10px rgba(0, 0, 0, 0.9);
+}
+
+.competicao-card h3 {
+  margin-top: 22px;
+  font-family: var(--display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--giz);
+}
+
+.competicao-card p {
+  margin-top: 11px;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+
+/* ---- Destaque do MFP ----
+
+   O único bloco do site que não é âmbar. A identidade da Maratona Feminina é
+   roxa e rosa, e repintá-la de laranja para "combinar com o site" apagaria
+   justamente o que a distingue. O roxo entra só aqui, contido dentro de uma
+   moldura — o resto da página continua sendo o que era. */
+.mfp {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+  align-items: center;
+  gap: clamp(26px, 4vw, 48px);
+  margin-top: 44px;
+  padding: clamp(30px, 4vw, 48px);
+  border: 1px solid rgba(168, 85, 214, 0.35);
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(ellipse 60% 70% at 12% 20%, rgba(168, 85, 214, 0.22), transparent 68%),
+    radial-gradient(ellipse 50% 50% at 88% 90%, rgba(240, 110, 150, 0.12), transparent 70%),
+    var(--penumbra);
+  overflow: hidden;
+}
+
+/* O papagaio faz aqui o que o pato faz no herói: fica grande, cortado pela
+   borda e apagado, sendo a fonte da luz do bloco em vez de um ícone. */
+.mfp-arara {
+  position: absolute;
+  top: -40px;
+  right: -30px;
+  width: clamp(160px, 22vw, 260px);
+  opacity: 0.16;
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+
+.mfp-say {
+  position: relative;
+}
+
+.mfp-selo {
+  display: inline-block;
+  padding: 5px 11px;
+  border: 1px solid rgba(168, 85, 214, 0.45);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #d9a6f0;
+}
+
+/* A marca em branco É o título. O <h3> não desenha nada; quem desenha é a
+   imagem dentro dele, e o `alt` carrega o texto. */
+.mfp-marca {
+  margin: 20px 0 0;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.mfp-marca img {
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  filter: drop-shadow(0 0 26px rgba(168, 85, 214, 0.5));
+}
+
+.mfp-say p {
+  max-width: 46ch;
+  margin-top: 18px;
+  font-size: 0.975rem;
+  line-height: 1.6;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+/* O botão do modal herda `.link-seta`, que é âmbar; aqui ele acompanha o roxo
+   do bloco. `border: 0` porque `.link-seta` também veste <button>. */
+.mfp .link-seta {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: var(--mono);
+  cursor: pointer;
+  color: #d9a6f0;
+}
+
+.mfp .link-seta:hover {
+  color: #f0c9ff;
+}
+
+.mfp-foto {
+  position: relative;
+  border: 1px solid rgba(168, 85, 214, 0.3);
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--breu);
+}
+
+.mfp-foto img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  filter: saturate(0.9) brightness(0.9);
+  transition: filter 0.5s var(--transicao);
+}
+
+.mfp-foto:hover img {
+  filter: none;
+}
+
+
+/* ==========================================================================
    MODAIS
 
    Três — Comunidade, SEMCOMP e o agradecimento do PROSEL — e uma implementação
@@ -2614,6 +3441,35 @@ footer {
     grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   }
 
+  /* Os blocos de duas colunas empilham aqui, junto do cartaz do PROSEL: abaixo
+     disto a coluna de texto fica com ~200px e o parágrafo quebra a cada três
+     palavras. */
+  .sobre-evento,
+  .inscricao-grid,
+  .mfp {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Empilhado, o texto vem primeiro e a foto fecha o bloco — a ordem em que se
+     lê, e não a ordem em que os dois estão no HTML da versão larga. */
+  .mfp-foto {
+    order: 2;
+  }
+
+  /* A capa deixa de ter altura mínima: o `min(88vh, 780px)` serve para a foto
+     preencher a tela num monitor, mas no celular ele vira um vão vazio abaixo
+     da ficha. */
+  .capa {
+    min-height: 0;
+    padding-top: 138px;
+  }
+
+  /* A do meio para de se destacar: com as três estreitas, o degrau de 26px só
+     desalinha a fileira em vez de dar ritmo a ela. */
+  .foto--alta {
+    transform: none;
+  }
+
   /* 980px também é onde a navegação vira menu: o ponto em que a página muda de
      forma é o mesmo em que a barra muda de forma. */
   .nav-links {
@@ -2689,6 +3545,26 @@ footer {
     flex-direction: column;
     gap: 14px;
   }
+
+  /*
+    A FILEIRA DE FOTOS VIRA UMA COLUNA, e cada foto vira deitada.
+
+    Três colunas de ~180px deixavam as fotos com 135px de altura: nesse tamanho
+    não se distingue mais gente de cadeira, e uma foto que não se lê é peso de
+    download sem função. Uma por linha, em 16:9, cada uma ocupa a largura toda e
+    volta a mostrar o que mostra. O `aspect-ratio` também derruba o retrato do
+    meio para deitado — em pé e com largura cheia ele sozinho ocuparia uma tela
+    inteira de celular.
+  */
+  .fotos {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .foto,
+  .foto--alta {
+    aspect-ratio: 16 / 9;
+  }
 }
 
 @media (max-width: 560px) {
@@ -2708,14 +3584,20 @@ footer {
   .prosel-acoes .btn-primary,
   .prosel-acoes .btn-outline,
   .modal-acoes .btn-primary,
-  .modal-acoes .btn-outline {
+  .modal-acoes .btn-outline,
+  .capa-acoes .btn-primary,
+  .capa-acoes .btn-secondary,
+  .inscricao-acoes .btn-primary,
+  .inscricao-acoes .btn-outline,
+  .vazio-acoes .btn-outline {
     flex: 1 1 100%;
     white-space: normal;
   }
 
   /* As fichas viram listas de filetes, um dado por linha. */
   .event-meta,
-  .modal-ficha {
+  .modal-ficha,
+  .capa-ficha {
     grid-template-columns: 1fr;
   }
 

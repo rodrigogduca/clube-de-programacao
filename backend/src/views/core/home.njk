@@ -9,7 +9,7 @@
   O que saiu daqui e para onde foi:
 
     PROSEL, clubes temáticos e os formulários  ->  /seja-membro
-    SEMCOMP                                    ->  modal da navbar
+    SEMCOMP                                    ->  /semcomp
     Redes, WhatsApp e grupos da maratona       ->  modal da navbar
     Calculadoras de média e de faltas          ->  help-cimatec.netlify.app
 
@@ -183,6 +183,44 @@
           </div>
         </div>
       </div>
+
+      {#
+        TRÊS FOTOS FECHANDO A SEÇÃO.
+
+        A home falava do clube só com texto e com o desenho do mascote — a
+        única coisa que provava que ele existe fora da tela eram os retratos da
+        diretoria, que são de estúdio. Estas três são o clube acontecendo:
+        gente no estande, gente falando, gente competindo. Elas entram DEPOIS
+        do texto de propósito: primeiro se lê o que o clube é, depois se vê.
+
+        Não é uma seção nova — é o fim da que já existia. A home continua com
+        três paradas.
+
+        A do meio é maior nas telas largas (`--alta`), para a fileira não virar
+        três retângulos iguais; cada uma tem legenda própria, porque foto sem
+        legenda numa página institucional vira banco de imagens.
+      #}
+      {% set fotos = [
+        { arquivo: 'galeria/stand.jpg', l: 1400, a: 933,
+          alt: 'Membros do Clube de Programação no estande do evento, com o banner do clube ao fundo',
+          legenda: 'O estande do clube, entre uma atividade e outra' },
+        { arquivo: 'galeria/evento.jpg', l: 1400, a: 2100, alta: true,
+          alt: 'Membro do clube apresentando para a plateia ao lado do banner do Clube de Programação',
+          legenda: 'Aula aberta: quem ensina é membro' },
+        { arquivo: 'galeria/maratona-lab.jpg', l: 1600, a: 900,
+          alt: 'Laboratório cheio de estudantes durante um treino da maratona de programação',
+          legenda: 'Treino de maratona no laboratório' }
+      ] %}
+
+      <div class="fotos stagger-children">
+        {% for f in fotos %}
+        <figure class="foto{% if f.alta %} foto--alta{% endif %} fade-in">
+          <img src="{{ static('images/' ~ f.arquivo) }}" alt="{{ f.alt }}"
+               width="{{ f.l }}" height="{{ f.a }}" loading="lazy" decoding="async">
+          <figcaption>{{ f.legenda }}</figcaption>
+        </figure>
+        {% endfor %}
+      </div>
     </div>
   </section>
 
@@ -284,7 +322,8 @@
     <div class="container">
       <a class="cta-box cta-box--link fade-in"
          href="{{ links.helpCimatec }}" target="_blank" rel="noopener noreferrer">
-        <img src="{{ static('images/pato.png') }}" alt="" aria-hidden="true" class="cta-duck" loading="lazy" decoding="async">
+        <img src="{{ static('images/pato.png') }}" alt="" aria-hidden="true" class="cta-duck"
+             width="880" height="765" loading="lazy" decoding="async">
 
         <span class="secao-indice" aria-hidden="true">03</span>
         <span class="section-label">// ferramentas da comunidade</span>

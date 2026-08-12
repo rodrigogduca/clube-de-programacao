@@ -45,6 +45,13 @@ export class PublicPagesController {
     return this.context.base(req);
   }
 
+  /** Página do maior evento do clube. Estática: só o contexto base. */
+  @Get('semcomp')
+  @Render('core/semcomp')
+  async semcomp(@Req() req: SessionRequest) {
+    return this.context.base(req);
+  }
+
   @Get('accounts/login')
   async login(
     @Req() req: SessionRequest,
@@ -142,7 +149,7 @@ export class PublicPagesController {
   sitemap(@Req() req: SessionRequest) {
     const host = req.get('host');
     const base = host ? `${req.protocol}://${host}` : '';
-    const paths = ['/', '/seja-membro', '/solicitar-cadastro'];
+    const paths = ['/', '/seja-membro', '/semcomp', '/solicitar-cadastro'];
     const urls = paths
       .map((path) => `  <url><loc>${base}${path}</loc></url>`)
       .join('\n');
