@@ -1,0 +1,18 @@
+# DOCUMENTO INTERNO NÃO ENTRA NO REPOSITÓRIO.
+#
+# Esta pasta é o lugar do material de trabalho da diretoria e da comissão:
+# documentação de evento, planilha exportada, proposta de patrocínio, ata. Coisas
+# que ajudam quem mexe no site e que NÃO podem ser publicadas — elas carregam
+# orçamento, status de negociação com patrocinador, contato de terceiro e, às
+# vezes, dado pessoal.
+#
+# O repositório é público. Um `git add .` distraído basta para o PDF do orçamento
+# virar histórico permanente do GitHub, e apagar depois não desfaz: fica no
+# histórico. Por isso a pasta existe versionada (por este arquivo) mas o conteúdo
+# dela não.
+#
+# Se algum documento PRECISAR ser público, escreva um .md em `docs/` com o que
+# interessa a quem lê o código — não commite o original.
+
+*
+!.gitignore
