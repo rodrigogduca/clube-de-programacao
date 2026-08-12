@@ -1,5 +1,10 @@
 /* ==========================================================================
-   HOME — Clube de Programação SENAI CIMATEC
+   SITE PÚBLICO — Clube de Programação SENAI CIMATEC
+
+   Chamava-se `style_home.css` enquanto existia uma página pública só. Hoje
+   veste as duas — `/` e `/seja-membro` — pelo layout compartilhado
+   `views/layouts/site.njk`, que é quem desenha a navbar, os três modais e o
+   rodapé de ambas.
 
    As variáveis vêm de `css/site/tokens.css`, carregado antes deste arquivo.
 
@@ -9,14 +14,16 @@
    desce. Todo o resto é escuro, quieto e alinhado, para que sobre atenção
    para esse único gesto.
 
-   Ordem: base · fundo · navegação · estrutura de seção · botões · hero ·
-   quem somos · diretoria · destaques (PROSEL e SEMCOMP) · participe ·
-   comunidade · ferramentas · chamada · modais · rodapé · responsivo ·
-   movimento reduzido.
+   Ordem: base · fundo · navegação · estrutura de seção · revelação · botões ·
+   hero · quem somos · diretoria · faixa · cabeçalho de página interna ·
+   PROSEL · benefícios · ações · clubes · redes e maratona · Help CIMATEC ·
+   modais · rodapé · responsivo · movimento reduzido.
 
-   A ordem do ARQUIVO não é a ordem da PÁGINA. Na tela, PROSEL e SEMCOMP vêm
-   logo depois do herói — são o que tem prazo. Aqui eles continuam onde sempre
-   estiveram, junto das regras de cartão que reaproveitam.
+   A ORDEM DO ARQUIVO NÃO É A ORDEM DA TELA. As regras de "redes e maratona",
+   por exemplo, só aparecem dentro de um modal; as de PROSEL e clubes, só na
+   /seja-membro. Elas ficam agrupadas por parentesco visual (tudo o que é
+   cartão perto de tudo o que é cartão), que é o que faz uma mudança de estilo
+   ser um lugar só.
    ========================================================================== */
 
 
@@ -58,8 +65,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/*
+  `height: auto` NÃO É DECORAÇÃO — é o que faz `aspect-ratio` funcionar.
+
+  Toda imagem do site carrega `width` e `height` no HTML (o navegador reserva o
+  espaço antes de baixar o arquivo, e sem isso a página pula quando cada foto
+  chega). Só que esses atributos viram uma dica de estilo real: com largura E
+  altura definidas, o `aspect-ratio` do CSS é simplesmente ignorado.
+
+  Foi assim que a foto do hackathon dentro do modal da SEMCOMP — 1600×1200 e um
+  `aspect-ratio: 16/9` que deveria recortá-la numa faixa — apareceu com 1200px
+  de altura e engoliu o modal inteiro: o botão de inscrição ficou fora da tela.
+
+  Com `height: auto` a altura volta a ser calculada (pela proporção, quando há
+  uma; pelo arquivo, quando não há). Quem precisa de altura fixa continua
+  pedindo na própria regra — `.director-foto` e `.prosel-foto img` fazem isso.
+*/
 img {
   max-width: 100%;
+  height: auto;
   display: block;
 }
 
@@ -85,6 +109,27 @@ button {
   outline: 2px solid var(--ambar);
   outline-offset: 3px;
   border-radius: var(--r-sm);
+}
+
+/* Texto que existe só para o leitor de tela.
+
+   O modal da SEMCOMP é titulado pelo letreiro de neon, que é uma imagem — e o
+   `aria-labelledby` do diálogo precisa apontar para TEXTO, não para um `alt`.
+   O <h2> real fica aqui, fora da tela e dentro da árvore de acessibilidade.
+
+   `clip-path` e 1px em vez de `display: none` ou `visibility: hidden`: essas
+   duas tiram o elemento da árvore também, e aí não sobra nome nenhum para o
+   diálogo — que é exatamente o problema que isto resolve. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 ::selection {
@@ -210,60 +255,50 @@ nav.scrolled {
   gap: 2px;
 }
 
-.nav-links li a {
+/*
+  `a` E `button` na mesma regra: dois dos quatro itens da barra (Comunidade e
+  SEMCOMP) abrem modal em vez de navegar, e um <button> é o elemento certo para
+  isso — <a href="#"> mentiria sobre haver uma seção para onde ir, e deixaria um
+  "#" no endereço se o JavaScript falhasse. O preço é que o botão herda a
+  aparência do sistema, então a pílula precisa ser desenhada nos dois.
+*/
+.nav-links li > a,
+.nav-links li > button {
   display: block;
   padding: 9px 14px;
+  border: 0;
   border-radius: 999px;
-  color: var(--fumaca);
+  background: none;
+  font-family: var(--texto);
   font-size: 0.875rem;
   font-weight: 500;
-  /* Sem isto "Quem Somos" quebra em duas linhas quando a barra aperta, e a
+  line-height: inherit;
+  color: var(--fumaca);
+  cursor: pointer;
+  /* Sem isto "Seja Membro" quebra em duas linhas quando a barra aperta, e a
      altura da pílula cresce junto — a barra inteira sai do lugar. */
   white-space: nowrap;
   transition: color var(--transicao), background var(--transicao);
 }
 
-.nav-links li a:hover {
+.nav-links li > a:hover,
+.nav-links li > button:hover {
   color: var(--giz);
   background: rgba(255, 255, 255, 0.05);
 }
 
-/* Selector com o `li` incluído para vencer a regra acima sem !important. */
-.nav-links li a.nav-cta,
-.mobile-menu a.nav-cta {
-  background: var(--ambar);
-  color: #170c02;
-  font-weight: 600;
-  padding: 9px 20px;
-}
+/*
+  A BARRA TEM UM SÓ BOTÃO PREENCHIDO, e ele é o Login.
 
-.nav-links li a.nav-cta:hover,
-.mobile-menu a.nav-cta:hover {
-  background: var(--gema);
-  color: #170c02;
-}
+  Três níveis, e não mais: texto cinza (Comunidade, SEMCOMP), texto âmbar
+  (Seja Membro) e pílula cheia (Login). "Seja Membro" é o destino que a página
+  mais quer, mas transformá-lo numa segunda pílula cheia poria duas manchas
+  âmbar lado a lado disputando a mesma atenção — e a barra viraria uma fileira
+  de botões, onde nada se destaca porque tudo se destaca. Cor sozinha basta:
+  ele é o único item âmbar no meio de texto cinza.
 
-/* Pílula de contorno: mesma forma da CTA, sem o peso do preenchimento. */
-.nav-links li a.nav-ghost {
-  padding: 9px 18px;
-  border: 1px solid var(--traco-forte);
-  color: var(--giz);
-  font-weight: 500;
-}
-
-.nav-links li a.nav-ghost:hover {
-  border-color: var(--ambar-traco);
-  color: var(--gema);
-  background: var(--ambar-lavagem);
-}
-
-/* PROSEL na barra: âmbar no texto, sem preenchimento e sem contorno.
-
-   Ele precisa se destacar dos outros quatro links, mas não pode virar uma
-   terceira pílula — a barra já tem a CTA "Participe" preenchida e o "Login"
-   contornado, e um terceiro tratamento forte transformaria a navegação numa
-   fileira de botões brigando entre si. Cor sozinha basta: é o único item
-   âmbar no meio de texto cinza. */
+  Selector com o `li` incluído para vencer a regra base sem !important.
+*/
 .nav-links li a.nav-destaque {
   color: var(--ambar);
   font-weight: 600;
@@ -272,6 +307,20 @@ nav.scrolled {
 .nav-links li a.nav-destaque:hover {
   color: var(--gema);
   background: var(--ambar-lavagem);
+}
+
+.nav-links li a.nav-cta,
+.mobile-menu a.nav-cta {
+  padding: 9px 20px;
+  background: var(--ambar);
+  color: #170c02;
+  font-weight: 600;
+}
+
+.nav-links li a.nav-cta:hover,
+.mobile-menu a.nav-cta:hover {
+  background: var(--gema);
+  color: #170c02;
 }
 
 /* ---- Menu do usuário logado ---- */
@@ -395,6 +444,25 @@ nav.scrolled {
   transition: transform 0.3s var(--transicao), opacity 0.2s ease;
 }
 
+/* O X é desenhado AQUI, e não por três `style.transform` escritos pelo JS.
+
+   Aparência que mora no JavaScript não passa pelo `prefers-reduced-motion` do
+   fim do arquivo: quem pede menos movimento continuava vendo as barras
+   girarem. E o estado do menu já é uma classe (`.open` no menu, `aria-expanded`
+   no botão) — a terceira representação do mesmo estado, em atributos inline,
+   era só mais uma coisa para dessincronizar. */
+.hamburger.aberto span:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+}
+
+.hamburger.aberto span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.aberto span:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+}
+
 .mobile-menu {
   display: none;
   position: fixed;
@@ -421,21 +489,29 @@ nav.scrolled {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* `a` e `button` juntos: Comunidade e SEMCOMP abrem modal e por isso são
+   <button>, mas no menu do celular eles têm de parecer e medir exatamente
+   como os itens que navegam. */
 .mobile-menu a,
-.mobile-logout-btn {
+.mobile-menu button {
   display: block;
   width: 100%;
   padding: 14px 16px;
+  border: 0;
   border-radius: var(--r-sm);
+  background: none;
   text-align: left;
+  font-family: var(--texto);
   font-size: 1rem;
   font-weight: 500;
+  line-height: inherit;
   color: var(--fumaca);
+  cursor: pointer;
   transition: color var(--transicao), background var(--transicao);
 }
 
 .mobile-menu a:hover,
-.mobile-logout-btn:hover {
+.mobile-menu button:hover {
   color: var(--giz);
   background: rgba(255, 255, 255, 0.05);
 }
@@ -512,6 +588,99 @@ section {
   line-height: 1.55;
   color: var(--fumaca);
   text-wrap: pretty;
+}
+
+/*
+  O cabeçalho de seção com o número na margem.
+
+  O índice (`01`, `02`, `03`) fica FORA da coluna do texto, alinhado com a
+  primeira linha do rótulo. Ele não é decoração: as duas páginas passaram a ter
+  três blocos cada, e o número é o que diz em que ponto do percurso a pessoa
+  está sem ela ter de contar as seções que rolou.
+
+  `aria-hidden` no HTML — o número não acrescenta nada em voz alta, e "zero um,
+  barra barra quem somos" é pior do que só o título.
+*/
+.secao-topo {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(18px, 3vw, 34px);
+}
+
+.secao-indice {
+  flex-shrink: 0;
+  padding-top: 2px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--ambar);
+  opacity: 0.7;
+}
+
+/* O rótulo, o título E a descrição vivem juntos nesta coluna.
+
+   A descrição ficava fora do `.secao-topo`, como irmã dele: alinhava com a
+   margem do container enquanto o título alinhava depois do número, e as duas
+   linhas do bloco começavam em pontos diferentes — um degrau de ~56px que só
+   aparecia depois que o índice entrou. Dentro da coluna as três partes têm a
+   mesma margem esquerda, seja qual for a largura do número. */
+.secao-corpo {
+  min-width: 0;
+}
+
+/* Link de texto com seta que anda no hover. É o fecho de um parágrafo, não um
+   botão: usar `.btn-*` aqui daria a um "ver mais" o mesmo peso visual de uma
+   inscrição. */
+.link-seta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 26px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ambar);
+  transition: gap var(--transicao), color var(--transicao);
+}
+
+.link-seta:hover {
+  gap: 15px;
+  color: var(--gema);
+}
+
+/* Um <button> que abre modal no meio de um parágrafo. Ele precisa parecer link
+   (é o que faz a frase funcionar) sem ser um <a>, porque não navega. */
+.link-botao {
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--ambar-traco);
+  background: none;
+  font: inherit;
+  color: var(--ambar);
+  cursor: pointer;
+  transition: color var(--transicao), border-color var(--transicao);
+}
+
+.link-botao:hover {
+  color: var(--gema);
+  border-color: var(--gema);
+}
+
+/* A frase solta que fecha uma seção — "prefere só acompanhar de longe?". Fica
+   centrada e em cinza: é uma saída lateral, não o caminho principal. */
+.secao-rodape {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+.secao-rodape strong {
+  color: var(--giz);
+  font-weight: 600;
 }
 
 
@@ -633,75 +802,21 @@ section {
   min-height: min(72vh, 620px);
 }
 
-/* ---- Tarjas de aviso ----
+/* ---- O ponto que pulsa ----
 
-   A única parte do herói com prazo de validade. Elas ficam ACIMA do <h1> de
-   propósito: o que está aberto agora chega antes do que o clube é sempre.
-
-   São pílulas de contorno e não botões preenchidos — o botão preenchido do
-   herói é um só, e é o do PROSEL logo abaixo. Estas são placas: levam à seção
-   que explica, não ao formulário. */
-.hero-avisos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px;
-  margin-bottom: 26px;
-}
-
-.aviso {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 15px 7px 13px;
-  border: 1px solid var(--traco-forte);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.03);
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0.04em;
-  color: var(--fumaca);
-  white-space: nowrap;
-  transition: border-color var(--transicao), background var(--transicao),
-    color var(--transicao), transform var(--transicao);
-}
-
-.aviso strong {
-  font-weight: 500;
-  color: var(--giz);
-}
-
-.aviso-sep {
-  color: var(--cinza);
-}
-
-.aviso:hover {
-  border-color: var(--ambar-traco);
-  background: var(--ambar-lavagem);
-  color: var(--giz);
-  transform: translateY(-1px);
-}
-
-/* A tarja do PROSEL já nasce âmbar: das duas, é a que a página existe para
-   empurrar. */
-.aviso-forte {
-  border-color: var(--ambar-traco);
-  background: var(--ambar-lavagem);
-}
-
-.aviso-forte strong {
-  color: var(--gema);
-}
-
-.aviso-forte:hover {
-  border-color: var(--ambar);
-}
-
-/* O ponto que pulsa — o mesmo "no ar" de transmissão ao vivo. É o único
-   movimento contínuo da página fora do pato, então ele é lento e discreto: um
-   pisca-pisca aqui competiria com o mascote.
+   O mesmo "no ar" de transmissão ao vivo. Marca o que está aberto AGORA: o
+   selo do PROSEL na /seja-membro e o do modal da SEMCOMP. É o único movimento
+   contínuo do site fora do pato, então é lento e discreto — um pisca-pisca
+   aqui competiria com o mascote.
 
    O halo é um `box-shadow` que cresce e some, e não um segundo elemento: assim
-   ele não ocupa espaço no fluxo e não desalinha o texto da pílula. */
+   ele não ocupa espaço no fluxo e não desalinha o texto do selo.
+
+   AQUI EXISTIAM AS TARJAS DO HERÓI (`.hero-avisos`, `.aviso`), duas pílulas
+   anunciando PROSEL e SEMCOMP acima do <h1>. Elas sumiram junto com as seções
+   que anunciavam: o PROSEL mudou para a /seja-membro e a SEMCOMP para um modal
+   da navbar, e a home não fala mais de prazo nenhum. O ponto ficou porque
+   agora ele mora nos dois destinos. */
 .aviso-ponto {
   flex-shrink: 0;
   width: 7px;
@@ -1128,148 +1243,238 @@ section {
 
 
 /* ==========================================================================
-   DESTAQUES — PROSEL E SEMCOMP
+   FAIXA CORRIDA — a emenda entre o herói e o conteúdo
 
-   As duas coisas com prazo da página usam o MESMO cartaz (`.event-highlight`).
-   Não é economia de CSS: é para o leitor reconhecer a forma na segunda vez.
-   Quem rolou pelo PROSEL já sabe onde fica o botão, onde fica a ficha e o que
-   a foto lateral significa — a SEMCOMP chega e ele lê em metade do tempo.
+   Um filete parado separava as seções. Aqui o corte é a própria lista do que o
+   clube faz, andando devagar: a página ganha um sinal de vida onde antes tinha
+   uma linha, e o leitor recebe em uma passada o índice do que a /seja-membro
+   detalha.
 
-   O que muda entre os dois é o modificador `--prosel`: moldura âmbar cheia,
-   brilho um pouco mais quente e tipografia no lugar do letreiro de neon.
+   COMO O LAÇO FECHA SEM EMENDA: o HTML repete a lista duas vezes, o trilho é
+   `width: max-content` e a animação anda exatamente -50%. No fim do ciclo a
+   segunda cópia está no pixel onde a primeira começou, então o salto de volta
+   ao 0% é invisível. Mudar o número de cópias sem mudar os -50% quebra isso.
    ========================================================================== */
 
-/* A SEMCOMP é o maior evento do clube — ganha um cartaz, com o letreiro de
-   neon no lugar do título e uma foto em pé do outro lado.
-
-   O brilho do painel nasce onde a lâmpada do letreiro está (topo da coluna de
-   texto), e não no canto do cartão: é a mesma lógica do herói, onde a luz sai
-   de dentro do desenho em vez de ser um degradê aplicado por cima. */
-.event-highlight {
+.faixa {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.62fr);
-  align-items: stretch;
-  gap: clamp(28px, 4vw, 52px);
-  margin-bottom: 22px;
-  padding: clamp(30px, 4.4vw, 52px);
-  border: 1px solid var(--ambar-traco);
-  border-radius: var(--r-lg);
-  background:
-    radial-gradient(ellipse 54% 62% at 14% 22%, rgba(255, 77, 0, 0.16), transparent 66%),
-    var(--penumbra);
+  z-index: 1;
+  padding: 22px 0;
+  border-top: 1px solid var(--traco);
+  border-bottom: 1px solid var(--traco);
+  background: rgba(255, 255, 255, 0.015);
   overflow: hidden;
+  /* Desbota nas pontas em vez de cortar no seco: a faixa some para dentro da
+     página, o que é o que faz o movimento parecer contínuo e não um letreiro
+     preso numa caixa. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
 
-.event-say {
+.faixa-trilho {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  width: max-content;
+  animation: faixa-anda 42s linear infinite;
 }
 
-/* O h3 não desenha nada: quem desenha é o letreiro dentro dele. Sem
-   `font-size: 0` de propósito — se o PNG não carregar, o `alt` ainda precisa
-   ser lido na página, e a imagem é `display: block` pela base, então não sobra
-   folga de linha para esconder. */
-.event-marca {
-  margin: 26px 0 4px;
+/* Pausa no ponteiro: a faixa tem nomes que a pessoa pode querer ler com calma
+   (e, para quem usa lupa, um texto que foge é um texto ilegível). */
+.faixa:hover .faixa-trilho {
+  animation-play-state: paused;
+}
+
+.faixa-lista {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.faixa-lista li {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  padding-right: 26px;
   font-family: var(--marca);
-  font-size: 1.6rem;
-  font-weight: 400;
-  line-height: 1.2;
+  font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--fumaca);
 }
 
-/* O letreiro é neon, então o halo é literal e não enfeite: a mesma luz que
-   sai do pato no topo da página, só que aqui ela já vem pintada no arquivo e
-   o `drop-shadow` só a estende para fora do traço. */
-.event-logo {
-  width: 100%;
-  max-width: 460px;
-  height: auto;
-  filter: drop-shadow(0 0 34px rgba(255, 77, 0, 0.34));
+.faixa-ponto {
+  font-size: 0.5em;
+  color: var(--ambar);
+  opacity: 0.75;
 }
 
-.event-badge {
-  display: inline-block;
-  padding: 7px 14px;
-  border: 1px solid var(--ambar-traco);
-  border-radius: 999px;
+@keyframes faixa-anda {
+  to { transform: translateX(-50%); }
+}
+
+
+/* ==========================================================================
+   CABEÇALHO DA PÁGINA INTERNA (/seja-membro)
+
+   Mais baixo que o herói da home, e sem o pato: quem chega aqui já clicou em
+   "Seja Membro" e não precisa ser convencido de novo — precisa saber por onde
+   começar. O título é a única coisa grande, e o índice logo abaixo é navegação
+   de verdade, não enfeite.
+   ========================================================================== */
+
+.pagina-hero {
+  position: relative;
+  z-index: 1;
+  padding: 148px 0 clamp(56px, 8vw, 96px);
+}
+
+.pagina-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   font-family: var(--mono);
   font-size: var(--t-mini);
-  letter-spacing: 0.14em;
+  letter-spacing: 0.08em;
+  color: var(--cinza);
+  transition: color var(--transicao), gap var(--transicao);
+}
+
+.pagina-voltar:hover {
+  color: var(--ambar);
+  gap: 13px;
+}
+
+.pagina-titulo {
+  margin-top: 30px;
+  font-family: var(--marca);
+  font-size: var(--t-pagina);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+}
+
+.pagina-sobrelinha {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 22px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-weight: 500;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--ambar);
 }
 
-/* "Inscrições abertas" com o mesmo ponto pulsante das tarjas do herói: quem
-   viu a tarja lá em cima reencontra o sinal aqui e entende que é o mesmo
-   assunto. `inline-flex` porque o ponto precisa alinhar com o texto — o
-   `inline-block` da regra acima empilharia os dois. */
-.event-badge--vivo {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding-left: 12px;
-  background: var(--ambar-lavagem);
-  color: var(--gema);
+.pagina-sobrelinha::before {
+  content: "";
+  width: 32px;
+  height: 1px;
+  background: var(--ambar);
+  opacity: 0.55;
 }
 
-/* ---- O cartaz do PROSEL ----
+.pagina-titulo .highlight {
+  color: var(--ambar);
+}
 
-   Mesma anatomia da SEMCOMP, contraste mais alto: é o primeiro bloco da
-   página e o que ela existe para empurrar.
+.pagina-linha {
+  max-width: 52ch;
+  margin-top: 28px;
+  font-size: var(--t-sub);
+  line-height: 1.5;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
 
-   A moldura passa de translúcida a âmbar com corpo, e o brilho ganha um
-   segundo foco no canto oposto — a luz atravessa o cartão em diagonal em vez
-   de ficar parada num canto. Continua sendo o mesmo brilho do pato: só está
-   mais perto do topo da página, onde a luz é mais forte. */
-.event-highlight--prosel {
-  border-color: rgba(242, 138, 31, 0.42);
+/* O índice dos três blocos. Filete em cima de cada item, como a faixa de
+   números do herói — é a mesma ideia de "dado solto ancorado numa linha". */
+.pagina-indice {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0 26px;
+  margin-top: clamp(44px, 6vw, 68px);
+  list-style: none;
+  counter-reset: none;
+}
+
+.pagina-indice a {
+  display: block;
+  padding: 18px 0 20px;
+  border-top: 1px solid var(--traco);
+  transition: border-color var(--transicao);
+}
+
+.pagina-indice a:hover {
+  border-color: var(--ambar);
+}
+
+.indice-num {
+  display: block;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.16em;
+  color: var(--ambar);
+}
+
+.indice-nome {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--display);
+  font-size: 1.22rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--giz);
+}
+
+.indice-desc {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: var(--fumaca);
+}
+
+
+/* ==========================================================================
+   PROSEL — o cartaz
+
+   O único bloco do site com moldura âmbar cheia. É o degrau mais alto da
+   /seja-membro e o único com prazo, então ele leva o contraste máximo: a luz
+   atravessa o cartão em diagonal (dois focos, e não um degradê num canto),
+   que é a mesma lógica do herói — a luz nasce de dentro do desenho.
+
+   O SEMCOMP dividia esta construção quando os dois eram seções irmãs. Hoje o
+   evento vive num modal, e o que ele reaproveita daqui é só o selo pulsante e
+   a ficha.
+   ========================================================================== */
+
+.prosel-cartaz {
+  position: relative;
+  display: grid;
+  /* `minmax(0, ...)` e não `1fr`: `1fr` é `minmax(auto, 1fr)`, e esse `auto` é
+     um PISO de min-content. O botão "Fazer minha inscrição" é `nowrap`, então o
+     min-content da coluna virava a largura inteira do rótulo e a coluna
+     estourava o cartão — que tem `overflow: hidden` e decepava o texto. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.62fr);
+  align-items: stretch;
+  gap: clamp(28px, 4vw, 52px);
+  padding: clamp(30px, 4.4vw, 52px);
+  border: 1px solid rgba(242, 138, 31, 0.42);
+  border-radius: var(--r-lg);
   background:
     radial-gradient(ellipse 58% 66% at 12% 18%, rgba(255, 77, 0, 0.24), transparent 68%),
     radial-gradient(ellipse 44% 50% at 92% 96%, rgba(242, 138, 31, 0.1), transparent 70%),
     var(--penumbra);
   box-shadow: 0 0 90px -50px rgba(255, 77, 0, 0.9);
+  overflow: hidden;
 }
 
-/* Onde a SEMCOMP tem o letreiro de neon, o PROSEL tem letra.
-
-   O processo seletivo não tem arte própria, e desenhar uma só para preencher
-   o buraco deixaria o bloco mais fraco — arte inventada compete com o letreiro
-   de verdade que aparece uma seção abaixo. Então a palavra é o cartaz: fonte
-   da marca, tamanho de título de seção, com o ano em mono e âmbar do lado,
-   que é como a página escreve metadado em todo canto.
-
-   `--t-secao` e não um tamanho novo: o cartaz não pode gritar mais alto que o
-   <h2> logo acima dele, senão a seção passa a ter dois títulos. */
-.prosel-titulo {
-  margin: 26px 0 4px;
+.prosel-say {
   display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 14px;
-  font-family: var(--marca);
-  font-size: var(--t-secao);
-  font-weight: 400;
-  line-height: 1.05;
-  letter-spacing: -0.01em;
-  color: var(--giz);
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-.prosel-titulo span {
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0.2em;
-  color: var(--ambar);
-  /* Sobe até a linha do topo da manuscrita: alinhado pela base, o ano ficava
-     pendurado no pé de uma letra três vezes maior. */
-  align-self: center;
-  padding: 5px 11px;
-  border: 1px solid var(--ambar-traco);
-  border-radius: 999px;
-}
-
-.event-highlight p {
+.prosel-cartaz p {
   max-width: 52ch;
   margin-top: 22px;
   font-size: var(--t-sub);
@@ -1278,8 +1483,38 @@ section {
   text-wrap: pretty;
 }
 
-/* Ficha do evento. Filete em cima de cada par, como a faixa de números do
-   herói — é a mesma ideia de "dado solto ancorado numa linha". */
+/* Onde a SEMCOMP tem o letreiro de neon, o PROSEL tem letra.
+
+   O processo seletivo não tem arte própria, e desenhar uma só para preencher o
+   buraco deixaria o bloco mais fraco — arte inventada compete com o letreiro de
+   verdade, que existe. Então a palavra é o cartaz: fonte da marca, com o ano em
+   mono e âmbar ao lado, que é como a página escreve metadado em todo canto. */
+.prosel-titulo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 26px 0 4px;
+  font-family: var(--marca);
+  font-size: clamp(2rem, 4.4vw, 3.1rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--giz);
+}
+
+.prosel-titulo span {
+  padding: 5px 11px;
+  border: 1px solid var(--ambar-traco);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.2em;
+  color: var(--ambar);
+}
+
+/* Ficha do processo. Filete em cima de cada par, como a faixa de números do
+   herói e como o índice da página. */
 .event-meta {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -1308,27 +1543,40 @@ section {
   color: var(--giz);
 }
 
-/* `margin-top: auto` cola as ações no pé da coluna, alinhadas com a base da
-   foto ao lado, em vez de deixá-las flutuando no meio. */
-.event-acoes {
-  display: flex;
-  flex-wrap: wrap;
+.event-badge {
+  display: inline-block;
+  padding: 7px 14px;
+  border: 1px solid var(--ambar-traco);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+/* "Inscrições abertas" com o ponto pulsante. `inline-flex` porque o ponto
+   precisa alinhar com o texto — o `inline-block` da regra acima empilharia. */
+.event-badge--vivo {
+  display: inline-flex;
   align-items: center;
-  gap: 10px 16px;
-  margin-top: 34px;
-  padding-top: 4px;
+  gap: 9px;
+  padding-left: 12px;
+  background: var(--ambar-lavagem);
+  color: var(--gema);
 }
 
 .event-nota {
   font-family: var(--mono);
   font-size: var(--t-mini);
+  line-height: 1.6;
   letter-spacing: 0.04em;
   color: var(--cinza);
 }
 
 /* A foto em pé equilibra a coluna de texto. Sangra até as bordas do cartão do
    lado direito para não virar um retângulo flutuando dentro de uma margem. */
-.event-foto {
+.prosel-foto {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1338,26 +1586,19 @@ section {
   background: var(--breu);
 }
 
-.event-foto img {
+.prosel-foto img {
   flex: 1;
   width: 100%;
   height: 100%;
   min-height: 340px;
   object-fit: cover;
-  /* O grupo ocupa a faixa central da foto; embaixo é só cadeira vazia e o teto
-     come o topo. Ancorar em 45% mantém os rostos no quadro no recorte alto. */
-  object-position: center 45%;
-}
-
-/* A foto do PROSEL é um retrato (1400×2100) com o rosto no terço de cima; o
-   `center 45%` acima é do retrato de grupo da SEMCOMP, onde os rostos estão no
-   meio. Com 45% aqui, o corte alto do modo empilhado (16/10) decepava a cabeça
-   de quem está falando. */
-.event-highlight--prosel .event-foto img {
+  /* O retrato tem 1400×2100 e o rosto no terço de cima. Ancorar em 32% mantém
+     a cabeça no quadro tanto na coluna alta quanto no corte deitado do modo
+     empilhado. */
   object-position: center 32%;
 }
 
-.event-foto figcaption {
+.prosel-foto figcaption {
   padding: 13px 18px;
   border-top: 1px solid var(--traco);
   font-family: var(--mono);
@@ -1366,120 +1607,148 @@ section {
   color: var(--cinza);
 }
 
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 14px;
+.prosel-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin-top: 36px;
 }
 
-.project-card {
-  display: flex;
-  flex-direction: column;
+
+/* ---- As etapas ----
+
+   Quatro cartões numerados. O número é grande e fica ATRÁS do texto, em âmbar
+   apagado: ele marca a ordem sem disputar a leitura com o título da etapa —
+   um "1" do mesmo peso do texto vira só mais uma palavra na frente da frase.
+
+   É um `<ol>` de verdade, então quem usa leitor de tela ouve "item 1 de 4" do
+   próprio elemento; por isso o `.passo-num` é `aria-hidden` no HTML, senão o
+   número seria dito duas vezes. */
+.passos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+  margin-top: 44px;
+  list-style: none;
+  counter-reset: none;
+}
+
+.passo {
+  position: relative;
+  padding: 26px 26px 28px;
   border: 1px solid var(--traco);
   border-radius: var(--r);
   background: var(--penumbra);
   overflow: hidden;
-  transition: border-color var(--transicao), transform var(--transicao),
-    background var(--transicao);
+  transition: border-color var(--transicao), background var(--transicao),
+    transform var(--transicao);
 }
 
-.project-card:hover {
+.passo:hover {
   border-color: var(--ambar-traco);
   background: var(--sombra);
   transform: translateY(-3px);
 }
 
-/* As artes são quadradas e desenhadas com detalhe até os cantos. Ocupam a
-   largura do cartão no formato original — `aspect-ratio: 1` em vez de um
-   quadradinho de 84px, que jogava fora o desenho inteiro. */
-.project-arte {
-  aspect-ratio: 1;
-  border-bottom: 1px solid var(--traco);
-  overflow: hidden;
-  background: var(--breu);
+.passo-num {
+  position: absolute;
+  top: -14px;
+  right: 6px;
+  font-family: var(--marca);
+  font-size: 5.5rem;
+  line-height: 1;
+  color: var(--ambar);
+  opacity: 0.14;
+  pointer-events: none;
+  transition: opacity var(--transicao);
 }
 
-.project-logo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform var(--transicao);
+.passo:hover .passo-num {
+  opacity: 0.26;
 }
 
-.project-card:hover .project-logo {
-  transform: scale(1.035);
-}
-
-/* Coluna que cresce: com `margin-top: auto` no link do Instagram, os três
-   cartões alinham o @ na mesma altura mesmo com descrições de tamanhos
-   diferentes. */
-.project-corpo {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  padding: 24px 26px 26px;
-}
-
-.project-card h3 {
+.passo h4 {
+  position: relative;
   font-family: var(--display);
-  font-size: 1.2rem;
+  font-size: 1.14rem;
   font-weight: 600;
   letter-spacing: -0.03em;
+  color: var(--giz);
 }
 
-.project-card p {
-  margin-top: 11px;
-  font-size: 0.95rem;
+.passo p {
+  position: relative;
+  margin-top: 10px;
+  font-size: 0.92rem;
   line-height: 1.55;
   color: var(--fumaca);
   text-wrap: pretty;
 }
 
-/* O @ de cada clube. Fica quieto no pé do cartão — o rosa do Instagram só
-   aparece no hover, do mesmo jeito que na lista de redes do modal de contato. */
-.project-instagram {
-  display: inline-flex;
-  align-items: center;
-  align-self: flex-start;
-  gap: 8px;
-  margin-top: auto;
-  padding-top: 18px;
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0.06em;
-  color: var(--cinza);
-  transition: color var(--transicao);
+
+/* ==========================================================================
+   BENEFÍCIOS DA COMUNIDADE
+   ========================================================================== */
+
+.beneficio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin-bottom: 56px;
 }
 
-.project-instagram svg {
-  flex-shrink: 0;
+.beneficio-card {
+  padding: 26px 26px 28px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+  transition: border-color var(--transicao), background var(--transicao);
 }
 
-.project-instagram:hover {
-  color: #e1306c;
+.beneficio-card:hover {
+  border-color: var(--ambar-traco);
+  background: var(--sombra);
 }
 
-/* O cartão inteiro não é link, então o @ precisa reagir quando o cartão é
-   apontado — senão parece texto morto. */
-.project-card:hover .project-instagram {
+.beneficio-icone {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--ambar-traco);
+  border-radius: var(--r-sm);
+  background: var(--ambar-lavagem);
+  color: var(--ambar);
+}
+
+.beneficio-card h3 {
+  margin-top: 20px;
+  font-family: var(--display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--giz);
+}
+
+.beneficio-card p {
+  margin-top: 10px;
+  font-size: 0.92rem;
+  line-height: 1.55;
   color: var(--fumaca);
-}
-
-.project-card:hover .project-instagram:hover {
-  color: #e1306c;
+  text-wrap: pretty;
 }
 
 
 /* ==========================================================================
-   PARTICIPE — as portas que não são o PROSEL
+   AÇÕES — os cartões que são links inteiros
 
-   Três cartões que são LINKS INTEIROS, não cartões com um link dentro. O alvo
-   de toque é o cartão todo: no celular, um `<a>` de 14px no pé de um bloco de
-   200px é um alvo que se erra.
+   Cartão com um link dentro vira, no celular, um alvo de 14px no pé de um bloco
+   de 200px: um alvo que se erra. Aqui o `<a>` É o cartão.
 
-   Ordem por compromisso — virar membro, comprar a camisa, entrar no grupo — e
-   o primeiro leva a moldura âmbar. Três cartões idênticos obrigam a ler os
-   três para escolher; com um marcado, quem não tem preferência já tem uma.
+   Ordem por compromisso, e o primeiro leva a moldura âmbar — três cartões
+   idênticos obrigam a ler os três para escolher; com um marcado, quem não tem
+   preferência já tem uma.
    ========================================================================== */
 
 .acao-grid {
@@ -1529,11 +1798,7 @@ section {
   transition: border-color var(--transicao), color var(--transicao);
 }
 
-.acao-card--destaque .acao-selo {
-  border-color: var(--ambar-traco);
-  color: var(--ambar);
-}
-
+.acao-card--destaque .acao-selo,
 .acao-card:hover .acao-selo {
   border-color: var(--ambar-traco);
   color: var(--ambar);
@@ -1556,9 +1821,8 @@ section {
   text-wrap: pretty;
 }
 
-/* `margin-top: auto` alinha o pé dos três cartões na mesma altura mesmo com
-   descrições de tamanhos diferentes — a mesma solução do @ nos cartões de
-   clube. */
+/* `margin-top: auto` alinha o pé dos cartões na mesma altura mesmo com
+   descrições de tamanhos diferentes. */
 .acao-pe {
   display: flex;
   align-items: center;
@@ -1601,47 +1865,149 @@ section {
 
 
 /* ==========================================================================
-   COMUNIDADE — as redes, fora do modal
+   CLUBES TEMÁTICOS
 
-   Grade de cartões-link. Cada cartão carrega a cor da rede numa variável
-   (`--rede`, um RGB solto para caber em `rgba()`), e ela só acende no ponteiro
-   — seis marcas acesas ao mesmo tempo viram um arco-íris no meio de uma página
-   que é escura e âmbar do começo ao fim.
+   As três artes são quadradas e cheias de detalhe de canto — o foguete e o
+   controle no Jogos, o hexágono no Cyber. Antes entravam num quadradinho de
+   84px, que jogava fora quase tudo. Aqui ocupam a largura inteira do cartão,
+   no formato em que foram desenhadas: nenhum recorte.
+
+   O cartão inteiro é o link para o Instagram do clube. Era uma <div> com um
+   `<a>` de 16px no pé, e o resto do bloco — a arte inteira, o nome, a
+   descrição — não clicava.
+   ========================================================================== */
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+  overflow: hidden;
+  transition: border-color var(--transicao), transform var(--transicao),
+    background var(--transicao);
+}
+
+.project-card:hover {
+  border-color: var(--ambar-traco);
+  background: var(--sombra);
+  transform: translateY(-3px);
+}
+
+.project-arte {
+  display: block;
+  aspect-ratio: 1;
+  border-bottom: 1px solid var(--traco);
+  overflow: hidden;
+  background: var(--breu);
+}
+
+.project-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transicao);
+}
+
+.project-card:hover .project-logo {
+  transform: scale(1.035);
+}
+
+/* Coluna que cresce: com `margin-top: auto` no @ do Instagram, os três cartões
+   alinham o rodapé na mesma altura mesmo com descrições diferentes. */
+.project-corpo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 24px 26px 26px;
+}
+
+.project-card h3 {
+  font-family: var(--display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--giz);
+}
+
+.project-card p {
+  margin-top: 11px;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+.project-instagram {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 18px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.06em;
+  color: var(--cinza);
+  transition: color var(--transicao);
+}
+
+.project-instagram svg {
+  flex-shrink: 0;
+}
+
+.project-card:hover .project-instagram {
+  color: #e1306c;
+}
+
+
+/* ==========================================================================
+   REDES E MARATONA — o conteúdo do modal da Comunidade
+
+   Cada cartão carrega a cor da rede numa variável (`--rede`, um RGB solto para
+   caber em `rgba()`), e ela só acende no ponteiro: seis marcas acesas ao mesmo
+   tempo viram um arco-íris no meio de uma página que é escura e âmbar do começo
+   ao fim.
    ========================================================================== */
 
 .rede-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
 }
 
 .rede-card {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 22px 24px;
+  gap: 14px;
+  padding: 18px 20px;
   border: 1px solid var(--traco);
   border-radius: var(--r);
-  background: var(--penumbra);
+  background: var(--sombra);
   transition: border-color var(--transicao), background var(--transicao),
     transform var(--transicao);
 }
 
 .rede-card:hover {
   border-color: rgba(var(--rede), 0.45);
-  background: var(--sombra);
-  transform: translateY(-3px);
+  transform: translateY(-2px);
 }
 
 .rede-icone {
   flex-shrink: 0;
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border: 1px solid var(--traco);
   border-radius: var(--r-sm);
-  background: var(--sombra);
+  background: var(--penumbra);
   color: var(--fumaca);
   transition: border-color var(--transicao), color var(--transicao),
     background var(--transicao);
@@ -1661,25 +2027,25 @@ section {
 
 .rede-nome {
   font-family: var(--display);
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: -0.025em;
   color: var(--giz);
 }
 
 .rede-desc {
-  margin-top: 7px;
-  font-size: 0.9rem;
+  margin-top: 6px;
+  font-size: 0.865rem;
   line-height: 1.5;
   color: var(--fumaca);
   text-wrap: pretty;
 }
 
-/* O @ pode ser mais comprido que o cartão (@clube.de.programacao já é longo,
-   e o do Instagram é maior ainda). Reticências em vez de estouro: o endereço
-   completo não é informação que alguém copie daqui — o cartão é clicável. */
+/* O @ pode ser mais comprido que o cartão (`@clubedeprogramacaocimatec` já é
+   longo). Reticências em vez de estouro: o endereço completo não é informação
+   que alguém copie daqui — o cartão é clicável. */
 .rede-conta {
-  margin-top: 11px;
+  margin-top: 10px;
   font-family: var(--mono);
   font-size: var(--t-mini);
   letter-spacing: 0.05em;
@@ -1696,79 +2062,38 @@ section {
 
 /* ---- Maratona ----
 
-   Fica separado da grade de redes porque não é "siga a gente": são duas salas
-   de estudo por nível, e entrar na errada custa caro (o novato se perde, o
-   experiente se entedia). Por isso cada grupo mostra para quem é, em vez de
-   ser mais um ícone verde na fileira. */
-.maratona {
-  display: grid;
-  grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr);
-  gap: clamp(24px, 3.5vw, 44px);
-  margin-top: 44px;
-  padding: clamp(26px, 3.4vw, 38px);
-  border: 1px solid var(--traco);
-  border-radius: var(--r-lg);
-  background: var(--penumbra);
-}
-
-.maratona-say h3 {
-  margin-top: 18px;
-  font-family: var(--marca);
-  font-size: clamp(1.6rem, 3vw, 2.1rem);
-  font-weight: 400;
-  line-height: 1.1;
-  color: var(--giz);
-}
-
-.maratona-say p {
-  margin-top: 14px;
-  font-size: 0.95rem;
-  line-height: 1.55;
-  color: var(--fumaca);
-  text-wrap: pretty;
-}
-
-.maratona-selo {
-  display: inline-block;
-  padding: 5px 11px;
-  border: 1px solid var(--traco-forte);
-  border-radius: 999px;
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--cinza);
-}
-
+   Separada da grade de redes porque não é "siga a gente": são duas salas de
+   estudo por nível, e entrar na errada custa caro (o novato se perde, o
+   experiente se entedia). Por isso cada grupo diz para quem é, em vez de ser
+   mais um ícone verde na fileira. */
 .maratona-grupos {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 10px;
 }
 
 .maratona-grupo {
   display: flex;
   align-items: flex-start;
-  gap: 15px;
-  padding: 20px 22px;
+  gap: 13px;
+  padding: 16px 18px;
   border: 1px solid var(--traco);
   border-radius: var(--r);
   background: var(--sombra);
-  transition: border-color var(--transicao), background var(--transicao),
-    transform var(--transicao);
+  transition: border-color var(--transicao), transform var(--transicao);
 }
 
 .maratona-grupo:hover {
   border-color: rgba(37, 211, 102, 0.45);
-  transform: translateX(3px);
+  transform: translateY(-2px);
 }
 
 .maratona-icone {
   flex-shrink: 0;
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: rgba(37, 211, 102, 0.1);
   color: rgba(37, 211, 102, 0.75);
@@ -1788,526 +2113,34 @@ section {
 
 .maratona-corpo strong {
   font-family: var(--display);
-  font-size: 1.02rem;
+  font-size: 0.98rem;
   font-weight: 600;
   letter-spacing: -0.025em;
   color: var(--giz);
 }
 
 .maratona-corpo span {
-  margin-top: 6px;
-  font-size: 0.9rem;
+  margin-top: 5px;
+  font-size: 0.865rem;
   line-height: 1.5;
   color: var(--fumaca);
   text-wrap: pretty;
 }
 
-/* Centrada na altura do cartão, não no topo: a seta aponta a linha inteira,
-   não o título. */
-.maratona-seta {
-  flex-shrink: 0;
-  align-self: center;
-  display: grid;
-  place-items: center;
-  color: var(--cinza);
-  transition: color var(--transicao), transform var(--transicao);
-}
-
-.maratona-grupo:hover .maratona-seta {
-  color: #25d366;
-  transform: translateX(3px);
-}
-
 
 /* ==========================================================================
-   FERRAMENTAS ACADÊMICAS
-
-   É a parte da página que as pessoas realmente usam. Nada de brilho aqui:
-   campo legível, número em mono e resultado que se lê de longe.
-   ========================================================================== */
-
-.tools-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 16px;
-  align-items: start;
-}
-
-.tool-card {
-  border: 1px solid var(--traco);
-  border-radius: var(--r-lg);
-  background: var(--penumbra);
-  overflow: hidden;
-}
-
-.tool-header {
-  padding: 28px 28px 24px;
-  border-bottom: 1px solid var(--traco);
-}
-
-.tool-icon {
-  width: 46px;
-  height: 46px;
-  display: grid;
-  place-items: center;
-  margin-bottom: 18px;
-  border: 1px solid var(--ambar-traco);
-  border-radius: var(--r-sm);
-  background: var(--ambar-lavagem);
-}
-
-.tool-header h3 {
-  font-family: var(--display);
-  font-size: 1.28rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-}
-
-.tool-desc {
-  margin-top: 9px;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: var(--fumaca);
-}
-
-/* Coluna para o "Limpar" poder se alinhar à esquerda no pé do cartão. */
-.tool-body {
-  display: flex;
-  flex-direction: column;
-  padding: 26px 28px 30px;
-}
-
-.tool-notas-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.tool-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.tool-field + .tool-field {
-  margin-top: 16px;
-}
-
-/* Dentro da grade de notas o espaçamento é da própria grade. */
-.tool-notas-grid .tool-field + .tool-field {
-  margin-top: 0;
-}
-
-.tool-field label {
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--fumaca);
-}
-
-.tool-peso-label {
-  color: var(--ambar);
-}
-
-/* Rótulo de um grupo (o radiogroup do modo de contagem), que não pode ser um
-   `<label>` porque não aponta para um campo só. Mesma pinta do `label`. */
-.tool-field-label {
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--fumaca);
-}
-
-/* Segmentado: dois radios de verdade (teclado e leitor de tela funcionam),
-   com o input escondido e o `<span>` fazendo o papel do botão. */
-.tool-toggle {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 4px;
-  padding: 4px;
-  border: 1px solid var(--traco);
-  border-radius: var(--r-sm);
-  background: var(--sombra);
-}
-
-.tool-toggle-opt input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.tool-toggle-opt span {
-  display: block;
-  padding: 9px 10px;
-  border-radius: 4px;
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0.06em;
-  text-align: center;
-  color: var(--cinza);
-  cursor: pointer;
-  transition: color var(--transicao), background var(--transicao);
-}
-
-.tool-toggle-opt span:hover {
-  color: var(--giz);
-}
-
-.tool-toggle-opt input:checked + span {
-  color: var(--ambar);
-  background: var(--ambar-lavagem);
-}
-
-/* O foco vive no input escondido, então o anel tem que aparecer no `<span>`. */
-.tool-toggle-opt input:focus-visible + span {
-  outline: 1px solid var(--ambar);
-  outline-offset: 1px;
-}
-
-.tool-input {
-  width: 100%;
-  padding: 13px 15px;
-  border: 1px solid var(--traco);
-  border-radius: var(--r-sm);
-  background: var(--sombra);
-  color: var(--giz);
-  font-family: var(--mono);
-  font-size: 0.95rem;
-  transition: border-color var(--transicao), background var(--transicao);
-}
-
-.tool-input::placeholder {
-  color: var(--cinza);
-}
-
-.tool-input:focus {
-  outline: none;
-  border-color: var(--ambar);
-  background: #1b1921;
-}
-
-.tool-input:focus-visible {
-  outline: none;
-}
-
-/* Some as setas nativas do number — as nossas ficam à direita, empilhadas. */
-.tool-number-wrap input[type="number"] {
-  -moz-appearance: textfield;
-  appearance: textfield;
-  padding-right: 42px;
-}
-
-.tool-number-wrap input[type="number"]::-webkit-outer-spin-button,
-.tool-number-wrap input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.tool-number-wrap,
-.tool-select-wrap {
-  position: relative;
-}
-
-.tool-number-btns {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  bottom: 5px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.tool-number-btn {
-  flex: 1;
-  width: 28px;
-  display: grid;
-  place-items: center;
-  border-radius: 4px;
-  color: var(--cinza);
-  transition: color var(--transicao), background var(--transicao);
-}
-
-.tool-number-btn svg {
-  width: 11px;
-  height: 11px;
-}
-
-.tool-number-btn:hover {
-  color: var(--ambar);
-  background: var(--ambar-lavagem);
-}
-
-.tool-select-wrap select.tool-input {
-  appearance: none;
-  -webkit-appearance: none;
-  padding-right: 40px;
-  cursor: pointer;
-}
-
-.tool-select-arrow {
-  position: absolute;
-  top: 50%;
-  right: 14px;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: var(--cinza);
-  display: flex;
-}
-
-/* Campo com nota fora de 0–10. Antes o valor era cortado em silêncio e a
-   pessoa via a média de um número que não digitou. */
-.tool-input.invalido {
-  border-color: var(--vermelho);
-  background: rgba(242, 86, 75, 0.07);
-}
-
-.tool-input.invalido:focus {
-  border-color: var(--vermelho);
-}
-
-/* Substitui o antigo "Calcular": a conta é ao vivo, então o único botão que
-   sobra é o de desfazer. Discreto e só aparece quando há algo preenchido. */
-.tool-limpar {
-  align-self: flex-start;
-  margin-top: 16px;
-  padding: 8px 0;
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--cinza);
-  transition: color var(--transicao);
-}
-
-.tool-limpar:hover {
-  color: var(--ambar);
-}
-
-/* ---- Resultado ---- */
-
-.tool-result {
-  margin-top: 22px;
-  padding: 24px;
-  border: 1px solid var(--traco);
-  border-radius: var(--r);
-  background: var(--breu);
-}
-
-/* O convite, antes de haver resultado. Sem caixa: uma linha de texto não deve
-   fingir ser um painel de resultado vazio. */
-.tool-result.vazio {
-  padding: 16px 0 0;
-  border: 0;
-  border-top: 1px solid var(--traco);
-  border-radius: 0;
-  background: none;
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  line-height: 1.75;
-  letter-spacing: 0.04em;
-  color: var(--cinza);
-  text-transform: none;
-}
-
-.result-value {
-  font-family: var(--mono);
-  font-size: 3rem;
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.05em;
-  color: var(--giz);
-}
-
-.result-value.aprovado   { color: var(--verde); }
-.result-value.final,
-.result-value.final-nota { color: var(--ambar); }
-.result-value.reprovado  { color: var(--vermelho); }
-
-.result-title {
-  margin-top: 8px;
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--cinza);
-}
-
-.result-status {
-  display: inline-block;
-  margin-top: 14px;
-  padding: 7px 13px;
-  border-radius: 999px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
-
-.aprovado-bg  { background: rgba(61, 214, 140, 0.13); color: var(--verde); }
-.final-bg     { background: var(--ambar-lavagem);     color: var(--ambar); }
-.reprovado-bg { background: rgba(242, 86, 75, 0.13);  color: var(--vermelho); }
-
-.result-detail {
-  margin-top: 14px;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: var(--fumaca);
-}
-
-.result-detail strong {
-  color: var(--giz);
-  font-family: var(--mono);
-  font-weight: 500;
-}
-
-.result-formula {
-  margin-top: 14px;
-  padding: 11px 14px;
-  border: 1px solid var(--traco);
-  border-radius: var(--r-sm);
-  background: var(--sombra);
-  font-family: var(--mono);
-  font-size: 0.8125rem;
-  color: var(--fumaca);
-}
-
-.result-divider {
-  height: 1px;
-  margin: 24px 0;
-  background: var(--traco);
-}
-
-.result-table {
-  width: 100%;
-  margin-top: 18px;
-  border-collapse: collapse;
-  font-family: var(--mono);
-  font-size: 0.8125rem;
-}
-
-.result-table th {
-  padding: 9px 10px;
-  border-bottom: 1px solid var(--traco);
-  text-align: left;
-  font-size: var(--t-mini);
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--cinza);
-}
-
-.result-table td {
-  padding: 10px;
-  border-bottom: 1px solid var(--traco);
-  color: var(--fumaca);
-}
-
-.result-table tr:last-child td {
-  border-bottom: 0;
-}
-
-.result-table td:first-child {
-  color: var(--giz);
-}
-
-/* A mesma quantidade na outra unidade ("4 dias (9 faltas)"): é apoio, não pode
-   competir com o número principal da linha. */
-.result-td-fraco {
-  color: var(--cinza);
-}
-
-.result-bar {
-  position: relative;
-  height: 5px;
-  margin-top: 20px;
-  border-radius: 999px;
-  background: var(--sombra);
-}
-
-.result-bar-fill {
-  height: 100%;
-  border-radius: 999px;
-  transition: width 0.8s var(--transicao);
-}
-
-/* Medida com escala: rótulo, barra e legenda compartilham o `--minimo` definido
-   no JS, para o risco e o texto "mínimo 75%" nunca saírem de sincronia. */
-.result-medida {
-  margin-top: 22px;
-}
-
-/* Risco na presença mínima. A barra sozinha era só uma faixa colorida sem
-   escala: não dava para saber se aquele comprimento passava ou não. O risco
-   marca os 75% e a barra passa a ter significado. */
-.result-bar.com-minimo::after {
-  content: "";
-  position: absolute;
-  top: -3px;
-  bottom: -3px;
-  left: var(--minimo);
-  width: 1px;
-  background: var(--giz);
-  opacity: 0.55;
-}
-
-.result-bar-rotulo {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--cinza);
-}
-
-.result-bar-rotulo strong {
-  font-size: 0.9375rem;
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  text-transform: none;
-  color: var(--giz);
-}
-
-/* Posicionamento absoluto e não flex: com `space-between` o rótulo do meio só
-   cai no centro se "0%" e "100%" tiverem a mesma largura — não têm, e o
-   "mínimo 75%" saía alguns pixels do risco. Ancorado em `--minimo` ele fica
-   exatamente embaixo. */
-.result-bar-escala {
-  position: relative;
-  height: 1.1em;
-  margin-top: 8px;
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
-  color: var(--cinza);
-}
-
-.result-bar-escala span {
-  position: absolute;
-  top: 0;
-  white-space: nowrap;
-}
-
-.result-bar-escala span:nth-child(1) { left: 0; }
-
-.result-bar-escala span:nth-child(2) {
-  left: var(--minimo);
-  transform: translateX(-50%);
-  color: var(--fumaca);
-}
-
-.result-bar-escala span:nth-child(3) { right: 0; }
-
-.result-bar-fill.green  { background: var(--verde); }
-.result-bar-fill.orange { background: var(--ambar); }
-.result-bar-fill.red    { background: var(--vermelho); }
-
-
-/* ==========================================================================
-   CHAMADA FINAL — a luz apagando
+   HELP CIMATEC — o banner que fecha a home
+
+   Herda o gesto da antiga chamada final: a luz do herói reaparece aqui, mais
+   fraca, e o pato volta apagado no canto. É o fim da página, então a luz está
+   acabando.
+
+   A diferença é que o bloco INTEIRO é um link para fora. Ele tinha um botão
+   dentro; num cartaz de 700px de largura, um alvo de 200px no pé é a única
+   parte viva de uma área que parece toda clicável — e no celular é um alvo que
+   se erra. O `.btn-primary` continua desenhado lá dentro, mas como <span>
+   `aria-hidden`: é a aparência de botão, não um segundo alvo aninhado (link
+   dentro de link é HTML inválido, e o leitor de tela anuncia dois destinos).
    ========================================================================== */
 
 .cta-section {
@@ -2316,6 +2149,7 @@ section {
 
 .cta-box {
   position: relative;
+  display: block;
   padding: clamp(48px, 7vw, 84px) clamp(28px, 5vw, 64px);
   border: 1px solid var(--traco);
   border-radius: var(--r-lg);
@@ -2323,6 +2157,16 @@ section {
     radial-gradient(ellipse 62% 100% at 84% 8%, rgba(255, 77, 0, 0.12), transparent 64%),
     var(--penumbra);
   overflow: hidden;
+}
+
+.cta-box--link {
+  transition: border-color var(--transicao), background var(--transicao),
+    transform var(--transicao);
+}
+
+.cta-box--link:hover {
+  border-color: var(--ambar-traco);
+  transform: translateY(-3px);
 }
 
 /* Mesmo pato do topo, menor e mais apagado: fecha a página onde ela começou. */
@@ -2334,25 +2178,64 @@ section {
   opacity: 0.14;
   transform: rotate(8deg);
   pointer-events: none;
+  transition: opacity var(--transicao);
+}
+
+.cta-box--link:hover .cta-duck {
+  opacity: 0.2;
+}
+
+.cta-box .secao-indice {
+  display: block;
+  margin-bottom: 14px;
 }
 
 .cta-box .section-title {
-  font-size: clamp(2.3rem, 5.4vw, 3.6rem);
+  font-size: clamp(2.6rem, 7vw, 4.6rem);
 }
 
 .cta-box .section-desc {
   margin-bottom: 38px;
 }
 
-.cta-buttons {
+.cta-acao {
   display: flex;
   flex-wrap: wrap;
-  gap: 13px;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+/* Dizer que abre em outra aba, e onde. `target="_blank"` sem aviso é uma
+   janela que aparece do nada — e o endereço escrito deixa a pessoa decidir se
+   confia antes de clicar, o que num site institucional que manda para fora do
+   próprio domínio é o mínimo. */
+.cta-nota {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.06em;
+  color: var(--cinza);
+}
+
+/* O <span> com cara de botão precisa reagir ao hover do CARTÃO, já que ele
+   próprio não é o alvo. */
+.cta-box--link:hover .btn-primary {
+  background: var(--gema);
+  box-shadow: 0 10px 30px -10px rgba(242, 138, 31, 0.55);
 }
 
 
 /* ==========================================================================
    MODAIS
+
+   Três — Comunidade, SEMCOMP e o agradecimento do PROSEL — e uma implementação
+   só, em `js/main.js`. Antes eram dois modais com um par de listeners copiado
+   para cada um; foi assim que o Discord ficou desatualizado numa das duas
+   listas de redes que existiam.
+
+   `hidden` DE VERDADE no HTML, e não só uma classe: sem ele o conteúdo do modal
+   continua na ordem de tabulação e na leitura de tela enquanto está fechado, e
+   dá para tabular às cegas por dentro de um diálogo invisível. O `.open` existe
+   para a transição de entrada; quem esconde é o atributo.
    ========================================================================== */
 
 .modal-overlay {
@@ -2362,17 +2245,22 @@ section {
   display: grid;
   place-items: center;
   padding: 22px;
-  background: rgba(4, 4, 6, 0.78);
+  background: rgba(4, 4, 6, 0.8);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   opacity: 0;
-  visibility: hidden;
-  transition: opacity var(--transicao), visibility var(--transicao);
+  transition: opacity var(--transicao);
+}
+
+/* `[hidden]` não vence `display: grid` sozinho — a regra de display de um
+   seletor de classe tem mais peso que a do atributo na folha do navegador.
+   Sem esta linha o modal fica visível o tempo todo. */
+.modal-overlay[hidden] {
+  display: none;
 }
 
 .modal-overlay.open {
   opacity: 1;
-  visibility: visible;
 }
 
 .modal-card {
@@ -2386,8 +2274,16 @@ section {
   border-radius: var(--r-lg);
   background: var(--penumbra);
   box-shadow: var(--elevacao);
-  transform: translateY(14px) scale(0.98);
+  transform: translateY(14px) scale(0.985);
   transition: transform var(--transicao);
+}
+
+/* Comunidade e SEMCOMP são conteúdo de página que passou a morar em modal:
+   seis cartões de rede e uma ficha de evento não cabem numa coluna de 432px
+   sem virar uma pilha de 2000px de altura. */
+.modal-card--largo {
+  max-width: 760px;
+  padding: 44px 40px 40px;
 }
 
 .modal-overlay.open .modal-card {
@@ -2398,23 +2294,71 @@ section {
   position: absolute;
   top: 14px;
   right: 14px;
-  width: 34px;
-  height: 34px;
+  z-index: 2;
+  width: 38px;
+  height: 38px;
   display: grid;
   place-items: center;
   border-radius: 50%;
+  background: var(--penumbra);
   color: var(--cinza);
   transition: color var(--transicao), background var(--transicao);
 }
 
 .modal-close:hover {
   color: var(--giz);
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.modal-header {
+.modal-topo {
+  margin-bottom: 28px;
+}
+
+.modal-topo--centro {
   text-align: center;
-  margin-bottom: 26px;
+}
+
+.modal-selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 13px;
+  border: 1px solid var(--ambar-traco);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+.modal-selo--vivo {
+  background: var(--ambar-lavagem);
+  color: var(--gema);
+}
+
+.modal-topo h2 {
+  margin-top: 18px;
+  font-family: var(--marca);
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  color: var(--giz);
+}
+
+.modal-topo p {
+  max-width: 56ch;
+  margin-top: 14px;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+.modal-topo--centro p {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .modal-logo {
@@ -2423,57 +2367,112 @@ section {
   margin: 0 auto 18px;
 }
 
-.modal-header h2 {
-  font-family: var(--display);
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.032em;
+/* O letreiro de neon É o título do modal da SEMCOMP. O halo é literal e não
+   enfeite: a mesma luz que sai do pato, só que aqui ela já vem pintada no
+   arquivo e o `drop-shadow` apenas a estende para fora do traço. */
+.modal-semcomp-logo {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  margin-top: 20px;
+  filter: drop-shadow(0 0 34px rgba(255, 77, 0, 0.34));
 }
 
-.modal-header p {
-  margin-top: 11px;
-  font-size: 0.925rem;
-  line-height: 1.55;
-  color: var(--fumaca);
-  text-wrap: pretty;
+/* Ficha do evento — mesmos filetes da ficha do PROSEL. */
+.modal-ficha {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0 22px;
+  margin-bottom: 24px;
 }
 
-.modal-links {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
+.modal-ficha > div {
+  padding: 14px 0 0;
+  border-top: 1px solid var(--traco);
 }
 
-.modal-link {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 14px 17px;
-  border: 1px solid var(--traco);
-  border-radius: var(--r-sm);
-  background: var(--sombra);
+.modal-ficha dt {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.modal-ficha dd {
+  margin-top: 6px;
   font-size: 0.9375rem;
-  font-weight: 500;
-  transition: border-color var(--transicao), background var(--transicao),
-    color var(--transicao), transform var(--transicao);
+  line-height: 1.4;
+  color: var(--giz);
 }
 
-.modal-link:hover {
-  transform: translateX(3px);
+.modal-foto {
+  margin-bottom: 26px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--breu);
 }
 
-/* Cada rede puxa a própria cor só no hover — no repouso a lista fica calma.
+/* Quando a foto fecha o modal em vez de ficar no meio dele, a margem de baixo
+   vira um vão entre a imagem e a borda do cartão. */
+.modal-foto--fecha {
+  margin-top: 28px;
+  margin-bottom: 0;
+}
 
-   O TikTok não tem uma cor de marca única (a identidade dele é o par ciano e
-   magenta em cima do preto), e nenhuma das duas sobrevive sozinha num fundo
-   escuro sem virar outra marca. Então ele fica no branco quente da página,
-   que é o que o logo usa no material oficial em fundo preto. */
-.modal-link-whatsapp:hover  { border-color: rgba(37, 211, 102, 0.5);  color: #25d366; }
-.modal-link-instagram:hover { border-color: rgba(225, 48, 108, 0.5);  color: #e1306c; }
-.modal-link-discord:hover   { border-color: rgba(88, 101, 242, 0.5);  color: #5865f2; }
-.modal-link-linkedin:hover  { border-color: rgba(10, 102, 194, 0.55); color: #3b9ae1; }
-.modal-link-youtube:hover   { border-color: rgba(255, 0, 0, 0.5);     color: #ff4040; }
-.modal-link-tiktok:hover    { border-color: var(--traco-forte);        color: var(--giz); }
+.modal-foto img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  /* O grupo ocupa a faixa central da foto; embaixo é cadeira vazia e o teto
+     come o topo. 45% mantém os rostos no quadro no corte deitado. */
+  object-position: center 45%;
+}
+
+.modal-foto figcaption {
+  padding: 12px 16px;
+  border-top: 1px solid var(--traco);
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.06em;
+  color: var(--cinza);
+}
+
+.modal-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin-top: 26px;
+}
+
+.modal-nota {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: var(--cinza);
+}
+
+/* Bloco secundário dentro do modal (os grupos da maratona). Separado por um
+   filete e por um rótulo, porque é outra categoria de coisa: canais do clube
+   acima, salas de turma abaixo. */
+.modal-bloco {
+  margin-top: 30px;
+  padding-top: 26px;
+  border-top: 1px solid var(--traco);
+}
+
+.modal-bloco-titulo {
+  display: block;
+  margin-bottom: 16px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
 
 
 /* ==========================================================================
@@ -2507,6 +2506,27 @@ footer {
   opacity: 0.75;
 }
 
+/* O rodapé ganhou links porque a navegação encolheu para quatro itens: dois
+   deles abrem modal e um é o Login, então "Seja membro" e "Help CIMATEC" são
+   os únicos destinos de página que existem — e quem chega ao fim rolando é
+   exatamente quem não vai subir de volta até a barra. */
+.footer-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 22px;
+}
+
+.footer-right a {
+  font-size: 0.875rem;
+  color: var(--fumaca);
+  transition: color var(--transicao);
+}
+
+.footer-right a:hover {
+  color: var(--ambar);
+}
+
 .footer-tech {
   font-family: var(--mono);
   font-size: var(--t-mini);
@@ -2520,11 +2540,11 @@ footer {
    RESPONSIVO
    ========================================================================== */
 
-/* Entre 860px (onde entra o hambúrguer) e ~1080px a barra tem seis links mais
-   duas pílulas e começava a empurrar o nome do clube. Aperta o respiro dos
-   links antes de recorrer ao menu. */
+/* A barra tem quatro itens mais o Login. Antes de mandá-los para o hambúrguer,
+   aperta o respiro de cada um. */
 @media (max-width: 1080px) {
-  .nav-links li a {
+  .nav-links li > a,
+  .nav-links li > button {
     padding-left: 10px;
     padding-right: 10px;
   }
@@ -2533,11 +2553,6 @@ footer {
     padding-left: 16px;
     padding-right: 16px;
   }
-
-  .nav-links li a.nav-ghost {
-    padding-left: 14px;
-    padding-right: 14px;
-  }
 }
 
 @media (max-width: 980px) {
@@ -2545,22 +2560,17 @@ footer {
     padding-top: 132px;
   }
 
-  /* O cartaz da SEMCOMP empilha: letreiro e texto primeiro, foto no pé
-     sangrando até as bordas do cartão.
+  .pagina-hero {
+    padding-top: 122px;
+  }
 
-     `minmax(0, 1fr)` e não `1fr`: o `1fr` sozinho é `minmax(auto, 1fr)`, e esse
-     `auto` é um PISO de min-content. O botão "Quero me inscrever na SEMCOMP" é
-     `white-space: nowrap`, então o min-content da coluna era a largura inteira
-     do rótulo — 292px dentro de um cartão de 280. A coluna estourava o cartão,
-     o `overflow: hidden` do cartaz cortava o que sobrava, e o resultado em
-     320px era o botão principal da seção com o fim do texto decepado (junto do
-     parágrafo e dos valores da ficha). O `0` remove o piso; a linha de baixo
-     cuida de o rótulo caber. A versão larga desta regra já usava minmax. */
-  .event-highlight {
+  /* O cartaz do PROSEL empilha: texto primeiro, foto no pé sangrando até as
+     bordas do cartão. */
+  .prosel-cartaz {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .event-foto {
+  .prosel-foto {
     margin: 0 calc(-1 * clamp(30px, 4.4vw, 52px))
               calc(-1 * clamp(30px, 4.4vw, 52px));
     border-left: 0;
@@ -2570,10 +2580,9 @@ footer {
   /* Em pé e de largura cheia a foto ficaria com dois metros de altura, então
      empilhada ela vira uma faixa deitada. `min-height: 0` derruba os 340px que
      só fazem sentido ao lado da coluna de texto. */
-  .event-foto img {
+  .prosel-foto img {
     min-height: 0;
     aspect-ratio: 16 / 10;
-    object-position: center 45%;
   }
 
   /* No celular o pato vem primeiro: a luz precisa chegar antes do texto. */
@@ -2599,57 +2608,14 @@ footer {
     grid-template-columns: 1fr;
   }
 
-  .tools-grid {
-    grid-template-columns: 1fr;
-  }
-
   /* Cinco retratos em fileira não cabem: a partir daqui a fileira volta a ser
      grade e se reacomoda sozinha (4, depois 3, depois 2 colunas). */
   .directors-grid {
     grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   }
 
-  /* O bloco da maratona empilha no mesmo ponto que o cartaz dos destaques: a
-     coluna de texto ficaria com 200px e as descrições dos grupos quebrariam a
-     cada duas palavras. */
-  .maratona {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 620px) {
-  /* A presidência empilha e os cartões largos viram cartões normais: com menos
-     de 620px o retrato lateral fica estreito demais para valer a pena. */
-  .directors-lead {
-    grid-template-columns: 1fr;
-  }
-
-  .director-lead {
-    flex-direction: column;
-  }
-
-  .director-lead .director-plate {
-    width: 100%;
-    max-width: none;
-    border-right: 0;
-    border-bottom: 1px solid var(--traco);
-  }
-
-  .director-lead .director-foto {
-    height: auto;
-    aspect-ratio: 4 / 5;
-  }
-
-  .director-lead .director-corpo {
-    padding: 20px 20px 24px;
-  }
-}
-
-/* 980px e não 860px: com a entrada de SEMCOMP a barra passou a ter seis links
-   mais duas pílulas, e entre 860 e 980 isso só cabia comprimindo tudo. 980
-   também é onde o herói e o cartaz do evento empilham, então a navegação passa
-   para o menu no mesmo ponto em que a página muda de forma. */
-@media (max-width: 980px) {
+  /* 980px também é onde a navegação vira menu: o ponto em que a página muda de
+     forma é o mesmo em que a barra muda de forma. */
   .nav-links {
     display: none;
   }
@@ -2682,11 +2648,52 @@ footer {
     border-top: 1px solid var(--traco);
     margin-top: 4px;
   }
+
+  /* O modal largo perde o respiro extra: numa tela de 800px ele já ocupa
+     quase tudo, e 40px de cada lado são 10% da largura útil. */
+  .modal-card--largo {
+    padding: 40px 26px 30px;
+  }
+}
+
+@media (max-width: 620px) {
+  /* A presidência empilha e os cartões largos viram cartões normais: com menos
+     de 620px o retrato lateral fica estreito demais para valer a pena. */
+  .directors-lead {
+    grid-template-columns: 1fr;
+  }
+
+  .director-lead {
+    flex-direction: column;
+  }
+
+  .director-lead .director-plate {
+    width: 100%;
+    max-width: none;
+    border-right: 0;
+    border-bottom: 1px solid var(--traco);
+  }
+
+  .director-lead .director-foto {
+    height: auto;
+    aspect-ratio: 4 / 5;
+  }
+
+  .director-lead .director-corpo {
+    padding: 20px 20px 24px;
+  }
+
+  /* O número da seção sai da margem e sobe para cima do rótulo: numa coluna de
+     600px ele comia 50px de largura de um título que já precisa de todos. */
+  .secao-topo {
+    flex-direction: column;
+    gap: 14px;
+  }
 }
 
 @media (max-width: 560px) {
   /*
-    Um por linha, cada um da largura da coluna.
+    Um botão por linha, cada um da largura da coluna.
 
     E aqui o `white-space: nowrap` dos botões deixa de valer. Ele existe para a
     barra e para as filas deitadas, onde um rótulo que quebra faz a pílula
@@ -2698,22 +2705,18 @@ footer {
   */
   .hero-buttons .btn-primary,
   .hero-buttons .btn-secondary,
-  .cta-buttons .btn-primary,
-  .cta-buttons .btn-secondary,
-  .cta-buttons .btn-outline,
-  .event-acoes .btn-primary,
-  .event-acoes .btn-outline {
+  .prosel-acoes .btn-primary,
+  .prosel-acoes .btn-outline,
+  .modal-acoes .btn-primary,
+  .modal-acoes .btn-outline {
     flex: 1 1 100%;
     white-space: normal;
   }
 
-  /* As duas tarjas do herói também empilham. Elas são `white-space: nowrap`
-     para não quebrarem no meio de "PROSEL aberto · entre para a diretoria", e
-     numa coluna de 280px as duas lado a lado empurrariam a segunda para fora
-     da tela. */
-  .hero-avisos {
-    flex-direction: column;
-    align-items: flex-start;
+  /* As fichas viram listas de filetes, um dado por linha. */
+  .event-meta,
+  .modal-ficha {
+    grid-template-columns: 1fr;
   }
 
   /* O pé do cartão vira duas linhas: a nota do formulário tem umas seis
@@ -2725,55 +2728,34 @@ footer {
     gap: 16px;
   }
 
-  /*
-    A maratona é o bloco mais aninhado da página — cartão dentro de cartão
-    dentro do container —, e cada camada cobra o seu respiro nos dois lados.
-    Num aparelho de 390px sobravam ~130px para a descrição do grupo, que caía
-    em seis linhas de três palavras.
-
-    Aqui as três camadas apertam e a seta sai de cena: ela é decoração de
-    afordância, e o cartão inteiro já é o link — quem está no celular toca no
-    bloco, não na setinha de 16px. Ganha-se quase 100px de coluna de texto, que
-    é o que faz a descrição caber em três linhas.
-  */
-  .maratona {
-    padding: 20px;
+  /* O modal é o bloco mais aninhado do site — cartão dentro de sobreposição,
+     com cartões dentro. Cada camada cobra o respiro dos dois lados, e numa
+     tela de 390px sobravam ~150px para a descrição de cada rede. */
+  .modal-card {
+    padding: 38px 20px 24px;
   }
 
+  .modal-card--largo {
+    padding: 38px 20px 26px;
+  }
+
+  .rede-card,
   .maratona-grupo {
+    padding: 15px 16px;
     gap: 12px;
-    padding: 16px 18px;
-  }
-
-  .maratona-seta {
-    display: none;
-  }
-
-  /* A ficha do evento vira uma lista de filetes, um dado por linha. */
-  .event-meta {
-    grid-template-columns: 1fr;
-  }
-
-  .tool-notas-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .tool-header,
-  .tool-body {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-
-  .result-value {
-    font-size: 2.5rem;
   }
 
   .footer-inner {
     flex-direction: column;
     align-items: flex-start;
   }
-}
 
+  /* O número grande atrás da etapa some: numa coluna estreita ele deixa de ser
+     marca-d'água e passa a atravessar o texto. */
+  .passo-num {
+    display: none;
+  }
+}
 
 /* ==========================================================================
    MOVIMENTO REDUZIDO
@@ -2803,5 +2785,23 @@ footer {
 
   .cursor-glow {
     display: none;
+  }
+
+  /*
+    A FAIXA PRECISA DE UMA REGRA PRÓPRIA, e o `animation-duration: 0.01ms` da
+    regra universal acima é justamente o motivo.
+
+    Encurtar a duração não cancela a animação: ela roda inteira em 0,01ms e
+    PARA NO ÚLTIMO QUADRO, que aqui é `translateX(-50%)`. O trilho ficaria
+    parado com a primeira cópia da lista inteiramente fora da tela, à esquerda —
+    metade da faixa vazia, para sempre. `animation: none` devolve o trilho ao 0%
+    e a faixa vira o que deveria ser sem movimento: uma lista quieta.
+
+    O `!important` acompanha o da regra universal, que ganharia por vir depois
+    na cascata em igualdade de peso.
+  */
+  .faixa-trilho {
+    animation: none !important;
+    transform: none;
   }
 }

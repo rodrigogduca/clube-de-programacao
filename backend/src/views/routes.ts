@@ -1,5 +1,8 @@
 export const routes: Record<string, string> = {
   home: '/',
+  // Página pública que reúne comunidade, clubes temáticos e o PROSEL. Saiu da
+  // home para que a landing volte a ter uma leitura só: quem somos e quem faz.
+  seja_membro: '/seja-membro',
   painel: '/painel',
   listar_membros: '/painel/membros',
   adicionar_membro: '/painel/adicionar-membro',

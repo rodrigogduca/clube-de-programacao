@@ -7,6 +7,7 @@ import { consumeFlash, consumirFormulario } from '../common/flash';
 import { MembersService } from '../members/members.service';
 import { SignupRequestsService } from '../signup-requests/signup-requests.service';
 import { PODE_APROVAR_CADASTRO as PODE_APROVAR } from '../common/escopo';
+import { SITE_LINKS } from './site-links';
 
 export const CargoLabel: Record<string, string> = {
   presidente: 'Presidente',
@@ -129,6 +130,11 @@ export class PageContextService {
     return {
       site_url: baseUrl,
       canonical_url: baseUrl ? `${baseUrl}${req.path}` : req.path,
+      // Os destinos externos (PROSEL, SEMCOMP, redes, Help CIMATEC). Vêm daqui
+      // e não de um `{% set %}` de template porque o layout público, a home e a
+      // página Seja Membro precisam todos do mesmo mapa — e `set` não atravessa
+      // `extends`. Ver `site-links.ts`.
+      links: SITE_LINKS,
       csrf_token: () => csrfInput(token),
       // `[]` e truthy em JS, entao um array vazio renderizaria a caixa de avisos.
       messages: messages.length > 0 ? messages : null,

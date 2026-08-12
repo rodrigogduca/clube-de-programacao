@@ -68,7 +68,18 @@
      bem mais larga por caractere. A 6.25rem a frase do herói quebrava em cinco
      linhas e jogava os botões de "quero participar" abaixo da dobra. */
   --t-hero: clamp(2.5rem, 6.2vw, 4.5rem);
-  --t-secao: clamp(2rem, 4.4vw, 3.1rem);
+  /* Os títulos de seção subiram de `clamp(2rem, 4.4vw, 3.1rem)`.
+
+     A página deixou de ter nove seções e passou a ter três por tela; com menos
+     paradas, cada uma pode ocupar mais espaço, e o título grande é o que marca
+     a parada quando não há mais uma sequência de blocos para dar o ritmo.
+     Continua ABAIXO do `--t-hero`: o herói é a única voz mais alta da página, e
+     empatar os dois tiraria a hierarquia de ambos. */
+  --t-secao: clamp(2.15rem, 5vw, 3.7rem);
+  /* Só o título das páginas internas (/seja-membro). Ele faz lá o papel que o
+     `--t-hero` faz na home — a diferença é que não divide a tela com o pato,
+     então pode ser maior. */
+  --t-pagina: clamp(3rem, 8.5vw, 6rem);
   --t-sub: clamp(1.15rem, 1.9vw, 1.45rem);
   --t-corpo: 1.0625rem;
   --t-mini: 0.75rem;

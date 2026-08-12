@@ -33,6 +33,18 @@ export class PublicPagesController {
     return this.context.base(req);
   }
 
+  /**
+   * Comunidade, clubes temáticos e PROSEL.
+   *
+   * Não precisa de nada além do contexto base: a página é estática e os
+   * destinos externos já chegam nele como `links`.
+   */
+  @Get('seja-membro')
+  @Render('core/seja_membro')
+  async sejaMembro(@Req() req: SessionRequest) {
+    return this.context.base(req);
+  }
+
   @Get('accounts/login')
   async login(
     @Req() req: SessionRequest,
@@ -130,7 +142,7 @@ export class PublicPagesController {
   sitemap(@Req() req: SessionRequest) {
     const host = req.get('host');
     const base = host ? `${req.protocol}://${host}` : '';
-    const paths = ['/', '/solicitar-cadastro'];
+    const paths = ['/', '/seja-membro', '/solicitar-cadastro'];
     const urls = paths
       .map((path) => `  <url><loc>${base}${path}</loc></url>`)
       .join('\n');

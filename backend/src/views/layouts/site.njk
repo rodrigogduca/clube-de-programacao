@@ -1,0 +1,388 @@
+{#
+  LAYOUT DO SITE PÚBLICO — a moldura que a home e a /seja-membro dividem.
+
+  Tudo o que é igual nas duas telas mora aqui: as camadas de luz do fundo, a
+  navbar, o menu do celular, os três modais e o rodapé. Antes isso era o começo
+  e o fim de `core/home.njk`, e existia uma página pública só; com a segunda, a
+  alternativa a esta camada seria manter duas cópias da navbar em dia — que é
+  como um item de menu some de uma tela e fica na outra.
+
+  Blocos que as telas preenchem:
+
+    titulo          Texto do <title> (vem do base.njk).
+    meta            Canonical, Open Graph, robots (vem do base.njk).
+    conteudo        O corpo da página. É o que cada tela realmente escreve.
+
+  A NAVBAR TEM QUATRO ITENS, e dois deles não navegam:
+
+    Comunidade   abre modal
+    SEMCOMP      abre modal
+    Seja Membro  vai para /seja-membro
+    Login        botão de destaque
+
+  Comunidade e SEMCOMP são `<button>` e não `<a href="#...">` de propósito: não
+  existe seção nenhuma para onde rolar, o conteúdo delas é o próprio modal.
+  Fingir de âncora deixaria o endereço com um `#comunidade` que não leva a
+  lugar nenhum se o JavaScript falhar.
+#}
+{% extends "layouts/base.njk" %}
+{% import "partials/icones.njk" as ic %}
+
+{% block fontes %}
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block estilos %}
+  {# O pato é a primeira coisa que aparece; sem preload ele chega depois do texto. #}
+  <link rel="preload" as="image" href="{{ static('images/pato.png') }}">
+  {# A fonte da marca desenha o título do herói: sem preload o texto aparece na
+     fonte de reserva e salta quando ela chega.
+
+     ENDEREÇO ESCRITO À MÃO, E NÃO `static()`, DE PROPÓSITO.
+
+     O preload só é aproveitado quando a URL bate BYTE A BYTE com a que o
+     navegador vai pedir depois. Quem pede a fonte de verdade é o `@font-face`
+     de `css/site/fontes.css`, com um `url()` relativo — e relativo não passa
+     pelo `static()`, então chega sem o `?v=`. Com `static()` aqui, o preload
+     buscava `...ttf?v=abc123` e o CSS buscava `...ttf`: dois endereços, dois
+     downloads, 167 KB baixados DUAS VEZES em toda primeira visita.
+
+     Se o prefixo `/static` mudar no bootstrap.ts, esta linha muda junto. #}
+  <link rel="preload" as="font" type="font/ttf" crossorigin
+        href="/static/fonts/BryndanWriteBook-nGPM.ttf">
+  <link rel="stylesheet" href="{{ static('css/site/tokens.css') }}">
+  <link rel="stylesheet" href="{{ static('css/site/fontes.css') }}">
+  {# `site/publico.css` e não mais `style_home.css`: ele deixou de ser a folha
+     de uma tela quando a /seja-membro passou a carregá-lo também. #}
+  <link rel="stylesheet" href="{{ static('css/site/publico.css') }}">
+{% endblock %}
+
+{% block corpo %}
+  {#
+    As redes do clube, na ordem em que aparecem no modal da Comunidade.
+
+    `cor` é o RGB solto da marca (para caber num `rgba()` no CSS) e só acende no
+    ponteiro — seis marcas acesas de uma vez viram um arco-íris no meio de uma
+    página que é escura e âmbar do começo ao fim. O TikTok fica no branco quente
+    da página: a identidade dele é o par ciano/magenta sobre preto, e nenhuma
+    das duas cores sobrevive sozinha aqui sem virar outra marca.
+  #}
+  {% set redes = [
+    { chave: 'instagram', nome: 'Instagram', conta: '@clubedeprogramacaocimatec', url: links.instagram, cor: '225, 48, 108',  desc: 'Avisos, resultados de processo seletivo e o dia a dia do clube.' },
+    { chave: 'whatsapp',  nome: 'WhatsApp',  conta: 'Comunidade do clube',        url: links.whatsapp,  cor: '37, 211, 102', desc: 'O grupo principal: curso, monitoria e evento chegam aqui primeiro.' },
+    { chave: 'tiktok',    nome: 'TikTok',    conta: '@clube.de.programacao',      url: links.tiktok,    cor: '246, 241, 233', desc: 'Bastidores dos eventos e os vídeos curtos do clube.' },
+    { chave: 'youtube',   nome: 'PatoTV',    conta: '@patotv-quack',              url: links.youtube,   cor: '255, 64, 64',  desc: 'O canal no YouTube: aulas, gravações e projetos por inteiro.' },
+    { chave: 'discord',   nome: 'Discord',   conta: 'Servidor do clube',          url: links.discord,   cor: '88, 101, 242', desc: 'Onde se estuda junto, tira dúvida e joga depois da prova.' },
+    { chave: 'linkedin',  nome: 'LinkedIn',  conta: 'Clube de Programação',       url: links.linkedin,  cor: '59, 154, 225', desc: 'A cara institucional: parcerias, conquistas e trajetória.' }
+  ] %}
+
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="{{ url('home') }}" class="nav-logo">
+      {# `logo-256.png` e não `logo.png`: aqui ele é desenhado com 36px, e o
+         original de 864px/147 KB levava ~14s para pintar num 3G. O grande
+         continua nas metas de compartilhamento, que é onde tamanho é útil. #}
+      <img src="{{ static('images/logo-256.png') }}" alt="Logo Clube de Programação SENAI CIMATEC">
+      <span>Clube de Programação</span>
+    </a>
+
+    <ul class="nav-links">
+      {# `data-modal` é o contrato com o js/main.js: qualquer elemento com ele
+         abre o modal de mesmo id. Não há um listener por botão. #}
+      <li><button type="button" class="nav-item" data-modal="modalComunidade">Comunidade</button></li>
+      <li><button type="button" class="nav-item" data-modal="modalSemcomp">SEMCOMP</button></li>
+      <li><a href="{{ url('seja_membro') }}" class="nav-item nav-destaque">Seja Membro</a></li>
+      {% if user.is_authenticated %}
+      <li>
+        <div class="user-menu">
+          <button class="user-avatar" type="button">{{ membro.usuario.first_name|make_list|first|default("?") }}{{ membro.usuario.last_name|make_list|first|default("") }}</button>
+          <div class="user-dropdown">
+            <div class="user-dropdown-header">
+              <strong>{{ membro.usuario.get_full_name|default(membro.usuario.username) }}</strong>
+              <span>{{ membro.cargo_label }}</span>
+            </div>
+            <div class="user-dropdown-divider"></div>
+            <a href="{{ url('painel') }}" class="user-dropdown-item">Painel</a>
+            <div class="user-dropdown-divider"></div>
+            <form method="POST" action="{{ url('logout') }}">
+              {{ csrf_token() | safe }}
+              <button type="submit" class="user-dropdown-item user-dropdown-logout">Sair</button>
+            </form>
+          </div>
+        </div>
+      </li>
+      {% else %}
+      {# Login é a única pílula preenchida da barra. "Seja Membro" leva o âmbar
+         só no texto: duas pílulas cheias lado a lado disputam a mesma atenção
+         e a barra vira uma fileira de botões. #}
+      <li><a href="{{ url('login') }}" class="nav-cta">Login</a></li>
+      {% endif %}
+    </ul>
+
+    <button class="hamburger" id="hamburger" aria-label="Abrir menu"
+            aria-expanded="false" aria-controls="mobileMenu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button type="button" class="mobile-item" data-modal="modalComunidade">Comunidade</button>
+    <button type="button" class="mobile-item" data-modal="modalSemcomp">SEMCOMP</button>
+    <a href="{{ url('seja_membro') }}" class="mobile-item">Seja Membro</a>
+    {% if user.is_authenticated %}
+    <a href="{{ url('painel') }}" class="mobile-item">Painel</a>
+    <form method="POST" action="{{ url('logout') }}" style="margin:0;">
+      {{ csrf_token() | safe }}
+      <button type="submit" class="mobile-logout-btn">Sair</button>
+    </form>
+    {% else %}
+    <a href="{{ url('login') }}" class="nav-cta">Login</a>
+    {% endif %}
+  </div>
+
+  {% block conteudo %}{% endblock %}
+
+  {#
+    ==========================================================================
+    MODAIS
+
+    Os três seguem a mesma estrutura (`role="dialog"`, `aria-modal`, um título
+    apontado por `aria-labelledby`, um `.modal-close`) porque o main.js os trata
+    por classe, não por id: abrir, prender o foco dentro, fechar no Escape, no
+    clique fora e devolver o foco a quem abriu — uma implementação só para os
+    três, em vez de um par de listeners copiado por modal.
+    ==========================================================================
+  #}
+
+  <!-- MODAL COMUNIDADE -->
+  <div class="modal-overlay" id="modalComunidade" role="dialog" aria-modal="true"
+       aria-labelledby="tituloComunidade" hidden>
+    <div class="modal-card modal-card--largo">
+      <button class="modal-close" type="button" data-modal-fechar aria-label="Fechar">
+        {{ ic.icone('fechar') }}
+      </button>
+
+      <div class="modal-topo">
+        <span class="modal-selo">// comunidade</span>
+        <h2 id="tituloComunidade">Onde o clube conversa</h2>
+        <p>Cada canal tem um papel. Os avisos saem no Instagram e no WhatsApp; o resto é onde o clube mostra o que anda fazendo.</p>
+      </div>
+
+      <div class="rede-grid">
+        {% for r in redes %}
+          {% if r.url %}
+          <a class="rede-card" style="--rede: {{ r.cor }}"
+             href="{{ r.url }}" target="_blank" rel="noopener noreferrer">
+            <span class="rede-icone">{{ ic.icone(r.chave, 20) }}</span>
+            <span class="rede-corpo">
+              <span class="rede-nome">{{ r.nome }}</span>
+              <span class="rede-desc">{{ r.desc }}</span>
+              <span class="rede-conta">{{ r.conta }}</span>
+            </span>
+          </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {#
+        MARATONA — grupos de turma, não canais do clube.
+
+        Ficam num bloco à parte porque não são "siga a gente": são duas salas de
+        estudo por nível, e entrar na errada custa caro (o novato se perde, o
+        experiente se entedia). O bloco só aparece se pelo menos um convite
+        estiver preenchido em `site-links.ts`.
+      #}
+      {% set maratona = [
+        { url: links.maratonaNovatos,     nome: 'Novatos em Maratona',     desc: 'Para quem está começando em programação competitiva.' },
+        { url: links.maratonaExperientes, nome: 'Experientes em Maratona', desc: 'Para quem já resolve problema com constância.' }
+      ] %}
+      {% if links.maratonaNovatos or links.maratonaExperientes %}
+      <div class="modal-bloco">
+        <span class="modal-bloco-titulo">Grupos de estudo &mdash; Maratona de Programação</span>
+        <div class="maratona-grupos">
+          {% for g in maratona %}
+            {% if g.url %}
+            <a class="maratona-grupo" href="{{ g.url }}" target="_blank" rel="noopener noreferrer">
+              <span class="maratona-icone">{{ ic.icone('whatsapp', 17) }}</span>
+              <span class="maratona-corpo">
+                <strong>{{ g.nome }}</strong>
+                <span>{{ g.desc }}</span>
+              </span>
+            </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- MODAL SEMCOMP -->
+  <div class="modal-overlay" id="modalSemcomp" role="dialog" aria-modal="true"
+       aria-labelledby="tituloSemcomp" hidden>
+    <div class="modal-card modal-card--largo">
+      <button class="modal-close" type="button" data-modal-fechar aria-label="Fechar">
+        {{ ic.icone('fechar') }}
+      </button>
+
+      {#
+        O letreiro de neon É o título do modal: um pato dentro de uma lâmpada
+        acesa, que é literalmente a ideia da marca (o pato é a fonte de luz). O
+        `alt` carrega o texto, e o <h2> fica na sombra para o leitor de tela
+        anunciar o modal com um nome — `aria-labelledby` precisa de texto, e
+        texto dentro de `alt` não serve para ele.
+      #}
+      <div class="modal-topo modal-topo--semcomp">
+        {% if links.semcomp %}
+        <span class="modal-selo modal-selo--vivo">
+          <span class="aviso-ponto" aria-hidden="true"></span>
+          Inscrições abertas
+        </span>
+        {% else %}
+        <span class="modal-selo">// evento principal</span>
+        {% endif %}
+
+        <h2 id="tituloSemcomp" class="sr-only">SEMCOMP 2026 — Semana da Computação</h2>
+        <img src="{{ static('images/semcomp/semcomp-2026.png') }}"
+             alt="SEMCOMP 2026 — Semana da Computação, 5 anos"
+             class="modal-semcomp-logo" width="767" height="308"
+             loading="lazy" decoding="async">
+        <p>A Semana da Computação é o maior evento organizado pelo Clube de Programação. Uma semana inteira de palestras, workshops e hackathons voltados para tecnologia e inovação — e é aberta a quem quiser assistir.</p>
+      </div>
+
+      <dl class="modal-ficha">
+        <div>
+          <dt>Ano</dt>
+          <dd>2026</dd>
+        </div>
+        <div>
+          <dt>Onde</dt>
+          <dd>Universidade SENAI CIMATEC</dd>
+        </div>
+        <div>
+          <dt>Formato</dt>
+          <dd>Palestras, workshops e hackathons</dd>
+        </div>
+      </dl>
+
+      {#
+        AS AÇÕES VÊM ANTES DA FOTO.
+
+        O modal inteiro mede ~1030px e a área útil de um notebook de 900px de
+        altura dá 854 para o cartão: com a foto no meio, o botão de inscrição —
+        que é a única razão de este modal existir — nascia abaixo da dobra, e
+        quem não pensasse em rolar dentro do diálogo não o via.
+
+        Trocada a ordem, a leitura continua fazendo sentido: o que é, quando é,
+        como se inscrever — e a foto fecha mostrando como aquilo se parece.
+
+        Sem link de inscrição o modal não promete o que não pode cumprir: no
+        lugar do botão entra a nota que manda acompanhar o Instagram.
+      #}
+      <div class="modal-acoes">
+        {% if links.semcomp %}
+        <a class="btn-primary" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
+          Quero me inscrever
+          {{ ic.icone('externo', 15) }}
+        </a>
+        {% else %}
+        <span class="modal-nota">As inscrições ainda não abriram — avisamos no Instagram.</span>
+        {% endif %}
+        <a class="btn-outline" href="{{ links.instagramSemcomp }}" target="_blank" rel="noopener noreferrer">
+          {{ ic.icone('instagram', 17) }}
+          @semcompcimatec
+        </a>
+      </div>
+
+      <figure class="modal-foto modal-foto--fecha">
+        <img src="{{ static('images/semcomp/hackathon.jpg') }}"
+             alt="Participantes do hackathon da SEMCOMP reunidos no auditório"
+             width="1600" height="1200" loading="lazy" decoding="async">
+        <figcaption>O hackathon que fecha a semana.</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  {#
+    MODAL DE AGRADECIMENTO DO PROSEL.
+
+    Fica no layout, e não na página do PROSEL, porque quem o abre é o Tally: ao
+    enviar o formulário ele redireciona para `?prosel=obrigado`, e o endereço de
+    retorno é configurado lá, fora deste repositório. No layout ele funciona em
+    qualquer página onde esse retorno caia — inclusive na `/`, que é onde o
+    Tally aponta hoje.
+  #}
+  <div class="modal-overlay" id="modalProsel" role="dialog" aria-modal="true"
+       aria-labelledby="tituloProsel" hidden>
+    <div class="modal-card">
+      <button class="modal-close" type="button" data-modal-fechar aria-label="Fechar">
+        {{ ic.icone('fechar') }}
+      </button>
+      <div class="modal-topo modal-topo--centro">
+        <img src="{{ static('images/logo-256.png') }}" alt="" aria-hidden="true" class="modal-logo" loading="lazy" decoding="async">
+        <h2 id="tituloProsel">Obrigado!</h2>
+        <p>Sua inscrição no PROSEL foi enviada com sucesso. Fique atento às nossas redes para acompanhar o resultado.</p>
+      </div>
+      <div class="modal-acoes">
+        <a class="btn-primary" href="{{ links.instagram }}" target="_blank" rel="noopener noreferrer">
+          {{ ic.icone('instagram', 17) }}
+          Seguir no Instagram
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <img src="{{ static('images/logo-256.png') }}" alt="Clube de Programação SENAI CIMATEC" aria-hidden="true" loading="lazy" decoding="async">
+        <span>Clube de Programação &mdash; Iniciativa Estudantil do SENAI CIMATEC</span>
+      </div>
+      <div class="footer-right">
+        <a href="{{ url('seja_membro') }}">Seja membro</a>
+        <a href="{{ links.helpCimatec }}" target="_blank" rel="noopener noreferrer">Help CIMATEC</a>
+        <span class="footer-tech">Feito por Rodrigo Gandarela</span>
+      </div>
+    </div>
+  </footer>
+{% endblock %}
+
+{% block scripts %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Clube de Programação",
+    "alternateName": ["Clube de Programação SENAI CIMATEC", "Clube de Programação Cimatec"],
+    "url": "{{ site_url }}/",
+    "logo": "{{ site_url }}{{ static('images/logo.png') }}",
+    "description": "Iniciativa estudantil sem fins lucrativos do SENAI CIMATEC que une pessoas apaixonadas por tecnologia para aprender, criar e evoluir juntos. Programação, IA, cibersegurança e jogos.",
+    "foundingDate": "2021",
+    "memberOf": {
+      "@type": "EducationalOrganization",
+      "name": "SENAI CIMATEC",
+      "url": "https://www.senaicimatec.com.br"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Salvador",
+      "addressRegion": "BA",
+      "addressCountry": "BR"
+    },
+    "sameAs": [
+      "{{ links.instagram }}",
+      "{{ links.linkedin }}",
+      "{{ links.tiktok }}",
+      "{{ links.youtube }}"
+    ]
+  }
+  </script>
+  {% block schema_pagina %}{% endblock %}
+  <script src="{{ static('js/main.js') }}"></script>
+{% endblock %}
