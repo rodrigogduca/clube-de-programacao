@@ -3,14 +3,25 @@
 
   Tem navbar e CSS próprios (style_home.css), por isso herda direto de
   `layouts/base.njk` em vez de `layouts/painel.njk`.
+
+  ORDEM DA PÁGINA — o que está aberto vem antes do que o clube é.
+
+  A página respondia "quem somos" primeiro e só falava de inscrição no rodapé.
+  Mas quem chega aqui pelo Instagram numa semana de PROSEL não veio ler a
+  história do clube: veio se inscrever. Então as duas coisas com prazo — o
+  PROSEL e a SEMCOMP — sobem para logo abaixo do herói, e a apresentação do
+  clube passa a ser o que sustenta a decisão, não o que a atrasa.
+
+    herói · PROSEL · SEMCOMP · participe · quem somos · diretoria ·
+    vertentes · ferramentas · comunidade · chamada final
 #}
 {% extends "layouts/base.njk" %}
 
-{% block titulo %}Clube de Programação - Universidade SENAI CIMATEC | Iniciativa Estudantil de Tecnologia{% endblock %}
+{% block titulo %}Clube de Programação - Universidade SENAI CIMATEC | PROSEL e SEMCOMP 2026{% endblock %}
 
 {% block meta %}
-<meta name="description" content="Clube de Programação - Universidade SENAI CIMATEC | Iniciativa estudantil sem fins lucrativos. Aprenda programação na prática com projetos, workshops, hackathons, IA, cibersegurança e jogos. Mais de 60 membros ativos.">
-  <meta name="keywords" content="Clube de Programação, Clube de Programação - Universidade SENAI CIMATEC, Clube de Programação Senai Cimatec, programação SENAI, iniciativa estudantil CIMATEC, aprender programação Salvador, SEMCOMP, clube de IA, clube de cibersegurança, clube de jogos, hackathon SENAI, workshop programação, projetos tecnologia CIMATEC, SENAI CIMATEC, Universidade SENAI CIMATEC">
+<meta name="description" content="Clube de Programação - Universidade SENAI CIMATEC. Inscrições abertas para o PROSEL (processo seletivo da diretoria) e para a SEMCOMP 2026. Iniciativa estudantil sem fins lucrativos: projetos, workshops, hackathons, IA, cibersegurança e jogos.">
+  <meta name="keywords" content="PROSEL Clube de Programação, processo seletivo Clube de Programação, SEMCOMP 2026, SEMCOMP CIMATEC, Clube de Programação, Clube de Programação - Universidade SENAI CIMATEC, Clube de Programação Senai Cimatec, programação SENAI, iniciativa estudantil CIMATEC, aprender programação Salvador, clube de IA, clube de cibersegurança, clube de jogos, hackathon SENAI, workshop programação, SENAI CIMATEC, Universidade SENAI CIMATEC">
   <meta name="author" content="Clube de Programação - Universidade SENAI CIMATEC">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   {# A verificação do Google saiu daqui para o `layouts/base.njk`, alimentada
@@ -24,14 +35,14 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="Clube de Programação - Universidade SENAI CIMATEC">
-  <meta property="og:title" content="Clube de Programação - Universidade SENAI CIMATEC - Aprenda, Crie e Evolua com Tecnologia">
-  <meta property="og:description" content="Iniciativa estudantil sem fins lucrativos da Universidade SENAI CIMATEC que une pessoas apaixonadas por tecnologia. Projetos, workshops, hackathons e mais de 60 membros ativos.">
+  <meta property="og:title" content="Clube de Programação - Universidade SENAI CIMATEC | PROSEL e SEMCOMP 2026">
+  <meta property="og:description" content="Inscrições abertas para o PROSEL e para a SEMCOMP 2026. Iniciativa estudantil sem fins lucrativos da Universidade SENAI CIMATEC: projetos, workshops, hackathons e mais de 500 membros.">
   <meta property="og:image" content="{{ site_url }}{{ static('images/logo.png') }}">
   <meta property="og:locale" content="pt_BR">
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Clube de Programação - Universidade SENAI CIMATEC - Aprenda, Crie e Evolua com Tecnologia">
-  <meta name="twitter:description" content="Iniciativa estudantil sem fins lucrativos da Universidade SENAI CIMATEC. Projetos, workshops, hackathons e mais de 60 membros ativos.">
+  <meta name="twitter:title" content="Clube de Programação - Universidade SENAI CIMATEC | PROSEL e SEMCOMP 2026">
+  <meta name="twitter:description" content="Inscrições abertas para o PROSEL e para a SEMCOMP 2026. Iniciativa estudantil sem fins lucrativos da Universidade SENAI CIMATEC.">
   <meta name="twitter:image" content="{{ site_url }}{{ static('images/logo.png') }}">
 {% endblock %}
 
@@ -65,6 +76,90 @@
 {% endblock %}
 
 {% block corpo %}
+{#
+  ============================================================================
+  LINKS EXTERNOS — o único lugar do projeto onde eles moram.
+
+  Antes o PROSEL e a SEMCOMP viviam no topo de `js/main.js` e o resto dos
+  destinos estava espalhado por seis pontos do HTML — o Instagram do clube
+  aparecia escrito por extenso quatro vezes. Trocar um link significava caçar
+  ocorrência. Aqui em cima é um mapa só: mexeu numa linha, mexeu na página
+  inteira.
+
+  E são âncoras de verdade (`<a href>`), não mais botões que chamam
+  `window.open`. Botão que abre link não é copiável com o botão direito, não
+  abre em nova aba com o meio do mouse, não aparece para o Google e some se o
+  JavaScript falhar. O PROSEL é o objetivo desta página; ele não pode depender
+  de um script ter carregado.
+
+  QUANDO UM PROCESSO ENCERRAR, apague o valor e deixe as aspas vazias — a
+  seção correspondente se apaga sozinha em vez de apontar para um formulário
+  fechado. É o que os `if` espalhados pela página conferem.
+
+  ---------------------------------------------------------------------------
+  O QUE É CADA UM (os comentários ficam AQUI FORA porque o Nunjucks não aceita
+  `{#` dentro de uma expressão — dentro do `set` abaixo eles são erro de
+  sintaxe, não comentário):
+
+    prosel     Processo seletivo para entrar na ADMINISTRAÇÃO do clube. É o
+               destino mais importante da página inteira.
+    semcomp    Inscrição no evento, no Even3. DESTINO DIFERENTE do PROSEL: um
+               é para trabalhar no clube, o outro é para assistir à semana.
+               Confundir os dois já aconteceu.
+    membresia  Cadastro de quem quer ser membro, sem seleção. Guardado sem o
+               `?edit_requested=true` que veio colado no endereço original —
+               aquilo é resquício de quem estava editando o formulário e não
+               faz parte do endereço público.
+    camisas    Pré-venda das camisas do clube.
+    maratona_* Os dois grupos de estudo de programação competitiva, por nível.
+               Guardados sem a cauda `?s=sw&p=i&mlu=0&ilr=2`: são parâmetros
+               que o WhatsApp gruda quando o convite é compartilhado pelo
+               aplicativo, para contar de onde veio quem entrou. O convite é
+               só o código de 22 caracteres; a cauda ainda faria o mesmo grupo
+               ter dois endereços diferentes dentro do site.
+  ============================================================================
+#}
+{% set links = {
+  prosel:    'https://tally.so/r/0Q0Mey',
+  semcomp:   'https://www.even3.com.br/semcomp2026-701106',
+  membresia: 'https://docs.google.com/forms/d/1dsH2payyp2EaLyqjtkg0XrEwEX8-rfcsbB9iusM99II/viewform',
+  camisas:   'https://forms.gle/3anb41o52tjZctGr6',
+
+  instagram: 'https://www.instagram.com/clubedeprogramacaocimatec',
+  whatsapp:  'https://chat.whatsapp.com/KMe3tc8wW38DVmymqQvoKP',
+  discord:   'https://discord.gg/myDYj6hN',
+  linkedin:  'https://www.linkedin.com/company/clube-de-programa%C3%A7%C3%A3o',
+  tiktok:    'https://www.tiktok.com/@clube.de.programacao',
+  youtube:   'https://www.youtube.com/@patotv-quack',
+
+  maratona_experientes: 'https://chat.whatsapp.com/JnblfiaTqcGANlaAAhalbO',
+  maratona_novatos:     'https://chat.whatsapp.com/KTZhcsKd8Bu3GRxJJnxmEg'
+} %}
+
+{#
+  Ícones das redes num lugar só. O SVG do Instagram estava copiado em quatro
+  pontos do arquivo e o do WhatsApp em dois; com a chegada do TikTok e do
+  YouTube seriam mais oito blocos de `path` no meio do texto da página.
+
+  `tamanho` porque o mesmo desenho serve o cartão da grade (20px) e a linha do
+  modal (20px), mas o rodapé de cada cartão de clube pede 16px.
+#}
+{% macro icone(nome, tamanho=20) %}
+  {%- if nome == 'instagram' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+  {%- elif nome == 'whatsapp' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  {%- elif nome == 'discord' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+  {%- elif nome == 'linkedin' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+  {%- elif nome == 'tiktok' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 0 1-2.59 2.5 2.59 2.59 0 0 1 0-5.18c.27 0 .53.04.77.12v-3.16a5.73 5.73 0 0 0-.77-.05A5.73 5.73 0 0 0 4.13 15.4a5.73 5.73 0 0 0 5.73 5.73 5.73 5.73 0 0 0 5.73-5.73V9.01a7.35 7.35 0 0 0 4.28 1.37V7.29a4.28 4.28 0 0 1-3.27-1.47z"/></svg>
+  {%- elif nome == 'youtube' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.5 6.51a3.02 3.02 0 0 0-2.12-2.14C19.5 3.86 12 3.86 12 3.86s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.51C0 8.4 0 12 0 12s0 3.6.5 5.49a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.6 24 12 24 12s0-3.6-.5-5.49zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg>
+  {%- endif -%}
+{% endmacro %}
+
 <!-- BACKGROUND GRID -->
   <div class="bg-grid" aria-hidden="true"></div>
 
@@ -81,12 +176,22 @@
       <img src="{{ static('images/logo-256.png') }}" alt="Logo Clube de Programação SENAI CIMATEC">
       <span>Clube de Programação</span>
     </a>
+    {#
+      A barra ficou com cinco links, não seis: "Diretores" saiu daqui.
+
+      Entre 860 e 1080px a navegação já andava comprimindo o respiro dos links
+      para caber, e agora ela precisa carregar PROSEL e SEMCOMP — que são o
+      motivo da visita. "Diretores" continua sendo uma seção da página e
+      continua no menu do celular; o que ele perdeu foi a vaga na barra, que é
+      espaço disputado. Ninguém chega ao site procurando a lista da diretoria.
+    #}
     <ul class="nav-links">
-      <li><a href="#sobre">Quem Somos</a></li>
-      <li><a href="#diretores">Diretores</a></li>
+      <li><a href="#prosel" class="nav-destaque">PROSEL</a></li>
       <li><a href="#semcomp">SEMCOMP</a></li>
+      <li><a href="#sobre">Quem Somos</a></li>
       <li><a href="#ferramentas">Ferramentas</a></li>
-      <li><a href="#contato" class="nav-cta">Participe</a></li>
+      <li><a href="#comunidade">Comunidade</a></li>
+      <li><a href="#participe" class="nav-cta">Participe</a></li>
       {% if user.is_authenticated %}
       <li>
         <div class="user-menu">
@@ -122,12 +227,15 @@
     </button>
   </nav>
 
+  {# No celular não há disputa por espaço horizontal, então "Diretores" volta. #}
   <div class="mobile-menu" id="mobileMenu">
+    <a href="#prosel">PROSEL</a>
+    <a href="#semcomp">SEMCOMP</a>
+    <a href="#participe">Participe</a>
     <a href="#sobre">Quem Somos</a>
     <a href="#diretores">Diretores</a>
-    <a href="#semcomp">SEMCOMP</a>
     <a href="#ferramentas">Ferramentas</a>
-    <a href="#contato">Participe</a>
+    <a href="#comunidade">Comunidade</a>
     {% if user.is_authenticated %}
     <a href="{{ url('painel') }}">Painel</a>
     <form method="POST" action="{{ url('logout') }}" style="margin:0;">
@@ -140,7 +248,7 @@
   </div>
 
   <!--
-    HERO — o pato é a fonte de luz da página.
+    HERO — o pato é a fonte de luz.
 
     O mascote não é enfeite de canto: o brilho âmbar sai dele e é o mesmo
     brilho que reaparece, mais fraco, na chamada final. O nome do clube fica
@@ -150,13 +258,66 @@
     <div class="container hero-grid">
 
       <div class="hero-say">
+        {#
+          A tarja de avisos vem ANTES do título, e é a primeira coisa lida na
+          página. É o único lugar do herói que muda de semestre para semestre:
+          o resto (o pato, a frase, os números) é a identidade do clube e fica
+          parado. Um aviso com prazo em cima da identidade permanente é o que
+          faz a página parecer viva em vez de institucional.
+
+          Cada tarja só aparece se o link dela existir — encerrada a inscrição,
+          basta esvaziar o endereço no mapa lá em cima.
+        #}
+        {% if links.prosel or links.semcomp %}
+        <div class="hero-avisos fade-in">
+          {% if links.prosel %}
+          <a href="#prosel" class="aviso aviso-forte">
+            <span class="aviso-ponto" aria-hidden="true"></span>
+            <strong>PROSEL aberto</strong>
+            <span class="aviso-sep" aria-hidden="true">·</span>
+            <span>entre para a diretoria</span>
+          </a>
+          {% endif %}
+          {#
+            A segunda tarja é só o nome do evento, sem "· inscrições abertas".
+
+            Com a legenda, as duas somavam 629px numa coluna de 570 e caíam em
+            duas linhas — 44px a mais no herói, que num notebook de 768px de
+            altura empurram o botão do PROSEL para baixo da dobra. É o botão
+            que a página existe para mostrar; ele ganha da legenda.
+
+            E o que ela dizia não se perde: a própria seção da SEMCOMP abre com
+            o selo "Inscrições abertas" pulsando, a um clique daqui.
+          #}
+          {% if links.semcomp %}
+          <a href="#semcomp" class="aviso">
+            <strong>SEMCOMP 2026</strong>
+          </a>
+          {% endif %}
+        </div>
+        {% endif %}
+
         <h1 class="hero-title fade-in">
           <span class="hero-brand">Clube de Programação</span>
           <span class="hero-statement">Transformando código em<br><span class="highlight">história</span></span>
         </h1>
         <p class="hero-line fade-in"><span class="hero-typing" data-text="aprender, criar e evoluir juntos — sem custo e sem pré-requisito."></span></p>
         <div class="hero-buttons fade-in">
-          <a href="#contato" class="btn-primary">Quero participar</a>
+          {#
+            O botão principal do site inteiro leva direto ao formulário do
+            PROSEL, sem escala intermediária. Quem chega pelo story do
+            Instagram no dia da abertura não precisa passar por uma seção
+            explicando o que é: se quiser o contexto, ele está a uma rolagem
+            (e as tarjas acima levam até lá).
+          #}
+          {% if links.prosel %}
+          <a href="{{ links.prosel }}" target="_blank" rel="noopener noreferrer" class="btn-primary">
+            Inscreva-se no PROSEL
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+          </a>
+          {% else %}
+          <a href="#participe" class="btn-primary">Quero participar</a>
+          {% endif %}
           <a href="#sobre" class="btn-secondary">Ver o que fazemos</a>
         </div>
       </div>
@@ -189,6 +350,273 @@
       </div>
     </div>
   </header>
+
+  {#
+    ==========================================================================
+    PROSEL — a primeira seção da página, e a mais alta em contraste.
+
+    Ela usa o mesmo cartaz da SEMCOMP (`.event-highlight`), com o modificador
+    `--prosel`: mesma anatomia — selo, título, texto, ficha, ações e foto
+    sangrando na lateral —, moldura âmbar cheia em vez de translúcida e o
+    brilho um pouco mais quente. Duas construções diferentes para dois blocos
+    que fazem a mesma coisa dariam duas manutenções, e o leitor precisa
+    reconhecer "isto aqui é o destaque" na segunda vez sem reaprender.
+
+    Onde a SEMCOMP tem o letreiro de neon, o PROSEL tem tipografia: o processo
+    seletivo não tem arte própria, e inventar uma para preencher o buraco
+    deixaria o bloco mais fraco, não mais forte.
+    ==========================================================================
+  #}
+  {% if links.prosel %}
+  <section id="prosel" class="prosel-section">
+    <div class="container">
+      <span class="section-label fade-in">// processo seletivo</span>
+      <h2 class="section-title fade-in">Faça o clube<br>acontecer</h2>
+      <p class="section-desc fade-in">O PROSEL é como se entra na administração do Clube de Programação — quem organiza os eventos, dá as aulas e toca os projetos. Sem pré-requisito técnico: vontade basta.</p>
+
+      <div class="event-highlight event-highlight--prosel fade-in">
+        <div class="event-say">
+          <span class="event-badge event-badge--vivo">
+            <span class="aviso-ponto" aria-hidden="true"></span>
+            Inscrições abertas
+          </span>
+
+          <h3 class="prosel-titulo">PROSEL <span>2026</span></h3>
+
+          <p>Toda semana de curso, todo hackathon e toda edição da SEMCOMP saem de estudantes que se inscreveram num processo como este. Você escolhe a área que quer tocar — eventos, ensino, projetos, marketing, finanças — e passa a construir o clube em vez de só frequentá-lo.</p>
+
+          {#
+            A ficha diz só o que o clube já afirma em outros pontos do site
+            (nenhum pré-requisito, aberto a qualquer curso, resultado nas
+            redes). Prazo e etapas não entram aqui de propósito: são a parte
+            que muda a cada edição, e data errada numa página é pior do que
+            data ausente.
+          #}
+          <dl class="event-meta">
+            <div>
+              <dt>Quem pode</dt>
+              <dd>Qualquer estudante do SENAI CIMATEC</dd>
+            </div>
+            <div>
+              <dt>Pré-requisito</dt>
+              <dd>Nenhum — nem técnico, nem de período</dd>
+            </div>
+            <div>
+              <dt>Resultado</dt>
+              <dd>Divulgado no nosso Instagram</dd>
+            </div>
+          </dl>
+
+          <div class="event-acoes">
+            <a class="btn-primary" href="{{ links.prosel }}" target="_blank" rel="noopener noreferrer">
+              Fazer minha inscrição
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+            </a>
+            <a class="btn-outline" href="{{ links.instagram }}" target="_blank" rel="noopener noreferrer">
+              {{ icone('instagram', 17) }}
+              Acompanhar no Instagram
+            </a>
+          </div>
+        </div>
+
+        {#
+          `galeria/evento.jpg` é retrato (1400×2100) e estava sem uso no
+          repositório. É um membro falando para a sala com o banner do clube
+          atrás — exatamente o que o PROSEL oferece a quem se inscreve, e o
+          formato em pé é o que o slot lateral do cartaz pede.
+        #}
+        <figure class="event-foto">
+          <img src="{{ static('images/galeria/evento.jpg') }}"
+               alt="Membro do clube apresentando para a plateia ao lado do banner do Clube de Programação"
+               width="1400" height="2100" loading="lazy" decoding="async">
+          <figcaption>Quem entra pelo PROSEL é quem conduz.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="container"><hr class="divider"></div>
+  {% endif %}
+
+  {#
+    ==========================================================================
+    SEMCOMP — o segundo destaque.
+
+    Era a última coisa da antiga seção "projetos & eventos", abaixo de três
+    cartões de clube. Agora tem seção própria, logo depois do PROSEL: as duas
+    coisas com prazo ficam juntas, no topo.
+    ==========================================================================
+  #}
+  <section id="semcomp" class="semcomp-section">
+    <div class="container">
+      <span class="section-label fade-in">// evento principal</span>
+      <h2 class="section-title fade-in">Uma semana inteira<br>de computação</h2>
+      <p class="section-desc fade-in">A SEMCOMP é o maior evento organizado pelo clube — e é aberta a quem quiser assistir.</p>
+
+      {#
+        A arte da SEMCOMP é um letreiro de neon: um pato dentro de uma lâmpada
+        acesa. É literalmente a ideia da página (o pato é a fonte de luz), então
+        ela entra como o título do bloco em vez de virar faixa decorativa. O
+        arquivo é `semcomp-2026.png`, o recorte com alfa gerado por
+        `scripts/otimizar-imagens.py` — o original tem 70% de preto morto em
+        volta e era isso que fazia a arte parecer solta aqui dentro.
+      #}
+      <div class="event-highlight fade-in">
+        <div class="event-say">
+          {% if links.semcomp %}
+          <span class="event-badge event-badge--vivo">
+            <span class="aviso-ponto" aria-hidden="true"></span>
+            Inscrições abertas
+          </span>
+          {% else %}
+          <span class="event-badge">Evento principal</span>
+          {% endif %}
+
+          {# O logo É o título: o `alt` carrega o texto do h3 que estava aqui. #}
+          <h3 class="event-marca">
+            <img src="{{ static('images/semcomp/semcomp-2026.png') }}"
+                 alt="SEMCOMP 2026 — Semana da Computação, 5 anos"
+                 class="event-logo" width="767" height="308"
+                 loading="lazy" decoding="async">
+          </h3>
+
+          <p>A Semana da Computação é o maior evento organizado pelo Clube de Programação. Uma semana inteira de palestras, workshops e hackathons voltados para tecnologia e inovação.</p>
+
+          <dl class="event-meta">
+            <div>
+              <dt>Ano</dt>
+              <dd>2026</dd>
+            </div>
+            {# Sem "· Salvador": na coluna de 150px o ponto sobrava no fim da
+               linha e a cidade caía sozinha embaixo. Salvador já está na faixa
+               de números do herói. #}
+            <div>
+              <dt>Onde</dt>
+              <dd>Universidade SENAI CIMATEC</dd>
+            </div>
+            <div>
+              <dt>Formato</dt>
+              <dd>Palestras, workshops e hackathons</dd>
+            </div>
+          </dl>
+
+          {#
+            Sem link de inscrição o bloco não promete o que não pode cumprir:
+            no lugar do botão entra a nota que manda acompanhar o Instagram.
+            Isso vivia num `if` dentro do main.js, que desabilitava o botão
+            depois de a página já ter sido desenhada com ele aceso.
+          #}
+          <div class="event-acoes">
+            {% if links.semcomp %}
+            <a class="btn-primary" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
+              Quero me inscrever na SEMCOMP
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+            </a>
+            {% else %}
+            <span class="event-nota">As inscrições ainda não abriram — avisamos no Instagram.</span>
+            {% endif %}
+            <a class="btn-outline" href="https://www.instagram.com/semcompcimatec"
+               target="_blank" rel="noopener noreferrer">
+              {{ icone('instagram', 17) }}
+              @semcompcimatec
+            </a>
+          </div>
+        </div>
+
+        {#
+          Foto de grupo do hackathon (1600x1200, 4:3). O arquivo do celular era
+          um HEIC — formato que nenhum navegador desktop abre —, então ele foi
+          convertido para JPEG de verdade; trocar a extensão do nome não basta.
+
+          Sendo foto e não letreiro, aqui vale o `cover` padrão da `.event-foto`:
+          o recorte só tira moldura em volta do grupo. A variante `--arte`, com
+          `contain`, era do banner de 4:1 que ocupava este slot antes.
+        #}
+        <figure class="event-foto">
+          <img src="{{ static('images/semcomp/hackathon.jpg') }}"
+               alt="Participantes do hackathon da SEMCOMP reunidos no auditório"
+               width="1600" height="1200" loading="lazy" decoding="async">
+          <figcaption>O hackathon que fecha a semana.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="container"><hr class="divider"></div>
+
+  {#
+    ==========================================================================
+    PARTICIPE — as portas que não são o PROSEL.
+
+    O PROSEL é para quem quer administrar o clube, e é uma minoria. A maioria
+    quer só entrar: essa pessoa não tinha destino nenhum na página antiga — o
+    máximo que ela achava era um modal com o link do WhatsApp.
+
+    Os cartões estão em ordem de compromisso: virar membro, depois comprar a
+    camisa, depois entrar no grupo (que não pede nada de ninguém). Cada um é um
+    link inteiro, não um cartão com um link dentro — o alvo de toque é o cartão.
+    ==========================================================================
+  #}
+  <section id="participe">
+    <div class="container">
+      <span class="section-label fade-in">// participe</span>
+      <h2 class="section-title fade-in">Três formas de<br>entrar agora</h2>
+      <p class="section-desc fade-in">O clube é uma das maiores Iniciativas Estudantis do SENAI CIMATEC e está aberto para todos, de qualquer curso e nível de experiência.</p>
+
+      {#
+        `nota` é a linha do pé do cartão: diz o que acontece DEPOIS do clique,
+        que é a dúvida real de quem hesita ("vou cair num formulário gigante?",
+        "isso já é uma compra?").
+      #}
+      {% set acoes = [
+        {
+          url:     links.membresia,
+          selo:    'Membresia',
+          titulo:  'Quero ser membro',
+          desc:    'O cadastro de membro do clube. Sem seleção e sem mensalidade — é o formulário que te coloca na lista de quem recebe curso, monitoria e evento em primeira mão.',
+          nota:    'Formulário do Google · leva 2 minutos',
+          destaque: true
+        },
+        {
+          url:     links.camisas,
+          selo:    'Pré-venda',
+          titulo:  'Camisa do clube',
+          desc:    'A camisa preta com o pato bordado, a mesma que a diretoria usa nos eventos. A pré-venda é o que define quantas peças são produzidas nesta leva.',
+          nota:    'Reserva por formulário · pagamento combinado depois',
+          destaque: false
+        },
+        {
+          url:     links.whatsapp,
+          selo:    'Comunidade',
+          titulo:  'Entrar no WhatsApp',
+          desc:    'O grupo principal do clube, onde saem os avisos de curso, monitoria e evento. Nenhum cadastro necessário: é só entrar e acompanhar.',
+          nota:    'Grupo aberto · entra na hora',
+          destaque: false
+        }
+      ] %}
+
+      <div class="acao-grid stagger-children">
+        {% for a in acoes %}
+          {% if a.url %}
+          <a class="acao-card fade-in{% if a.destaque %} acao-card--destaque{% endif %}"
+             href="{{ a.url }}" target="_blank" rel="noopener noreferrer">
+            <span class="acao-selo">{{ a.selo }}</span>
+            <h3>{{ a.titulo }}</h3>
+            <p>{{ a.desc }}</p>
+            <span class="acao-pe">
+              <span class="acao-nota">{{ a.nota }}</span>
+              <span class="acao-seta" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </span>
+          </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <div class="container"><hr class="divider"></div>
 
   <!-- QUEM SOMOS -->
   <section id="sobre">
@@ -246,7 +674,7 @@
       {# "Estudante de Engenharia da Computação" abria as sete biografias, uma
          atrás da outra. É um fato da seção, não de cada pessoa: dito uma vez
          aqui, cada cartão fica só com o que diferencia quem está nele. #}
-      <p class="section-desc fade-in">Sete estudantes de Engenharia da Computação que organizam e mantêm o clube funcionando, voluntariamente.</p>
+      <p class="section-desc fade-in">Sete estudantes de Engenharia da Computação que organizam e mantêm o clube funcionando, voluntariamente. Todos entraram por um PROSEL.</p>
 
       {#
         Um cartão por diretor, gerado da lista abaixo. Antes eram sete blocos
@@ -316,81 +744,16 @@
 
   <div class="container"><hr class="divider"></div>
 
-  <!-- PROJETOS & EVENTOS -->
-  <section id="projetos">
+  {#
+    As vertentes ficavam numa seção chamada "projetos & eventos" junto com a
+    SEMCOMP. Com o evento promovido a seção própria, o que sobrou é só isto —
+    e "vertentes" é o nome que o texto de "quem somos" já usa para elas.
+  #}
+  <section id="clubes">
     <div class="container">
-      <span class="section-label fade-in">// projetos & eventos</span>
-      <h2 class="section-title fade-in">O que estamos<br>construindo</h2>
-      <p class="section-desc fade-in">Conheça nossos projetos e nosso principal evento.</p>
-
-      {#
-        SEMCOMP destaque — um cartaz, não um cartão com uma tarja no pé.
-
-        A arte da SEMCOMP é um letreiro de neon: um pato dentro de uma lâmpada
-        acesa. É literalmente a ideia da página (o pato é a fonte de luz), então
-        ela entra como o título do bloco em vez de virar faixa decorativa. O
-        arquivo é `semcomp-2026.png`, o recorte com alfa gerado por
-        `scripts/otimizar-imagens.py` — o original tem 70% de preto morto em
-        volta e era isso que fazia a arte parecer solta aqui dentro.
-      #}
-      <div class="event-highlight fade-in" id="semcomp">
-        <div class="event-say">
-          <span class="event-badge">Evento principal</span>
-
-          {# O logo É o título: o `alt` carrega o texto do h3 que estava aqui. #}
-          <h3 class="event-marca">
-            <img src="{{ static('images/semcomp/semcomp-2026.png') }}"
-                 alt="SEMCOMP 2026 — Semana da Computação, 5 anos"
-                 class="event-logo" width="767" height="308"
-                 loading="lazy" decoding="async">
-          </h3>
-
-          <p>A Semana da Computação é o maior evento organizado pelo Clube de Programação. Uma semana inteira de palestras, workshops e hackathons voltados para tecnologia e inovação.</p>
-
-          <dl class="event-meta">
-            <div>
-              <dt>Ano</dt>
-              <dd>2026</dd>
-            </div>
-            {# Sem "· Salvador": na coluna de 150px o ponto sobrava no fim da
-               linha e a cidade caía sozinha embaixo. Salvador já está na faixa
-               de números do herói. #}
-            <div>
-              <dt>Onde</dt>
-              <dd>Universidade SENAI CIMATEC</dd>
-            </div>
-            <div>
-              <dt>Formato</dt>
-              <dd>Palestras, workshops e hackathons</dd>
-            </div>
-          </dl>
-
-          <div class="event-acoes">
-            <button class="btn-primary" id="btnSemcomp" type="button">Quero me inscrever na SEMCOMP</button>
-            <a class="btn-outline" href="https://www.instagram.com/semcompcimatec"
-               target="_blank" rel="noopener noreferrer">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-              @semcompcimatec
-            </a>
-          </div>
-        </div>
-
-        {#
-          Foto de grupo do hackathon (1600x1200, 4:3). O arquivo do celular era
-          um HEIC — formato que nenhum navegador desktop abre —, então ele foi
-          convertido para JPEG de verdade; trocar a extensão do nome não basta.
-
-          Sendo foto e não letreiro, aqui vale o `cover` padrão da `.event-foto`:
-          o recorte só tira moldura em volta do grupo. A variante `--arte`, com
-          `contain`, era do banner de 4:1 que ocupava este slot antes.
-        #}
-        <figure class="event-foto">
-          <img src="{{ static('images/semcomp/hackathon.jpg') }}"
-               alt="Participantes do hackathon da SEMCOMP reunidos no auditório"
-               width="1600" height="1200" loading="lazy" decoding="async">
-          <figcaption>O hackathon que fecha a semana.</figcaption>
-        </figure>
-      </div>
+      <span class="section-label fade-in">// vertentes</span>
+      <h2 class="section-title fade-in">Três clubes<br>dentro do clube</h2>
+      <p class="section-desc fade-in">Frentes que giram em torno do clube principal, cada uma com a sua turma e o seu Instagram.</p>
 
       {#
         Grid de clubes. Os logos vêm de images/clubes/, normalizados em 320px —
@@ -435,7 +798,7 @@
                  href="https://www.instagram.com/{{ c.instagram }}"
                  target="_blank" rel="noopener noreferrer"
                  aria-label="{{ c.nome }} no Instagram">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                {{ icone('instagram', 16) }}
                 <span>@{{ c.instagram }}</span>
               </a>
             </div>
@@ -573,6 +936,93 @@
 
   <div class="container"><hr class="divider"></div>
 
+  {#
+    ==========================================================================
+    COMUNIDADE — as redes saem do modal e viram página.
+
+    Elas viviam só dentro do "Nossas Redes", atrás de um clique, num modal de
+    432px que o Google não indexa como conteúdo e que o TikTok e a PatoTV
+    entupiriam de vez. Aqui cada rede tem espaço para dizer o que se encontra
+    nela, que é o que decide se vale seguir. O modal continua existindo, como
+    atalho — não como o único caminho.
+    ==========================================================================
+  #}
+  <section id="comunidade">
+    <div class="container">
+      <span class="section-label fade-in">// comunidade</span>
+      <h2 class="section-title fade-in">Onde o clube<br>conversa</h2>
+      <p class="section-desc fade-in">Cada canal tem um papel. Os avisos saem no Instagram e no WhatsApp; o resto é onde o clube mostra o que anda fazendo.</p>
+
+      {# `cor` é a marca da rede, usada só no hover e na borda do ícone — a
+         grade em repouso fica monocromática para não virar arco-íris. #}
+      {% set redes = [
+        { chave: 'instagram', nome: 'Instagram',  conta: '@clubedeprogramacaocimatec', url: links.instagram, cor: '225, 48, 108',  desc: 'Avisos, resultados de processo seletivo e o dia a dia do clube.' },
+        { chave: 'whatsapp',  nome: 'WhatsApp',   conta: 'Comunidade do clube',        url: links.whatsapp,  cor: '37, 211, 102', desc: 'O grupo principal: curso, monitoria e evento chegam aqui primeiro.' },
+        { chave: 'tiktok',    nome: 'TikTok',     conta: '@clube.de.programacao',      url: links.tiktok,    cor: '255, 255, 255', desc: 'Bastidores dos eventos e os vídeos curtos do clube.' },
+        { chave: 'youtube',   nome: 'PatoTV',     conta: '@patotv-quack',              url: links.youtube,   cor: '255, 0, 0',    desc: 'O canal do clube no YouTube: aulas, gravações e projetos por inteiro.' },
+        { chave: 'discord',   nome: 'Discord',    conta: 'Servidor do clube',          url: links.discord,   cor: '88, 101, 242', desc: 'Onde se estuda junto, tira dúvida e joga depois da prova.' },
+        { chave: 'linkedin',  nome: 'LinkedIn',   conta: 'Clube de Programação',       url: links.linkedin,  cor: '59, 154, 225', desc: 'A cara institucional: parcerias, conquistas e trajetória.' }
+      ] %}
+
+      <div class="rede-grid stagger-children">
+        {% for r in redes %}
+          {% if r.url %}
+          <a class="rede-card fade-in" style="--rede: {{ r.cor }}"
+             href="{{ r.url }}" target="_blank" rel="noopener noreferrer">
+            <span class="rede-icone">{{ icone(r.chave, 20) }}</span>
+            <span class="rede-corpo">
+              <span class="rede-nome">{{ r.nome }}</span>
+              <span class="rede-desc">{{ r.desc }}</span>
+              <span class="rede-conta">{{ r.conta }}</span>
+            </span>
+          </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {#
+        MARATONA — grupos de turma, não canais do clube.
+
+        Ficam num bloco à parte porque não são "siga a gente": são duas salas
+        de estudo por nível, e entrar na errada é entrar num grupo em que a
+        pessoa não vai acompanhar (ou vai se entediar). O bloco inteiro só
+        aparece quando pelo menos um dos convites está preenchido lá em cima.
+      #}
+      {% set maratona = [
+        { url: links.maratona_novatos,     nome: 'Novatos em Maratona',     desc: 'Para quem está começando em programação competitiva: lógica, estruturas básicas e os primeiros problemas.' },
+        { url: links.maratona_experientes, nome: 'Experientes em Maratona', desc: 'Para quem já resolve problema com constância e quer treinar para as seletivas e a maratona da SBC.' }
+      ] %}
+
+      {% if links.maratona_novatos or links.maratona_experientes %}
+      <div class="maratona fade-in">
+        <div class="maratona-say">
+          <span class="maratona-selo">Grupos de estudo</span>
+          <h3>Maratona de Programação</h3>
+          <p>Treino de programação competitiva em dois níveis. Entre no grupo que combina com o seu momento — dá para trocar depois.</p>
+        </div>
+        <div class="maratona-grupos">
+          {% for g in maratona %}
+            {% if g.url %}
+            <a class="maratona-grupo" href="{{ g.url }}" target="_blank" rel="noopener noreferrer">
+              <span class="maratona-icone">{{ icone('whatsapp', 18) }}</span>
+              <span class="maratona-corpo">
+                <strong>{{ g.nome }}</strong>
+                <span>{{ g.desc }}</span>
+              </span>
+              <span class="maratona-seta" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <div class="container"><hr class="divider"></div>
+
   <!-- CTA -->
   <section id="contato" class="cta-section">
     <div class="container">
@@ -581,10 +1031,25 @@
         <img src="{{ static('images/pato.png') }}" alt="" aria-hidden="true" class="cta-duck" loading="lazy" decoding="async">
         <span class="section-label">// junte-se a nós</span>
         <h2 class="section-title">Bora ser um membro?</h2>
-        <p class="section-desc">O clube é uma das maiores Iniciativas Estudantis do SENAI CIMATEC e está aberto para todos, de qualquer curso e nível de experiência.</p>
+        {#
+          A chamada final repete o pedido do topo em vez de inventar um novo:
+          quem chegou até aqui leu a página inteira e é exatamente a pessoa que
+          o PROSEL procura. O botão de redes vira o terceiro, não o primeiro —
+          antes ele era o principal, e "Nossas Redes" não é um pedido, é um
+          menu.
+        #}
+        <p class="section-desc">Se você leu até aqui, provavelmente é uma das pessoas que a gente está procurando. Escolha por onde começar.</p>
         <div class="cta-buttons">
-          <button class="btn-primary" id="btnContato">Nossas Redes</button>
-          <button class="btn-outline" id="btnProsel">Inscrição para a ADM</button>
+          {% if links.prosel %}
+          <a class="btn-primary" href="{{ links.prosel }}" target="_blank" rel="noopener noreferrer">
+            Inscreva-se no PROSEL
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+          </a>
+          {% endif %}
+          {% if links.membresia %}
+          <a class="btn-outline" href="{{ links.membresia }}" target="_blank" rel="noopener noreferrer">Quero ser membro</a>
+          {% endif %}
+          <button class="btn-secondary" id="btnContato" type="button">Nossas Redes</button>
         </div>
       </div>
     </div>
@@ -602,15 +1067,20 @@
         <p>Sua inscrição no PROSEL foi enviada com sucesso! Fique atento às nossas redes sociais para acompanhar o resultado.</p>
       </div>
       <div class="modal-links">
-        <a href="https://www.instagram.com/clubedeprogramacaocimatec" target="_blank" rel="noopener noreferrer" class="modal-link modal-link-instagram">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        <a href="{{ links.instagram }}" target="_blank" rel="noopener noreferrer" class="modal-link modal-link-instagram">
+          {{ icone('instagram') }}
           Siga no Instagram
         </a>
       </div>
     </div>
   </div>
 
-  <!-- MODAL CONTATO -->
+  {#
+    MODAL CONTATO — atalho para as mesmas redes da seção COMUNIDADE.
+
+    A lista sai de `redes`, a mesma variável que desenha a grade: eram duas
+    listas separadas e o Discord já tinha ficado desatualizado numa delas.
+  #}
   <div class="modal-overlay" id="modalContato">
     <div class="modal-card">
       <button class="modal-close" id="modalClose" aria-label="Fechar">
@@ -622,22 +1092,15 @@
         <p>Iniciativa estudantil sem fins lucrativos do SENAI CIMATEC. Aprendemos programação na prática através de projetos, workshops e muita colaboração.</p>
       </div>
       <div class="modal-links">
-        <a href="https://chat.whatsapp.com/KMe3tc8wW38DVmymqQvoKP" target="_blank" rel="noopener noreferrer" class="modal-link modal-link-whatsapp">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          WhatsApp
-        </a>
-        <a href="https://www.instagram.com/clubedeprogramacaocimatec" target="_blank" rel="noopener noreferrer" class="modal-link modal-link-instagram">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-          Instagram
-        </a>
-        <a href="https://discord.gg/myDYj6hN" target="_blank" rel="noopener noreferrer" class="modal-link modal-link-discord">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
-          Discord
-        </a>
-        <a href="https://www.linkedin.com/company/clube-de-programa%C3%A7%C3%A3o" target="_blank" rel="noopener noreferrer" class="modal-link modal-link-linkedin">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-          LinkedIn
-        </a>
+        {% for r in redes %}
+          {% if r.url %}
+          <a href="{{ r.url }}" target="_blank" rel="noopener noreferrer"
+             class="modal-link modal-link-{{ r.chave }}">
+            {{ icone(r.chave) }}
+            {{ r.nome }}
+          </a>
+          {% endif %}
+        {% endfor %}
       </div>
     </div>
   </div>
@@ -684,8 +1147,10 @@
       "addressCountry": "BR"
     },
     "sameAs": [
-      "https://www.instagram.com/clubedeprogramacaocimatec",
-      "https://www.linkedin.com/company/clube-de-programa%C3%A7%C3%A3o"
+      "{{ links.instagram }}",
+      "{{ links.linkedin }}",
+      "{{ links.tiktok }}",
+      "{{ links.youtube }}"
     ]
   }
   </script>

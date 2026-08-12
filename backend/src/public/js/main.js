@@ -3,17 +3,21 @@
    ============================================ */
 
 /* ---- FORMULÁRIOS EXTERNOS ----
-   Os dois destinos ficam aqui em cima porque são o que muda a cada edição —
-   o resto do arquivo não precisa ser aberto para trocar um link.
 
-   PROSEL é o processo seletivo do clube; SEMCOMP é a inscrição no evento. São
-   destinos diferentes e não devem apontar para o mesmo lugar.
+   Não estão mais aqui. `PROSEL_INSCRICAO` e `SEMCOMP_INSCRICAO` viviam neste
+   topo e eram abertos com `window.open` a partir de dois `<button>`; agora os
+   dois destinos — e todos os outros do site — moram no mapa `links` no topo de
+   `views/core/home.njk`, e a página os renderiza como `<a href>` de verdade.
 
-   Se `SEMCOMP_INSCRICAO` voltar a ser null (edição encerrada, página nova ainda
-   sem link), o botão do evento se desabilita sozinho e avisa que as inscrições
-   não estão abertas, em vez de abrir uma aba em branco. */
-const PROSEL_INSCRICAO = 'https://tally.so/r/J926Po';
-const SEMCOMP_INSCRICAO = 'https://www.even3.com.br/semcomp2026-701106';
+   O motivo não é organização. Um botão que abre link não pode ser copiado com
+   o botão direito, não abre em nova aba com o meio do mouse, não aparece para
+   o Google e some inteiro se este arquivo falhar ao carregar. A inscrição no
+   PROSEL é o objetivo da página: ela não pode depender de um script.
+
+   O caso "ainda não abriu" também saiu daqui. Ele era um `if` que desabilitava
+   o botão DEPOIS de a página já ter sido desenhada com ele aceso — o visitante
+   via, por um instante, uma inscrição que não existia. Hoje é um `{% if %}` no
+   template: o botão simplesmente não chega ao HTML.                          */
 
 /* ---- NAVBAR SCROLL ---- */
 const navbar = document.getElementById('navbar');
@@ -243,38 +247,13 @@ document.addEventListener('keydown', (e) => {
   });
 })();
 
-/* ---- MODAL PROSEL ---- */
-const btnProsel = document.getElementById('btnProsel');
+/* ---- MODAL PROSEL (agradecimento) ----
+
+   Só o retorno do Tally. A ida para o formulário é um link no HTML; o que
+   sobrou de JavaScript é o que acontece na VOLTA — o Tally redireciona para
+   `/?prosel=obrigado` e o modal de "inscrição enviada" abre a partir daí. */
 const modalProsel = document.getElementById('modalProsel');
 const modalProselClose = document.getElementById('modalProselClose');
-
-if (btnProsel) {
-  btnProsel.addEventListener('click', () => {
-    window.open(PROSEL_INSCRICAO, '_blank', 'noopener');
-  });
-}
-
-/* ---- INSCRIÇÃO NA SEMCOMP ---- */
-(function () {
-  const btnSemcomp = document.getElementById('btnSemcomp');
-  if (!btnSemcomp) return;
-
-  const nota = document.querySelector('.event-nota');
-
-  if (!SEMCOMP_INSCRICAO) {
-    // Sem formulário ainda: o botão não promete o que não pode cumprir.
-    btnSemcomp.disabled = true;
-    btnSemcomp.textContent = 'Inscrições ainda não abriram';
-    if (nota) {
-      nota.textContent = 'Avisamos no Instagram quando abrirem.';
-    }
-    return;
-  }
-
-  btnSemcomp.addEventListener('click', () => {
-    window.open(SEMCOMP_INSCRICAO, '_blank', 'noopener');
-  });
-})();
 
 if (modalProsel && modalProselClose) {
   modalProselClose.addEventListener('click', () => {
