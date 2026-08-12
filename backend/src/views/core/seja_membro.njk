@@ -128,7 +128,7 @@
       #}
       {% set beneficios = [
         { icone: 'aula',    titulo: 'Curso e monitoria',      desc: 'Aulas de algoritmos, linguagens e ferramentas dadas por membros, abertas a quem estiver na comunidade.' },
-        { icone: 'evento',  titulo: 'Eventos e hackathons',   desc: 'Prioridade e aviso antecipado na SEMCOMP, nos workshops e nas maratonas que o clube organiza.' },
+        { icone: 'evento',  titulo: 'Eventos e competições',  desc: 'Prioridade e aviso antecipado na SEMCOMP, nos workshops e nas maratonas que o clube organiza.' },
         { icone: 'projeto', titulo: 'Projetos de verdade',    desc: 'Entrar num projeto em andamento, do primeiro dia, sem precisar provar nada antes.' },
         { icone: 'gente',   titulo: 'Gente que responde',     desc: 'Um grupo em que a dúvida de terça-feira à noite é respondida por alguém que já passou por ela.' }
       ] %}
@@ -301,13 +301,12 @@
         </div>
       </div>
 
+      {# Sem legenda: a descrição da seção, logo acima, já diz que o clube treina
+         toda semana — o filete sobre a foto repetia a frase por cima dela. #}
       <figure class="banner fade-in">
         <img src="{{ static('images/galeria/maratona-lab.jpg') }}"
              alt="Laboratório do SENAI CIMATEC cheio de estudantes durante um treino da maratona de programação"
              width="1600" height="900" loading="lazy" decoding="async">
-        <figcaption class="banner-legenda">
-          <span>Treino de maratona no laboratório &mdash; toda semana, durante o semestre.</span>
-        </figcaption>
       </figure>
 
       {#
@@ -442,7 +441,7 @@
 
           <h3 class="prosel-titulo">PROSEL <span>2026</span></h3>
 
-          <p>Toda semana de curso, todo hackathon e toda edição da SEMCOMP saem de estudantes que se inscreveram num processo como este. Você escolhe a área que quer tocar — eventos, ensino, projetos, marketing, finanças — e passa a construir o clube em vez de só frequentá-lo.</p>
+          <p>Toda semana de curso, toda competição e toda edição da SEMCOMP saem de estudantes que se inscreveram num processo como este. Você escolhe a área que quer tocar — eventos, ensino, projetos, marketing, finanças — e passa a construir o clube em vez de só frequentá-lo.</p>
 
           <dl class="event-meta">
             <div>
@@ -475,7 +474,6 @@
           <img src="{{ static('images/galeria/prosel.jpg') }}"
                alt="Integrantes do Clube de Programação reunidos na sala ao fim de um processo seletivo"
                width="1400" height="1050" loading="lazy" decoding="async">
-          <figcaption>Quem entra pelo PROSEL é quem conduz.</figcaption>
         </figure>
       </div>
 

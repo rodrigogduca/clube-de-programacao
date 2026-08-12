@@ -1,20 +1,29 @@
 {#
-  SEMCOMP — a página do maior evento do clube.
+  SEMCOMP 2026 — a página do maior evento do clube.
 
-    herói ilustrado · sobre o evento · o que acontece · programação ·
-    inscrição e dúvidas
+    herói ilustrado · sobre o evento · o que acontece · a semana dia a dia ·
+    Arena Day · inscrição e dúvidas · comissão organizadora
 
   ERA UM MODAL. Um diálogo não tem endereço: não dava para mandar o link do
-  evento no grupo, o Google não indexava uma linha dele, e a semana inteira —
-  palestras, workshops, hackathon — vivia espremida numa caixa de 760px que já
-  precisava rolar por dentro. Agora é página, com `og:image` própria, entrada
-  no sitemap e espaço para a grade crescer.
+  evento no grupo, o Google não indexava uma linha dele, e a semana inteira
+  vivia espremida numa caixa de 760px que já precisava rolar por dentro. Agora
+  é página, com `og:image` própria, entrada no sitemap e espaço para a grade
+  crescer.
 
-  SOBRE A PROGRAMAÇÃO: a lista `programacao` abaixo nasce vazia de propósito.
-  Enquanto ela estiver assim, a seção mostra honestamente que a grade sai no
-  Even3 — em vez de uma tabela de mentira com horário e palestrante inventados.
-  Preencher a lista é o suficiente para a grade aparecer; nada de CSS ou de
-  template precisa mudar.
+  DE ONDE VEM O CONTEÚDO: `SEMCOMP_2026_Documentacao` (documentação oficial da
+  comissão). Datas, dias temáticos, modalidades de competição, estrutura de
+  horário e a lista da comissão saem de lá — nada nesta página é estimativa.
+
+  O QUE A DOCUMENTAÇÃO AINDA NÃO FECHOU fica de fora de propósito:
+
+    · O horário do Arena Day (a própria documentação registra, na seção de
+      divergências, que as duas versões da tabela não batem).
+    · Palestrantes, salas e a grade hora a hora dos dias de palestra.
+    · O preço, se houver.
+
+  Tudo isso sai no Even3, e é para lá que a página aponta. Uma tabela com
+  horário inventado para "preencher o layout" é pior do que nenhuma tabela —
+  as pessoas se organizam a partir dela.
 
   A moldura (fundo, navbar, modal da Comunidade, rodapé) vem de
   `layouts/site.njk`.
@@ -22,11 +31,11 @@
 {% extends "layouts/site.njk" %}
 {% import "partials/icones.njk" as ic %}
 
-{% block titulo %}SEMCOMP 2026 | Semana da Computação — Clube de Programação SENAI CIMATEC{% endblock %}
+{% block titulo %}SEMCOMP 2026 | 29/09 a 03/10 — Semana da Computação, SENAI CIMATEC{% endblock %}
 
 {% block meta %}
-  <meta name="description" content="SEMCOMP 2026 — a Semana da Computação da Universidade SENAI CIMATEC, organizada pelo Clube de Programação. Uma semana de palestras, workshops e hackathons, aberta a quem quiser assistir. Inscrições pelo Even3.">
-  <meta name="keywords" content="SEMCOMP, SEMCOMP 2026, SEMCOMP CIMATEC, Semana da Computação, Semana da Computação SENAI CIMATEC, hackathon Salvador, workshop programação Salvador, evento de tecnologia Bahia, Clube de Programação, SENAI CIMATEC">
+  <meta name="description" content="SEMCOMP 2026 — a 5ª Semana da Computação da Universidade SENAI CIMATEC, de 29 de setembro a 3 de outubro. Cinco dias temáticos de palestras, workshops e competições, abertos ao público. Inscrições pelo Even3.">
+  <meta name="keywords" content="SEMCOMP, SEMCOMP 2026, SEMCOMP CIMATEC, Semana da Computação, Semana da Computação SENAI CIMATEC, Arena Day, Cyber CTF, Game Jam, Olimpíada de Programação, evento de tecnologia Bahia, workshop programação Salvador, Clube de Programação, SENAI CIMATEC">
   <meta name="author" content="Clube de Programação - Universidade SENAI CIMATEC">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <link rel="canonical" href="{{ canonical_url }}">
@@ -35,33 +44,68 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="Clube de Programação - Universidade SENAI CIMATEC">
-  <meta property="og:title" content="SEMCOMP 2026 — Semana da Computação | SENAI CIMATEC">
-  <meta property="og:description" content="Uma semana inteira de palestras, workshops e hackathons na Universidade SENAI CIMATEC. Aberta a quem quiser assistir.">
-  {# A foto do hackathon e não o logo do clube: o que se compartilha aqui é o
-     evento, e uma sala cheia de gente vende a semana melhor que um selo. #}
-  <meta property="og:image" content="{{ site_url }}{{ static('images/semcomp/hackathon.jpg') }}">
+  <meta property="og:title" content="SEMCOMP 2026 — Semana da Computação | 29/09 a 03/10, SENAI CIMATEC">
+  <meta property="og:description" content="Cinco dias, cinco temas: AWS, Cimatec Day, Dev &amp; IA Day, Cyber &amp; Quantum Day e Arena Day. Onde a ideia acende.">
+  {#
+    A MINIATURA É A LOGO, E SÓ A LOGO.
+
+    `semcomp-og.jpg` é a assinatura oficial centralizada num quadro de
+    1200×630 — a proporção que WhatsApp, LinkedIn, X e Facebook recortam sem
+    cortar nada. Antes daqui saía uma fotografia: bonita no feed, mas ilegível
+    no cartão pequeno do WhatsApp e sem dizer de que evento se trata.
+
+    Não trocar pelo `.png` da capa: ele tem fundo transparente, e transparência
+    no cartão de compartilhamento vira preto no Facebook e branco no iMessage —
+    a mesma arte com dois fundos diferentes conforme o aplicativo.
+
+    `og:image:width`/`height` declarados: sem eles o WhatsApp mostra o cartão
+    sem imagem na PRIMEIRA vez que o link é colado, enquanto busca o arquivo.
+  #}
+  <meta property="og:image" content="{{ site_url }}{{ static('images/semcomp/semcomp-og.jpg') }}">
+  <meta property="og:image:secure_url" content="{{ site_url }}{{ static('images/semcomp/semcomp-og.jpg') }}">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Logo da SEMCOMP 2026 — Semana da Computação, 5 anos">
   <meta property="og:locale" content="pt_BR">
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="SEMCOMP 2026 — Semana da Computação | SENAI CIMATEC">
-  <meta name="twitter:description" content="Uma semana inteira de palestras, workshops e hackathons na Universidade SENAI CIMATEC.">
-  <meta name="twitter:image" content="{{ site_url }}{{ static('images/semcomp/hackathon.jpg') }}">
+  <meta name="twitter:description" content="29/09 a 03/10 de 2026, na Universidade SENAI CIMATEC. Cinco dias temáticos, competições e Arena Day.">
+  <meta name="twitter:image" content="{{ site_url }}{{ static('images/semcomp/semcomp-og.jpg') }}">
+  <meta name="twitter:image:alt" content="Logo da SEMCOMP 2026 — Semana da Computação, 5 anos">
 {% endblock %}
 
 {% block conteudo %}
 
   {#
+    Dados oficiais do evento em um lugar só — eles reaparecem no herói, na
+    inscrição e no schema.org, e três cópias soltas é como uma data muda em
+    dois lugares e fica velha no terceiro.
+  #}
+  {% set evento = {
+    inicio: '29 de setembro',
+    fim: '3 de outubro de 2026',
+    curto: '29/09 a 03/10',
+    edicao: '5ª edição — 5 anos',
+    local: 'Universidade SENAI CIMATEC',
+    endereco: 'Av. Orlando Gomes, 1845 — Piatã, Salvador/BA',
+    cep: '41650-010',
+    mapa: 'https://www.google.com/maps/search/?api=1&query=SENAI+CIMATEC+Av.+Orlando+Gomes+1845+Piat%C3%A3+Salvador+BA'
+  } %}
+
+  {#
     ==========================================================================
     HERÓI ILUSTRADO
 
-    A foto do hackathon ocupa a largura da tela e o letreiro de neon fica por
-    cima dela. Duas camadas de degradê entre uma coisa e outra fazem o texto ser
+    A foto da turma ocupa a largura da tela e o letreiro de neon fica por cima
+    dela. Duas camadas de degradê entre uma coisa e outra fazem o texto ser
     legível sem apagar a foto — ver `.capa-veu` no CSS. É o mesmo raciocínio do
     pato na home: a luz nasce de dentro da imagem, não é um filtro por cima.
     ==========================================================================
   #}
   <header class="capa">
-    <img src="{{ static('images/semcomp/hackathon.jpg') }}"
+    <img src="{{ static('images/semcomp/turma.jpg') }}"
          alt="" aria-hidden="true" class="capa-foto"
          width="1600" height="1200" fetchpriority="high" decoding="async">
     <div class="capa-veu" aria-hidden="true"></div>
@@ -91,7 +135,14 @@
              class="capa-logo" width="767" height="308" fetchpriority="high">
       </h1>
 
-      <p class="capa-linha fade-in">Uma semana inteira de palestras, workshops e hackathons na Universidade SENAI CIMATEC — organizada por estudantes, aberta a quem quiser assistir.</p>
+      {# O conceito da marca, e não uma frase de efeito qualquer: "onde a ideia
+         acende" é o posicionamento oficial da identidade de 2026 — a lâmpada
+         do logo é o insight, o traço à mão é a comunidade, o laranja é a
+         energia. Ele vem antes da descrição porque é a coisa que o evento diz
+         de si; a descrição só explica. #}
+      <p class="capa-mote fade-in">Onde a ideia acende.</p>
+
+      <p class="capa-linha fade-in">Cinco dias de palestras, workshops e competições na Universidade SENAI CIMATEC — organizados por estudantes, abertos a quem quiser assistir.</p>
 
       <div class="capa-acoes fade-in">
         {% if links.semcomp %}
@@ -102,21 +153,21 @@
         {% else %}
         <a class="btn-primary" href="#inscricao">Como participar</a>
         {% endif %}
-        <a class="btn-secondary" href="#sobre">O que é a SEMCOMP</a>
+        <a class="btn-secondary" href="#programacao">Ver os cinco dias</a>
       </div>
 
       <dl class="capa-ficha fade-in">
         <div>
-          <dt>Edição</dt>
-          <dd>2026 &mdash; 5 anos</dd>
+          <dt>Quando</dt>
+          <dd>{{ evento.curto }} de 2026</dd>
         </div>
         <div>
           <dt>Onde</dt>
-          <dd>Universidade SENAI CIMATEC</dd>
+          <dd>{{ evento.local }}<br><span class="capa-ficha-fraco">Piatã, Salvador &mdash; BA</span></dd>
         </div>
         <div>
-          <dt>Formato</dt>
-          <dd>Palestras, workshops e hackathons</dd>
+          <dt>Edição</dt>
+          <dd>{{ evento.edicao }}</dd>
         </div>
         <div>
           <dt>Quem pode</dt>
@@ -138,17 +189,20 @@
         <div class="secao-corpo">
           <span class="section-label">// sobre o evento</span>
           <h2 class="section-title">A semana em que<br>o campus vira código</h2>
-          <p class="section-desc">A Semana da Computação é o maior evento organizado pelo Clube de Programação, e em 2026 ela chega à quinta edição.</p>
+          <p class="section-desc">A Semana da Computação é o maior evento organizado pelo Clube de Programação, e em 2026 ela chega à quinta edição — cinco anos de SEMCOMP.</p>
         </div>
       </div>
 
       <div class="sobre-evento">
         <div class="sobre-texto fade-in-left">
           <p>
-            A SEMCOMP nasceu da mesma ideia que sustenta o clube: <strong>conhecimento se constrói melhor quando é compartilhado</strong>. Durante uma semana, o campus recebe gente de fora e de dentro para falar do que está fazendo — em palestra, em oficina de mão na massa ou em competição.
+            A SEMCOMP nasceu da mesma ideia que sustenta o clube: <strong>conhecimento se constrói melhor quando é compartilhado</strong>. Durante cinco dias, o campus recebe gente de fora e de dentro para falar do que está fazendo — em palestra, em oficina de mão na massa ou em competição.
           </p>
           <p>
-            Tudo é organizado por estudantes voluntários. Quem monta a grade, fala com os palestrantes, cuida do credenciamento e corrige o hackathon é a diretoria do clube — a mesma que entra por <a href="{{ url('seja_membro') }}#prosel">processo seletivo</a>.
+            Cada dia tem um tema: <strong>AWS, Cimatec Day, Dev &amp; IA Day, Cyber &amp; Quantum Day</strong> e, no sábado, o <strong>Arena Day</strong> — o festival de jogos e desafios que fecha a semana.
+          </p>
+          <p>
+            Tudo é organizado por estudantes voluntários. Quem monta a grade, fala com os palestrantes, cuida do credenciamento e corrige as competições é a <a href="#comissao">comissão da SEMCOMP</a> — formada na diretoria do clube, que entra por <a href="{{ url('seja_membro') }}#prosel">processo seletivo</a>.
           </p>
           <p>
             <strong>Não é preciso ser membro do clube nem estudar computação</strong> para participar. A semana é aberta, e boa parte de quem aparece está justamente descobrindo se a área é para si.
@@ -158,14 +212,39 @@
         {#
           A foto do stand estava sem uso desde que a home encolheu. É o clube
           recebendo gente no corredor — exatamente o que a SEMCOMP é do lado de
-          fora do auditório.
+          fora do auditório. Sem legenda: a imagem ilustra o texto ao lado, e
+          um filete de texto embaixo dela repetiria o que o parágrafo já diz.
         #}
         <figure class="foto-quadro fade-in-right">
           <img src="{{ static('images/galeria/stand.jpg') }}"
                alt="Membros do Clube de Programação no estande do evento, com o banner do clube ao fundo"
                width="1400" height="933" loading="lazy" decoding="async">
-          <figcaption>O estande do clube durante a semana.</figcaption>
         </figure>
+      </div>
+
+      {#
+        ALCANCE INTERINSTITUCIONAL.
+
+        Não é enfeite: a SEMCOMP deixou de ser um evento de um campus. Em 2024
+        eram só estudantes do CIMATEC; em 2025 vieram UFBA, UNEB e UESB; 2026
+        soma UCSAL, UNIFACS e UNIJORGE. É a informação que faz alguém de outra
+        faculdade entender que a inscrição também é para si.
+      #}
+      {% set universidades = [
+        'SENAI CIMATEC', 'UFBA', 'UESB', 'UNEB', 'UCSAL', 'UNIFACS', 'UNIJORGE'
+      ] %}
+
+      <div class="alcance fade-in">
+        <div class="alcance-texto">
+          <span class="section-label">// quem vem</span>
+          <h3>Sete universidades na mesma semana</h3>
+          <p>A edição de 2025 reuniu 438 participantes, 111 deles de fora do CIMATEC. Em 2026 a semana chega a sete instituições da Bahia, com equipes convidadas para as competições.</p>
+        </div>
+        <ul class="instituicoes">
+          {% for u in universidades %}
+          <li>{{ u }}</li>
+          {% endfor %}
+        </ul>
       </div>
     </div>
   </section>
@@ -177,8 +256,8 @@
     02 — O QUE ACONTECE
 
     Os quatro formatos que a semana tem. É a informação que decide se vale ir:
-    "palestras, workshops e hackathons" numa linha só não diz a quem serve cada
-    coisa nem quanto tempo custa.
+    "palestras e workshops" numa linha só não diz a quem serve cada coisa nem
+    quanto tempo custa.
     ==========================================================================
   #}
   <section id="atividades">
@@ -187,7 +266,7 @@
         <span class="secao-indice" aria-hidden="true">02</span>
         <div class="secao-corpo">
           <span class="section-label">// o que acontece</span>
-          <h2 class="section-title">Quatro formatos,<br>uma semana</h2>
+          <h2 class="section-title">Quatro formatos,<br>cinco dias</h2>
           <p class="section-desc">Dá para ir a tudo, e dá para ir a uma coisa só. Cada formato pede um tipo diferente de disponibilidade.</p>
         </div>
       </div>
@@ -197,7 +276,7 @@
           selo: 'Palestra',
           titulo: 'Quem já está lá fora',
           desc: 'Profissionais e pesquisadores contando o que fazem de verdade no dia a dia — a parte que não aparece na ementa da disciplina.',
-          nota: 'Sente e assista &middot; sem pré-requisito'
+          nota: 'Blocos de 50 min &middot; sem pré-requisito'
         },
         {
           selo: 'Workshop',
@@ -206,10 +285,10 @@
           nota: 'Traga o notebook &middot; vagas limitadas'
         },
         {
-          selo: 'Hackathon',
-          titulo: 'A maratona que fecha a semana',
-          desc: 'Times resolvendo um desafio real contra o relógio. É o ponto alto da SEMCOMP e o que mais gente leva para o currículo.',
-          nota: 'Em equipe &middot; inscrição à parte'
+          selo: 'Competição',
+          titulo: 'O sábado do Arena Day',
+          desc: 'Olimpíada de programação, IA, CTF, game jam e os jogos presenciais — cinco modalidades num dia só, com premiação.',
+          nota: 'Em equipe ou individual &middot; <a href="#arena">ver as modalidades</a>'
         },
         {
           selo: 'Estandes',
@@ -236,26 +315,19 @@
 
   {#
     ==========================================================================
-    03 — PROGRAMAÇÃO
+    03 — A SEMANA, DIA A DIA
 
-    COMO PREENCHER A GRADE: acrescente objetos à lista `programacao` abaixo, um
-    por dia. Cada dia tem `dia` (rótulo curto), `data` (opcional) e `itens`, e
-    cada item tem `hora`, `titulo`, `tipo` e `quem` (opcional).
+    Cinco dias temáticos e a estrutura padrão de um dia de palestras. É o que
+    a documentação oficial já fechou.
 
-      {% raw %}{% set programacao = [
-        {
-          dia: 'Segunda', data: '20 de abril',
-          itens: [
-            { hora: '19h', tipo: 'Palestra', titulo: 'Abertura', quem: 'Diretoria do clube' },
-            { hora: '20h', tipo: 'Palestra', titulo: 'IA na indústria', quem: 'Fulana de Tal' }
-          ]
-        }
-      ] %}{% endraw %}
+    OS PARCEIROS DE CADA DIA entram como `tags`, e as que ainda não estão
+    assinadas levam `pendente: true` — o template desenha essas em traço
+    tracejado, com um rodapé dizendo que estão em confirmação. Anunciar
+    patrocinador não fechado como se fosse fechado é uma dívida que a comissão
+    paga depois, no credenciamento.
 
-    ENQUANTO ELA ESTIVER VAZIA a seção mostra o aviso honesto de que a grade sai
-    no Even3. Isso é de propósito: uma tabela com horário e nome inventados para
-    "preencher o layout" é pior do que nenhuma tabela — as pessoas se organizam
-    a partir dela.
+    QUANDO A GRADE HORA A HORA SAIR, ela sai no Even3 — não copie para cá sem
+    que a documentação tenha consolidado as duas versões da tabela.
     ==========================================================================
   #}
   <section id="programacao">
@@ -264,62 +336,147 @@
         <span class="secao-indice" aria-hidden="true">03</span>
         <div class="secao-corpo">
           <span class="section-label">// programação</span>
-          <h2 class="section-title">A grade<br>da semana</h2>
-          <p class="section-desc">Cada dia tem um tema e um ritmo diferente. A grade fechada é divulgada junto com a abertura das inscrições.</p>
+          <h2 class="section-title">Cinco dias,<br>cinco temas</h2>
+          <p class="section-desc">De 29 de setembro a 3 de outubro de 2026. Cada dia tem um assunto e um ritmo diferente — e o último não tem palestra nenhuma.</p>
         </div>
       </div>
 
-      {% set programacao = [] %}
+      {% set dias = [
+        {
+          num: '29', mes: 'set', semana: 'Terça',
+          tema: 'Evento AWS',
+          desc: 'A abertura da semana, com a trilha da AWS: nuvem, dados e infraestrutura na prática de quem opera.',
+          tags: [{ nome: 'AWS' }]
+        },
+        {
+          num: '30', mes: 'set', semana: 'Quarta',
+          tema: 'Cimatec Day',
+          desc: 'O dia da casa: empreendedorismo, internacionalização, extensão e as iniciativas que nascem dentro do campus.',
+          tags: [{ nome: 'Empreendedorismo' }, { nome: 'Internacionalização' }, { nome: 'Extensão' }]
+        },
+        {
+          num: '01', mes: 'out', semana: 'Quinta',
+          tema: 'Dev &amp; IA Day',
+          desc: 'Inteligência artificial e desenvolvimento — do modelo que treina ao produto que vai para produção.',
+          tags: [{ nome: 'NVIDIA', pendente: true }, { nome: 'Google', pendente: true }]
+        },
+        {
+          num: '02', mes: 'out', semana: 'Sexta',
+          tema: 'Cyber &amp; Quantum Day',
+          desc: 'Cibersegurança e computação quântica no mesmo dia: o que já ataca hoje e o que muda a criptografia amanhã.',
+          tags: [{ nome: 'Fortinet', pendente: true }, { nome: 'QuIIN', pendente: true }]
+        },
+        {
+          num: '03', mes: 'out', semana: 'Sábado',
+          tema: 'Arena Day',
+          desc: 'O festival de jogos e desafios presenciais que fecha a semana, com premiação e cerimônia de encerramento.',
+          tags: [{ nome: 'Competições' }, { nome: 'Encerramento' }],
+          destaque: true
+        }
+      ] %}
 
-      {% if programacao.length %}
-      <div class="grade stagger-children">
-        {% for d in programacao %}
-        <section class="grade-dia fade-in">
-          <header class="grade-cabecalho">
-            <h3>{{ d.dia }}</h3>
-            {% if d.data %}<span class="grade-data">{{ d.data }}</span>{% endif %}
-          </header>
-          <ol class="grade-itens">
-            {% for i in d.itens %}
-            <li class="grade-item">
-              <span class="grade-hora">{{ i.hora }}</span>
-              <span class="grade-corpo">
-                <span class="grade-tipo">{{ i.tipo }}</span>
-                <strong>{{ i.titulo }}</strong>
-                {% if i.quem %}<span class="grade-quem">{{ i.quem }}</span>{% endif %}
-              </span>
-            </li>
-            {% endfor %}
-          </ol>
-        </section>
+      <ol class="trilha stagger-children">
+        {% for d in dias %}
+        <li class="trilha-dia{% if d.destaque %} trilha-dia--destaque{% endif %} fade-in">
+          <div class="trilha-data" aria-hidden="true">
+            <span class="trilha-num">{{ d.num }}</span>
+            <span class="trilha-mes">{{ d.mes }}</span>
+          </div>
+          <div class="trilha-corpo">
+            <span class="trilha-semana">{{ d.semana }}, {{ d.num }}/{{ '09' if d.mes == 'set' else '10' }}</span>
+            <h3>{{ d.tema | safe }}</h3>
+            <p>{{ d.desc }}</p>
+            <ul class="trilha-tags">
+              {% for t in d.tags %}
+              <li{% if t.pendente %} class="trilha-tag--pendente"{% endif %}>{{ t.nome }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </li>
         {% endfor %}
-      </div>
-      {% else %}
+      </ol>
+
+      <p class="trilha-nota fade-in">
+        As marcas em traço tracejado são convites em confirmação. Nada é anunciado como fechado antes de estar.
+      </p>
+
       {#
-        Estado vazio honesto. Ele diz três coisas: que a grade ainda não saiu,
-        onde ela vai sair e o que dá para fazer agora — que é o mínimo que um
-        vazio deve fazer para não ser só um buraco na página.
+        A ESTRUTURA PADRÃO DE UM DIA DE PALESTRAS, em duas colunas — manhã e
+        tarde. É a informação que resolve a pergunta prática de quem vem de
+        outra faculdade: a que horas eu preciso estar lá e até quando isso vai.
+
+        Reaproveita o `.grade` que já existia para a programação: um cartão por
+        bloco, `hora` de um lado e o que acontece do outro.
       #}
-      <div class="vazio fade-in">
-        <span class="vazio-icone" aria-hidden="true">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-        </span>
-        <h3>A grade ainda não foi publicada</h3>
-        <p>Palestras, workshops e horários saem no Even3 e no Instagram da SEMCOMP assim que fecharem. Quem já se inscreveu recebe o aviso por lá.</p>
-        <div class="vazio-acoes">
-          {% if links.semcomp %}
-          <a class="btn-outline" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
-            Ver no Even3
-            {{ ic.icone('externo', 15) }}
-          </a>
-          {% endif %}
-          <a class="btn-outline" href="{{ links.instagramSemcomp }}" target="_blank" rel="noopener noreferrer">
-            {{ ic.icone('instagram', 16) }}
-            @semcompcimatec
-          </a>
+      <div class="dia-padrao fade-in">
+        <div class="dia-padrao-topo">
+          <h3>Como é um dia de palestras</h3>
+          <span>29/09 a 02/10 &middot; credenciamento a partir das 07:30</span>
+        </div>
+
+        {% set turnos = [
+          {
+            dia: 'Manhã', data: 'até 12:50',
+            itens: [
+              { hora: '07:30', tipo: 'Chegada',   titulo: 'Credenciamento', quem: 'até as 08:50' },
+              { hora: '09:00', tipo: 'Palestra',  titulo: '1º bloco',       quem: '50 minutos' },
+              { hora: '10:00', tipo: 'Palestra',  titulo: '2º bloco',       quem: '50 minutos' },
+              { hora: '11:00', tipo: 'Palestra',  titulo: '3º bloco',       quem: '50 minutos' },
+              { hora: '12:00', tipo: 'Intervalo', titulo: 'Almoço',         quem: 'até as 12:50' }
+            ]
+          },
+          {
+            dia: 'Tarde', data: 'até 17:50',
+            itens: [
+              { hora: '13:00', tipo: 'Palestra',  titulo: '4º bloco',        quem: '50 minutos' },
+              { hora: '14:00', tipo: 'Palestra',  titulo: '5º bloco',        quem: '50 minutos' },
+              { hora: '15:00', tipo: 'Palestra',  titulo: '6º bloco',        quem: '50 minutos' },
+              { hora: '16:00', tipo: 'Intervalo', titulo: 'Coffee break',    quem: 'até as 16:50' },
+              { hora: '17:00', tipo: 'Clubes',    titulo: 'Clube temático',  quem: 'até as 17:50' }
+            ]
+          }
+        ] %}
+
+        <div class="grade">
+          {% for t in turnos %}
+          <section class="grade-dia">
+            <header class="grade-cabecalho">
+              <h4>{{ t.dia }}</h4>
+              <span class="grade-data">{{ t.data }}</span>
+            </header>
+            <ol class="grade-itens">
+              {% for i in t.itens %}
+              <li class="grade-item">
+                <span class="grade-hora">{{ i.hora }}</span>
+                <span class="grade-corpo">
+                  <span class="grade-tipo">{{ i.tipo }}</span>
+                  <strong>{{ i.titulo }}</strong>
+                  {% if i.quem %}<span class="grade-quem">{{ i.quem }}</span>{% endif %}
+                </span>
+              </li>
+              {% endfor %}
+            </ol>
+          </section>
+          {% endfor %}
         </div>
       </div>
-      {% endif %}
+
+      <p class="secao-rodape fade-in">
+        <strong>Palestrantes, salas e horários de cada atividade saem no Even3</strong> e no Instagram da SEMCOMP assim que fecharem. Quem já se inscreveu recebe o aviso por lá.
+      </p>
+
+      <div class="acoes-centro fade-in">
+        {% if links.semcomp %}
+        <a class="btn-outline" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
+          Ver no Even3
+          {{ ic.icone('externo', 15) }}
+        </a>
+        {% endif %}
+        <a class="btn-outline" href="{{ links.instagramSemcomp }}" target="_blank" rel="noopener noreferrer">
+          {{ ic.icone('instagram', 16) }}
+          @semcompcimatec
+        </a>
+      </div>
     </div>
   </section>
 
@@ -327,24 +484,98 @@
 
   {#
     ==========================================================================
-    04 — INSCRIÇÃO E DÚVIDAS
+    04 — ARENA DAY
 
-    O FAQ RESPONDE SÓ O QUE O CLUBE JÁ AFIRMA em outros pontos do site. Falta
-    aqui, de propósito, a pergunta mais frequente de todas — "é pago?" — e a do
-    certificado: nenhuma das duas tem resposta escrita em lugar nenhum deste
-    repositório, e chutar num FAQ é criar uma promessa que alguém vai cobrar no
-    credenciamento. Quando a diretoria definir, acrescente os pares na lista
-    `duvidas`.
+    As cinco modalidades do sábado. Cada cartão diz o formato (equipe ou
+    individual) porque é o que decide se a pessoa precisa arrumar time antes.
+
+    SEM HORÁRIO AQUI: a documentação oficial registra duas versões diferentes
+    da tabela do dia e pede a consolidação das duas. Publicar uma delas é
+    escolher no palpite qual está certa.
+    ==========================================================================
+  #}
+  <section id="arena">
+    <div class="container">
+      <div class="secao-topo fade-in">
+        <span class="secao-indice" aria-hidden="true">04</span>
+        <div class="secao-corpo">
+          <span class="section-label">// arena day &middot; 03/10</span>
+          <h2 class="section-title">O sábado<br>de competição</h2>
+          <p class="section-desc">O último dia não tem palestra: é um festival de jogos e desafios, do algoritmo ao totó, com premiação e encerramento.</p>
+        </div>
+      </div>
+
+      {% set modalidades = [
+        {
+          selo: 'OCC',
+          titulo: 'Olimpíada de Programação',
+          desc: 'Duas modalidades. A principal segue o padrão SBC, em trios, com questões de dificuldade crescente. A Júnior é individual e mais simples, feita para quem está no 1º ou no 2º semestre.',
+          nota: 'Trios (SBC) e individual (Júnior)'
+        },
+        {
+          selo: 'IA',
+          titulo: 'Competição de IA',
+          desc: 'Um desafio prático de inteligência artificial: modelo treinado e avaliado no dia, valendo prêmio geral.',
+          nota: 'Formato divulgado no Even3'
+        },
+        {
+          selo: 'CTF',
+          titulo: 'Cyber CTF',
+          desc: 'Captura de bandeira em parceria com o Clube de Cyber — criptografia, engenharia reversa e exploração de falhas em ambiente controlado.',
+          nota: 'Em equipe &middot; Clube de Cyber'
+        },
+        {
+          selo: 'Game Jam',
+          titulo: 'Game Jam',
+          desc: 'Desenvolvimento de jogos contra o relógio, promovido pelo Clube de Jogos: um tema, um prazo e um jogo jogável no fim.',
+          nota: 'Em equipe &middot; Clube de Jogos'
+        },
+        {
+          selo: 'Presenciais',
+          titulo: 'Jogos presenciais',
+          desc: 'Os torneios que não pedem computador nenhum: Ping Pong, Totó, Dominó e Truco, no terraço do Cimatec 3.',
+          nota: 'Inscrição no local &middot; premiação por modalidade'
+        }
+      ] %}
+
+      <div class="formato-grid arena-grid stagger-children">
+        {% for m in modalidades %}
+        <article class="formato-card fade-in">
+          <span class="formato-selo">{{ m.selo }}</span>
+          <h3>{{ m.titulo }}</h3>
+          <p>{{ m.desc }}</p>
+          <span class="formato-nota">{{ m.nota | safe }}</span>
+        </article>
+        {% endfor %}
+      </div>
+
+      <p class="secao-rodape fade-in">
+        As competições têm <strong>premiação por modalidade</strong> e vagas limitadas. A inscrição de cada uma abre no Even3, junto com o regulamento.
+      </p>
+    </div>
+  </section>
+
+  <div class="container"><hr class="divider"></div>
+
+  {#
+    ==========================================================================
+    05 — INSCRIÇÃO E DÚVIDAS
+
+    O FAQ RESPONDE SÓ O QUE A DOCUMENTAÇÃO OFICIAL JÁ AFIRMA. Falta aqui, de
+    propósito, a pergunta mais frequente de todas — "é pago?": nenhum documento
+    da comissão define isso, e chutar num FAQ é criar uma promessa que alguém
+    vai cobrar no credenciamento. Quando a comissão definir, acrescente o par
+    na lista `duvidas`.
     ==========================================================================
   #}
   <section id="inscricao">
     <div class="container">
       <div class="secao-topo fade-in">
-        <span class="secao-indice" aria-hidden="true">04</span>
+        <span class="secao-indice" aria-hidden="true">05</span>
         <div class="secao-corpo">
           <span class="section-label">// inscrição</span>
           <h2 class="section-title">Como participar</h2>
-          <p class="section-desc">A inscrição é feita no Even3, a plataforma que emite a lista de participantes do evento.</p>
+          <p class="section-desc">A inscrição é feita no Even3, a plataforma oficial do evento — é por ela que saem a grade, os comunicados e o certificado.</p>
         </div>
       </div>
 
@@ -354,8 +585,28 @@
             <img src="{{ static('images/semcomp/semcomp-2026.png') }}" alt=""
                  width="767" height="308" loading="lazy" decoding="async">
           </span>
-          <h3>SEMCOMP 2026</h3>
-          <p>Universidade SENAI CIMATEC &middot; Salvador &mdash; BA</p>
+
+          <dl class="inscricao-ficha">
+            <div>
+              <dt>Quando</dt>
+              <dd>{{ evento.inicio }} a {{ evento.fim }}</dd>
+            </div>
+            <div>
+              <dt>Onde</dt>
+              <dd>
+                {{ evento.local }}<br>
+                <a href="{{ evento.mapa }}" target="_blank" rel="noopener noreferrer">
+                  {{ evento.endereco }}
+                  {{ ic.icone('externo', 13) }}
+                </a>
+              </dd>
+            </div>
+            <div>
+              <dt>Credenciamento</dt>
+              <dd>Das 07:30 às 08:50, todo dia de palestra</dd>
+            </div>
+          </dl>
+
           <div class="inscricao-acoes">
             {% if links.semcomp %}
             <a class="btn-primary" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
@@ -378,20 +629,32 @@
             r: 'Não. A SEMCOMP é aberta ao público — dá para assistir sem nenhum vínculo com o clube. Se depois você quiser entrar, a <a href="' ~ url('seja_membro') ~ '">membresia também é gratuita</a>.'
           },
           {
+            p: 'Estudo em outra universidade. Posso participar?',
+            r: 'Pode. Em 2026 a semana convida estudantes de UFBA, UESB, UNEB, UCSAL, UNIFACS e UNIJORGE, inclusive com equipes nas competições. A inscrição é a mesma, pelo Even3.'
+          },
+          {
             p: 'Preciso estudar computação?',
             r: 'Não. Boa parte de quem aparece está justamente descobrindo se a área serve para si, e as palestras são pensadas para quem chega de fora.'
           },
           {
             p: 'Onde acontece?',
-            r: 'Na Universidade SENAI CIMATEC, em Salvador. As salas de cada atividade saem junto com a grade.'
+            r: 'Na Universidade SENAI CIMATEC — Av. Orlando Gomes, 1845, Piatã, Salvador/BA. As salas de cada atividade saem junto com a grade, no Even3.'
+          },
+          {
+            p: 'A que horas eu preciso chegar?',
+            r: 'Nos dias de palestra o credenciamento vai das 07:30 às 08:50, e o primeiro bloco começa às 09:00. O Arena Day, no sábado, tem horário próprio — divulgado no Even3.'
           },
           {
             p: 'Preciso levar computador?',
-            r: 'Só para os workshops, que são práticos. Palestras e estandes não pedem nada além de aparecer.'
+            r: 'Só para os workshops e para as competições digitais, que são práticos. Palestras, estandes e jogos presenciais não pedem nada além de aparecer.'
+          },
+          {
+            p: 'Tem certificado?',
+            r: 'Sim. Os certificados de participação são emitidos pelo Even3 depois do evento, para quem estiver inscrito e credenciado.'
           },
           {
             p: 'Quem organiza?',
-            r: 'O Clube de Programação — estudantes voluntários da própria universidade. A diretoria entra por <a href="' ~ url('seja_membro') ~ '#prosel">processo seletivo</a>, e organizar a SEMCOMP é parte do trabalho.'
+            r: 'A <a href="#comissao">comissão da SEMCOMP 2026</a>: 14 estudantes voluntários do Clube de Programação, divididos em doze frentes. A diretoria do clube entra por <a href="' ~ url('seja_membro') ~ '#prosel">processo seletivo</a>, e organizar a SEMCOMP é parte do trabalho.'
           }
         ] %}
 
@@ -417,6 +680,67 @@
     </div>
   </section>
 
+  <div class="container"><hr class="divider"></div>
+
+  {#
+    ==========================================================================
+    06 — COMISSÃO ORGANIZADORA
+
+    Quem responde por quê. A seção existe por dois motivos práticos: dá nome a
+    quem procurar quando falta uma sala, um crachá ou um patrocínio, e mostra
+    a quem pensa em se candidatar ao PROSEL o tamanho real do trabalho.
+
+    SEM RETRATO, de propósito: existem sete fotos de diretoria no repositório e
+    quatorze pessoas na comissão. Meia grade com rosto e meia com inicial fica
+    parecendo que metade importa menos.
+    ==========================================================================
+  #}
+  <section id="comissao">
+    <div class="container">
+      <div class="secao-topo fade-in">
+        <span class="secao-indice" aria-hidden="true">06</span>
+        <div class="secao-corpo">
+          <span class="section-label">// comissão organizadora</span>
+          <h2 class="section-title">Quem faz<br>a semana acontecer</h2>
+          <p class="section-desc">Quatorze estudantes voluntários, doze frentes de trabalho e um evento que começa a ser montado meses antes de a primeira pessoa se credenciar.</p>
+        </div>
+      </div>
+
+      {% set comissao = [
+        { frente: 'Logística',                     nomes: ['Átila Mascarenhas', 'Pedro Tanajura'],          atribuicao: 'Reserva de salas, equipamentos e manutenção' },
+        { frente: 'Marketing',                     nomes: ['Rodrigo Gandarela', 'Katharina Sabaliauskas'],  atribuicao: 'Instagram, avisos e identidade visual' },
+        { frente: 'Comunicação com patrocinadores', nomes: ['Maria Fernanda Ribeiro'],                      atribuicao: 'Contato com apresentadores e patrocinadores externos' },
+        { frente: 'Gerência de produtos',          nomes: ['Camila Rocha'],                                 atribuicao: 'Fornecedores e compra dos produtos do evento' },
+        { frente: 'Comunicação interna',           nomes: ['Luiz Gustavo Antunes'],                         atribuicao: 'Contato com os apresentadores do SENAI' },
+        { frente: 'Comunicação com universidades', nomes: ['Arthur Farias'],                                atribuicao: 'Contato com as universidades convidadas' },
+        { frente: 'Gerência de voluntários',       nomes: ['Mateus Salmeron'],                              atribuicao: 'Escala e coordenação dos voluntários' },
+        { frente: 'Gerência de atividades',        nomes: ['Eulália Ribeiro'],                              atribuicao: 'Cronograma de atividades, data e hora' },
+        { frente: 'Gerência de site',              nomes: ['Daniel Carneiro'],                              atribuicao: 'Registro e atualização das atividades no Even3' },
+        { frente: 'Gerência de competições',       nomes: ['Rafael Cezimbra'],                              atribuicao: 'Questões, nível de dificuldade e formato das provas' },
+        { frente: 'Eventos',                       nomes: ['Isaque Escorêdo'],                              atribuicao: 'Organização do Arena Day e do encerramento' },
+        { frente: 'Financeiro',                    nomes: ['Davi Brito'],                                   atribuicao: 'Controle financeiro do evento' }
+      ] %}
+
+      <ul class="comissao-grid stagger-children">
+        {% for c in comissao %}
+        <li class="comissao-item fade-in">
+          <span class="comissao-frente">{{ c.frente }}</span>
+          <p class="comissao-nomes">{{ c.nomes | join(' &middot; ') | safe }}</p>
+          <span class="comissao-atribuicao">{{ c.atribuicao }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <p class="secao-rodape fade-in">
+        A comissão sai da diretoria do clube, e a diretoria entra por processo seletivo.
+        <a class="link-seta" href="{{ url('seja_membro') }}#prosel">
+          Quero organizar a próxima
+          {{ ic.icone('seta', 15) }}
+        </a>
+      </p>
+    </div>
+  </section>
+
 {% endblock %}
 
 {% block schema_pagina %}
@@ -424,11 +748,14 @@
     Schema de evento. `eventAttendanceMode` presencial e `eventStatus` agendado
     são o que o Google usa para montar o cartão de evento na busca.
 
-    SEM `startDate`: o schema.org exige data ISO, e a do evento ainda não está
-    definida em lugar nenhum deste repositório. Um `startDate` chutado alimenta
-    o rich result com uma data errada — que é pior do que não ter cartão.
-    Quando a data existir, acrescente `"startDate": "2026-04-20"` e
-    `"endDate"`.
+    AGORA COM `startDate` E `endDate`: a documentação oficial fixou 29/09 a
+    03/10 de 2026 (e registra que a versão de 30/09 a 03/10, do Mídia Kit, é a
+    errada). Sem data confirmada, um `startDate` chutado alimenta o rich result
+    com informação errada — que é pior do que não ter cartão.
+
+    Os cinco dias entram como `subEvent`: é assim que o Google entende uma
+    semana com temas diferentes em vez de um bloco só de cinco dias. Sem hora,
+    porque a grade hora a hora ainda não fechou.
   #}
   <script type="application/ld+json">
   {
@@ -436,8 +763,10 @@
     "@type": "Event",
     "name": "SEMCOMP 2026 — Semana da Computação",
     "url": "{{ canonical_url }}",
-    "description": "Uma semana inteira de palestras, workshops e hackathons na Universidade SENAI CIMATEC, organizada pelo Clube de Programação.",
-    "image": "{{ site_url }}{{ static('images/semcomp/hackathon.jpg') }}",
+    "description": "A 5ª Semana da Computação da Universidade SENAI CIMATEC: cinco dias temáticos de palestras, workshops e competições, organizados pelo Clube de Programação.",
+    "image": "{{ site_url }}{{ static('images/semcomp/semcomp-og.jpg') }}",
+    "startDate": "2026-09-29",
+    "endDate": "2026-10-03",
     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
     "eventStatus": "https://schema.org/EventScheduled",
     "location": {
@@ -445,8 +774,10 @@
       "name": "Universidade SENAI CIMATEC",
       "address": {
         "@type": "PostalAddress",
+        "streetAddress": "Av. Orlando Gomes, 1845",
         "addressLocality": "Salvador",
         "addressRegion": "BA",
+        "postalCode": "41650-010",
         "addressCountry": "BR"
       }
     },
@@ -454,7 +785,21 @@
       "@type": "Organization",
       "name": "Clube de Programação",
       "url": "{{ site_url }}/"
-    }
+    },
+    {% if links.semcomp %}
+    "offers": {
+      "@type": "Offer",
+      "url": "{{ links.semcomp }}",
+      "availability": "https://schema.org/InStock"
+    },
+    {% endif %}
+    "subEvent": [
+      { "@type": "Event", "name": "Evento AWS",         "startDate": "2026-09-29", "endDate": "2026-09-29" },
+      { "@type": "Event", "name": "Cimatec Day",        "startDate": "2026-09-30", "endDate": "2026-09-30" },
+      { "@type": "Event", "name": "Dev & IA Day",       "startDate": "2026-10-01", "endDate": "2026-10-01" },
+      { "@type": "Event", "name": "Cyber & Quantum Day","startDate": "2026-10-02", "endDate": "2026-10-02" },
+      { "@type": "Event", "name": "Arena Day",          "startDate": "2026-10-03", "endDate": "2026-10-03" }
+    ]
   }
   </script>
 {% endblock %}

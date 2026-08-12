@@ -49,6 +49,31 @@ Duas coisas que o script resolve e que erram fácil se refeitas à mão:
   enquadrados nestes retratos de estúdio. A 0% sobra ar acima; a 12% corta o
   queixo de quem está mais alto no quadro.
 
+## A miniatura de compartilhamento da SEMCOMP
+
+`images/semcomp/semcomp-og.jpg` — **1200×630**, a logo do evento centralizada
+sobre o fundo da página. É o `og:image` e o `twitter:image` de `/semcomp`, e é o
+que aparece quando o link é colado no WhatsApp, no LinkedIn ou no X.
+
+Três decisões que ela carrega:
+
+- **1200×630** é a proporção que todas as redes recortam sem cortar nada. A arte
+  original (`semcomp-2026.jpg`) tem 1600×400 — num cartão 1,91:1 ela apareceria
+  com tarja preta em cima e embaixo, ou seria recortada nas pontas.
+- **JPEG, e não o `.png` do letreiro.** O PNG tem fundo transparente, e
+  transparência em cartão de compartilhamento vira preto no Facebook e branco no
+  iMessage: a mesma arte com dois fundos diferentes conforme o aplicativo.
+- **Nada além da logo.** Sem data, sem chamada, sem foto. Data em imagem envelhece
+  e não é indexada; quem compartilha quer que a pessoa reconheça o evento.
+
+Para regerar (por exemplo, quando a arte da edição mudar), a receita é: recortar a
+arte pelo que acende (`getbbox` sobre o preto), reduzir para ~940 px de largura,
+centralizar num quadro 1200×630 de `#08080b` com um halo âmbar e compor por
+`ImageChops.lighter` — assim o preto do arquivo original não vira um retângulo
+colado no meio do fundo. As metas `og:image:width`/`height` no template precisam
+acompanhar o tamanho do arquivo: sem elas o WhatsApp mostra o cartão sem imagem
+na primeira vez que o link é colado.
+
 ## Arquivos não usados
 
 - `IMG_0141.HEIC`, `IMG_0229.HEIC`, `IMG_1581.HEIC` — **nenhum navegador exibe

@@ -27,8 +27,8 @@
 {% block titulo %}Clube de Programação - Universidade SENAI CIMATEC | Iniciativa Estudantil de Tecnologia{% endblock %}
 
 {% block meta %}
-  <meta name="description" content="Clube de Programação - Universidade SENAI CIMATEC. Iniciativa estudantil sem fins lucrativos que une pessoas apaixonadas por tecnologia: projetos, workshops, hackathons, IA, cibersegurança e jogos. Mais de 500 membros.">
-  <meta name="keywords" content="Clube de Programação, Clube de Programação - Universidade SENAI CIMATEC, Clube de Programação Senai Cimatec, programação SENAI, iniciativa estudantil CIMATEC, aprender programação Salvador, SEMCOMP, clube de IA, clube de cibersegurança, clube de jogos, hackathon SENAI, workshop programação, SENAI CIMATEC, Universidade SENAI CIMATEC">
+  <meta name="description" content="Clube de Programação - Universidade SENAI CIMATEC. Iniciativa estudantil sem fins lucrativos que une pessoas apaixonadas por tecnologia: projetos, workshops, competições, IA, cibersegurança e jogos. Mais de 500 membros.">
+  <meta name="keywords" content="Clube de Programação, Clube de Programação - Universidade SENAI CIMATEC, Clube de Programação Senai Cimatec, programação SENAI, iniciativa estudantil CIMATEC, aprender programação Salvador, SEMCOMP, clube de IA, clube de cibersegurança, clube de jogos, competições de programação, workshop programação, SENAI CIMATEC, Universidade SENAI CIMATEC">
   <meta name="author" content="Clube de Programação - Universidade SENAI CIMATEC">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <link rel="canonical" href="{{ canonical_url }}">
@@ -38,13 +38,13 @@
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="Clube de Programação - Universidade SENAI CIMATEC">
   <meta property="og:title" content="Clube de Programação - Universidade SENAI CIMATEC - Aprenda, Crie e Evolua com Tecnologia">
-  <meta property="og:description" content="Iniciativa estudantil sem fins lucrativos da Universidade SENAI CIMATEC que une pessoas apaixonadas por tecnologia. Projetos, workshops, hackathons e mais de 500 membros.">
+  <meta property="og:description" content="Iniciativa estudantil sem fins lucrativos da Universidade SENAI CIMATEC que une pessoas apaixonadas por tecnologia. Projetos, workshops, competições e mais de 500 membros.">
   <meta property="og:image" content="{{ site_url }}{{ static('images/logo.png') }}">
   <meta property="og:locale" content="pt_BR">
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Clube de Programação - Universidade SENAI CIMATEC - Aprenda, Crie e Evolua com Tecnologia">
-  <meta name="twitter:description" content="Iniciativa estudantil sem fins lucrativos da Universidade SENAI CIMATEC. Projetos, workshops, hackathons e mais de 500 membros.">
+  <meta name="twitter:description" content="Iniciativa estudantil sem fins lucrativos da Universidade SENAI CIMATEC. Projetos, workshops, competições e mais de 500 membros.">
   <meta name="twitter:image" content="{{ site_url }}{{ static('images/logo.png') }}">
 {% endblock %}
 
@@ -115,7 +115,7 @@
     é assim que a emenda fica invisível quando o laço reinicia. A segunda cópia
     é `aria-hidden` para o leitor de tela não ouvir a lista duplicada.
   #}
-  {% set faixa = ['Projetos', 'Workshops', 'Hackathons', 'Monitorias', 'Inteligência Artificial', 'Cibersegurança', 'Jogos', 'Maratona de Programação'] %}
+  {% set faixa = ['Projetos', 'Workshops', 'Competições', 'Monitorias', 'Inteligência Artificial', 'Cibersegurança', 'Jogos', 'Maratona de Programação'] %}
   <div class="faixa" aria-label="O que o clube faz">
     <div class="faixa-trilho">
       {% for repeticao in [1, 2] %}
@@ -197,19 +197,21 @@
         três paradas.
 
         A do meio é maior nas telas largas (`--alta`), para a fileira não virar
-        três retângulos iguais; cada uma tem legenda própria, porque foto sem
-        legenda numa página institucional vira banco de imagens.
+        três retângulos iguais.
+
+        SEM LEGENDA. As três tinham `<figcaption>` sobre um degradê no pé da
+        imagem, e as três diziam o que a própria foto mostra ("o estande do
+        clube", "treino de maratona no laboratório") — texto que só cobria um
+        terço da imagem para repeti-la. O que a foto precisa dizer a quem não a
+        vê continua no `alt`, que é o lugar certo para isso.
       #}
       {% set fotos = [
         { arquivo: 'galeria/stand.jpg', l: 1400, a: 933,
-          alt: 'Membros do Clube de Programação no estande do evento, com o banner do clube ao fundo',
-          legenda: 'O estande do clube, entre uma atividade e outra' },
+          alt: 'Membros do Clube de Programação no estande do evento, com o banner do clube ao fundo' },
         { arquivo: 'galeria/evento.jpg', l: 1400, a: 2100, alta: true,
-          alt: 'Membro do clube apresentando para a plateia ao lado do banner do Clube de Programação',
-          legenda: 'Aula aberta: quem ensina é membro' },
+          alt: 'Membro do clube apresentando para a plateia ao lado do banner do Clube de Programação' },
         { arquivo: 'galeria/maratona-lab.jpg', l: 1600, a: 900,
-          alt: 'Laboratório cheio de estudantes durante um treino da maratona de programação',
-          legenda: 'Treino de maratona no laboratório' }
+          alt: 'Laboratório cheio de estudantes durante um treino da maratona de programação' }
       ] %}
 
       <div class="fotos stagger-children">
@@ -217,7 +219,6 @@
         <figure class="foto{% if f.alta %} foto--alta{% endif %} fade-in">
           <img src="{{ static('images/' ~ f.arquivo) }}" alt="{{ f.alt }}"
                width="{{ f.l }}" height="{{ f.a }}" loading="lazy" decoding="async">
-          <figcaption>{{ f.legenda }}</figcaption>
         </figure>
         {% endfor %}
       </div>
@@ -259,7 +260,7 @@
         { nome: 'Luiz Antunes',      cargo: 'Presidente',           foto: 'luiz',    bio: 'Apaixonado por programação e um verdadeiro pato.' },
         { nome: 'Mateus Salmeron',   cargo: 'Vice-Presidente',      foto: 'mateus',  bio: 'Focado em projetos de ensino e em conhecimento de C.' },
         { nome: 'Rodrigo Gandarela', cargo: 'Diretor de Marketing', foto: 'rodrigo', bio: 'Entusiasta de sistemas web, com Python e diversos frameworks.' },
-        { nome: 'Isaque Escorêdo',   cargo: 'Diretor de Eventos',   foto: 'isaque',  bio: 'Organiza os workshops e hackathons.' },
+        { nome: 'Isaque Escorêdo',   cargo: 'Diretor de Eventos',   foto: 'isaque',  bio: 'Organiza os workshops e o Arena Day da SEMCOMP.' },
         { nome: 'Davi Brito',        cargo: 'Diretor Financeiro',   foto: 'davi',    bio: 'Cuida das finanças do clube.' },
         { nome: 'Artur Silveira',    cargo: 'Diretor de Projetos',  foto: 'artur',   bio: 'Coordena os projetos do clube.' },
         { nome: 'Gabriel Petersen',  cargo: 'Diretor Acadêmico',    foto: 'gabriel', bio: 'Coordena os cursos de algoritmos.' }

@@ -73,7 +73,7 @@ body {
   chega). Só que esses atributos viram uma dica de estilo real: com largura E
   altura definidas, o `aspect-ratio` do CSS é simplesmente ignorado.
 
-  Foi assim que a foto do hackathon dentro do modal da SEMCOMP — 1600×1200 e um
+  Foi assim que a foto da turma dentro do modal da SEMCOMP — 1600×1200 e um
   `aspect-ratio: 16/9` que deveria recortá-la numa faixa — apareceu com 1200px
   de altura e engoliu o modal inteiro: o botão de inscrição ficou fora da tela.
 
@@ -1598,15 +1598,6 @@ section {
   object-position: center 32%;
 }
 
-.prosel-foto figcaption {
-  padding: 13px 18px;
-  border-top: 1px solid var(--traco);
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0.06em;
-  color: var(--cinza);
-}
-
 .prosel-acoes {
   display: flex;
   flex-wrap: wrap;
@@ -2234,7 +2225,13 @@ section {
 
      1. Moldura de 1px do mesmo `--traco` de todos os cartões.
      2. Raio `--r`, o mesmo dos cartões.
-     3. Um véu que escurece o pé da imagem, onde a legenda entra.
+     3. O `overflow: hidden`, que segura o `scale` do hover dentro da moldura.
+
+   SEM LEGENDA. As fotos deste site não levam mais `<figcaption>`: nenhuma
+   delas mostrava algo que o texto ao lado já não dissesse, e o filete de
+   texto por baixo (ou o degradê por cima) só roubava altura da imagem e
+   desalinhava a fileira quando uma legenda quebrava em duas linhas. O que a
+   foto precisa dizer a quem não a vê continua no `alt`.
 
    E todas descem levemente saturadas e escurecidas no repouso, voltando ao
    normal no ponteiro (`filter`): assim elas convivem com o texto quando não
@@ -2269,42 +2266,6 @@ section {
   filter: none;
 }
 
-/* ---- Legenda ----
-
-   Ela fica DENTRO da imagem, sobre um degradê que nasce do próprio pé dela.
-   Fora, num filete abaixo, a foto ganharia uma barra a mais e a fileira de
-   três ficaria com alturas diferentes conforme o tamanho do texto. */
-.foto figcaption,
-.banner-legenda {
-  position: absolute;
-  inset: auto 0 0 0;
-  padding: 40px 18px 15px;
-  background: linear-gradient(180deg, transparent, rgba(8, 8, 11, 0.9) 62%);
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  line-height: 1.45;
-  letter-spacing: 0.04em;
-  color: var(--fumaca);
-  text-wrap: pretty;
-  pointer-events: none;
-}
-
-.foto:hover figcaption,
-.banner:hover .banner-legenda {
-  color: var(--giz);
-}
-
-/* A do `.foto-quadro` é filete de verdade, e não sobreposição: ali a foto está
-   ao lado de um texto e a legenda é parte da coluna, não da imagem. */
-.foto-quadro figcaption {
-  padding: 13px 18px;
-  border-top: 1px solid var(--traco);
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0.06em;
-  color: var(--cinza);
-}
-
 /* ---- A fileira de três, na home ---- */
 
 .fotos {
@@ -2335,11 +2296,6 @@ section {
 .banner {
   aspect-ratio: 16 / 9;
   margin-bottom: 56px;
-}
-
-.banner-legenda {
-  padding: 60px 26px 22px;
-  font-size: 0.8125rem;
 }
 
 /* ---- Foto ao lado de texto (Sobre o Evento) ---- */
@@ -2384,9 +2340,77 @@ section {
 
 
 /* ==========================================================================
+   ALCANCE INTERINSTITUCIONAL — as universidades convidadas
+
+   Uma faixa, e não uma grade de cartões: são sete nomes curtos, e sete cartões
+   com um nome dentro seria a coisa mais barulhenta de uma página que já tem
+   quatro grades. O texto explica de um lado, as pílulas listam do outro.
+
+   As pílulas são NOMES, não logotipos: as sete marcas são de terceiros, cada
+   uma com fundo, cor e proporção próprios, e enfileirá-las viraria uma colcha
+   de retalhos — além de pedir permissão de uso que o clube não tem.
+   ========================================================================== */
+
+.alcance {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 48px);
+  margin-top: clamp(56px, 7vw, 84px);
+  padding: clamp(26px, 3.4vw, 38px);
+  border: 1px solid var(--traco);
+  border-radius: var(--r-lg);
+  background: var(--penumbra);
+}
+
+.alcance-texto h3 {
+  margin-top: 14px;
+  font-family: var(--display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--giz);
+}
+
+.alcance-texto p {
+  margin-top: 12px;
+  font-size: 0.975rem;
+  line-height: 1.6;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+.instituicoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+}
+
+.instituicoes li {
+  padding: 9px 15px;
+  border: 1px solid var(--traco-forte);
+  border-radius: 999px;
+  background: var(--sombra);
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  color: var(--giz);
+}
+
+/* A casa em primeiro: é a instituição que recebe, e no meio de seis siglas
+   iguais ela desaparecia. */
+.instituicoes li:first-child {
+  border-color: var(--ambar-traco);
+  background: var(--ambar-lavagem);
+  color: var(--gema);
+}
+
+
+/* ==========================================================================
    CAPA DA SEMCOMP — a foto como fundo do herói
 
-   A foto do hackathon ocupa a tela toda atrás do letreiro de neon. O problema
+   A foto da turma ocupa a tela toda atrás do letreiro de neon. O problema
    clássico de texto sobre foto é o contraste: onde a imagem clareia, o texto
    some. A solução aqui tem DUAS camadas e não uma:
 
@@ -2469,9 +2493,24 @@ section {
   margin-top: 26px;
 }
 
+/* O CONCEITO DA MARCA, na fonte da marca.
+
+   "Onde a ideia acende" é o posicionamento oficial de 2026, não uma legenda do
+   logo — por isso ele vem na `--marca` (o mesmo lettering à mão do letreiro) e
+   em tamanho de subtítulo, entre o logo e a descrição. Fica no âmbar claro
+   para acender junto com o neon acima sem competir com ele. */
+.capa-mote {
+  margin-top: 20px;
+  font-family: var(--marca);
+  font-size: clamp(1.5rem, 3.2vw, 2.25rem);
+  line-height: 1.1;
+  color: var(--gema);
+  text-shadow: 0 0 34px rgba(255, 77, 0, 0.35);
+}
+
 .capa-linha {
   max-width: 54ch;
-  margin-top: 26px;
+  margin-top: 18px;
   font-size: var(--t-sub);
   line-height: 1.5;
   color: var(--giz);
@@ -2514,6 +2553,13 @@ section {
   font-size: 0.9375rem;
   line-height: 1.4;
   color: var(--giz);
+}
+
+/* A segunda linha de um dado da ficha (o bairro, embaixo do nome do campus).
+   Ela é complemento, não outro dado: fica no secundário para a ficha continuar
+   com uma informação forte por coluna. */
+.capa-ficha-fraco {
+  color: var(--fumaca);
 }
 
 
@@ -2582,9 +2628,240 @@ section {
   color: var(--cinza);
 }
 
+.formato-nota a {
+  color: var(--ambar);
+  border-bottom: 1px solid var(--ambar-traco);
+  transition: color var(--transicao), border-color var(--transicao);
+}
+
+.formato-nota a:hover {
+  color: var(--gema);
+  border-color: var(--gema);
+}
+
+/* AS MODALIDADES DO ARENA DAY reaproveitam o `.formato-card` inteiro e mudam
+   só a largura mínima da coluna: são CINCO cartões, e com os 250px dos
+   formatos eles caíam em 4+1 — uma linha cheia e um cartão órfão embaixo. Com
+   320px a grade fecha em três colunas e a divisão vira 3+2. */
+.arena-grid {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
 
 /* ==========================================================================
-   GRADE DA PROGRAMAÇÃO E O ESTADO VAZIO
+   OS CINCO DIAS TEMÁTICOS — a trilha da semana
+
+   Uma LISTA VERTICAL, e não cinco cartões lado a lado. Os dias têm ordem (é
+   uma semana, não um menu), e cinco colunas de ~200px deixariam o tema de cada
+   dia — "Cyber & Quantum Day" — quebrando em três linhas dentro da coluna.
+
+   Na vertical, a data ganha uma plaqueta fixa à esquerda e o filete que liga
+   uma plaqueta à outra faz o que a data sozinha não faz: mostra que os dias são
+   contínuos. O filete é `::before` na lista, atrás das plaquetas, e não uma
+   borda em cada item — em cada item ele apareceria também abaixo do último dia,
+   apontando para o vazio.
+   ========================================================================== */
+
+.trilha {
+  position: relative;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.trilha::before {
+  content: "";
+  position: absolute;
+  top: 34px;
+  bottom: 34px;
+  left: 33px;
+  width: 1px;
+  background: linear-gradient(180deg, var(--ambar-traco), var(--traco));
+}
+
+.trilha-dia {
+  position: relative;
+  display: grid;
+  grid-template-columns: 67px minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(16px, 2.4vw, 28px);
+}
+
+/* A plaqueta da data. Fundo opaco de propósito: ela cobre o filete que passa
+   por trás, e é isso que dá a impressão de conta de rosário em vez de uma
+   linha atravessando cinco caixas. */
+.trilha-data {
+  display: grid;
+  place-items: center;
+  padding: 12px 0 10px;
+  border: 1px solid var(--traco-forte);
+  border-radius: var(--r);
+  background: var(--penumbra);
+}
+
+.trilha-num {
+  font-family: var(--display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--giz);
+}
+
+.trilha-mes {
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.trilha-corpo {
+  padding: 22px 24px 24px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+  transition: border-color var(--transicao), background var(--transicao);
+}
+
+.trilha-dia:hover .trilha-corpo {
+  border-color: var(--ambar-traco);
+  background: var(--sombra);
+}
+
+.trilha-semana {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.trilha-corpo h3 {
+  margin-top: 8px;
+  font-family: var(--display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--giz);
+}
+
+.trilha-corpo p {
+  margin-top: 10px;
+  max-width: 68ch;
+  font-size: 0.975rem;
+  line-height: 1.6;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+/* O Arena Day fecha a semana e é o único dia sem palestra: ele acende a
+   plaqueta e a moldura para a lista terminar num ponto alto, do mesmo jeito
+   que o dia termina o evento. */
+.trilha-dia--destaque .trilha-data {
+  border-color: var(--ambar-traco);
+  background: var(--ambar-lavagem);
+}
+
+.trilha-dia--destaque .trilha-num {
+  color: var(--gema);
+}
+
+.trilha-dia--destaque .trilha-corpo {
+  border-color: var(--ambar-traco);
+  background:
+    radial-gradient(ellipse 60% 70% at 4% 0%, rgba(255, 77, 0, 0.11), transparent 70%),
+    var(--penumbra);
+}
+
+.trilha-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+  list-style: none;
+}
+
+.trilha-tags li {
+  padding: 5px 11px;
+  border: 1px solid var(--traco-forte);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.06em;
+  color: var(--fumaca);
+}
+
+/* TRAÇO TRACEJADO = CONVITE EM CONFIRMAÇÃO.
+
+   A diferença entre um patrocinador assinado e um em negociação não pode ser
+   invisível: quem lê "NVIDIA" numa pílula sólida entende que está fechado. O
+   tracejado é a convenção que a interface usa em toda parte para "provisório",
+   e o `.trilha-nota` abaixo da lista diz em palavras o que ele significa.
+
+   O seletor leva o `li` de propósito: `.trilha-tags li` acima tem um elemento
+   na conta e venceria uma classe sozinha na especificidade. */
+.trilha-tags li.trilha-tag--pendente {
+  border-style: dashed;
+  border-color: var(--ambar-traco);
+  color: var(--ambar);
+}
+
+.trilha-nota {
+  margin-top: 20px;
+  padding-left: 4px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: var(--cinza);
+}
+
+
+/* ==========================================================================
+   A ESTRUTURA DE UM DIA DE PALESTRAS
+
+   O cartão que responde "a que horas eu preciso estar lá". Reaproveita o
+   `.grade` inteiro (um cartão por turno, hora à esquerda) — ele foi desenhado
+   para a grade da programação e serve igual para os dois turnos de um dia
+   padrão.
+   ========================================================================== */
+
+.dia-padrao {
+  margin-top: clamp(56px, 7vw, 84px);
+}
+
+.dia-padrao-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px 20px;
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--traco);
+}
+
+.dia-padrao-topo h3 {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--giz);
+}
+
+.dia-padrao-topo span {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.06em;
+  color: var(--cinza);
+}
+
+
+/* ==========================================================================
+   GRADE DA PROGRAMAÇÃO
    ========================================================================== */
 
 .grade {
@@ -2609,7 +2886,12 @@ section {
   border-bottom: 1px solid var(--traco);
 }
 
-.grade-cabecalho h3 {
+/* `h3` E `h4`: o nível do título depende de onde a grade está. Solta na seção
+   ela é h3; dentro do cartão "como é um dia de palestras", que já abre com um
+   h3, cada turno desce para h4 — a aparência é a mesma, a ordem dos cabeçalhos
+   continua sem pular nível para quem navega por leitor de tela. */
+.grade-cabecalho h3,
+.grade-cabecalho h4 {
   font-family: var(--marca);
   font-size: 1.5rem;
   font-weight: 400;
@@ -2674,49 +2956,15 @@ section {
   color: var(--fumaca);
 }
 
-/* Estado vazio: uma caixa tracejada, que é como interface diz "aqui vai
-   entrar coisa" sem fingir que já entrou. */
-.vazio {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: clamp(40px, 6vw, 64px) 28px;
-  border: 1px dashed var(--traco-forte);
-  border-radius: var(--r-lg);
-  background: rgba(255, 255, 255, 0.015);
-}
+/* Fila de botões centralizada no fim de uma seção — os dois destinos onde a
+   grade hora a hora vai sair (Even3 e Instagram da SEMCOMP).
 
-.vazio-icone {
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  border: 1px solid var(--ambar-traco);
-  border-radius: 50%;
-  background: var(--ambar-lavagem);
-  color: var(--ambar);
-}
-
-.vazio h3 {
-  margin-top: 22px;
-  font-family: var(--display);
-  font-size: 1.3rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  color: var(--giz);
-}
-
-.vazio p {
-  max-width: 52ch;
-  margin-top: 12px;
-  font-size: 0.975rem;
-  line-height: 1.6;
-  color: var(--fumaca);
-  text-wrap: pretty;
-}
-
-.vazio-acoes {
+   ERA `.vazio-acoes`, o pé de um estado vazio: enquanto a programação não
+   existia, a seção inteira era uma caixa tracejada dizendo "a grade ainda não
+   foi publicada". Com os cinco dias temáticos e a estrutura do dia no ar, o
+   estado vazio saiu — mas a fila de botões continua fazendo sentido embaixo de
+   uma seção que ainda aponta para fora. */
+.acoes-centro {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -2767,6 +3015,57 @@ section {
   font-size: var(--t-mini);
   letter-spacing: 0.06em;
   color: var(--cinza);
+}
+
+/* ---- A ficha dentro do cartão de inscrição ----
+
+   Quando, onde e a que horas chegar, em três filetes. É a informação que a
+   pessoa precisa TER NA MÃO no momento em que decide clicar em "fazer minha
+   inscrição" — deixá-la só no herói obriga a rolar a página de volta.
+
+   `<dl>` e não três parágrafos: cada linha é rótulo + valor, que é exatamente o
+   par que a lista de definição descreve. */
+.inscricao-ficha {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.inscricao-ficha > div {
+  padding-top: 14px;
+  border-top: 1px solid var(--traco);
+}
+
+.inscricao-ficha dt {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.inscricao-ficha dd {
+  margin-top: 6px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--giz);
+}
+
+/* O endereço leva ao mapa. O ícone de link externo entra no fim da linha e não
+   pode ser a única pista de que ali se clica — daí o filete embaixo do texto. */
+.inscricao-ficha dd a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ambar);
+  border-bottom: 1px solid var(--ambar-traco);
+  transition: color var(--transicao), border-color var(--transicao);
+}
+
+.inscricao-ficha dd a:hover {
+  color: var(--gema);
+  border-color: var(--gema);
 }
 
 .inscricao-acoes {
@@ -2866,6 +3165,75 @@ section {
 .faq-item p a:hover {
   color: var(--gema);
   border-color: var(--gema);
+}
+
+
+/* ==========================================================================
+   COMISSÃO ORGANIZADORA DA SEMCOMP
+
+   Doze frentes, quatorze pessoas. A unidade é a FRENTE e não a pessoa: quem
+   procura esta seção quer saber a quem falar sobre sala, crachá ou patrocínio,
+   e duas pessoas que dividem uma frente dividem um cartão.
+
+   Sem retrato: existem sete fotos de diretoria no repositório e quatorze
+   pessoas na comissão — meia grade com rosto e meia com inicial faria parecer
+   que metade importa menos. Aqui o cartão é tipográfico, e o nome é o que
+   acende.
+   ========================================================================== */
+
+.comissao-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+  gap: 14px;
+  list-style: none;
+}
+
+.comissao-item {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 22px 20px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+  transition: border-color var(--transicao), background var(--transicao),
+    transform var(--transicao);
+}
+
+.comissao-item:hover {
+  border-color: var(--ambar-traco);
+  background: var(--sombra);
+  transform: translateY(-3px);
+}
+
+.comissao-frente {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+/* O NOME é o assunto do cartão, então ele fica no tamanho de um título — e na
+   `--display`, não na `--marca`: nome próprio com acento e sobrenome longo na
+   fonte manuscrita fica difícil de ler em corpo pequeno. */
+.comissao-nomes {
+  margin-top: 12px;
+  font-family: var(--display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: var(--giz);
+  text-wrap: pretty;
+}
+
+.comissao-atribuicao {
+  margin-top: auto;
+  padding-top: 14px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--fumaca);
+  text-wrap: pretty;
 }
 
 
@@ -3257,15 +3625,6 @@ section {
   object-position: center 45%;
 }
 
-.modal-foto figcaption {
-  padding: 12px 16px;
-  border-top: 1px solid var(--traco);
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0.06em;
-  color: var(--cinza);
-}
-
 .modal-acoes {
   display: flex;
   flex-wrap: wrap;
@@ -3446,8 +3805,15 @@ footer {
      palavras. */
   .sobre-evento,
   .inscricao-grid,
+  .alcance,
   .mfp {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Empilhado, o texto perde a centralização vertical que só fazia sentido ao
+     lado das pílulas. */
+  .alcance {
+    align-items: start;
   }
 
   /* Empilhado, o texto vem primeiro e a foto fecha o bloco — a ordem em que se
@@ -3547,6 +3913,45 @@ footer {
   }
 
   /*
+    A TRILHA DOS DIAS PERDE A PLAQUETA LATERAL.
+
+    Com 67px de plaqueta + 16px de vão numa coluna de 340px, o tema do dia
+    ficava com 250px e "Cyber & Quantum Day" quebrava em três linhas. Aqui a
+    data vira uma faixa deitada em cima do cartão: os mesmos dois dados (dia e
+    mês), lado a lado, sem cobrar largura do texto.
+
+    O filete que ligava as plaquetas sai junto — na vertical ele passaria por
+    dentro dos cartões, não por trás deles.
+  */
+  .trilha::before {
+    display: none;
+  }
+
+  .trilha-dia {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .trilha-data {
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: baseline;
+    gap: 8px;
+    padding: 10px 16px;
+    border-bottom: 0;
+    border-radius: var(--r) var(--r) 0 0;
+  }
+
+  .trilha-num {
+    font-size: 1.35rem;
+  }
+
+  .trilha-corpo {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  /*
     A FILEIRA DE FOTOS VIRA UMA COLUNA, e cada foto vira deitada.
 
     Três colunas de ~180px deixavam as fotos com 135px de altura: nesse tamanho
@@ -3589,7 +3994,7 @@ footer {
   .capa-acoes .btn-secondary,
   .inscricao-acoes .btn-primary,
   .inscricao-acoes .btn-outline,
-  .vazio-acoes .btn-outline {
+  .acoes-centro .btn-outline {
     flex: 1 1 100%;
     white-space: normal;
   }
