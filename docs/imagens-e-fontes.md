@@ -13,7 +13,8 @@ assets/originais/                    FONTE — nunca servida
 ├── semcomp-estande.jpg              8,3 MB, 6000×4000 (EXIF 8 → vertical)
 ├── semcomp-plateia.jpg              7,4 MB — ainda sem derivado
 ├── semcomp-vr.jpg                   6,8 MB — ainda sem derivado
-└── logo-mfp.png, logo-obi2.jpg, …   arte de terceiros como veio
+├── obi logo.png, obi nome.png, …    marcas de competição, 1080×1350 com alfa
+└── logo-mfp.png, logo-obi2.jpg, …   arte de terceiros como veio (substituída)
 
 backend/src/public/                  PUBLICADO — só derivado
 ├── fonts/
@@ -70,38 +71,52 @@ Duas coisas que o script resolve e que erram fácil se refeitas à mão:
 
 ## Logotipo de terceiro em página escura
 
-`competicoes/sbc.png` e `competicoes/obi.png` chegam como JPEG desenhado para
-fundo **branco**: azul-escuro na SBC, preto e âmbar na OBI. O site é escuro, e
-não existe saída sem custo — as três possíveis foram consideradas:
+As três marcas de competição chegaram em **PNG de 1080×1350 com alfa**, cada uma
+em dois arquivos: o símbolo (`obi logo.png`) e o wordmark (`obi nome.png`). Os
+derivados saem de `SELOS_COMP` e `MARCAS_COMP`, e cada linha dessas tabelas diz o
+**tratamento** que aquele arquivo pede — medido uma vez, não deduzido de limiar:
 
-| Saída | O que custa |
-|---|---|
-| Plaquinha branca atrás | Dois retângulos brancos num site escuro, e o `padding` encolhe o desenho para ~48 px dentro de um selo de 84 |
-| Só tirar o fundo | O wordmark preto da OBI e o azul `#2b4a78` da SBC ficam em ~1,4:1 contra o `#100f14` do cartão — ilegíveis |
-| **Mono claro (o que está no ar)** | Descarta a cor da marca alheia |
+| Tratamento | Quem usa hoje | O que faz |
+|---|---|---|
+| `direto` | OBI (símbolo e nome) | Só apara e reduz — o alfa já é limpo e o traço já é claro |
+| `tingir` | Maratona SBC | Mantém o alfa e chapa o RGB em `TINTA_MONO` |
+| `do-preto` | MFP (símbolo e nome) | O véu preto em volta do desenho vira transparência |
 
-O script resolve em `logo_mono()`: o alfa sai da **cobertura de tinta** do
-original (quanto mais escuro o pixel, mais opaco fica), o RGB é chapado em
-`TINTA_MONO`, e a rampa é linear em vez de um corte binário — sem isso o
-antisserrilhado do JPEG viraria uma borda serrilhada de um pixel em volta de
-cada letra.
+**Só a SBC é repintada, e por medida.** O azul `#2b4a78` dela dá 2,1:1 contra o
+`#100f14` do cartão, abaixo do 3:1 que um elemento gráfico precisa para ser
+visto; o disco amarelo da OBI dá 19:1 e não tem por que ser alterado. Entre um
+azul clareado (que não é a cor de ninguém) e o branco quente da página, o branco
+da página é o que se assume como escolha nossa. **Não existe mais plaquinha
+branca atrás de logo nenhum** — ela era a saída de quando a SBC e a OBI só
+existiam em JPEG de fundo branco, e encolhia o desenho para ~48 px dentro de um
+selo de 84.
 
-Duas sutilezas que não são óbvias ao ler o código:
+Três sutilezas que não são óbvias ao ler o código:
 
-- **A opacidade máxima é normalizada para 255.** Sem isso cada marca sairia com
-  o brilho do próprio pigmento: o preto da OBI dá alfa 255 e o azul da SBC dá
-  181, e a SBC apareceria 29% mais apagada que a vizinha na mesma fileira —
-  diferença que não é decisão de design nenhuma, é só a tinta que o autor
-  escolheu.
-- **O respiro dentro do selo tem dois valores** (`RESPIRO_MONO` 6%,
-  `RESPIRO_ALFA` 2%). SBC e OBI são desenho chapado de contorno fechado; o
-  papagaio do MFP é silhueta aberta e, com o mesmo respiro, lê como menor do
+- **`do-preto` é o `neon()` ao contrário do que parece.** A arte do MFP vem sobre
+  um véu preto semitransparente, e luz sobre preto é aditiva: o canal máximo
+  serve direto como alfa e o RGB é dividido por ele. Composta de volta sobre
+  preto, a imagem sai idêntica — a operação só ensina o arquivo a dizer onde ele
+  não tem tinta. O alfa que o arquivo já trazia é multiplicado no resultado, ou o
+  véu voltaria opaco onde tem brilho.
+- **O aparo mede com piso de alfa** (`LIMIAR_APARO`, 8) e não com `getbbox()` no
+  alfa cru. O véu do MFP morre num degradê longo e deixa uma auréola de alfa
+  1..7: invisível na tela, dentro da caixa. No wordmark do MFP a caixa cai de
+  781×580 para 699×373 ao exigir alfa ≥ 8 — 36% da altura era auréola, e a marca
+  aparecia 1,5× menor do que devia. Nas artes de alfa limpo o mesmo piso muda de
+  1 a 3 px.
+- **O respiro dentro do selo é por arte** (6% na SBC e na OBI, 2% no MFP, no
+  terceiro campo da tabela). As duas primeiras são desenho chapado de contorno
+  fechado; o papagaio é silhueta aberta e, com o mesmo respiro, lê como menor do
   que é. "Alinhado" aqui quer dizer presença óptica equivalente, não o mesmo
   número no CSS.
 
-**Se a arte de alguma delas chegar um dia em SVG ou PNG com alfa e traço
-claro**, ela deixa de precisar disto: basta movê-la de `LOGOS_MONO` para
-`LOGOS_ALFA` e a cor original volta.
+`maratona sbc nome.png` fica em `assets/originais/` **sem derivado**: só os dois
+blocos de destaque da `/seja-membro` usam wordmark, e derivado que nenhum
+template referencia é peso morto em `src/public/`. Os originais antigos
+(`maratona-logo.jpg`, `logo-obi2.jpg`, `mfp-logo.png`, `mfp-lofo2.png`) também
+continuam lá, agora sem mapa que os aponte — foram substituídos por este
+material, e a função `logo_mono()` que os tratava saiu do script.
 
 ## A miniatura de compartilhamento da SEMCOMP
 

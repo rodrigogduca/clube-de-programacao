@@ -315,13 +315,16 @@
       {#
         As três provas.
 
-        `logo` aponta para images/competicoes/, gerado por
-        scripts/otimizar-imagens.py. OS TRÊS SELOS AGORA TÊM ALFA e assentam
-        direto no escuro: a SBC e a OBI vinham em JPEG de fundo branco e a
-        página as apoiava numa plaquinha branca, os únicos dois retângulos
-        claros de um site escuro. Hoje o script as entrega em mono claro (ver
-        `logo_mono`), com a mesma geometria do papagaio do MFP — daí não haver
-        mais nenhum modificador de fundo aqui.
+        O selo de cada prova é `images/competicoes/<slug>.png`, gerado por
+        scripts/otimizar-imagens.py a partir do material oficial que a comissão
+        entregou (símbolo e wordmark de cada marca, em PNG com alfa).
+
+        OS TRÊS ASSENTAM DIRETO NO ESCURO, e dois deles na cor da própria marca:
+        o disco amarelo da OBI e o papagaio roxo do MFP saem como são. Só a
+        Maratona SBC é repintada em claro pelo script — o azul-escuro dela dá
+        2,1:1 contra o fundo do cartão, e marca que não se vê não é marca. Não
+        há mais nenhuma plaquinha branca atrás de logo nenhum, que era o que a
+        página fazia quando a SBC e a OBI só existiam em JPEG de fundo branco.
       #}
       {% set competicoes = [
         {
@@ -379,12 +382,20 @@
         <img src="{{ static('images/competicoes/obi.png') }}" alt="" aria-hidden="true"
              class="comp-destaque-fundo" width="480" height="480" loading="lazy" decoding="async">
 
+        {#
+          O TÍTULO É O WORDMARK, não o selo. Antes esta linha repetia
+          `obi.png` — o mesmo disco que já está no fundo do bloco e no cartão
+          da fileira acima, três vezes o mesmo desenho em duas telas de
+          distância, e nenhuma delas escrevendo o nome da prova. O material
+          novo trouxe o "OBI" em lettering (`obi-marca.png`), que é o que um
+          título precisa ser.
+        #}
         <div class="comp-destaque-say">
           <span class="comp-destaque-selo">Para quem está começando</span>
           <h3 class="comp-destaque-marca">
-            <img src="{{ static('images/competicoes/obi.png') }}"
+            <img src="{{ static('images/competicoes/obi-marca.png') }}"
                  alt="Olimpíada Brasileira de Informática"
-                 width="480" height="480" loading="lazy" decoding="async">
+                 width="480" height="201" loading="lazy" decoding="async">
           </h3>
           <p>A OBI tem fase por nível e não cobra experiência nenhuma na entrada. É onde boa parte do clube resolveu o primeiro problema de programação da vida — e o treino para ela é o mesmo que abre a porta das outras duas provas.</p>
           {% if links.maratonaNovatos or links.maratonaExperientes %}
@@ -412,7 +423,10 @@
 
         A marca em branco (`mfp-marca.png`) faz o papel de título; o papagaio
         (`mfp.png`) fica atrás, grande e cortado pela borda, como o pato faz no
-        herói da home. Os dois têm alfa, então vão direto sobre o roxo.
+        herói da home. Os dois têm alfa, então vão direto sobre o roxo — e o véu
+        preto que vinha desenhado em volta dos dois arquivos originais é
+        transformado em transparência pelo script (tratamento 'do-preto'), senão
+        cada um apareceria dentro de um retângulo escuro por cima do bloco.
       #}
       <div class="comp-destaque comp-destaque--mfp fade-in">
         <img src="{{ static('images/competicoes/mfp.png') }}" alt="" aria-hidden="true"
@@ -423,7 +437,7 @@
           <h3 class="comp-destaque-marca">
             <img src="{{ static('images/competicoes/mfp-marca.png') }}"
                  alt="Maratona Feminina de Programação"
-                 width="480" height="280" loading="lazy" decoding="async">
+                 width="480" height="256" loading="lazy" decoding="async">
           </h3>
           <p>Meninas e mulheres do CIMATEC treinando e competindo juntas. O clube monta os times, organiza os treinos e acompanha a prova — e quem nunca competiu entra do mesmo jeito.</p>
           {% if links.maratonaNovatos %}

@@ -2954,6 +2954,28 @@ section {
   color: var(--ambar);
 }
 
+/* PÍLULA ACESA = O QUE DÁ NOME AO DIA.
+
+   Nem toda tag de um dia tem o mesmo peso: "AWS" no Student Community Day é a
+   marca que assina o dia inteiro, e "Empreendedorismo" no Cimatec Day é um dos
+   assuntos entre quatro. Em cinza, as duas pesavam igual e a pessoa tinha de ler
+   o título do cartão para saber qual era qual.
+
+   PREENCHIDA, e não só com o filete âmbar: o tracejado do `--pendente` já usa
+   a borda âmbar para dizer "provisório", e um destaque que mexesse apenas na cor
+   da borda ficaria a um traço de distância do seu oposto. Fundo lavado + `--gema`
+   no texto é a mesma escada de ênfase do `.trilha-dia--destaque` e da primeira
+   pílula das `.instituicoes` — a casa e o dia final da semana.
+
+   Mesmo peso de seletor do irmão acima (`li` na conta) para a ordem no arquivo
+   não decidir quem vence quando as duas classes existirem no mesmo `li`. Elas
+   não convivem no template, mas a folha não depende disso. */
+.trilha-tags li.trilha-tag--destaque {
+  border-color: var(--ambar-traco);
+  background: var(--ambar-lavagem);
+  color: var(--gema);
+}
+
 .trilha-nota {
   margin-top: 20px;
   padding-left: 4px;
@@ -3220,7 +3242,7 @@ section {
   margin-top: 28px;
 }
 
-/* ---- O mapa do local ----
+/* ---- O mapa do local, em faixa ----
 
    Um iframe do Google dentro de uma página com identidade fechada é o elemento
    mais difícil de assentar do site: ele chega claro, com a tipografia de outra
@@ -3230,13 +3252,19 @@ section {
    `overflow: hidden`. É o que faz o mapa ser lido como mais um quadro do
    conjunto em vez de um retângulo colado de fora.
 
+   AGORA ELE É IRMÃO DO `.inscricao-grid`, NÃO FILHO DO CARTÃO. Enquanto vivia
+   dentro do `.inscricao-cta`, o mapa herdava a coluna estreita (~376px) e ficava
+   emoldurado duas vezes — filete dentro de um cartão que já tem filete, degradê
+   e brilho. Fora dele pega a largura do container e a margem passa a ser de
+   separação entre blocos (a `clamp` das outras seções), não de espaço interno.
+
    O MAPA NÃO LEVA O `filter` DE REPOUSO QUE AS FOTOS LEVAM. Foto apagada que
    acende no ponteiro funciona porque foto é ilustração — ela convive com o
    texto quando não é o assunto. Mapa é instrumento: quem olha está procurando
    uma rua, e escurecer o que a pessoa veio ler para "combinar com a paleta"
    troca legibilidade por decoração. Ele fica claro, e é para ficar. */
 .mapa {
-  margin-top: 32px;
+  margin-top: clamp(36px, 4.5vw, 56px);
   border: 1px solid var(--traco);
   border-radius: var(--r);
   overflow: hidden;
@@ -3247,32 +3275,31 @@ section {
    espaço da linha de base, que aqui apareceria como uma listra do fundo entre
    o mapa e a legenda.
 
-   PROPORÇÃO E TETO, os dois. `aspect-ratio` sozinho não serve porque este
-   elemento vive em duas larguras muito diferentes: na coluna da inscrição ele
-   tem ~376px, e abaixo de 980px o grid empilha e ele passa a ter a largura
-   inteira do container (até 1140px). Em 4:3 isso daria 855px de altura — um
-   mapa com mais de uma tela de celular de altura, que a pessoa rola por dentro
-   sem querer no meio da página.
+   8:3 É A FORMA DE UM MAPA DE RUA. Fora do cartão o mapa tem a largura inteira
+   do container (até 1140px), e a proporção antiga (4:3) daria 855px de altura:
+   mais de uma tela de celular só de mapa, que a pessoa rola por dentro sem
+   querer no meio da página. Deitado, ele mostra o trecho da Orlando Gomes que
+   interessa — a avenida corre na horizontal — em 428px.
 
-   Então a altura é uma FAIXA e não um número: 4:3 manda no meio, o
-   `max-height` assume quando a coluna estica (o mapa vira faixa deitada em vez
-   de poço) e o `min-height` assume quando ela aperta — em 320px o 4:3 puro
-   daria 162px, altura em que o mapa mostra um quarteirão e a marca do Google
-   ocupa um terço dele.
+   PROPORÇÃO, TETO E PISO, os três. A altura é uma FAIXA e não um número: 8:3
+   manda na largura de leitura, o `max-height` segura em telas muito largas e o
+   `min-height` assume quando aperta — em 360px o 8:3 puro daria 135px, altura
+   em que sobra um quarteirão e a marca do Google ocupa um terço dele. É por
+   isso que no celular ele volta a ser quase um quadrado: 260px de piso numa
+   tela estreita, que é o mínimo para o mapa dizer alguma coisa.
 
-   `height: auto` NÃO É REDUNDANTE, e foi o que estava faltando. O `<iframe>`
-   leva `width`/`height` como atributos de HTML, e eles viram dica de
-   apresentação com peso próprio na cascata. O `width: 100%` daqui vence o
-   atributo de largura, mas sem declarar `height` o `height="480"` do HTML
-   ficava valendo e o `aspect-ratio` não tinha o que calcular: o mapa saía com
-   480px fixos em qualquer viewport, virando um retrato estreito no celular. */
+   `height: auto` NÃO É REDUNDANTE. O `<iframe>` leva `width`/`height` como
+   atributos de HTML, e eles viram dica de apresentação com peso próprio na
+   cascata. O `width: 100%` daqui vence o atributo de largura, mas sem declarar
+   `height` o do HTML ficaria valendo e o `aspect-ratio` não teria o que
+   calcular: o mapa sairia com altura fixa em qualquer viewport. */
 .mapa iframe {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 4 / 3;
-  min-height: 240px;
-  max-height: 420px;
+  aspect-ratio: 8 / 3;
+  min-height: 260px;
+  max-height: 440px;
   border: 0;
 }
 
@@ -3655,8 +3682,13 @@ section {
   filter: drop-shadow(0 0 26px rgba(var(--acento-rgb), 0.5));
 }
 
+/* 132px ERA MEDIDA DE SELO: o título deste bloco usava o disco quadrado da OBI,
+   e um quadrado de 260px (o padrão) ficava do tamanho de um cartão. Agora ali
+   está o wordmark "OBI" em 2,4:1, e a mesma largura devolveria uma lettering de
+   55px de altura — menor que o parágrafo abaixo dela. 200px dá ~84px de altura,
+   que é a presença de um título ao lado do wordmark do MFP no bloco vizinho. */
 .comp-destaque--obi {
-  --marca-largura: 132px;
+  --marca-largura: 200px;
 }
 
 .comp-destaque-say p {

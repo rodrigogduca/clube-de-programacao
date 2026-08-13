@@ -201,41 +201,59 @@ BANNERS = {
 
 # Logotipos de terceiros -> images/competicoes/.
 #
-# A SBC e a OBI chegam em JPEG desenhado para fundo BRANCO (azul-escuro na SBC,
-# preto e âmbar na OBI). Antes eles eram só aparados e a página os assentava
-# sobre uma plaquinha branca arredondada — honesto com a marca, mas eram os
-# únicos dois retângulos brancos de um site inteiramente escuro, e a plaquinha
-# encolhia o desenho para ~48px dentro de um selo de 72.
+# O MATERIAL FOI TROCADO: as três marcas chegaram de novo, agora em PNG de
+# 1080x1350 com alfa (`obi logo.png`, `mfp nome.png`, ...) e cada uma em DOIS
+# arquivos — o símbolo ("logo") e o wordmark ("nome"). Antes a SBC e a OBI só
+# existiam em JPEG desenhado para fundo BRANCO, e o script precisava repintá-las
+# inteiras em mono claro para elas assentarem no escuro (a função `logo_mono`,
+# que saiu junto com os originais `maratona-logo.jpg` e `logo-obi2.jpg` — os
+# arquivos continuam em `assets/originais/`, sem mapa que os aponte).
 #
-# Agora saem em MONO CLARO: fundo transparente e o traço repintado de
-# `TINTA_MONO`. É o mesmo tratamento que qualquer marca de parceiro recebe para
-# assentar em fundo escuro, e o alfa vem da COBERTURA DE TINTA do original — o
-# preto do anel da OBI fica opaco, o âmbar do disco fica translúcido, o branco
-# some. O desenho continua o mesmo; muda a cor, não a forma.
+# O GANHO: a OBI volta a aparecer NA COR DELA (o disco amarelo com a lâmpada
+# pontilhada), que é o que a marca é. Só a SBC continua repintada, e por medida:
+# o azul #2b4a78 dela dá 2,1:1 contra o #100f14 do cartão — abaixo do 3:1 que um
+# elemento gráfico precisa para ser visto. Entre alterar a cor e não mostrar a
+# marca, altera-se a cor; onde não é preciso alterar, não se altera.
 #
-# TRADE-OFF ASSUMIDO: mono descarta a cor da marca alheia (o âmbar da OBI, o
-# azul da SBC). A alternativa era transparência pura, e aí o wordmark preto da
-# OBI e o azul #2b4a78 da SBC ficariam em ~1,4:1 contra o #100f14 do cartão —
-# ilegíveis. Entre alterar a cor e não mostrar a marca, altera-se a cor.
-LOGOS_MONO = {
-    'maratona-logo.jpg': 'sbc.png',
-    'logo-obi2.jpg': 'obi.png',
+# TRÊS TRATAMENTOS, um por arquivo, escritos ao lado do nome em vez de deduzidos
+# de um limiar de luminância — o que cada arte precisa foi medido uma vez, e um
+# número mágico decidindo isso sozinho erraria calado no dia em que a próxima
+# marca chegasse num tom intermediário:
+#
+#   'direto'    alfa limpo e traço claro; só apara e reduz.
+#   'tingir'    mantém o alfa e chapa o RGB em TINTA_MONO (a SBC).
+#   'do-preto'  a arte vem sobre um véu preto semitransparente, que na página
+#               virava um retângulo escuro por cima do bloco roxo do MFP. O
+#               preto vira transparência pelo mesmo caminho do `neon()`: o
+#               brilho É o alfa (ver `alfa_do_preto`).
+#
+# O TERCEIRO CAMPO É O RESPIRO dentro do selo quadrado, em fração do lado, e ele
+# é por ARTE e não por tratamento: SBC e OBI são desenho chapado de contorno
+# fechado e ocupam o quadro inteiro que lhes cabe (0.06); o papagaio do MFP é
+# silhueta aberta — asas, cauda, bico — e com o mesmo respiro lê como menor do
+# que é (0.02). Os dois valores deixam os três com presença óptica equivalente na
+# fileira, que é o que "alinhado" quer dizer aqui, e não ter o mesmo número no
+# CSS. O wordmark ignora este campo: ele é limitado por largura.
+#
+#   origem -> (saída, tratamento, respiro)
+
+# Símbolo: sai QUADRADO, porque os três ficam lado a lado na fileira de cartões
+# e uma caixa por proporção de arquivo deixaria a fileira com marcas de tamanhos
+# aparentes diferentes.
+SELOS_COMP = {
+    'maratona sbc logo.png': ('sbc.png', 'tingir', 0.06),
+    'obi logo.png': ('obi.png', 'direto', 0.06),
+    'mfp logo.png': ('mfp.png', 'do-preto', 0.02),
 }
 
-# Os do MFP já vêm em PNG com alfa e traço claro, então vão direto para o
-# escuro — mas vinham com margem transparente sobrando, e era ela que fazia o
-# papagaio parecer menor que os vizinhos no mesmo selo. Agora os dois são
-# aparados pela caixa do alfa antes de sair.
-#
-# O papagaio é SELO (quadrado, para a fileira de três ficar alinhada); a marca
-# é WORDMARK e mantém a proporção dela — espremer "Maratona Feminina de
-# Programação" num quadrado deixaria a lettering minúscula.
-LOGOS_ALFA = {
-    'mfp-logo.png': 'mfp.png',
-}
-
-MARCAS_ALFA = {
-    'mfp-lofo2.png': 'mfp-marca.png',
+# Wordmark: mantém a proporção do próprio desenho e é limitado por LARGURA —
+# espremer "Maratona Feminina de Programação" num quadrado deixaria a lettering
+# minúscula. Só os dois blocos de destaque da /seja-membro usam wordmark (OBI e
+# MFP); `maratona sbc nome.png` fica em `assets/originais/` esperando um lugar na
+# página, porque derivado que ninguém referencia é peso morto em `src/public/`.
+MARCAS_COMP = {
+    'obi nome.png': ('obi-marca.png', 'direto'),
+    'mfp nome.png': ('mfp-marca.png', 'do-preto'),
 }
 
 LARGURA_BANNER = 1600
@@ -246,23 +264,20 @@ LARGURA_GRUPO = 1400
 PROPORCAO_GRUPO = 4 / 3
 LADO_LOGO_COMP = 480
 LARGURA_MARCA = 480
-# Tolerância do aparo: o branco de um JPEG não é 255 puro — a compressão deixa
-# 248..254 espalhado pela moldura. Com o `getbbox` cru (que só corta o exato) o
-# recorte não tirava um pixel sequer.
-BRANCO_MINIMO = 244
 # O branco quente da paleta (`--giz` é #f6f1e9), um passo abaixo: a marca de
 # terceiro acompanha o texto da página sem gritar mais alto que o título dela.
+# É a tinta do tratamento 'tingir' (hoje, só a Maratona SBC).
 TINTA_MONO = (238, 233, 225)
-# Respiro dentro do selo quadrado, em fração do lado.
+# Piso de alfa para o aparo (ver `arte_terceiro`).
 #
-# Dois valores porque as artes têm densidade diferente. SBC e OBI são desenho
-# chapado com contorno fechado e ocupam o quadro inteiro que lhes cabe; o
-# papagaio do MFP é ilustração de silhueta aberta (asas, cauda, bico) e, com o
-# mesmo respiro, lê como menor do que é. Os 2% deixam os três com presença
-# óptica equivalente na fileira — que é o que "alinhado" quer dizer aqui, e não
-# ter o mesmo número no CSS.
-RESPIRO_MONO = 0.06
-RESPIRO_ALFA = 0.02
+# `getbbox()` no alfa cru corta em alfa > 0, e no 'do-preto' isso é a caixa do
+# HALO, não a do desenho: o véu preto dos PNGs do MFP se apaga num degradê longo
+# e sobra uma auréola de alfa 1..7 — invisível na tela, mas dentro da caixa. Medido
+# nos seis arquivos: no wordmark do MFP a caixa cai de 781x580 para 699x373 ao
+# exigir alfa >= 8, ou seja 36% da altura era auréola, e o desenho aparecia 1,5x
+# menor do que devia. Nas artes de alfa limpo (OBI, SBC) o mesmo piso muda de 1 a
+# 3px. Em 4 a auréola ainda entra; de 8 a 40 a caixa não se move mais.
+LIMIAR_APARO = 8
 # Paleta dos logotipos de competição (ver `salvar_png_paleta`).
 CORES_PALETA = 64
 
@@ -377,10 +392,32 @@ def neon(origem, margem):
             min(im.size[1], base + margem),
         ))
 
-    # Via tobytes/frombytes e não getdata/putdata: getdata está a caminho da
-    # remoção no Pillow 14 e materializar 250 mil tuplas custa mais que
-    # percorrer o buffer cru.
-    origem_bytes = im.tobytes()
+    return brilho_para_alfa(im)
+
+
+def brilho_para_alfa(im, alfa_base=None):
+    """Arte desenhada SOBRE PRETO -> RGBA com o preto virando transparência.
+
+    Luz sobre preto é aditiva: o valor do pixel *é* o brilho. Então o canal
+    máximo serve direto como alfa, e o RGB é dividido por ele (desmultiplicação)
+    para o meio-tom não escurecer duas vezes ao ser composto. Sem essa divisão o
+    halo em volta das letras fica sujo em vez de difuso.
+
+    Composta de volta sobre preto, a imagem sai IDÊNTICA à original — a
+    operação só ensina o arquivo a dizer onde ele não tem tinta.
+
+    `alfa_base` é o alfa que o arquivo já trazia, multiplicado no resultado. Os
+    PNGs do MFP chegam com um véu preto SEMITRANSPARENTE em volta do desenho
+    (alfa 31..99 nos cantos): sem multiplicar, o véu voltaria opaco onde tem
+    brilho; sem o brilho, o retângulo escuro do véu continuaria aparecendo por
+    cima do bloco roxo da página.
+
+    Via tobytes/frombytes e não getdata/putdata: getdata está a caminho da
+    remoção no Pillow 14 e materializar um milhão de tuplas custa mais que
+    percorrer o buffer cru.
+    """
+    origem_bytes = im.convert('RGB').tobytes()
+    base = alfa_base.tobytes() if alfa_base is not None else None
     destino_bytes = bytearray(len(origem_bytes) // 3 * 4)
 
     for i in range(0, len(origem_bytes), 3):
@@ -388,8 +425,13 @@ def neon(origem, margem):
         a = max(r, g, b)
         j = i // 3 * 4
         if a:
+            if base is not None:
+                a = a * base[j // 4] // 255
+                if not a:
+                    continue
             destino_bytes[j:j + 4] = (
-                r * 255 // a, g * 255 // a, b * 255 // a, a
+                r * 255 // max(r, g, b), g * 255 // max(r, g, b),
+                b * 255 // max(r, g, b), a
             )
 
     return Image.frombytes('RGBA', im.size, bytes(destino_bytes))
@@ -487,22 +529,21 @@ def faixa(origem, largura, proporcao, topo_rel):
     return im
 
 
-def aparar_branco(origem, limite):
-    """Tira a moldura branca de um logotipo entregue em JPEG.
+def tingir(im, tinta):
+    """Mantém o alfa e chapa o RGB numa tinta só.
 
-    O logo da Maratona SBC vem numa tela de 2066x1865 com o desenho no meio e
-    branco em volta; o da OBI, idem. Colados numa plaquinha, o que apareceria
-    era a moldura vazia com a marca encolhida no centro.
+    Para a marca que chega com alfa limpo mas em tinta ESCURA — o azul #2b4a78 da
+    Maratona SBC dá 2,1:1 contra o #100f14 do cartão, abaixo do 3:1 que um
+    elemento gráfico precisa para ser visto. O desenho continua o mesmo; muda a
+    cor, não a forma.
 
-    O `getbbox` do Pillow só corta o que é exatamente 0 depois de invertido, e
-    branco de JPEG não é 255 puro — a compressão deixa 248..254 espalhado. Por
-    isso o corte usa um limiar (`point`) antes de medir: tudo acima de `limite`
-    vira 0 e entra na conta como fundo.
+    Não tenta preservar a cor da marca: clarear o azul mantendo o matiz devolveria
+    um azul-bebê que não é a cor de ninguém. Entre um azul inventado e o branco da
+    página, o branco da página é o que se assume como escolha nossa.
     """
-    im = ImageOps.exif_transpose(Image.open(origem)).convert('RGB')
-    mascara = im.convert('L').point(lambda p: 0 if p >= limite else 255)
-    caixa = mascara.getbbox()
-    return im.crop(caixa) if caixa else im
+    marca = Image.new('RGBA', im.size, tinta + (255,))
+    marca.putalpha(im.getchannel('A'))
+    return marca
 
 
 def encaixar(im, lado, respiro_rel):
@@ -529,73 +570,60 @@ def encaixar(im, lado, respiro_rel):
     return tela
 
 
-def logo_mono(origem, lado, limite, tinta, respiro_rel):
-    """Logotipo de fundo branco -> PNG transparente, repintado em tinta clara.
+def arte_terceiro(origem, tratamento):
+    """Marca de terceiro -> RGBA aparado e legível sobre fundo escuro.
 
-    O contrário do `neon()`: lá a arte é luz sobre preto e o brilho VIRA o alfa;
-    aqui a arte é tinta sobre branco e o alfa é a COBERTURA DE TINTA — quanto
-    mais escuro o pixel, mais opaco ele fica.
+    O passo comum aos seis arquivos de competição, antes de virar selo ou
+    wordmark. `tratamento` é o que o arquivo pede, medido uma vez e escrito na
+    tabela (ver SELOS_COMP): 'direto', 'tingir' ou 'do-preto'.
 
-    A rampa é linear de `limite` (fundo, alfa 0) até 0 (tinta cheia, alfa 255),
-    e não um corte binário. Sem ela o antisserrilhado do JPEG viraria uma borda
-    serrilhada de um pixel em volta de cada letra; com ela o meio-tom continua
-    meio-tom, só que translúcido.
+    O APARO É O PONTO e vale para todos: as artes chegam em tela de 1080x1350 com
+    o desenho ocupando o meio (o "OBI" usa 710x296 dela). Encaixada com
+    `object-fit: contain`, a margem vazia conta como parte da imagem e a marca é
+    desenhada menor que as vizinhas no mesmo selo — o wordmark do MFP aparecia
+    com ~186px de largura útil onde cabiam 260.
 
-    O RGB é chapado: a cor da marca não sobrevive a esta operação e fingir o
-    contrário (tentar preservar o âmbar da OBI, digamos) devolveria um âmbar
-    quase transparente — o pior dos dois mundos.
+    A ORDEM IMPORTA: aparar depois de tratar. No 'do-preto' o véu preto tem alfa
+    próprio, então a caixa do alfa cru é o retângulo do véu, não a do desenho —
+    aparar antes cortaria pelo lugar errado e deixaria a margem do véu no
+    arquivo.
+
+    E o aparo mede com PISO DE ALFA (`LIMIAR_APARO`), não com `getbbox()` no alfa
+    cru: o que sobra do véu é um degradê que morre em alfa 1..7, invisível na tela
+    e ainda assim dentro da caixa.
     """
-    im = aparar_branco(origem, limite)
+    im = ImageOps.exif_transpose(Image.open(origem)).convert('RGBA')
 
-    alfa = im.convert('L').point(
-        lambda p: 0 if p >= limite else round((limite - p) * 255 / limite)
+    if tratamento == 'tingir':
+        im = tingir(im, TINTA_MONO)
+    elif tratamento == 'do-preto':
+        im = brilho_para_alfa(im, alfa_base=im.getchannel('A'))
+    elif tratamento != 'direto':
+        raise ValueError(f'tratamento desconhecido: {tratamento!r}')
+
+    visivel = im.getchannel('A').point(
+        lambda p: 255 if p >= LIMIAR_APARO else 0
     )
-
-    # Normaliza a opacidade máxima para 255.
-    #
-    # Sem isto cada marca sai com o brilho do seu próprio pigmento: o preto da
-    # OBI dá alfa 255 e o azul #2b4a78 da SBC dá 181, então a SBC apareceria
-    # 29% mais apagada que a vizinha na mesma fileira — diferença que não é
-    # decisão de design nenhuma, é só a tinta que o autor escolheu. A rampa
-    # inteira é esticada, então a proporção interna da arte (o contorno mais
-    # forte que o preenchimento) continua igual.
-    teto = alfa.getextrema()[1]
-    if teto:
-        alfa = alfa.point(lambda p: min(255, round(p * 255 / teto)))
-
-    marca = Image.new('RGBA', im.size, tinta + (255,))
-    marca.putalpha(alfa)
-    return encaixar(marca, lado, respiro_rel)
+    caixa = visivel.getbbox()
+    return im.crop(caixa) if caixa else im
 
 
-def logo_alfa(origem, lado, respiro_rel):
-    """PNG com alfa -> selo quadrado, aparado pela caixa do desenho.
+def selo_comp(origem, lado, tratamento, respiro_rel):
+    """Marca de competição -> selo quadrado, para a fileira de três cartões."""
+    return encaixar(arte_terceiro(origem, tratamento), lado, respiro_rel)
 
-    O aparo é o ponto: `mfp-logo.png` vinha numa tela de 480x480 com o papagaio
-    ocupando 480x428 e uma faixa transparente no pé. Encaixado num selo com
-    `object-fit: contain`, essa faixa vazia contava como parte da imagem e o
-    papagaio era desenhado menor que os vizinhos no mesmo selo.
+
+def marca_comp(origem, largura, tratamento, _respiro=None):
+    """Marca de competição -> wordmark na proporção do próprio desenho.
+
+    Sem quadrado, ao contrário do `selo_comp`: o CSS limita o wordmark por
+    LARGURA, e enfiar "Maratona Feminina de Programação" numa caixa quadrada
+    deixaria a lettering minúscula.
+
+    `_respiro` existe só para a assinatura casar com a das tabelas, que carregam
+    o respiro do selo em toda linha — aqui não há quadrado onde respirar.
     """
-    im = ImageOps.exif_transpose(Image.open(origem)).convert('RGBA')
-    caixa = im.getchannel('A').getbbox()
-    if caixa:
-        im = im.crop(caixa)
-    return encaixar(im, lado, respiro_rel)
-
-
-def marca_alfa(origem, largura):
-    """PNG com alfa -> wordmark aparado, na proporção do próprio desenho.
-
-    Sem quadrado, ao contrário do `logo_alfa`: `mfp-lofo2.png` é a lettering
-    "Maratona Feminina de Programação" com 344x201 de desenho perdidos no meio
-    de uma tela de 480x480. O CSS a limita por LARGURA, então cada pixel de
-    margem transparente à esquerda e à direita saía direto do tamanho da letra
-    na tela — a marca aparecia com ~186px de largura útil onde cabiam 260.
-    """
-    im = ImageOps.exif_transpose(Image.open(origem)).convert('RGBA')
-    caixa = im.getchannel('A').getbbox()
-    if caixa:
-        im = im.crop(caixa)
+    im = arte_terceiro(origem, tratamento)
     if im.size[0] <= largura:
         return im
     altura = round(im.size[1] * largura / im.size[0])
@@ -627,15 +655,16 @@ def main():
          lambda o, topo: faixa(o, LARGURA_GRUPO, PROPORCAO_GRUPO, topo), salvar),
         ('galeria', BANNERS,
          lambda o: faixa(o, LARGURA_BANNER, PROPORCAO_BANNER, TOPO_BANNER), salvar),
-        # PNG e não JPEG nos quatro: o alfa é o ponto. Sem ele não há como pôr
-        # marca de terceiro sobre o escuro sem a plaquinha branca de volta.
-        ('competicoes', LOGOS_MONO,
-         lambda o: logo_mono(o, LADO_LOGO_COMP, BRANCO_MINIMO, TINTA_MONO,
-                             RESPIRO_MONO), salvar_png_paleta),
-        ('competicoes', LOGOS_ALFA,
-         lambda o: logo_alfa(o, LADO_LOGO_COMP, RESPIRO_ALFA), salvar_png_paleta),
-        ('competicoes', MARCAS_ALFA,
-         lambda o: marca_alfa(o, LARGURA_MARCA), salvar_png_paleta),
+        # PNG e não JPEG nos cinco: o alfa é o ponto. Sem ele não há como pôr
+        # marca de terceiro sobre o escuro sem uma plaquinha branca atrás.
+        #
+        # As duas tabelas carregam `(saída, tratamento[, respiro])`, e o `main`
+        # desempacota o resto da tupla como argumento extra.
+        ('competicoes', SELOS_COMP,
+         lambda o, trat, respiro: selo_comp(o, LADO_LOGO_COMP, trat, respiro),
+         salvar_png_paleta),
+        ('competicoes', MARCAS_COMP,
+         lambda o, trat: marca_comp(o, LARGURA_MARCA, trat), salvar_png_paleta),
     )
 
     antes_total = depois_total = 0

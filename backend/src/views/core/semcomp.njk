@@ -35,7 +35,7 @@
 
 {% block meta %}
   <meta name="description" content="SEMCOMP 2026 — a 5ª Semana da Computação da Universidade SENAI CIMATEC, de 29 de setembro a 3 de outubro. Cinco dias temáticos de palestras, workshops e competições, abertos ao público. Inscrições pelo Even3.">
-  <meta name="keywords" content="SEMCOMP, SEMCOMP 2026, SEMCOMP CIMATEC, Semana da Computação, Semana da Computação SENAI CIMATEC, Arena Day, Cyber CTF, Game Jam, Olimpíada de Programação, evento de tecnologia Bahia, workshop programação Salvador, Clube de Programação, SENAI CIMATEC">
+  <meta name="keywords" content="SEMCOMP, SEMCOMP 2026, SEMCOMP CIMATEC, Semana da Computação, Semana da Computação SENAI CIMATEC, AWS Student Community Day, Arena Day, Cyber CTF, Game Jam, Olimpíada de Programação, evento de tecnologia Bahia, workshop programação Salvador, Clube de Programação, SENAI CIMATEC">
   <meta name="author" content="Clube de Programação - Universidade SENAI CIMATEC">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <link rel="canonical" href="{{ canonical_url }}">
@@ -45,7 +45,7 @@
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="Clube de Programação - Universidade SENAI CIMATEC">
   <meta property="og:title" content="SEMCOMP 2026 — Semana da Computação | 29/09 a 03/10, SENAI CIMATEC">
-  <meta property="og:description" content="Cinco dias, cinco temas: AWS, Cimatec Day, Dev &amp; IA Day, Cyber &amp; Quantum Day e Arena Day. Onde a ideia acende.">
+  <meta property="og:description" content="Cinco dias, cinco temas: AWS Student Community Day, Cimatec Day, Dev &amp; IA Day, Cyber &amp; Quantum Day e Arena Day. Onde a ideia acende.">
   {#
     A MINIATURA É A LOGO, E SÓ A LOGO.
 
@@ -221,7 +221,7 @@
             A SEMCOMP nasceu da mesma ideia que sustenta o clube: <strong>conhecimento se constrói melhor quando é compartilhado</strong>. Durante cinco dias, o campus recebe gente de fora e de dentro para falar do que está fazendo — em palestra, em oficina de mão na massa ou em competição.
           </p>
           <p>
-            Cada dia tem um tema: <strong>AWS, Cimatec Day, Dev &amp; IA Day, Cyber &amp; Quantum Day</strong> e, no sábado, o <strong>Arena Day</strong> — o festival de jogos e desafios que fecha a semana.
+            Cada dia tem um tema: <strong>AWS Student Community Day, Cimatec Day, Dev &amp; IA Day, Cyber &amp; Quantum Day</strong> e, no sábado, o <strong>Arena Day</strong> — o festival de jogos e desafios que fecha a semana.
           </p>
           <p>
             Tudo é organizado por estudantes voluntários. Quem monta a grade, fala com os palestrantes, cuida do credenciamento e corrige as competições é a <a href="#comissao">comissão da SEMCOMP</a> — formada na diretoria do clube, que entra por <a href="{{ url('seja_membro') }}#prosel">processo seletivo</a>.
@@ -232,15 +232,24 @@
         </div>
 
         {#
-          A foto do stand estava sem uso desde que a home encolheu. É o clube
-          recebendo gente no corredor — exatamente o que a SEMCOMP é do lado de
-          fora do auditório. Sem legenda: a imagem ilustra o texto ao lado, e
-          um filete de texto embaixo dela repetiria o que o parágrafo já diz.
+          A FOTO DE TURMA DA PRÓPRIA SEMCOMP, e não mais o estande do clube.
+
+          Aqui estava `galeria/stand.jpg`: cinco membros atrás da bancada, uma
+          foto do CLUBE em evento — boa, mas a mesma cena que o banner da seção
+          02 já mostra do outro lado do corredor. Ao lado de um texto que diz
+          "o campus recebe gente de fora e de dentro", a imagem que prova a
+          frase é a sala cheia no fim do dia, não a equipe organizadora.
+
+          É a mesma imagem do herói, e de propósito: lá ela é textura — vive
+          sob as duas camadas do `.capa-veu`, escurecida e atravessada pelo
+          letreiro de neon, e ninguém enxerga um rosto. Aqui ela aparece
+          inteira e limpa. Sem legenda: a imagem ilustra o texto ao lado, e um
+          filete embaixo repetiria o que o parágrafo já diz.
         #}
         <figure class="foto-quadro fade-in-right">
-          <img src="{{ static('images/galeria/stand.jpg') }}"
-               alt="Membros do Clube de Programação no estande do evento, com o banner do clube ao fundo"
-               width="1400" height="933" loading="lazy" decoding="async">
+          <img src="{{ static('images/semcomp/turma.jpg') }}"
+               alt="Participantes da SEMCOMP reunidos no auditório da Universidade SENAI CIMATEC, com os braços erguidos ao fim de um dia de palestras"
+               width="1600" height="1200" loading="lazy" decoding="async">
         </figure>
       </div>
 
@@ -252,8 +261,12 @@
         soma UCSAL, UNIFACS e UNIJORGE. É a informação que faz alguém de outra
         faculdade entender que a inscrição também é para si.
       #}
+      {# A casa vem com o nome inteiro — "Universidade SENAI CIMATEC" — e as
+         convidadas por sigla. O CSS já acende a primeira pílula (`:first-child`);
+         escrito por extenso, quem chega de fora entende que a lista começa por
+         quem recebe, e não por mais uma sigla no meio de seis. #}
       {% set universidades = [
-        'SENAI CIMATEC', 'UFBA', 'UESB', 'UNEB', 'UCSAL', 'UNIFACS', 'UNIJORGE'
+        'Universidade SENAI CIMATEC', 'UFBA', 'UESB', 'UNEB', 'UCSAL', 'UNIFACS', 'UNIJORGE'
       ] %}
 
       <div class="alcance fade-in">
@@ -385,15 +398,15 @@
       {% set dias = [
         {
           num: '29', mes: 'set', semana: 'Terça',
-          tema: 'Evento AWS',
+          tema: 'AWS Student Community Day',
           desc: 'A abertura da semana, com a trilha da AWS: nuvem, dados e infraestrutura na prática de quem opera.',
-          tags: [{ nome: 'AWS' }]
+          tags: [{ nome: 'AWS', destaque: true }]
         },
         {
           num: '30', mes: 'set', semana: 'Quarta',
           tema: 'Cimatec Day',
           desc: 'O dia da casa: empreendedorismo, internacionalização, extensão e as iniciativas que nascem dentro do campus.',
-          tags: [{ nome: 'Empreendedorismo' }, { nome: 'Internacionalização' }, { nome: 'Extensão' }]
+          tags: [{ nome: 'SENAI CIMATEC' }, { nome: 'Empreendedorismo' }, { nome: 'Internacionalização' }, { nome: 'Extensão' }]
         },
         {
           num: '01', mes: 'out', semana: 'Quinta',
@@ -411,7 +424,7 @@
           num: '03', mes: 'out', semana: 'Sábado',
           tema: 'Arena Day',
           desc: 'O festival de jogos e desafios presenciais que fecha a semana, com premiação e cerimônia de encerramento.',
-          tags: [{ nome: 'Competições' }, { nome: 'Encerramento' }],
+          tags: [{ nome: 'Competições', destaque: true }, { nome: 'Premiação', destaque: true }, { nome: 'Encerramento' }],
           destaque: true
         }
       ] %}
@@ -429,7 +442,16 @@
             <p>{{ d.desc }}</p>
             <ul class="trilha-tags">
               {% for t in d.tags %}
-              <li{% if t.pendente %} class="trilha-tag--pendente"{% endif %}>{{ t.nome }}</li>
+              {#
+                Três estados numa pílula só, e cada um é uma informação
+                diferente: sólida em cinza é assunto do dia, TRACEJADA é convite
+                em confirmação (`pendente`) e ACESA é o que dá nome ao dia
+                (`destaque`) — a AWS no Student Community Day, as competições e a
+                premiação no Arena Day. `pendente` vem primeiro no `if` porque as
+                duas nunca convivem: uma marca em negociação não pode aparecer
+                acesa, que é exatamente o que o tracejado existe para evitar.
+              #}
+              <li{% if t.pendente %} class="trilha-tag--pendente"{% elif t.destaque %} class="trilha-tag--destaque"{% endif %}>{{ t.nome }}</li>
               {% endfor %}
             </ul>
           </div>
@@ -438,7 +460,7 @@
       </ol>
 
       <p class="trilha-nota fade-in">
-        As marcas em traço tracejado são convites em confirmação. Nada é anunciado como fechado antes de estar.
+        As pílulas acesas dão nome ao dia. As em traço tracejado são convites em confirmação — nada é anunciado como fechado antes de estar.
       </p>
 
       {#
@@ -502,8 +524,15 @@
         </div>
       </div>
 
+      {# A quebra é MANUAL e fica no fim da primeira frase: são dois recados
+         diferentes ("onde sai" e "como você fica sabendo"), e o `text-wrap:
+         pretty` da classe quebraria a linha onde a largura mandasse, no meio de
+         um deles. O `<br>` só entra em telas largas — abaixo de 560px a frase
+         já ocupa mais de duas linhas por conta própria e uma quebra extra
+         abriria um vão no meio do parágrafo (ver `.rodape-quebra` no CSS). #}
       <p class="secao-rodape fade-in">
-        <strong>Palestrantes, salas e horários de cada atividade saem no Even3</strong> e no Instagram da SEMCOMP assim que fecharem. Quem já se inscreveu recebe o aviso por lá.
+        <strong>Palestrantes, salas e horários de cada atividade saem no Even3</strong> e no Instagram da SEMCOMP assim que fecharem.<br class="rodape-quebra">
+        Quem já se inscreveu recebe o aviso por lá.
       </p>
 
       <div class="acoes-centro fade-in">
@@ -684,55 +713,6 @@
             </a>
           </div>
 
-          {#
-            O MAPA.
-
-            "Av. Orlando Gomes, 1845" só serve a quem já sabe onde isso fica.
-            O campus tem várias entradas e fica numa avenida longa; a linha de
-            endereço responde "qual o endereço", e a pergunta real de quem vem
-            de fora é "como isso se parece e por onde eu entro".
-
-            FICA DEPOIS DOS BOTÕES, e não junto da linha "Onde" lá em cima. No
-            meio da ficha ele empurraria o "Fazer minha inscrição" — que é o que
-            esta seção existe para entregar — uns 380px para baixo. Aqui ele
-            fecha a coluna e ainda equilibra a altura contra o FAQ ao lado, que
-            tem oito perguntas.
-
-            SEM CHAVE DE API. O `output=embed` do maps.google.com é a forma
-            keyless; a Embed API oficial (`/maps/embed/v1/place`) faria a mesma
-            coisa, mas exige chave, e chave exige cota, restrição de referrer e
-            um segredo a mais para rodar em produção — três coisas para desenhar
-            um mapa que ninguém vai clicar duas vezes.
-
-            `loading="lazy"` porque o iframe traz o runtime de mapas do Google
-            inteiro, e ele está bem abaixo da dobra: sem isso a página passaria
-            a baixar algumas centenas de KB de terceiro no primeiro carregamento
-            para desenhar uma coisa que a maioria não rola até ver.
-
-            O `title` NÃO É DECORAÇÃO: é o nome acessível do iframe, e sem ele o
-            leitor de tela anuncia só "quadro". A legenda embaixo repete o
-            endereço em texto — quem não pode usar o mapa continua tendo o dado,
-            e quem pode ganha o botão para abri-lo no aplicativo.
-
-            `width`/`height` são 640x480 para casar com o `aspect-ratio: 4/3` do
-            CSS: eles reservam o espaço antes de a folha chegar, e um par em
-            outra proporção faria a página dar um pulo quando ela chegasse.
-          #}
-          <figure class="mapa fade-in">
-            <iframe
-              src="{{ evento_mapa_incorporado }}"
-              title="Mapa do local da SEMCOMP 2026: {{ evento.local }}, {{ evento.endereco }}"
-              width="640" height="480"
-              loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-              allowfullscreen></iframe>
-            <figcaption class="mapa-pe">
-              <span>{{ evento.local }} &middot; CEP {{ evento.cep }}</span>
-              <a href="{{ evento_mapa }}" target="_blank" rel="noopener noreferrer">
-                Abrir no Google Maps
-                {{ ic.icone('externo', 13) }}
-              </a>
-            </figcaption>
-          </figure>
         </div>
 
         {% set duvidas = [
@@ -789,6 +769,63 @@
           {% endfor %}
         </div>
       </div>
+
+      {#
+        O MAPA, EM FAIXA, EMBAIXO DOS DOIS BLOCOS.
+
+        "Av. Orlando Gomes, 1845" só serve a quem já sabe onde isso fica. O
+        campus tem várias entradas e fica numa avenida longa; a linha de endereço
+        responde "qual o endereço", e a pergunta real de quem vem de fora é "como
+        isso se parece e por onde eu entro".
+
+        SAIU DE DENTRO DO CARTÃO DE INSCRIÇÃO. Lá ele vivia na coluna estreita
+        (~376px) do `.inscricao-cta`, dentro de uma caixa que já tinha filete,
+        degradê e brilho próprios: um quadro emoldurado dentro de outro quadro
+        emoldurado, e o mapa saía quase quadrado — largura de meia coluna para
+        mostrar uma avenida que corre na horizontal. Fora do cartão ele pega a
+        largura inteira do container e vira um retângulo deitado, que é a forma
+        de um mapa de rua; e o cartão volta a ser só o que a seção precisa
+        entregar (ficha + "fazer minha inscrição").
+
+        FICA DEPOIS DO GRID, e não antes: quem chega aqui decide primeiro se vai
+        (o CTA e o FAQ) e só então procura como chegar. É também o que fecha a
+        seção sem competir de altura com o FAQ de oito perguntas ao lado.
+
+        SEM CHAVE DE API. O `output=embed` do maps.google.com é a forma keyless;
+        a Embed API oficial (`/maps/embed/v1/place`) faria a mesma coisa, mas
+        exige chave, e chave exige cota, restrição de referrer e um segredo a
+        mais para rodar em produção — três coisas para desenhar um mapa que
+        ninguém vai clicar duas vezes.
+
+        `loading="lazy"` porque o iframe traz o runtime de mapas do Google
+        inteiro, e ele está bem abaixo da dobra: sem isso a página passaria a
+        baixar algumas centenas de KB de terceiro no primeiro carregamento para
+        desenhar uma coisa que a maioria não rola até ver.
+
+        O `title` NÃO É DECORAÇÃO: é o nome acessível do iframe, e sem ele o
+        leitor de tela anuncia só "quadro". A legenda embaixo repete o endereço
+        em texto — quem não pode usar o mapa continua tendo o dado, e quem pode
+        ganha o botão para abri-lo no aplicativo.
+
+        `width`/`height` são 1600x600 para casar com a proporção da faixa no
+        CSS: eles reservam o espaço antes de a folha chegar, e um par em outra
+        proporção faria a página dar um pulo quando ela chegasse.
+      #}
+      <figure class="mapa fade-in">
+        <iframe
+          src="{{ evento_mapa_incorporado }}"
+          title="Mapa do local da SEMCOMP 2026: {{ evento.local }}, {{ evento.endereco }}"
+          width="1600" height="600"
+          loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen></iframe>
+        <figcaption class="mapa-pe">
+          <span>{{ evento.local }} &middot; CEP {{ evento.cep }}</span>
+          <a href="{{ evento_mapa }}" target="_blank" rel="noopener noreferrer">
+            Abrir no Google Maps
+            {{ ic.icone('externo', 13) }}
+          </a>
+        </figcaption>
+      </figure>
     </div>
   </section>
 
@@ -827,7 +864,7 @@
         { frente: 'Comunicação com universidades', nomes: ['Arthur Farias'],                                atribuicao: 'Contato com as universidades convidadas' },
         { frente: 'Gerência de voluntários',       nomes: ['Mateus Salmeron'],                              atribuicao: 'Escala e coordenação dos voluntários' },
         { frente: 'Gerência de atividades',        nomes: ['Eulália Ribeiro'],                              atribuicao: 'Cronograma de atividades, data e hora' },
-        { frente: 'Gerência de site',              nomes: ['Daniel Carneiro'],                              atribuicao: 'Registro e atualização das atividades no Even3' },
+        { frente: 'Gerência de inscreções',        nomes: ['Daniel Carneiro'],                              atribuicao: 'Registro e atualização das atividades no Even3' },
         { frente: 'Gerência de competições',       nomes: ['Rafael Cezimbra'],                              atribuicao: 'Questões, nível de dificuldade e formato das provas' },
         { frente: 'Eventos',                       nomes: ['Isaque Escorêdo'],                              atribuicao: 'Organização do Arena Day e do encerramento' },
         { frente: 'Financeiro',                    nomes: ['Davi Brito'],                                   atribuicao: 'Controle financeiro do evento' }
@@ -906,7 +943,7 @@
     },
     {% endif %}
     "subEvent": [
-      { "@type": "Event", "name": "Evento AWS",         "startDate": "2026-09-29", "endDate": "2026-09-29" },
+      { "@type": "Event", "name": "AWS Student Community Day", "startDate": "2026-09-29", "endDate": "2026-09-29" },
       { "@type": "Event", "name": "Cimatec Day",        "startDate": "2026-09-30", "endDate": "2026-09-30" },
       { "@type": "Event", "name": "Dev & IA Day",       "startDate": "2026-10-01", "endDate": "2026-10-01" },
       { "@type": "Event", "name": "Cyber & Quantum Day","startDate": "2026-10-02", "endDate": "2026-10-02" },
