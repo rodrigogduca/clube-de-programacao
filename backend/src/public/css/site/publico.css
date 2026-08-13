@@ -3569,15 +3569,19 @@ section {
 }
 
 
-/* ---- Destaque de competição — OBI e MFP ----
+/* ---- Destaque de competição — Maratona SBC, OBI e MFP ----
 
-   UMA CONSTRUÇÃO, DUAS CORES.
+   UMA CONSTRUÇÃO, TRÊS CORES.
 
    Isto nasceu como `.mfp`, bloco único e com o roxo escrito em cada regra.
    Quando a OBI pediu o mesmo tratamento, havia duas saídas: copiar as catorze
    regras trocando as cores, ou tirar as cores das regras. A segunda, porque a
    primeira é como um dos dois blocos fica com o `hover` que o outro ganhou
    depois — o bug que ninguém vê até já estar no ar.
+
+   A APOSTA SE PAGOU NA TERCEIRA: o bloco da Maratona SBC custou quatro linhas
+   de variável e nenhuma regra nova. Se as cores tivessem ficado nas regras,
+   teriam sido mais catorze para copiar e manter em dia.
 
    Então a cor virou variável e o resto é comum. O modificador declara três
    tokens e não toca em mais nada:
@@ -3614,6 +3618,45 @@ section {
     radial-gradient(ellipse 50% 50% at 88% 90%, rgba(var(--acento-par-rgb), 0.12), transparent 70%),
     var(--penumbra);
   overflow: hidden;
+}
+
+/* O azul da Maratona SBC. Mesmo caso do MFP abaixo: cor de marca de terceiro,
+   vale dentro desta moldura e não entra em tokens.css.
+
+   OS CANAIS SÃO O AZUL DA MARCA CLAREADO, não o azul da marca. `#2b4a78` cru
+   dá 2,1:1 contra o `--penumbra` do bloco: como traço de borda a 0.35 ele
+   simplesmente não aparece, e o brilho a 0.12 some. `88, 140, 210` é o mesmo
+   matiz com luz suficiente para os dois usos.
+
+   `--acento-forte` pinta o texto do selo e do link, então é medido: `#8ec5f0`
+   dá 10,4:1 contra `#100f14`, na mesma faixa dos vizinhos (12,1:1 no âmbar da
+   OBI, 9,7:1 no lilás do MFP). Abaixo de ~7:1 o azul começa a acinzentar
+   contra o fundo do bloco, que já tem o próprio brilho por cima.
+
+   O WORDMARK É MAIS LARGO QUE OS DOIS OUTROS (2,7:1 contra 2,4:1 da OBI), e
+   230px devolvem ~85px de altura — a mesma presença de título que a OBI tem
+   com 200px. Sem isto ele herdaria os 260px do padrão e ficaria maior que o
+   nome da própria seção.
+
+   `--marca-brilho` É O ÚNICO CASO DO PROJETO, e existe por uma restrição e não
+   por gosto: os dois arquivos da Maratona em `images/competicoes/` são postos à
+   mão e não podem ser alterados, e o wordmark vem no azul `#09467c` da marca.
+   Como TÍTULO ele dá 1,49:1 contra o fundo deste bloco — e o número é tão baixo
+   justamente porque o brilho do bloco também é azul: é azul sobre azul. Os
+   títulos dos vizinhos dão 13,3:1 (OBI) e 15,1:1 (MFP).
+
+   2.2 é o menor valor que passa dos 4,5:1 (dá 4,85:1). O custo está escrito
+   aqui para ninguém achar que foi descuido: `brightness` multiplica em sRGB e
+   satura o canal, então `rgb(9,70,124)` vira `rgb(20,154,255)` — o azul-marinho
+   sai ciano. Não é a cor da marca. Foi a saída escolhida por preservar o
+   ARQUIVO; a que preserva a COR seria gerar `sbc-marca.png` tingido de claro
+   pelo script, cuja receita continua em `scripts/otimizar-imagens.py`. */
+.comp-destaque--sbc {
+  --acento-rgb: 88, 140, 210;
+  --acento-par-rgb: 86, 180, 225;
+  --acento-forte: #8ec5f0;
+  --marca-largura: 230px;
+  --marca-brilho: brightness(2.2);
 }
 
 /* O roxo e o rosa da Maratona Feminina. Não existem em tokens.css: são cor de
@@ -3670,11 +3713,22 @@ section {
   font-weight: 400;
 }
 
+/* `--marca-brilho` VEM ANTES DO `drop-shadow` E ISSO IMPORTA: filtro é uma
+   fila, cada função recebe o resultado da anterior. Com o `brightness` antes,
+   o halo é lançado a partir da arte já clareada; depois dele, o halo sairia da
+   arte escura e seria clareado junto — a marca ganharia um contorno aceso em
+   vez de um brilho difuso atrás.
+
+   O padrão é `brightness(1)`, que é identidade: só a Maratona SBC declara
+   outro valor (ver `.comp-destaque--sbc`). `brightness(1)` e não `none`
+   porque `none` como valor de variável dentro de uma lista de filtros
+   invalida a declaração inteira, e o que se perderia junto era o halo. */
 .comp-destaque-marca img {
   width: 100%;
   max-width: var(--marca-largura, 260px);
   height: auto;
-  filter: drop-shadow(0 0 26px rgba(var(--acento-rgb), 0.5));
+  filter: var(--marca-brilho, brightness(1))
+    drop-shadow(0 0 26px rgba(var(--acento-rgb), 0.5));
 }
 
 /* 132px ERA MEDIDA DE SELO: o título deste bloco usava o disco quadrado da OBI,

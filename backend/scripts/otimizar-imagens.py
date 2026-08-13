@@ -260,17 +260,33 @@ BANNERS = {
 # Símbolo: sai QUADRADO, porque os três ficam lado a lado na fileira de cartões
 # e uma caixa por proporção de arquivo deixaria a fileira com marcas de tamanhos
 # aparentes diferentes.
+#
+# A MARATONA SBC SAIU DESTA TABELA. Os dois arquivos dela em
+# `src/public/images/competicoes/` — `sbc.png` e `maratona sbc nome.png` — são
+# postos à mão, na arte original e no AZUL ORIGINAL da marca, e a página os
+# consome como estão. Enquanto for assim, gerar derivado aqui só serviria para
+# este script apagar o arquivo posto à mão na próxima vez que alguém o rodasse.
+#
+# Se um dia a decisão voltar a ser repintar a marca em claro, a linha é
+#     'maratona sbc logo.png': ('sbc.png', 'tingir', 0.06),
+# e o wordmark, em MARCAS_COMP,
+#     'maratona sbc nome.png': ('sbc-marca.png', 'tingir'),
+# com os dois originais já em `assets/originais/`. O `tingir` existe e continua
+# testado; o que mudou foi a escolha, não a receita.
 SELOS_COMP = {
-    'maratona sbc logo.png': ('sbc.png', 'tingir', 0.06),
     'obi logo.png': ('obi.png', 'direto', 0.06),
     'mfp logo.png': ('mfp.png', 'do-preto', 0.02),
 }
 
 # Wordmark: mantém a proporção do próprio desenho e é limitado por LARGURA —
 # espremer "Maratona Feminina de Programação" num quadrado deixaria a lettering
-# minúscula. Só os dois blocos de destaque da /seja-membro usam wordmark (OBI e
-# MFP); `maratona sbc nome.png` fica em `assets/originais/` esperando um lugar na
-# página, porque derivado que ninguém referencia é peso morto em `src/public/`.
+# minúscula.
+#
+# A SBC NÃO SAI DAQUI HOJE, e o selo dela também não sai de SELOS_COMP — os
+# dois arquivos da Maratona em `src/public/images/competicoes/` são postos à
+# mão, na arte original e no azul original, e é assim que a página os quer.
+# Rodar este script os SUBSTITUI pelas versões tingidas de branco. Antes de
+# rodar, veja o aviso no cabeçalho do arquivo.
 MARCAS_COMP = {
     'obi nome.png': ('obi-marca.png', 'direto'),
     'mfp nome.png': ('mfp-marca.png', 'do-preto'),

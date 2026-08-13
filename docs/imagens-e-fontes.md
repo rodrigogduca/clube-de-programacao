@@ -13,6 +13,7 @@ assets/originais/                    FONTE — nunca servida
 ├── semcomp-estande.jpg              8,3 MB, 6000×4000 (EXIF 8 → vertical)
 ├── semcomp-plateia.jpg              7,4 MB, 6000×4000 → semcomp/plateia.jpg
 ├── semcomp-vr.jpg                   6,8 MB — ainda sem derivado
+├── sbc-galera.jpeg                  138 KB, 903×637 — já em tamanho de web
 ├── obi logo.png, obi nome.png, …    marcas de competição, 1080×1350 com alfa
 ├── maratona sbc logo.png, … nome …  o mesmo par da SBC, já aparado na origem
 └── logo-mfp.png, logo-obi2.jpg, …   arte de terceiros como veio (substituída)
@@ -30,6 +31,12 @@ backend/src/public/                  PUBLICADO — só derivado
     ├── galeria/                     ← derivados 1400–1600px de largura
     └── semcomp/                     ← letreiro, miniatura social e foto
 ```
+
+`sbc-galera.jpeg` é a exceção que confirma a regra do script: chegou com 903×637
+e 138 KB, ou seja **já em tamanho de web**, então a cópia em
+`images/galeria/maratona-sbc.jpeg` é o próprio arquivo e não um derivado. Passá-lo
+pelo `otimizar-imagens.py` não teria o que reduzir — o script nunca amplia, e
+recomprimir um JPEG já comprimido só perde qualidade.
 
 **Os templates só referenciam derivados.** Os originais ficam no repositório
 como fonte para recortar de novo, mas nunca são servidos: são fotos de
@@ -80,17 +87,37 @@ derivados saem de `SELOS_COMP` e `MARCAS_COMP`, e cada linha dessas tabelas diz 
 | Tratamento | Quem usa hoje | O que faz |
 |---|---|---|
 | `direto` | OBI (símbolo e nome) | Só apara e reduz — o alfa já é limpo e o traço já é claro |
-| `tingir` | Maratona SBC | Mantém o alfa e chapa o RGB em `TINTA_MONO` |
+| `tingir` | ninguém (era a SBC) | Mantém o alfa e chapa o RGB em `TINTA_MONO` |
 | `do-preto` | MFP (símbolo e nome) | O véu preto em volta do desenho vira transparência |
 
-**Só a SBC é repintada, e por medida.** O azul `#2b4a78` dela dá 2,1:1 contra o
-`#100f14` do cartão, abaixo do 3:1 que um elemento gráfico precisa para ser
-visto; o disco amarelo da OBI dá 19:1 e não tem por que ser alterado. Entre um
-azul clareado (que não é a cor de ninguém) e o branco quente da página, o branco
-da página é o que se assume como escolha nossa. **Não existe mais plaquinha
-branca atrás de logo nenhum** — ela era a saída de quando a SBC e a OBI só
-existiam em JPEG de fundo branco, e encolhia o desenho para ~48 px dentro de um
-selo de 84.
+**Não existe mais plaquinha branca atrás de logo nenhum** — ela era a saída de
+quando a SBC e a OBI só existiam em JPEG de fundo branco, e encolhia o desenho
+para ~48 px dentro de um selo de 84.
+
+### A Maratona SBC saiu do script
+
+Os dois arquivos dela em `images/competicoes/` — `sbc.png` e
+`maratona sbc nome.png` — são **postos à mão, na arte e na cor originais**, e o
+script não os gera mais: as linhas saíram de `SELOS_COMP` e `MARCAS_COMP` para
+que rodá-lo não apague o que foi posto ali. A receita antiga (`tingir`, com os
+originais em `assets/originais/`) ficou escrita como comentário nas duas tabelas.
+
+É o único par de imagens do projeto que não é derivado, e cobra dois preços:
+
+- **`maratona sbc nome.png` tem espaço no nome.** É o único caminho de imagem do
+  projeto com espaço, e funciona — o navegador escapa para `%20` e o servidor
+  estático desescapa. Está assim porque renomear seria mexer no arquivo curado.
+- **O azul não passa no contraste, e o CSS corrige o que o arquivo não corrige.**
+  `#09467c` como título do bloco de destaque dá **1,49:1** — e é tão baixo porque
+  o brilho do bloco também é azul. `.comp-destaque--sbc` declara
+  `--marca-brilho: brightness(2.2)`, que sobe para 4,85:1. O custo está medido no
+  comentário da regra: `brightness` multiplica em sRGB e satura o canal, então o
+  azul-marinho sai ciano `rgb(20,154,255)`. Preserva-se o **arquivo**, não a
+  **cor**. Quem quiser o contrário gera `sbc-marca.png` com `tingir` (11,9:1) e
+  tira o `--marca-brilho`.
+
+No cartão da fileira o azul original fica: ali o fundo é `#100f14` chapado, sem
+brilho azul por cima, e o selo é lido como marca e não como título.
 
 Três sutilezas que não são óbvias ao ler o código:
 
@@ -106,24 +133,15 @@ Três sutilezas que não são óbvias ao ler o código:
   781×580 para 699×373 ao exigir alfa ≥ 8 — 36% da altura era auréola, e a marca
   aparecia 1,5× menor do que devia. Nas artes de alfa limpo o mesmo piso muda de
   1 a 3 px.
-- **O respiro dentro do selo é por arte** (6% na SBC e na OBI, 2% no MFP, no
-  terceiro campo da tabela). As duas primeiras são desenho chapado de contorno
-  fechado; o papagaio é silhueta aberta e, com o mesmo respiro, lê como menor do
-  que é. "Alinhado" aqui quer dizer presença óptica equivalente, não o mesmo
-  número no CSS.
+- **O respiro dentro do selo é por arte** (6% na OBI, 2% no MFP, no terceiro
+  campo da tabela). A primeira é desenho chapado de contorno fechado; o papagaio
+  é silhueta aberta e, com o mesmo respiro, lê como menor do que é. "Alinhado"
+  aqui quer dizer presença óptica equivalente, não o mesmo número no CSS.
 
-**O par da SBC chegou aparado** (647×501 e 894×332, contra os 1080×1350 dos
-outros quatro) e é esse que vale — o par anterior, na tela cheia, era o mesmo
-desenho com margem em volta. Não muda nada no pipeline: `arte_terceiro()` apara
-pelo conteúdo de qualquer jeito, e os dois pares dão selo idêntico. Continua no
-`tingir` porque a tinta é a mesma, `#2f4a75`.
-
-`maratona sbc nome.png` fica em `assets/originais/` **sem derivado**: só os dois
-blocos de destaque da `/seja-membro` usam wordmark, e derivado que nenhum
-template referencia é peso morto em `src/public/`. Os originais antigos
-(`maratona-logo.jpg`, `logo-obi2.jpg`, `mfp-logo.png`, `mfp-lofo2.png`) também
-continuam lá, agora sem mapa que os aponte — foram substituídos por este
-material, e a função `logo_mono()` que os tratava saiu do script.
+Os originais antigos (`maratona-logo.jpg`, `logo-obi2.jpg`, `mfp-logo.png`,
+`mfp-lofo2.png`) continuam em `assets/originais/` sem mapa que os aponte — foram
+substituídos por este material, e a função `logo_mono()` que os tratava saiu do
+script.
 
 ## A miniatura de compartilhamento da SEMCOMP
 
@@ -165,6 +183,11 @@ intenção — e sempre havia outro arquivo à mão. Dois casos foram desfeitos:
   de destaque logo abaixo, na mesma tela. A marca d'água saiu do template e do
   CSS; a luz do bloco vinha dos dois `radial-gradient` do `.comp-destaque`, não
   dela, e continua lá.
+
+Por isso as três fotos dos blocos de destaque são três fotos diferentes —
+`galeria/maratona-sbc.jpeg` (os times), `galeria/maratona-lab.jpg` (o
+laboratório) e `galeria/maratona-feminina.jpg` (a turma do MFP). A primeira
+estava na pasta sem uso nenhum até o bloco da SBC existir.
 
 O que **pode** repetir é marca: `logo.png`/`logo-256.png`, o `pato.png` e o
 letreiro `semcomp-2026.png` são assinatura, e assinatura aparece onde precisa.

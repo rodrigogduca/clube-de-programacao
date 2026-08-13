@@ -290,15 +290,20 @@
     clube: é metade do que ele faz — e as três provas abaixo têm calendário,
     treino próprio e turma própria.
 
-    A SEÇÃO TERMINA EM DOIS BLOCOS DE DESTAQUE — OBI e MFP —, e não mais num
+    A SEÇÃO TERMINA EM TRÊS BLOCOS DE DESTAQUE — um por prova —, e não mais num
     banner de largura cheia com a foto do laboratório. O banner mostrava treino
     de maratona antes de a página dizer que competição existe, e a foto (que
     continua na galeria da home) não dizia de qual das três provas era.
 
-    Os dois blocos têm a MESMA construção, `.comp-destaque`, e diferem só na
-    cor: âmbar na OBI, roxo no MFP. São as duas provas em que a conversa não
-    acaba na descrição do cartão — a OBI porque é a porta de entrada de quem
-    nunca competiu, o MFP porque a participação depende de quem a pessoa é.
+    Os três têm a MESMA construção, `.comp-destaque`, e diferem só na cor: azul
+    na Maratona SBC, âmbar na OBI, roxo no MFP. Eram dois — OBI e MFP —, com a
+    justificativa de que só nessas duas a conversa não acabava na descrição do
+    cartão. A fileira de cartões acima já responde por essa camada; o que os
+    blocos fazem é dar a cada prova uma foto da turma que a disputa, e não havia
+    razão para a maior delas ser a única sem.
+
+    A ORDEM É A DA FILEIRA (SBC, OBI, MFP) e não uma classificação: quem lê os
+    cartões da esquerda para a direita encontra os blocos na mesma sequência.
     ==========================================================================
   #}
   <section id="competicoes">
@@ -315,16 +320,17 @@
       {#
         As três provas.
 
-        O selo de cada prova é `images/competicoes/<slug>.png`, gerado por
-        scripts/otimizar-imagens.py a partir do material oficial que a comissão
-        entregou (símbolo e wordmark de cada marca, em PNG com alfa).
+        O selo de cada prova é `images/competicoes/<slug>.png`, e os três
+        assentam direto no escuro — não há plaquinha branca atrás de logo
+        nenhum, que era o que a página fazia quando a SBC e a OBI só existiam
+        em JPEG de fundo branco.
 
-        OS TRÊS ASSENTAM DIRETO NO ESCURO, e dois deles na cor da própria marca:
-        o disco amarelo da OBI e o papagaio roxo do MFP saem como são. Só a
-        Maratona SBC é repintada em claro pelo script — o azul-escuro dela dá
-        2,1:1 contra o fundo do cartão, e marca que não se vê não é marca. Não
-        há mais nenhuma plaquinha branca atrás de logo nenhum, que era o que a
-        página fazia quando a SBC e a OBI só existiam em JPEG de fundo branco.
+        AS TRÊS ESTÃO NA COR DA PRÓPRIA MARCA: o disco amarelo da OBI, o
+        papagaio roxo do MFP e o azul da Maratona SBC. Os dois primeiros saem
+        do `scripts/otimizar-imagens.py`; os arquivos da Maratona são postos à
+        mão, na arte original, e o script não os toca mais (ver `SELOS_COMP`).
+        O azul dela é escuro contra o fundo do cartão — quem quiser a versão
+        repintada em claro, a receita continua escrita no script.
       #}
       {% set competicoes = [
         {
@@ -362,15 +368,60 @@
       </div>
 
       {#
+        DESTAQUE DA MARATONA SBC.
+
+        Primeiro dos três porque é o primeiro cartão da fileira, e é a prova
+        que o resto da seção usa como referência ("o mesmo formato da maratona
+        tradicional", diz o cartão do MFP).
+
+        O TÍTULO É O WORDMARK POSTO À MÃO, `maratona sbc nome.png`, com o nome
+        de arquivo como veio — espaços inclusive. É o único caminho de imagem
+        do projeto com espaço no nome, e ele vive aqui porque o arquivo é
+        curado à mão e não gerado: renomear seria mexer no que a pasta tem.
+
+        ELE CHEGA NO AZUL DA MARCA E É CLAREADO NO CSS, não no arquivo — 1,49:1
+        como título é invisível, e o filtro resolve sem tocar no PNG. O preço é
+        que o azul-marinho sai ciano. Está tudo medido em `--marca-brilho`, no
+        `.comp-destaque--sbc`, com a alternativa que preserva a cor.
+
+        A FOTO É `galeria/maratona-sbc.jpeg`, os times do clube depois da
+        prova. É a única das três fotos de bloco em que dá para contar a
+        turma — e o azul das camisetas é o mesmo azul da marca, que é o que
+        faz este bloco não precisar de mais nenhuma cor.
+      #}
+      <div class="comp-destaque comp-destaque--sbc fade-in">
+        <div class="comp-destaque-say">
+          <span class="comp-destaque-selo">Competição nacional</span>
+          <h3 class="comp-destaque-marca">
+            <img src="{{ static('images/competicoes/maratona sbc nome.png') }}"
+                 alt="Maratona SBC de Programação"
+                 width="894" height="332" loading="lazy" decoding="async">
+          </h3>
+          <p>É a prova mais disputada do calendário e a que o clube treina o ano inteiro. Os times são de três e representam o CIMATEC na regional; quem passa vai para a final brasileira. O treino é o mesmo que acontece toda semana nos grupos de estudo — não existe preparação separada para ela.</p>
+          {% if links.maratonaExperientes or links.maratonaNovatos %}
+          <button type="button" class="link-seta" data-modal="modalComunidade">
+            Entrar num grupo de treino
+            {{ ic.icone('seta', 16) }}
+          </button>
+          {% endif %}
+        </div>
+
+        <figure class="comp-destaque-foto">
+          <img src="{{ static('images/galeria/maratona-sbc.jpeg') }}"
+               alt="Times do Clube de Programação reunidos com balões depois da regional da Maratona SBC, todos de camiseta azul-marinho"
+               width="903" height="637" loading="lazy" decoding="async">
+        </figure>
+      </div>
+
+      {#
         DESTAQUE DA OBI.
 
-        Mesma construção do MFP abaixo — `.comp-destaque`, com a cor trocada
-        pelo modificador. Ganha bloco próprio pelo motivo oposto ao do MFP: o
-        MFP é a prova em que a participação depende de quem a pessoa é, e a OBI
-        é a única em que ela não depende de nada. Ela é a resposta à objeção
-        que aparece no direct toda vez que a página fala de competição ("não
-        sei o suficiente para competir"), e essa resposta não cabe num cartão
-        de três linhas na fileira acima.
+        Mesma construção — `.comp-destaque`, com a cor trocada pelo
+        modificador. O que este bloco tem de próprio é o assunto: a OBI é a
+        única das três em que entrar não depende de nada, e é a resposta à
+        objeção que aparece no direct toda vez que a página fala de competição
+        ("não sei o suficiente para competir"). Essa resposta não cabe num
+        cartão de três linhas na fileira acima.
 
         A FOTO É A DO LABORATÓRIO, que era o banner de largura cheia desta
         seção. Ali ela ilustrava "competições" em geral, sem dizer de qual
@@ -436,7 +487,7 @@
       #}
       <div class="comp-destaque comp-destaque--mfp fade-in">
         <div class="comp-destaque-say">
-          <span class="comp-destaque-selo">Competição</span>
+          <span class="comp-destaque-selo">Competição feminina</span>
           <h3 class="comp-destaque-marca">
             <img src="{{ static('images/competicoes/mfp-marca.png') }}"
                  alt="Maratona Feminina de Programação"
