@@ -411,7 +411,7 @@
           num: '30', mes: 'set', semana: 'Quarta',
           tema: 'Cimatec Day',
           desc: 'O dia da casa: empreendedorismo, internacionalização, extensão e as iniciativas que nascem dentro do campus.',
-          tags: [{ nome: 'SENAI CIMATEC' }, { nome: 'Empreendedorismo' }, { nome: 'Internacionalização' }, { nome: 'Extensão' }]
+          tags: [{ nome: 'SENAI CIMATEC', destaque: true }, { nome: 'Empreendedorismo' }, { nome: 'Internacionalização' }, { nome: 'Extensão' }]
         },
         {
           num: '01', mes: 'out', semana: 'Quinta',
@@ -448,13 +448,17 @@
             <ul class="trilha-tags">
               {% for t in d.tags %}
               {#
-                Três estados numa pílula só, e cada um é uma informação
-                diferente: sólida em cinza é assunto do dia, TRACEJADA é convite
-                em confirmação (`pendente`) e ACESA é o que dá nome ao dia
-                (`destaque`) — a AWS no Student Community Day, as competições e a
-                premiação no Arena Day. `pendente` vem primeiro no `if` porque as
-                duas nunca convivem: uma marca em negociação não pode aparecer
-                acesa, que é exatamente o que o tracejado existe para evitar.
+                Duas pílulas, e a diferença é de peso: SÓLIDA EM CINZA é assunto
+                do dia (`Empreendedorismo`, `Extensão`), ÂMBAR é o que dá nome ao
+                dia — a marca que assina (AWS, SENAI CIMATEC, NVIDIA) ou a
+                atração que define o sábado (competições, premiação).
+
+                `pendente` e `destaque` desenham igual hoje: as duas classes
+                compartilham a mesma regra na folha. Continuam separadas no dado
+                porque dizem coisas diferentes — `pendente` é convite ainda em
+                negociação —, e é o que permite devolver um tratamento próprio ao
+                provisório mexendo em um seletor só. `pendente` vem primeiro no
+                `if` porque nunca convivem no mesmo item.
               #}
               <li{% if t.pendente %} class="trilha-tag--pendente"{% elif t.destaque %} class="trilha-tag--destaque"{% endif %}>{{ t.nome }}</li>
               {% endfor %}
