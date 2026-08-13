@@ -377,18 +377,21 @@
         prova era; aqui ela ilustra treino — que é exatamente o que o bloco
         oferece a quem está começando. O arquivo continua o mesmo e segue em
         uso na galeria da home.
+
+        E NÃO HÁ MAIS SELO DE MARCA D'ÁGUA NO CANTO. Havia: `obi.png` de novo,
+        girado e a 16% de opacidade, "como o pato no herói da home" — só que o
+        pato é o mascote da casa e aparece uma vez, e este disco já está inteiro
+        e na cor cheia no cartão da fileira logo acima, a um palmo daqui. O que
+        o bloco ganhava era o mesmo desenho duas vezes na mesma tela; a luz que
+        a marca d'água supostamente dava vem dos dois `radial-gradient` que o
+        `.comp-destaque` desenha sozinho no CSS, e ela continua ali.
       #}
       <div class="comp-destaque comp-destaque--obi fade-in">
-        <img src="{{ static('images/competicoes/obi.png') }}" alt="" aria-hidden="true"
-             class="comp-destaque-fundo" width="480" height="480" loading="lazy" decoding="async">
-
         {#
           O TÍTULO É O WORDMARK, não o selo. Antes esta linha repetia
-          `obi.png` — o mesmo disco que já está no fundo do bloco e no cartão
-          da fileira acima, três vezes o mesmo desenho em duas telas de
-          distância, e nenhuma delas escrevendo o nome da prova. O material
-          novo trouxe o "OBI" em lettering (`obi-marca.png`), que é o que um
-          título precisa ser.
+          `obi.png` — o mesmo disco do cartão da fileira acima, e sem escrever
+          o nome da prova. O material novo trouxe o "OBI" em lettering
+          (`obi-marca.png`), que é o que um título precisa ser.
         #}
         <div class="comp-destaque-say">
           <span class="comp-destaque-selo">Para quem está começando</span>
@@ -421,17 +424,17 @@
         foto da própria turma, que é a prova de que a competição acontece aqui
         e não só no site da organizadora.
 
-        A marca em branco (`mfp-marca.png`) faz o papel de título; o papagaio
-        (`mfp.png`) fica atrás, grande e cortado pela borda, como o pato faz no
-        herói da home. Os dois têm alfa, então vão direto sobre o roxo — e o véu
-        preto que vinha desenhado em volta dos dois arquivos originais é
-        transformado em transparência pelo script (tratamento 'do-preto'), senão
-        cada um apareceria dentro de um retângulo escuro por cima do bloco.
+        A marca em branco (`mfp-marca.png`) faz o papel de título, e SÓ ELA: o
+        papagaio ficava atrás, grande e apagado no canto, e é o mesmo desenho
+        que o cartão da fileira acima já mostra inteiro e colorido. Saiu junto
+        com o disco da OBI, pelo mesmo motivo — ver o bloco de cima.
+
+        O wordmark tem alfa, então vai direto sobre o roxo: o véu preto que vinha
+        desenhado em volta do arquivo original é transformado em transparência
+        pelo script (tratamento 'do-preto'), senão a marca apareceria dentro de
+        um retângulo escuro por cima do bloco.
       #}
       <div class="comp-destaque comp-destaque--mfp fade-in">
-        <img src="{{ static('images/competicoes/mfp.png') }}" alt="" aria-hidden="true"
-             class="comp-destaque-fundo" width="480" height="480" loading="lazy" decoding="async">
-
         <div class="comp-destaque-say">
           <span class="comp-destaque-selo">Competição</span>
           <h3 class="comp-destaque-marca">

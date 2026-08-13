@@ -134,6 +134,26 @@ BANNERS_SEMCOMP = {
     'semcomp-estande.jpg': ('estande.jpg', 0.13),
 }
 
+# Foto 4:3 da SEMCOMP -> images/semcomp/.
+#
+# `semcomp-plateia.jpg` é o auditório cheio visto de perto (6000x4000 de câmera,
+# 7 MB) e ocupa o quadro da seção "sobre o evento". ALI ESTAVA `turma.jpg`, QUE
+# É A FOTO DO HERÓI da mesma página: a mesma imagem duas vezes numa rolagem só é
+# repetição, não é ritmo — e no herói ela nem se vê direito, porque vive sob as
+# duas camadas do `.capa-veu`. Agora cada uma aparece uma vez.
+#
+# 0.20: o terço de cima do original é parede branca com luminária. Cortado ali,
+# a primeira fileira de cabeças entra a um quarto da altura do quadro final e o
+# resto é o auditório, que é o que a foto tem para dizer.
+#
+# 1600x1200 é exatamente a caixa que `turma.jpg` ocupava neste quadro, então a
+# troca não mexe em `width`/`height` no template nem reserva espaço diferente.
+#
+#   origem -> (saída, fração da altura onde o recorte começa)
+FOTOS_SEMCOMP = {
+    'semcomp-plateia.jpg': ('plateia.jpg', 0.20),
+}
+
 # Nome de saída sem espaço: o helper `static()` dos templates não escapa espaço
 # em nome de arquivo.
 SOLTAS = {
@@ -262,6 +282,9 @@ PROPORCAO_BANNER = 16 / 9
 LARGURA_GRUPO = 1400
 # (o topo de cada foto de grupo vive junto do nome dela, em FOTOS_NOVAS)
 PROPORCAO_GRUPO = 4 / 3
+# A foto de ambiente da SEMCOMP é maior que as de grupo porque ocupa metade da
+# largura do container numa tela larga, e não um cartão.
+LARGURA_FOTO_SEMCOMP = 1600
 LADO_LOGO_COMP = 480
 LARGURA_MARCA = 480
 # O branco quente da paleta (`--giz` é #f6f1e9), um passo abaixo: a marca de
@@ -505,24 +528,39 @@ def faixa(origem, largura, proporcao, topo_rel):
     o terço de cima é teto e luminária, o de baixo é mesa com garrafa e mochila.
     Usada inteira num banner, a página mostraria dois metros de teto.
 
-    `topo_rel` é onde a tira começa, em fração da altura. Ele é preso ao limite
-    de baixo (`min`) para uma foto mais curta que o esperado não gerar um
-    recorte que passa do fim da imagem — o crop do Pillow aceita coordenada
-    fora e devolve borda preta, que é um bug silencioso e feio.
+    `topo_rel` é onde a tira começa, em fração da altura, E ELE É O PRIMEIRO
+    CORTE — não um deslocamento aplicado dentro de um dos ramos. Era isso antes,
+    e o efeito era que `topo_rel` valia só para foto em pé: numa foto que já
+    chega mais deitada que o alvo, o recorte saía centralizado na vertical e não
+    havia como dizer "comece mais embaixo". `semcomp-plateia.jpg` é 6000x4000
+    com o terço de cima em parede vazia, e sem este corte um terço do quadro
+    final era parede.
+
+    Para as verticais o resultado é idêntico ao de antes: tirar h*topo_rel do
+    topo e pegar a faixa a partir dali é a mesma janela que o crop deslocado
+    recortava.
+
+    E cortar primeiro também é o que dispensa o `min` que existia aqui: uma foto
+    mais curta que o esperado agora cai sozinha no ramo de baixo, que aperta pela
+    largura, em vez de gerar coordenada além do fim da imagem — o crop do Pillow
+    aceita coordenada fora e devolve borda preta, que é um bug silencioso e feio.
     """
     im = ImageOps.exif_transpose(Image.open(origem))
+
+    alto = round(im.size[1] * topo_rel)
+    if alto:
+        im = im.crop((0, alto, im.size[0], im.size[1]))
+
     total_largura, total_altura = im.size
 
     altura_corte = round(total_largura / proporcao)
     if altura_corte > total_altura:
         # Foto já mais deitada que o alvo: aperta pela largura.
-        altura_corte = total_altura
         largura_corte = round(total_altura * proporcao)
         esq = (total_largura - largura_corte) // 2
-        im = im.crop((esq, 0, esq + largura_corte, altura_corte))
+        im = im.crop((esq, 0, esq + largura_corte, total_altura))
     else:
-        topo = min(round(total_altura * topo_rel), total_altura - altura_corte)
-        im = im.crop((0, topo, total_largura, topo + altura_corte))
+        im = im.crop((0, 0, total_largura, altura_corte))
 
     if im.size[0] > largura:
         im = im.resize((largura, round(largura / proporcao)), Image.LANCZOS)
@@ -640,6 +678,8 @@ def main():
         ('semcomp', SEMCOMP_FOTO, lambda o: largura_fixa(o, LARGURA_GALERIA), salvar),
         ('semcomp', BANNERS_SEMCOMP,
          lambda o, topo: faixa(o, LARGURA_BANNER, PROPORCAO_BANNER, topo), salvar),
+        ('semcomp', FOTOS_SEMCOMP,
+         lambda o, topo: faixa(o, LARGURA_FOTO_SEMCOMP, PROPORCAO_GRUPO, topo), salvar),
         ('semcomp', SOLTAS, lambda o: largura_fixa(o, LARGURA_SOLTA), salvar),
         # PNG e não JPEG: o alfa é o ponto todo, e JPEG não tem canal alfa.
         ('semcomp', NEON, lambda o: neon(o, MARGEM_NEON), salvar_png),

@@ -3633,18 +3633,13 @@ section {
   --acento-forte: var(--gema);
 }
 
-/* A marca de fundo faz aqui o que o pato faz no herói: fica grande, cortada
-   pela borda e apagada, sendo a fonte da luz do bloco em vez de um ícone.
-   O papagaio do MFP é a mesma arte do selo lá em cima; a da OBI também. */
-.comp-destaque-fundo {
-  position: absolute;
-  top: -40px;
-  right: -30px;
-  width: clamp(160px, 22vw, 260px);
-  opacity: 0.16;
-  transform: rotate(-8deg);
-  pointer-events: none;
-}
+/* `.comp-destaque-fundo` SAIU DAQUI, e com ele a marca d'água no canto de cada
+   bloco. Ela era o selo da própria prova girado a 16% de opacidade — o mesmo
+   arquivo (`obi.png`, `mfp.png`) que o cartão da fileira acima já mostra
+   inteiro e na cor cheia, repetido a meia tela de distância. A justificativa
+   era "faz o que o pato faz no herói"; a diferença é que o pato aparece uma
+   vez. A luz do bloco não dependia dela: vem dos dois `radial-gradient` do
+   `.comp-destaque` logo acima, que continuam lá. */
 
 .comp-destaque-say {
   position: relative;

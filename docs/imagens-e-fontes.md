@@ -11,9 +11,10 @@ assets/originais/                    FONTE — nunca servida
 ├── maratona-feminina.HEIC           2,9 MB
 ├── evento.jpg                       5,7 MB, arquivo de câmera
 ├── semcomp-estande.jpg              8,3 MB, 6000×4000 (EXIF 8 → vertical)
-├── semcomp-plateia.jpg              7,4 MB — ainda sem derivado
+├── semcomp-plateia.jpg              7,4 MB, 6000×4000 → semcomp/plateia.jpg
 ├── semcomp-vr.jpg                   6,8 MB — ainda sem derivado
 ├── obi logo.png, obi nome.png, …    marcas de competição, 1080×1350 com alfa
+├── maratona sbc logo.png, … nome …  o mesmo par da SBC, já aparado na origem
 └── logo-mfp.png, logo-obi2.jpg, …   arte de terceiros como veio (substituída)
 
 backend/src/public/                  PUBLICADO — só derivado
@@ -111,6 +112,12 @@ Três sutilezas que não são óbvias ao ler o código:
   que é. "Alinhado" aqui quer dizer presença óptica equivalente, não o mesmo
   número no CSS.
 
+**O par da SBC chegou aparado** (647×501 e 894×332, contra os 1080×1350 dos
+outros quatro) e é esse que vale — o par anterior, na tela cheia, era o mesmo
+desenho com margem em volta. Não muda nada no pipeline: `arte_terceiro()` apara
+pelo conteúdo de qualquer jeito, e os dois pares dão selo idêntico. Continua no
+`tingir` porque a tinta é a mesma, `#2f4a75`.
+
 `maratona sbc nome.png` fica em `assets/originais/` **sem derivado**: só os dois
 blocos de destaque da `/seja-membro` usam wordmark, e derivado que nenhum
 template referencia é peso morto em `src/public/`. Os originais antigos
@@ -142,6 +149,25 @@ centralizar num quadro 1200×630 de `#08080b` com um halo âmbar e compor por
 colado no meio do fundo. As metas `og:image:width`/`height` no template precisam
 acompanhar o tamanho do arquivo: sem elas o WhatsApp mostra o cartão sem imagem
 na primeira vez que o link é colado.
+
+## Uma foto, um lugar
+
+**Foto não se repete dentro da mesma página.** Não é regra de estilo: quem rola a
+página vê a mesma imagem duas vezes e lê isso como acervo curto, não como
+intenção — e sempre havia outro arquivo à mão. Dois casos foram desfeitos:
+
+- **`semcomp/turma.jpg` aparecia no herói e outra vez na seção 01** da `/semcomp`,
+  com a justificativa de que no herói ela é textura (vive sob o `.capa-veu`,
+  escurecida e atravessada pelo letreiro). Na tela o argumento não se sustenta.
+  A seção 01 passou a usar `semcomp/plateia.jpg`, que estava sem derivado.
+- **`competicoes/obi.png` e `mfp.png` apareciam no cartão da fileira e de novo
+  como marca d'água** (`.comp-destaque-fundo`, 16% de opacidade, girada) no bloco
+  de destaque logo abaixo, na mesma tela. A marca d'água saiu do template e do
+  CSS; a luz do bloco vinha dos dois `radial-gradient` do `.comp-destaque`, não
+  dela, e continua lá.
+
+O que **pode** repetir é marca: `logo.png`/`logo-256.png`, o `pato.png` e o
+letreiro `semcomp-2026.png` são assinatura, e assinatura aparece onde precisa.
 
 ## O que nenhum template pede pelo nome
 
