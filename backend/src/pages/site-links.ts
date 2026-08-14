@@ -18,7 +18,7 @@
  */
 export const SITE_LINKS = {
   /** Processo seletivo para entrar na ADMINISTRAÇÃO do clube. */
-  prosel: 'https://tally.so/r/0Q0Mey',
+  prosel: 'https://tally.so/r/vG6KPd',
 
   /**
    * Inscrição na SEMCOMP, no Even3. DESTINO DIFERENTE do PROSEL: um é para
@@ -35,7 +35,7 @@ export const SITE_LINKS = {
     'https://docs.google.com/forms/d/1dsH2payyp2EaLyqjtkg0XrEwEX8-rfcsbB9iusM99II/viewform',
 
   /** Pré-venda das camisas do clube. */
-  camisas: 'https://forms.gle/3anb41o52tjZctGr6',
+  camisas: 'https://tally.so/r/xXbva9',
 
   /**
    * As ferramentas acadêmicas (média do semestre, limite de faltas) viviam
