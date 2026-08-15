@@ -1870,9 +1870,14 @@ section {
    Cartão com um link dentro vira, no celular, um alvo de 14px no pé de um bloco
    de 200px: um alvo que se erra. Aqui o `<a>` É o cartão.
 
-   Ordem por compromisso, e o primeiro leva a moldura âmbar — três cartões
-   idênticos obrigam a ler os três para escolher; com um marcado, quem não tem
-   preferência já tem uma.
+   Ordem por compromisso, e a moldura âmbar marca o que tem prazo — três
+   cartões idênticos obrigam a ler os três para escolher; com os que correm
+   contra o calendário acesos, quem não tem preferência já tem uma.
+
+   O `--destaque` não é "o primeiro cartão": é um estado da coisa que o cartão
+   aponta. Hoje ele está no cadastro e na pré-venda da camisa; quando a leva de
+   camisas fechar, o link sai de `site-links.ts`, o cartão some com ele e o
+   destaque volta a ser um só, sem nada a mudar aqui.
    ========================================================================== */
 
 .acao-grid {
@@ -4027,6 +4032,125 @@ section {
 }
 
 
+/* ---- O aviso que abre sozinho ----
+
+   O modal do PROSEL aberto. É o único que a pessoa não pediu para ver, e a
+   diferença de tratamento vem daí: ele precisa se explicar em um segundo, antes
+   de a mão chegar no X.
+
+   A luz âmbar no topo é a mesma do `.acao-card--destaque` — o site inteiro usa
+   esse degradê para dizer "é por aqui", e um aviso que aparece sem ser chamado
+   não é hora de inventar um segundo vocabulário.
+
+   MAIS LARGO QUE OS OUTROS MODAIS, e a largura aqui é vertical: nos 432px do
+   `.modal-card` os dois botões empilham, as duas portas empilham, e o cartão
+   passa de 800px de altura — num notebook de 768px a camisa fica abaixo da
+   dobra, dentro de uma rolagem interna que ninguém procura num aviso. A 560px
+   os botões cabem lado a lado e as portas viram duas colunas: o mesmo conteúdo
+   inteiro na tela. */
+.modal-card--aviso {
+  max-width: 560px;
+  border-color: var(--ambar-traco);
+  background:
+    radial-gradient(ellipse 100% 60% at 50% 0%, rgba(255, 77, 0, 0.12), transparent 72%),
+    var(--penumbra);
+}
+
+/* Membresia e camisa, abaixo do filete. `auto-fit` e não duas colunas fixas:
+   no celular elas empilham sozinhas, que é onde a altura sobra e a largura é
+   que falta. */
+.aviso-portas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+/* A seta ocupa uma coluna inteira à direita, atravessando as três linhas de
+   texto: assim ela fica no centro óptico do bloco em qualquer altura de
+   descrição, sem depender de `align-items` combinar com o tamanho do texto. */
+.aviso-porta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "selo seta"
+    "nome seta"
+    "desc seta";
+  /* `align-items` centra a seta na altura das três linhas de texto. O
+     `align-content` é o par necessário disso: sem ele, a porta mais curta das
+     duas — que a grade estica para igualar a altura da vizinha — centra também
+     o texto, e os dois títulos param em alturas diferentes lado a lado. */
+  align-items: center;
+  align-content: start;
+  column-gap: 14px;
+  padding: 15px 17px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--sombra);
+  transition: border-color var(--transicao), background var(--transicao),
+    transform var(--transicao);
+}
+
+.aviso-porta:hover {
+  border-color: var(--ambar-traco);
+  background: var(--ambar-lavagem);
+  transform: translateY(-2px);
+}
+
+.aviso-porta-selo {
+  grid-area: selo;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cinza);
+  transition: color var(--transicao);
+}
+
+.aviso-porta:hover .aviso-porta-selo {
+  color: var(--ambar);
+}
+
+.aviso-porta strong {
+  grid-area: nome;
+  margin-top: 7px;
+  font-family: var(--display);
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--giz);
+}
+
+.aviso-porta-desc {
+  grid-area: desc;
+  margin-top: 5px;
+  font-size: 0.865rem;
+  line-height: 1.5;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+.aviso-porta-seta {
+  grid-area: seta;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--traco);
+  border-radius: 50%;
+  color: var(--fumaca);
+  transition: border-color var(--transicao), background var(--transicao),
+    color var(--transicao), transform var(--transicao);
+}
+
+.aviso-porta:hover .aviso-porta-seta {
+  border-color: var(--ambar-traco);
+  background: var(--ambar-lavagem);
+  color: var(--ambar);
+  transform: translateX(3px);
+}
+
+
 /* ==========================================================================
    RODAPÉ
    ========================================================================== */
@@ -4406,6 +4530,38 @@ footer {
   .maratona-grupo {
     padding: 15px 16px;
     gap: 12px;
+  }
+
+  /* Mesmo respiro dos dois acima, mas só na coluna: as linhas da porta são
+     separadas por `margin-top`, e um `gap` cheio aqui somaria aos dois. */
+  .aviso-porta {
+    padding: 15px 16px;
+    column-gap: 12px;
+  }
+
+  /* O AVISO APERTA AS JUNTAS NO CELULAR.
+
+     Ele é o modal mais alto do site — anúncio, dois botões e duas portas — e
+     no celular tudo isso empilha: os botões viram um por linha (regra acima) e
+     as portas viram uma coluna. Num iPhone SE (667px de altura) o cartão passa
+     da tela e a camisa, que é justamente uma das coisas anunciadas, cai numa
+     rolagem interna.
+
+     Os vãos abaixo são os mesmos do modal comum, encolhidos: é o que dá para
+     recuperar sem cortar conteúdo — e cortar conteúdo aqui seria apagar
+     exatamente o que o aviso existe para dizer. Em telas de 844px (o padrão
+     dos aparelhos de hoje) isso já é o bastante para caber inteiro. */
+  .modal-card--aviso .modal-topo {
+    margin-bottom: 18px;
+  }
+
+  .modal-card--aviso .modal-acoes {
+    margin-top: 18px;
+  }
+
+  .modal-card--aviso .modal-bloco {
+    margin-top: 22px;
+    padding-top: 20px;
   }
 
   .footer-inner {

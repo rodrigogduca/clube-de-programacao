@@ -189,7 +189,10 @@ if (hamburger && mobileMenu) {
      e o modal de agradecimento abre a partir daí. O parâmetro sai do endereço
      ao fechar, para um F5 não reabrir o agradecimento. */
   const modalProsel = document.getElementById('modalProsel');
-  if (modalProsel && new URLSearchParams(window.location.search).get('prosel') === 'obrigado') {
+  const voltouDoFormulario =
+    new URLSearchParams(window.location.search).get('prosel') === 'obrigado';
+
+  if (modalProsel && voltouDoFormulario) {
     abrir(modalProsel, null);
     modalProsel.addEventListener('transitionend', function limpar() {
       modalProsel.removeEventListener('transitionend', limpar);
@@ -197,6 +200,67 @@ if (hamburger && mobileMenu) {
     const url = new URL(window.location.href);
     url.searchParams.delete('prosel');
     window.history.replaceState({}, '', url);
+  }
+
+  /* ------------------------------------------------------------------
+     AVISO QUE ABRE SOZINHO — o PROSEL aberto, a membresia e a camisa.
+
+     É o único modal do site que ninguém pede para ver, então as três regras
+     abaixo existem para ele não virar praga:
+
+     1. UMA VEZ POR CAMPANHA, e não uma vez por página. A marca fica no
+        localStorage sob a identidade do `data-aviso` do próprio modal — trocar
+        aquele valor no template é o que faz o aviso voltar para todo mundo.
+        `localStorage` e não `sessionStorage`: quem fechou o aviso hoje não
+        quer revê-lo amanhã só porque abriu o navegador de novo.
+
+     2. NÃO ATROPELA NADA. Se o agradecimento do formulário já estiver aberto,
+        o aviso nem entra na fila — e some de vez: quem acabou de se inscrever
+        é a última pessoa que precisa saber que as inscrições abriram.
+
+     3. UM RESPIRO ANTES DE APARECER. Sem ele o diálogo rouba o foco no mesmo
+        quadro em que a página pinta, antes de a pessoa ver onde chegou.
+
+     O `localStorage` fica em try/catch porque ele LANÇA — não devolve null —
+     em navegação privada de Safari antigo e quando o usuário bloqueia dados de
+     site. Sem a proteção, o erro derruba o resto deste arquivo junto.
+     ------------------------------------------------------------------ */
+  const modalAviso = document.getElementById('modalAviso');
+
+  if (modalAviso) {
+    const chave = 'aviso:' + (modalAviso.dataset.aviso || 'padrao');
+
+    const jaViu = (function () {
+      try {
+        return window.localStorage.getItem(chave) === '1';
+      } catch (e) {
+        // Sem armazenamento, o aviso aparece uma vez por carregamento. É o
+        // comportamento pior, mas é o que sobra — e ainda é melhor do que
+        // nenhum aviso.
+        return false;
+      }
+    })();
+
+    function marcarVisto() {
+      try {
+        window.localStorage.setItem(chave, '1');
+      } catch (e) {
+        /* Sem armazenamento não há o que marcar. */
+      }
+    }
+
+    if (voltouDoFormulario) {
+      marcarVisto();
+    } else if (!jaViu) {
+      window.setTimeout(function () {
+        // Outro modal pode ter sido aberto no meio do respiro — o de
+        // Comunidade, por exemplo. Abrir por cima fecharia o que a pessoa
+        // pediu para ver.
+        if (modalAberto) return;
+        abrir(modalAviso, null);
+        marcarVisto();
+      }, 1200);
+    }
   }
 })();
 

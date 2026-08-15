@@ -3,7 +3,7 @@
   `/semcomp`.
 
   Tudo o que é igual nas três mora aqui: as camadas de luz do fundo, a navbar,
-  o menu do celular, os dois modais e o rodapé. Antes isso era o começo e o fim
+  o menu do celular, os modais e o rodapé. Antes isso era o começo e o fim
   de `core/home.njk`, e existia uma página pública só; a alternativa a esta
   camada seria manter três cópias da navbar em dia — que é como um item de menu
   some de uma tela e fica na outra.
@@ -158,11 +158,11 @@
     ==========================================================================
     MODAIS
 
-    Os três seguem a mesma estrutura (`role="dialog"`, `aria-modal`, um título
+    Todos seguem a mesma estrutura (`role="dialog"`, `aria-modal`, um título
     apontado por `aria-labelledby`, um `.modal-close`) porque o main.js os trata
     por classe, não por id: abrir, prender o foco dentro, fechar no Escape, no
-    clique fora e devolver o foco a quem abriu — uma implementação só para os
-    três, em vez de um par de listeners copiado por modal.
+    clique fora e devolver o foco a quem abriu — uma implementação só para
+    todos, em vez de um par de listeners copiado por modal.
     ==========================================================================
   #}
 
@@ -257,6 +257,82 @@
       </div>
     </div>
   </div>
+
+  {#
+    MODAL DE AVISO — o único que abre sozinho.
+
+    Anuncia o que tem prazo AGORA: o PROSEL aberto, e ao lado dele as duas
+    outras portas que também estão de pé (a membresia e a pré-venda da camisa).
+    Fica no layout porque o aviso vale para as três telas públicas — quem chega
+    pela `/semcomp` compartilhada no WhatsApp precisa vê-lo tanto quanto quem
+    chega pela home.
+
+    ELE INTEIRO DEPENDE DE `links.prosel`. Quando o processo encerrar, basta a
+    string vazia em `site-links.ts` (a convenção que aquele arquivo documenta) e
+    o pop-up some do site sozinho — nada aqui precisa ser apagado, e não fica um
+    "inscrições abertas" apontando para um formulário fechado.
+
+    `data-aviso` é a IDENTIDADE DA CAMPANHA, e é o que o main.js grava no
+    localStorage para não repetir o aviso a cada página. Trocar o valor (na
+    próxima edição, ou quando o texto mudar de assunto) faz o aviso voltar a
+    aparecer para todo mundo, inclusive para quem já fechou o anterior.
+
+    Os dois blocos de ação são hierarquia, não decoração: o PROSEL leva o botão
+    cheio, membresia e camisa vêm abaixo do filete, como "também aberto". Três
+    botões de mesmo peso numa caixa de 432px é uma escolha que ninguém faz.
+  #}
+  {% if links.prosel %}
+  <div class="modal-overlay" id="modalAviso" role="dialog" aria-modal="true"
+       aria-labelledby="tituloAviso" data-aviso="prosel-2026" hidden>
+    <div class="modal-card modal-card--aviso">
+      <button class="modal-close" type="button" data-modal-fechar aria-label="Fechar">
+        {{ ic.icone('fechar') }}
+      </button>
+
+      <div class="modal-topo">
+        <span class="modal-selo modal-selo--vivo">
+          <span class="aviso-ponto" aria-hidden="true"></span>
+          Inscrições abertas
+        </span>
+        <h2 id="tituloAviso">O PROSEL abriu</h2>
+        <p>As inscrições para entrar na diretoria do clube estão abertas. Sem pré-requisito técnico: você escolhe a área — eventos, ensino, projetos, marketing, finanças — e passa a construir o clube.</p>
+      </div>
+
+      <div class="modal-acoes">
+        <a class="btn-primary" href="{{ links.prosel }}" target="_blank" rel="noopener noreferrer">
+          Fazer minha inscrição
+          {{ ic.icone('externo', 15) }}
+        </a>
+        <a class="btn-outline" href="{{ url('seja_membro') }}#prosel">Ver como funciona</a>
+      </div>
+
+      {% if links.membresia or links.camisas %}
+      <div class="modal-bloco">
+        <span class="modal-bloco-titulo">Também aberto agora</span>
+        <div class="aviso-portas">
+          {% if links.membresia %}
+          <a class="aviso-porta" href="{{ links.membresia }}" target="_blank" rel="noopener noreferrer">
+            <span class="aviso-porta-selo">Membresia</span>
+            <strong>Fazer meu cadastro</strong>
+            <span class="aviso-porta-desc">Gratuito e sem seleção. Leva 2 minutos.</span>
+            <span class="aviso-porta-seta" aria-hidden="true">{{ ic.icone('seta', 15) }}</span>
+          </a>
+          {% endif %}
+
+          {% if links.camisas %}
+          <a class="aviso-porta" href="{{ links.camisas }}" target="_blank" rel="noopener noreferrer">
+            <span class="aviso-porta-selo">Pré-venda</span>
+            <strong>Camisa do clube</strong>
+            <span class="aviso-porta-desc">A preta com o pato. A pré-venda define quantas peças saem.</span>
+            <span class="aviso-porta-seta" aria-hidden="true">{{ ic.icone('seta', 15) }}</span>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
 
   <!-- FOOTER -->
   <footer>

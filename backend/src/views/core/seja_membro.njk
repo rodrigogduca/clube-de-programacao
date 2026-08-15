@@ -160,13 +160,20 @@
       </div>
 
       {#
-        As duas portas de entrada. `acao-card` é link inteiro, não cartão com um
+        As três portas de entrada. `acao-card` é link inteiro, não cartão com um
         link dentro: no celular, um `<a>` de 14px no pé de um bloco de 200px é
         um alvo que se erra.
 
         A camisa entra aqui e não numa seção própria porque é o que ela é — um
         item da comunidade, não um degrau do funil. E fica ao lado da membresia
         porque é a mesma pessoa que se interessa pelas duas.
+
+        DUAS MOLDURAS ÂMBAR, E ELAS SÃO VIZINHAS. A camisa passou a ser a
+        segunda, e não a última, porque as duas coisas em destaque precisam ser
+        lidas como um par: cadastro e camisa são o que tem prazo agora, o
+        WhatsApp está aberto desde sempre e continua aberto amanhã. Com o grupo
+        no meio, o destaque virava dois cartões acesos separados por um apagado
+        — que se lê como dois avisos soltos, não como "estas duas".
       #}
       <div class="acao-grid stagger-children">
         {% if links.membresia %}
@@ -182,6 +189,19 @@
         </a>
         {% endif %}
 
+        {% if links.camisas %}
+        <a class="acao-card acao-card--destaque fade-in"
+           href="{{ links.camisas }}" target="_blank" rel="noopener noreferrer">
+          <span class="acao-selo">Pré-venda aberta</span>
+          <h3>Camisa do clube</h3>
+          <p>A camisa preta com o pato, a mesma que a diretoria usa nos eventos. A pré-venda define quantas peças saem nesta leva.</p>
+          <span class="acao-pe">
+            <span class="acao-nota">Reserva por formulário &middot; pagamento combinado depois</span>
+            <span class="acao-seta" aria-hidden="true">{{ ic.icone('seta', 16) }}</span>
+          </span>
+        </a>
+        {% endif %}
+
         <a class="acao-card fade-in"
            href="{{ links.whatsapp }}" target="_blank" rel="noopener noreferrer">
           <span class="acao-selo">WhatsApp</span>
@@ -192,19 +212,6 @@
             <span class="acao-seta" aria-hidden="true">{{ ic.icone('seta', 16) }}</span>
           </span>
         </a>
-
-        {% if links.camisas %}
-        <a class="acao-card fade-in"
-           href="{{ links.camisas }}" target="_blank" rel="noopener noreferrer">
-          <span class="acao-selo">Pré-venda</span>
-          <h3>Camisa do clube</h3>
-          <p>A camisa preta com o pato, a mesma que a diretoria usa nos eventos. A pré-venda define quantas peças saem nesta leva.</p>
-          <span class="acao-pe">
-            <span class="acao-nota">Reserva por formulário &middot; pagamento combinado depois</span>
-            <span class="acao-seta" aria-hidden="true">{{ ic.icone('seta', 16) }}</span>
-          </span>
-        </a>
-        {% endif %}
       </div>
 
       {# O modal da Comunidade tem as seis redes e os grupos da maratona. Este
