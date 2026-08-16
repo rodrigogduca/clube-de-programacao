@@ -57,6 +57,36 @@ if (hamburger && mobileMenu) {
   });
 }
 
+/* ---- TARJA DE AVISO ----
+
+   Aqui só mora a DISPENSA. Quem decide se a tarja aparece é o script no <head>
+   de `layouts/site.njk`, que roda antes da primeira pintura — este arquivo
+   chega no fim do body, quando a página já foi desenhada, e mexer na altura do
+   topo daqui faria a tela pular a cada carregamento.
+
+   A identidade da campanha vem do <html>, escrita por aquele script: é o que
+   mantém a chave do localStorage declarada num lugar só. Sem ela (tarja fora do
+   ar, ou script bloqueado) não há o que gravar. */
+(function () {
+  const botao = document.getElementById('tarjaFechar');
+  if (!botao) return;
+
+  botao.addEventListener('click', () => {
+    const raiz = document.documentElement;
+    // Tirar a classe some com a tarja E devolve o topo à navbar e à página, em
+    // um passo: as três medidas saem do mesmo `--tarja-h`.
+    raiz.classList.remove('com-tarja');
+
+    const campanha = raiz.dataset.tarja;
+    if (!campanha) return;
+    try {
+      window.localStorage.setItem('tarja:' + campanha, '1');
+    } catch (e) {
+      /* Sem armazenamento a tarja volta na próxima página. É o que sobra. */
+    }
+  });
+})();
+
 /* ============================================
    MODAIS
 
@@ -321,7 +351,12 @@ document.querySelectorAll('a[href^="#"]').forEach((ancora) => {
     const alvo = document.querySelector(destino);
     if (!alvo) return;
     e.preventDefault();
-    const posicao = alvo.getBoundingClientRect().top + window.scrollY - 80;
+    // O recuo é a navbar flutuante mais a tarja, quando ela está no ar. Medido
+    // no clique e não guardado: a tarja pode ter sido fechada no meio do
+    // caminho, e aí `offsetHeight` já responde 0 (ela é `display: none`).
+    const tarja = document.querySelector('.tarja');
+    const recuo = 80 + (tarja ? tarja.offsetHeight : 0);
+    const posicao = alvo.getBoundingClientRect().top + window.scrollY - recuo;
     window.scrollTo({ top: posicao, behavior: 'smooth' });
   });
 });

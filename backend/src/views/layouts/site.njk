@@ -61,6 +61,52 @@
   {# `site/publico.css` e não mais `style_home.css`: ele deixou de ser a folha
      de uma tela quando a /seja-membro passou a carregá-lo também. #}
   <link rel="stylesheet" href="{{ static('css/site/publico.css') }}">
+
+  {#
+    A DECISÃO SOBRE A TARJA DE AVISO — e o único <script> em linha do site.
+
+    Ela mora no <head>, e não no `js/main.js`, porque precisa acontecer ANTES DA
+    PRIMEIRA PINTURA. A tarja tem altura própria: enquanto está no ar, a navbar
+    desce e o corpo da página desce junto (é o que `--tarja-h` faz na folha).
+    Decidir isso no fim do body significaria pintar a página numa posição e
+    corrigi-la no quadro seguinte — quem já dispensou a tarja veria a tela
+    inteira pular 46px em toda visita, e quem não dispensou veria o contrário.
+    São 12 linhas para evitar isso em todas as páginas públicas.
+
+    A CAMPANHA É DECLARADA AQUI E EM MAIS LUGAR NENHUM. O `main.js` precisa dela
+    para gravar a dispensa, e a lê de volta em `document.documentElement.dataset
+    .tarja` — em vez de repetir a string num `data-` do HTML, que é como as duas
+    metades do mesmo aviso passam a falar de campanhas diferentes. Trocar o
+    valor abaixo faz a tarja voltar para todo mundo, inclusive para quem fechou
+    a anterior; é o mesmo contrato do `data-aviso` do pop-up, e os dois são
+    independentes de propósito (ver o comentário da tarja em `publico.css`).
+
+    `localStorage` em try/catch pelo motivo de sempre: ele LANÇA quando o
+    usuário bloqueia dados de site, e um erro aqui em cima levaria junto tudo o
+    que vem depois no <head>.
+  #}
+  {% if links.prosel %}
+  <script>
+    (function () {
+      var campanha = 'prosel-2026';
+      var raiz = document.documentElement;
+      raiz.dataset.tarja = campanha;
+
+      var dispensada = false;
+      try {
+        dispensada = window.localStorage.getItem('tarja:' + campanha) === '1';
+      } catch (e) {
+        /* Sem armazenamento a tarja aparece sempre — melhor do que sumir. */
+      }
+
+      /* Quem volta do formulário acabou de se inscrever: para essa pessoa a
+         tarja não é aviso, é insistência. Mesma regra do pop-up. */
+      var voltouDoFormulario = window.location.search.indexOf('prosel=obrigado') !== -1;
+
+      if (!dispensada && !voltouDoFormulario) raiz.classList.add('com-tarja');
+    })();
+  </script>
+  {% endif %}
 {% endblock %}
 
 {% block corpo %}
@@ -84,6 +130,40 @@
 
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+  {#
+    TARJA DE AVISO — o PROSEL aberto, no topo de todas as telas públicas.
+
+    Divide o assunto com o `#modalAviso` logo abaixo, e não o repete: o pop-up
+    interrompe uma vez, com a história inteira e as outras portas abertas; a
+    tarja fica de plantão em toda página, com uma frase e um destino. Quem
+    fechou o pop-up na home e foi para a /semcomp continua sabendo que as
+    inscrições estão de pé, sem levar o mesmo diálogo na cara de novo.
+
+    Ela é ancorada no <html> pela classe `com-tarja`, escrita no <head> — aqui
+    não há `hidden` nem estado nenhum; o CSS decide se desenha. Ver o script no
+    bloco `estilos` e a seção "TARJA DE AVISO" de `css/site/publico.css`.
+
+    Está atrás da mesma condição do pop-up: quando o processo encerrar, a
+    string vazia de `prosel` em `site-links.ts` apaga a tarja e o pop-up de uma
+    vez, sem que nada aqui precise ser removido.
+  #}
+  {% if links.prosel %}
+  <div class="tarja">
+    <span class="aviso-ponto" aria-hidden="true"></span>
+    <p class="tarja-texto">
+      <strong>O PROSEL abriu.</strong>
+      <span class="tarja-detalhe">Inscrições para a diretoria do clube, sem pré-requisito técnico.</span>
+    </p>
+    <a class="tarja-cta" href="{{ links.prosel }}" target="_blank" rel="noopener noreferrer">
+      Fazer inscrição
+      {{ ic.icone('externo', 13) }}
+    </a>
+    <button type="button" class="tarja-fechar" id="tarjaFechar" aria-label="Fechar aviso do PROSEL">
+      {{ ic.icone('fechar', 15) }}
+    </button>
+  </div>
+  {% endif %}
 
   <!-- NAVBAR -->
   <nav id="navbar">

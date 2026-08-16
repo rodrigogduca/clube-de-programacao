@@ -14,8 +14,9 @@
    desce. Todo o resto é escuro, quieto e alinhado, para que sobre atenção
    para esse único gesto.
 
-   Ordem: base · fundo · navegação · estrutura de seção · revelação · botões ·
-   hero · quem somos · diretoria · faixa · cabeçalho de página interna ·
+   Ordem: base · fundo · tarja de aviso · navegação · estrutura de seção ·
+   revelação · botões · hero · quem somos · diretoria · faixa ·
+   cabeçalho de página interna ·
    PROSEL · benefícios · ações · clubes · redes e maratona · Help CIMATEC ·
    modais · rodapé · responsivo · movimento reduzido.
 
@@ -41,8 +42,11 @@
 
 html {
   scroll-behavior: smooth;
-  /* A navbar flutua sobre o conteúdo; sem isto as âncoras param embaixo dela. */
-  scroll-padding-top: 96px;
+  /* A navbar flutua sobre o conteúdo; sem isto as âncoras param embaixo dela.
+     A tarja de aviso entra por cima da navbar e empurra tudo para baixo: sem o
+     `--tarja-h` aqui, o destino de `/seja-membro#prosel` — que é justamente o
+     link do aviso — para com o título escondido atrás da barra. */
+  scroll-padding-top: calc(96px + var(--tarja-h));
   -webkit-text-size-adjust: 100%;
   /* Precisa estar aqui e não só no body: o body sozinho não segura a rolagem
      horizontal, porque o overflow do viewport é decidido no elemento raiz. Em
@@ -55,6 +59,10 @@ html {
 
 body {
   min-height: 100vh;
+  /* A tarja é `fixed`: ela sai do fluxo e cobriria o topo da página. Este
+     respiro é o que devolve o espaço dela ao conteúdo — e vale zero quando a
+     tarja não está no ar, porque aí `--tarja-h` é 0px. */
+  padding-top: var(--tarja-h);
   background: var(--breu);
   color: var(--giz);
   font-family: var(--texto);
@@ -196,12 +204,138 @@ footer,
 
 
 /* ==========================================================================
+   TARJA DE AVISO — a faixa fixa no topo das três telas públicas
+
+   O mesmo assunto do pop-up (`#modalAviso`), com um papel diferente: o modal
+   interrompe UMA vez e some para sempre; a tarja fica. Quem fechou o pop-up na
+   home e navegou até a /semcomp continua vendo que o PROSEL está aberto, sem
+   ser interrompido de novo. Por isso as duas dispensas são independentes —
+   `aviso:<campanha>` no localStorage é do modal, `tarja:<campanha>` é daqui.
+
+   TODA A GEOMETRIA PASSA POR `--tarja-h`, e é de propósito. A navbar e o menu
+   do celular são `position: fixed` com um `top` em pixels; o corpo da página é
+   fluxo normal. Um número solto repetido nesses três lugares é como uma tarja
+   de 46px convive com uma navbar que desceu 44 — o encaixe some no dia em que
+   o texto mudar de altura. Com a variável, a altura é declarada UMA vez, aqui,
+   e os três acompanham.
+
+   A ALTURA É FIXA (`height`, não `min-height`) pela mesma razão: `--tarja-h`
+   promete uma altura ao resto da folha, e texto que quebra em duas linhas
+   quebraria a promessa — a navbar ficaria por cima da tarja. Daí o `nowrap` e
+   o detalhe que some no celular, onde ele não caberia.
+
+   `display: none` por padrão, e não `hidden` no HTML: quem decide é a classe
+   `com-tarja` no <html>, escrita por um script no <head> antes da primeira
+   pintura (ver `layouts/site.njk`). Se a decisão viesse depois, o visitante que
+   já dispensou a tarja veria a página inteira dar um pulo de 46px ao carregar.
+   ========================================================================== */
+
+:root {
+  --tarja-h: 0px;
+}
+
+:root.com-tarja {
+  --tarja-h: 46px;
+}
+
+.tarja {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* O mesmo plano da navbar — as duas se encostam e nunca se sobrepõem. Abaixo
+     dos modais (200), que precisam cobrir a tarja junto com o resto. */
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: var(--tarja-h);
+  /* À direita sobra o dobro: é onde o botão de fechar fica, por cima. */
+  padding: 0 clamp(40px, 7vw, 64px) 0 clamp(14px, 3vw, 24px);
+  border-bottom: 1px solid var(--ambar-traco);
+  /* A luz continua vindo de um lugar só: o âmbar nasce à esquerda, junto do
+     ponto que pulsa, e se apaga antes da metade. Uma barra âmbar de ponta a
+     ponta seria a coisa mais forte da tela, acima do próprio pato. */
+  background:
+    linear-gradient(90deg, rgba(255, 77, 0, 0.16), rgba(255, 77, 0, 0) 58%),
+    rgba(10, 9, 13, 0.94);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+}
+
+:root.com-tarja .tarja {
+  display: flex;
+}
+
+/* `nowrap` é obrigatório: a altura da tarja é fixa e uma segunda linha sairia
+   por baixo dela, atrás da navbar. As reticências são a rede de segurança para
+   quando a frase mesmo assim não couber — o corte de verdade é o
+   `.tarja-detalhe` sumindo em 860px, lá no responsivo. */
+.tarja-texto {
+  min-width: 0;
+  font-size: 0.875rem;
+  line-height: 1;
+  color: var(--fumaca);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tarja-texto strong {
+  font-weight: 600;
+  color: var(--giz);
+}
+
+.tarja-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 7px 15px;
+  border-radius: 999px;
+  background: var(--ambar);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  color: #170c02;
+  transition: background var(--transicao);
+}
+
+.tarja-cta:hover {
+  background: var(--gema);
+}
+
+/* Absoluto, e não um terceiro item do flex: assim a mensagem fica centrada na
+   TELA, e não no espaço que sobra dela até o X. */
+.tarja-fechar {
+  position: absolute;
+  top: 50%;
+  right: clamp(6px, 1.5vw, 14px);
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: var(--cinza);
+  transition: color var(--transicao), background var(--transicao);
+}
+
+.tarja-fechar:hover {
+  color: var(--giz);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+
+/* ==========================================================================
    NAVEGAÇÃO
    ========================================================================== */
 
 nav {
   position: fixed;
-  top: 14px;
+  top: calc(14px + var(--tarja-h));
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
@@ -466,7 +600,8 @@ nav.scrolled {
 .mobile-menu {
   display: none;
   position: fixed;
-  top: 80px;
+  /* Desce junto com a navbar, que é de onde ele sai. */
+  top: calc(80px + var(--tarja-h));
   left: 14px;
   right: 14px;
   z-index: 99;
@@ -4352,6 +4487,17 @@ footer {
 }
 
 @media (max-width: 860px) {
+  /* O complemento da tarja sai INTEIRO, e sai aqui.
+
+     A frase pede 507px, o botão 140 e o resto (ponto, respiros, o vão do X)
+     mais uns 115: abaixo de ~860px ela não cabe mais e o `text-overflow` a
+     cortaria no meio. Meia frase com reticências não informa nada e ainda
+     empurra o botão — que é a única coisa da tarja que precisa ser clicada.
+     Sem ela sobra o essencial: o que abriu e por onde entrar. */
+  .tarja-detalhe {
+    display: none;
+  }
+
   .hero-stats {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -4379,6 +4525,23 @@ footer {
 }
 
 @media (max-width: 620px) {
+  /* Sem o complemento, o que sobra da tarja cabe folgado num celular — mas o
+     botão é o alvo do polegar e ele merece a folga. Encolher a barra em 4px é
+     o que devolve esse espaço ao redor dele; a variável leva os 4px para a
+     navbar e para o topo da página junto. */
+  :root.com-tarja {
+    --tarja-h: 42px;
+  }
+
+  .tarja-texto {
+    font-size: 0.8125rem;
+  }
+
+  .tarja-cta {
+    padding: 6px 13px;
+    font-size: 0.75rem;
+  }
+
   /* A presidência empilha e os cartões largos viram cartões normais: com menos
      de 620px o retrato lateral fica estreito demais para valer a pena. */
   .directors-lead {
