@@ -54,8 +54,40 @@ function conferirUrlDoBanco(logger: Logger) {
 export class PrismaService extends PrismaClient implements OnModuleInit {
   private readonly logger = new Logger(PrismaService.name);
 
+  /**
+   * NAO PROPAGA A FALHA DE CONEXAO — de proposito.
+   *
+   * O `onModuleInit` roda dentro do `app.init()` que o `api/index.js` chama
+   * antes de entregar a PRIMEIRA requisicao ao Express. Com o `await
+   * this.$connect()` solto, um banco fora do ar (projeto do Supabase pausado,
+   * senha trocada, DNS que sumiu) fazia o boot inteiro rejeitar — e a Vercel
+   * respondia FUNCTION_INVOCATION_FAILED em TODA rota, inclusive nas paginas
+   * publicas que nao tocam o banco: home, Seja Membro, SEMCOMP, a tela de
+   * login e ate os arquivos de `/static`, porque o catch-all do vercel.json
+   * manda tudo para a mesma funcao.
+   *
+   * Ou seja: o banco cair derrubava o site inteiro, quando so o painel depende
+   * dele.
+   *
+   * Deixar de derrubar o boot nao adia problema nenhum: o Prisma conecta
+   * sozinho, preguicosamente, na primeira consulta. O `$connect()` daqui e
+   * so o aquecimento — vale a pena tentar, para o primeiro acesso do conteiner
+   * nao pagar o handshake, mas nao vale o site.
+   *
+   * Quem depende do banco continua falhando, agora onde deve: na rota que
+   * consulta, com o erro do Prisma passando pelo WebExceptionFilter.
+   */
   async onModuleInit(): Promise<void> {
     conferirUrlDoBanco(this.logger);
-    await this.$connect();
+    try {
+      await this.$connect();
+    } catch (erro) {
+      this.logger.error(
+        'Nao consegui conectar ao banco no boot. As paginas publicas continuam ' +
+          'no ar; as que consultam o banco vao falhar ate a conexao voltar. ' +
+          'Confira DATABASE_URL e se o projeto do banco esta ativo.',
+        erro instanceof Error ? erro.stack : String(erro),
+      );
+    }
   }
 }
