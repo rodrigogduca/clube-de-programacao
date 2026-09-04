@@ -1635,6 +1635,19 @@ section {
   color: var(--ambar);
 }
 
+/* O MESMO SELO, SEM A LUZ — é o que fica quando o processo encerra.
+
+   O âmbar deste site significa uma coisa só: aqui há algo a fazer agora. Um
+   "inscrições encerradas" aceso mente para quem passa os olhos e lê apenas a
+   cor, e é o pior tipo de mentira de interface, porque o texto ao lado diz o
+   contrário. Sem fundo e em cinza, o selo continua informando — que era o
+   ponto — e para de chamar. */
+.indice-selo--quieto {
+  background: none;
+  border: 1px solid var(--traco);
+  color: var(--cinza);
+}
+
 
 /* ==========================================================================
    PROSEL — o cartaz
@@ -1834,6 +1847,15 @@ section {
   color: var(--gema);
 }
 
+/* O oposto do `--vivo`: prazo vencido. Mesma pílula, borda neutra e cinza de
+   metadado — pela razão do `.indice-selo--quieto` logo acima. Ele fica no topo
+   do cartaz justamente porque é a primeira coisa que quem chega atrasado
+   precisa saber, e um selo é mais rápido de ler do que a frase lá embaixo. */
+.event-badge--encerrado {
+  border-color: var(--traco);
+  color: var(--fumaca);
+}
+
 .event-nota {
   font-family: var(--mono);
   font-size: var(--t-mini);
@@ -1872,6 +1894,17 @@ section {
   align-items: center;
   gap: 12px 16px;
   margin-top: 36px;
+}
+
+/* Com o processo encerrado, a nota toma o lugar do botão grande — e toma a
+   LINHA inteira (`100%`), com os dois destinos de rede abaixo dela. Lado a
+   lado com os botões ela viraria uma legenda espremida entre pílulas; acima,
+   é a frase que explica por que os botões mudaram de assunto. O `max-width`
+   é o limite de leitura de sempre: linha de mono comprida demais cansa. */
+.prosel-acoes .event-nota {
+  flex: 1 1 100%;
+  max-width: 62ch;
+  margin: 0;
 }
 
 

@@ -68,10 +68,13 @@
         longa e os três blocos respondem a perguntas diferentes. Quem já sabe
         que veio pelo PROSEL não deveria rolar por dois blocos até achá-lo.
 
-        O QUARTO ITEM É MARCADO. Ele fecha a lista, e numa fileira de quatro
-        cartões iguais o último é o que menos se olha — justamente o degrau que
-        a página existe para empurrar. O `--destaque` acende o filete, o nome e
-        acrescenta o selo; a ordem de leitura não muda.
+        O QUARTO ITEM SÓ É MARCADO ENQUANTO HÁ INSCRIÇÃO ABERTA. Numa fileira
+        de quatro cartões iguais o último é o que menos se olha, e o `--destaque`
+        (filete aceso, nome em âmbar) existe para corrigir isso enquanto o
+        formulário está de pé. Com o processo encerrado o degrau volta ao peso
+        dos vizinhos: o selo continua, em cinza, porque a informação que falta
+        agora é "acabou" — e destacar um prazo vencido é chamar para uma porta
+        fechada.
       #}
       <ol class="pagina-indice fade-in">
         <li>
@@ -95,12 +98,16 @@
             <span class="indice-desc">Treinar e competir</span>
           </a>
         </li>
-        <li class="indice-item--destaque">
+        <li{% if links.prosel %} class="indice-item--destaque"{% endif %}>
           <a href="#prosel">
             <span class="indice-num" aria-hidden="true">04</span>
             <span class="indice-nome">PROSEL</span>
             <span class="indice-desc">Entrar para a diretoria</span>
-            <span class="indice-selo">Inscrições {% if links.prosel %}abertas{% else %}em breve{% endif %}</span>
+            {% if links.prosel %}
+            <span class="indice-selo">Inscrições abertas</span>
+            {% else %}
+            <span class="indice-selo indice-selo--quieto">Inscrições encerradas</span>
+            {% endif %}
           </a>
         </li>
       </ol>
@@ -531,18 +538,20 @@
     ==========================================================================
     04 — PROSEL
 
-    O último degrau e o único com moldura âmbar cheia: é o que a página
-    empurra com mais força, e é o único bloco com prazo.
+    O último degrau, e o único bloco com prazo.
 
-    E AGORA A SEÇÃO INTEIRA CARREGA ISSO, não só o cartaz.
+    TODA A ÊNFASE DESTA SEÇÃO É CONDICIONAL, e depende de `links.prosel`.
 
-    O problema era de vizinhança: um cartaz âmbar dentro de uma seção que, do
-    lado de fora, é igual às outras três — mesmo fundo, mesmo `padding`, mesmo
-    título. Quem rola rápido passa por quatro blocos de mesmo peso e o quarto,
-    por ser o último, é o que menos recebe atenção. `--destaque` acende o fundo
-    da seção, o número na margem e o título, e o cartaz cresce dentro dela; o
-    percurso 01→04 continua o mesmo, o degrau final é que deixa de se disfarçar
-    de parada intermediária.
+    Com inscrição aberta, `--destaque` acende o fundo da seção, o número na
+    margem, o título e a moldura do cartaz: um cartaz âmbar dentro de uma seção
+    igual às outras três se perde, e quem rola rápido passa por quatro paradas
+    de mesmo peso — o quarto, por ser o último, é o que menos recebe atenção.
+
+    Com o processo ENCERRADO nada disso se justifica: a seção volta ao peso das
+    outras três e o bloco passa a ser o que sobrou de útil — explicar o que é o
+    PROSEL para quem chegar depois, dizer que esta edição fechou e mandar
+    acompanhar as redes, que é onde a próxima será anunciada. Acender uma porta
+    fechada é o pior dos dois mundos: gasta a atenção e entrega frustração.
 
     A ficha e as etapas dizem só o que o clube já afirma em outros pontos do
     site (nenhum pré-requisito, aberto a qualquer curso, resultado nas redes).
@@ -550,18 +559,18 @@
     página é pior do que data ausente.
     ==========================================================================
   #}
-  <section id="prosel" class="prosel-section prosel-section--destaque">
+  <section id="prosel" class="prosel-section{% if links.prosel %} prosel-section--destaque{% endif %}">
     <div class="container">
       <div class="secao-topo fade-in">
         <span class="secao-indice" aria-hidden="true">04</span>
         <div class="secao-corpo">
           <span class="section-label">// processo seletivo</span>
-          <h2 class="section-title section-title--destaque">Faça o clube<br>acontecer</h2>
-          <p class="section-desc">O PROSEL é como se entra na administração do clube — quem organiza os eventos, dá as aulas e toca os projetos. Sem pré-requisito técnico: vontade basta.</p>
+          <h2 class="section-title{% if links.prosel %} section-title--destaque{% endif %}">Faça o clube<br>acontecer</h2>
+          <p class="section-desc">O PROSEL é como se entra na administração do clube — quem organiza os eventos, dá as aulas e toca os projetos. Sem pré-requisito técnico: vontade basta.{% if not links.prosel %} As inscrições desta edição já se encerraram.{% endif %}</p>
         </div>
       </div>
 
-      <div class="prosel-cartaz prosel-cartaz--destaque fade-in">
+      <div class="prosel-cartaz{% if links.prosel %} prosel-cartaz--destaque{% endif %} fade-in">
         <div class="prosel-say">
           {% if links.prosel %}
           <span class="event-badge event-badge--vivo">
@@ -569,10 +578,10 @@
             Inscrições abertas
           </span>
           {% else %}
-          <span class="event-badge">Processo seletivo</span>
+          <span class="event-badge event-badge--encerrado">Inscrições encerradas</span>
           {% endif %}
 
-          <h3 class="prosel-titulo prosel-titulo--destaque">PROSEL <span>2026</span></h3>
+          <h3 class="prosel-titulo{% if links.prosel %} prosel-titulo--destaque{% endif %}">PROSEL <span>2026</span></h3>
 
           <p>Toda semana de curso, toda competição e toda edição da SEMCOMP saem de estudantes que se inscreveram num processo como este. Você escolhe a área que quer tocar — eventos, ensino, projetos, marketing, finanças — e passa a construir o clube em vez de só frequentá-lo.</p>
 
@@ -643,23 +652,35 @@
         </li>
       </ol>
 
-      {# O CTA prioritário da página inteira. `--grande` só existe aqui: é o
-         único botão que a /seja-membro precisa que seja achado sem procura, e
-         um segundo botão do mesmo tamanho em qualquer outro ponto acabaria com
-         a diferença que este tira do tamanho. #}
+      {# COM INSCRIÇÃO ABERTA, o CTA prioritário da página inteira. `--grande`
+         só existe aqui: é o único botão que a /seja-membro precisa que seja
+         achado sem procura, e um segundo botão do mesmo tamanho em qualquer
+         outro ponto acabaria com a diferença que este tira do tamanho.
+
+         ENCERRADO, o lugar do botão é do aviso — e o que sobra de ação não é
+         mais "inscreva-se", é "fique sabendo da próxima". Por isso as redes
+         entram aqui com os dois destinos que o resto da página já usa: o
+         Instagram, que é onde sai o resultado e a próxima chamada, e o modal
+         da Comunidade, que abre a lista inteira. Nenhum dos dois é `--grande`:
+         a seção deixou de ser o degrau que a página empurra. #}
       <div class="prosel-acoes fade-in">
         {% if links.prosel %}
         <a class="btn-primary btn-primary--grande" href="{{ links.prosel }}" target="_blank" rel="noopener noreferrer">
           Fazer minha inscrição
           {{ ic.icone('externo', 15) }}
         </a>
-        {% else %}
-        <span class="event-nota">As inscrições não estão abertas no momento — avisamos no Instagram quando abrirem.</span>
-        {% endif %}
         <a class="btn-outline" href="{{ links.instagram }}" target="_blank" rel="noopener noreferrer">
           {{ ic.icone('instagram', 17) }}
           Acompanhar no Instagram
         </a>
+        {% else %}
+        <p class="event-nota">O período de inscrição do PROSEL 2026 se encerrou. O resultado desta edição e a chamada da próxima saem nas redes do clube — acompanhe por lá.</p>
+        <a class="btn-outline" href="{{ links.instagram }}" target="_blank" rel="noopener noreferrer">
+          {{ ic.icone('instagram', 17) }}
+          Acompanhar no Instagram
+        </a>
+        <button type="button" class="btn-outline" data-modal="modalComunidade">Ver todas as redes</button>
+        {% endif %}
       </div>
     </div>
   </section>

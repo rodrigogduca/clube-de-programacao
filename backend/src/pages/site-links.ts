@@ -17,8 +17,18 @@
  * leva a um formulário fechado. Apagar a chave quebraria o `if`.
  */
 export const SITE_LINKS = {
-  /** Processo seletivo para entrar na ADMINISTRAÇÃO do clube. */
-  prosel: 'https://tally.so/r/vG6KPd',
+  /**
+   * Processo seletivo para entrar na ADMINISTRAÇÃO do clube.
+   *
+   * ENCERRADO — as inscrições do PROSEL 2026 fecharam. A string vazia é o que
+   * apaga, de uma vez, a tarja do topo, o pop-up de aviso e o botão de
+   * inscrição da /seja-membro; no lugar deles os templates desenham o aviso de
+   * encerramento e mandam acompanhar as redes. Na próxima edição, basta
+   * devolver o endereço do formulário aqui.
+   *
+   * Formulário da edição de 2026: https://tally.so/r/vG6KPd
+   */
+  prosel: '',
 
   /**
    * Inscrição na SEMCOMP, no Even3. DESTINO DIFERENTE do PROSEL: um é para
