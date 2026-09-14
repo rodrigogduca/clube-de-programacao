@@ -35,7 +35,7 @@
 
 {% block meta %}
   <meta name="description" content="SEMCOMP 2026 — a 5ª Semana da Computação da Universidade SENAI CIMATEC, de 29 de setembro a 3 de outubro. Cinco dias temáticos de palestras, workshops e competições, abertos ao público. Inscrições pelo Even3.">
-  <meta name="keywords" content="SEMCOMP, SEMCOMP 2026, SEMCOMP CIMATEC, Semana da Computação, Semana da Computação SENAI CIMATEC, AWS Day, Arena Day, Cyber CTF, Game Jam, Olimpíada de Programação, evento de tecnologia Bahia, workshop programação Salvador, Clube de Programação, SENAI CIMATEC">
+  <meta name="keywords" content="SEMCOMP, SEMCOMP 2026, SEMCOMP CIMATEC, Semana da Computação, Semana da Computação SENAI CIMATEC, Cloud Day, Arena Day, hackathon, Cyber CTF, Game Jam, Olimpíada de Programação, evento de tecnologia Bahia, workshop programação Salvador, Clube de Programação, SENAI CIMATEC">
   <meta name="author" content="Clube de Programação - Universidade SENAI CIMATEC">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <link rel="canonical" href="{{ canonical_url }}">
@@ -45,7 +45,7 @@
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="Clube de Programação - Universidade SENAI CIMATEC">
   <meta property="og:title" content="SEMCOMP 2026 — Semana da Computação | 29/09 a 03/10, SENAI CIMATEC">
-  <meta property="og:description" content="Cinco dias, cinco temas: AWS Day, Cimatec Day, Dev &amp; IA Day, Cyber &amp; Quantum Day e Arena Day. Onde a ideia acende.">
+  <meta property="og:description" content="Cinco dias, cinco temas: Cimatec Day, Cloud Day, Dev &amp; IA Day, Cyber &amp; Quantum Day e Arena Day. Onde a ideia acende.">
   {#
     A MINIATURA É A LOGO, E SÓ A LOGO.
 
@@ -221,7 +221,7 @@
             A SEMCOMP nasceu da mesma ideia que sustenta o clube: <strong>conhecimento se constrói melhor quando é compartilhado</strong>. Durante cinco dias, o campus recebe gente de fora e de dentro para falar do que está fazendo — em palestra, em oficina de mão na massa ou em competição.
           </p>
           <p>
-            Cada dia tem um tema: <strong>AWS Day, Cimatec Day, Dev &amp; IA Day, Cyber &amp; Quantum Day</strong> e, no sábado, o <strong>Arena Day</strong> — o festival de jogos e desafios que fecha a semana.
+            Cada dia tem um tema: <strong>Cimatec Day, Cloud Day, Dev &amp; IA Day, Cyber &amp; Quantum Day</strong> e, no sábado, o <strong>Arena Day</strong> — o festival de jogos e desafios que fecha a semana.
           </p>
           <p>
             Tudo é organizado por estudantes voluntários. Quem monta a grade, fala com os palestrantes, cuida do credenciamento e corrige as competições é a <a href="#comissao">comissão da SEMCOMP</a> — formada na diretoria do clube, que entra por <a href="{{ url('seja_membro') }}#prosel">processo seletivo</a>.
@@ -306,7 +306,7 @@
         <span class="secao-indice" aria-hidden="true">02</span>
         <div class="secao-corpo">
           <span class="section-label">// o que acontece</span>
-          <h2 class="section-title">Quatro formatos,<br>cinco dias</h2>
+          <h2 class="section-title">Cinco formatos,<br>cinco dias</h2>
           <p class="section-desc">Dá para ir a tudo, e dá para ir a uma coisa só. Cada formato pede um tipo diferente de disponibilidade.</p>
         </div>
       </div>
@@ -331,6 +331,12 @@
           nota: 'Em equipe ou individual &middot; <a href="#arena">ver as modalidades</a>'
         },
         {
+          selo: 'Hackathon',
+          titulo: 'Um desafio, uma entrega',
+          desc: 'Equipes recebem um problema real e têm o prazo do evento para entregar uma solução funcionando, defendida diante da banca no fim.',
+          nota: ('Em equipe &middot; <a href="' + links.hackathon + '" target="_blank" rel="noopener noreferrer">portal do hackathon</a>') if links.hackathon else 'Em equipe &middot; detalhes no Even3'
+        },
+        {
           selo: 'Estandes',
           titulo: 'O corredor',
           desc: 'Os clubes temáticos, os projetos em andamento e os parceiros ficam de portas abertas entre uma atividade e outra.',
@@ -352,11 +358,12 @@
       {#
         O CORREDOR, logo depois do cartão que fala dele.
 
-        Dos quatro formatos, três a pessoa consegue imaginar pelo nome —
-        palestra é palestra, workshop é workshop, competição é competição. O
-        quarto ("Estandes — o corredor") é o que precisa de imagem: quem nunca
-        foi lê "estandes" e pensa em feira de empresa, não em parceiro
-        distribuindo lata entre uma atividade e outra.
+        Dos cinco formatos, quatro a pessoa consegue imaginar pelo nome —
+        palestra é palestra, workshop é workshop, competição é competição,
+        hackathon é hackathon. O último ("Estandes — o corredor") é o que
+        precisa de imagem: quem nunca foi lê "estandes" e pensa em feira de
+        empresa, não em parceiro distribuindo lata entre uma atividade e
+        outra.
 
         É a terceira foto da página e nenhuma repete outra: o herói é a turma no
         fim do dia, a seção 01 é a plateia dentro do auditório e esta é o
@@ -403,15 +410,15 @@
       {% set dias = [
         {
           num: '29', mes: 'set', semana: 'Terça',
-          tema: 'AWS Day',
-          desc: 'A abertura da semana, com a trilha da AWS: nuvem, dados e infraestrutura na prática de quem opera.',
-          tags: [{ nome: 'AWS', destaque: true }]
+          tema: 'Cimatec Day',
+          desc: 'A abertura da semana é o dia da casa: empreendedorismo, internacionalização, extensão e as iniciativas que nascem dentro do campus.',
+          tags: [{ nome: 'SENAI CIMATEC', destaque: true }, { nome: 'Empreendedorismo' }, { nome: 'Internacionalização' }, { nome: 'Extensão' }]
         },
         {
           num: '30', mes: 'set', semana: 'Quarta',
-          tema: 'Cimatec Day',
-          desc: 'O dia da casa: empreendedorismo, internacionalização, extensão e as iniciativas que nascem dentro do campus.',
-          tags: [{ nome: 'SENAI CIMATEC', destaque: true }, { nome: 'Empreendedorismo' }, { nome: 'Internacionalização' }, { nome: 'Extensão' }]
+          tema: 'Cloud Day',
+          desc: 'A trilha da nuvem, com a AWS: dados e infraestrutura na prática de quem opera.',
+          tags: [{ nome: 'AWS', destaque: true }]
         },
         {
           num: '01', mes: 'out', semana: 'Quinta',
@@ -450,7 +457,7 @@
               {#
                 Duas pílulas, e a diferença é de peso: SÓLIDA EM CINZA é assunto
                 do dia (`Empreendedorismo`, `Extensão`), ÂMBAR é o que dá nome ao
-                dia — a marca que assina (AWS, SENAI CIMATEC, NVIDIA) ou a
+                dia — a marca que assina (SENAI CIMATEC, AWS, NVIDIA) ou a
                 atração que define o sábado (competições, premiação).
 
                 `pendente` e `destaque` desenham igual hoje: as duas classes
@@ -746,6 +753,10 @@
             r: 'Nos dias de palestra o credenciamento vai das 07:30 às 08:50, e o primeiro bloco começa às 09:00. O Arena Day, no sábado, tem horário próprio — divulgado no Even3.'
           },
           {
+            p: 'Como funciona o hackathon?',
+            r: ('As equipes recebem um desafio e têm o prazo do evento para entregar uma solução funcionando. O regulamento, o desafio e a inscrição das equipes ficam no <a href="' ~ links.hackathon ~ '" target="_blank" rel="noopener noreferrer">portal do hackathon</a>.') if links.hackathon else 'As equipes recebem um desafio e têm o prazo do evento para entregar uma solução funcionando. O regulamento e a inscrição saem no Even3.'
+          },
+          {
             p: 'Preciso levar computador?',
             r: 'Só para os workshops e para as competições digitais, que são práticos. Palestras, estandes e jogos presenciais não pedem nada além de aparecer.'
           },
@@ -952,8 +963,8 @@
     },
     {% endif %}
     "subEvent": [
-      { "@type": "Event", "name": "AWS Day", "startDate": "2026-09-29", "endDate": "2026-09-29" },
-      { "@type": "Event", "name": "Cimatec Day",        "startDate": "2026-09-30", "endDate": "2026-09-30" },
+      { "@type": "Event", "name": "Cimatec Day",        "startDate": "2026-09-29", "endDate": "2026-09-29" },
+      { "@type": "Event", "name": "Cloud Day",          "startDate": "2026-09-30", "endDate": "2026-09-30" },
       { "@type": "Event", "name": "Dev & IA Day",       "startDate": "2026-10-01", "endDate": "2026-10-01" },
       { "@type": "Event", "name": "Cyber & Quantum Day","startDate": "2026-10-02", "endDate": "2026-10-02" },
       { "@type": "Event", "name": "Arena Day",          "startDate": "2026-10-03", "endDate": "2026-10-03" }

@@ -44,6 +44,14 @@ export const SITE_LINKS = {
   membresia:
     'https://docs.google.com/forms/d/1dsH2payyp2EaLyqjtkg0XrEwEX8-rfcsbB9iusM99II/viewform',
 
+  /**
+   * Portal do HACKATHON da SEMCOMP — regulamento, desafio e inscrição das
+   * equipes. Fica fora do Even3 de propósito: é um portal próprio, mantido
+   * pela organização do hackathon, e é para lá que a página manda quem quer
+   * mais do que a linha de resumo do cartão.
+   */
+  hackathon: 'https://portal-hackathon.vercel.app/',
+
   /** Pré-venda das camisas do clube. */
   camisas: 'https://tally.so/r/xXbva9',
 
