@@ -2048,9 +2048,14 @@ section {
    destaque volta a ser um só, sem nada a mudar aqui.
    ========================================================================== */
 
+/* `min(270px, 100%)` pelo mesmo motivo do `.grade` e do `.comissao-grid`: o
+   mínimo de uma coluna de `minmax` não encolhe, e numa tela de 320px a coluna
+   passava alguns pixels da caixa que a contém. A grade também passou a ser
+   usada na escolha de modalidade do Arena Day, então agora ela aparece em duas
+   páginas e em duas larguras de container diferentes. */
 .acao-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr));
   gap: 14px;
 }
 
@@ -2880,12 +2885,97 @@ section {
 
 /* ==========================================================================
    FORMATOS DA SEMCOMP
+
+   A GRADE CONTA OS CARTÕES EM VEZ DE DIVIDIR A LARGURA POR UM MÍNIMO.
+
+   Era `repeat(auto-fit, minmax(250px, 1fr))`, e o `auto-fit` decide o número de
+   colunas olhando só para a largura disponível — ele não sabe quantos cartões
+   existem. Com os cinco formatos numa tela de 1140px a conta dava quatro
+   colunas, e o quinto cartão descia sozinho para uma fileira de 255px de
+   cartão e 795px de vazio à direita. Entre 620 e 860px dava duas colunas, e
+   sobrava o mesmo órfão. A fileira quebrada era a coisa mais visível da seção.
+
+   Aqui o número de colunas é declarado (três, depois duas, depois uma) e a
+   última fileira REPARTE ENTRE OS QUE SOBRARAM o espaço que sobraria vazio.
+   Com cinco cartões isso é 3 em cima e 2 embaixo, cada um dos dois com metade
+   da largura; com seis (as modalidades do Arena Day) é 3+3 e nenhuma regra de
+   sobra chega a valer.
+
+   POR QUE ESTICAR E NÃO CENTRALIZAR os que sobram: tudo nesta página começa na
+   borda esquerda do container e termina na direita — a trilha dos dias, a
+   grade dos turnos, o mapa, a comissão. Uma fileira centralizada seria o único
+   bloco fora desse alinhamento, e o que hoje se lê como falha viraria uma
+   assimetria com cara de engano.
+
+   A CONTA É EM `nth-child`, E NÃO UM NÚMERO FIXO, porque a lista vem de um
+   `{% set %}` no template: quem acrescenta uma modalidade mexe no array e não
+   volta aqui. Havia um comentário nesta folha avisando que uma sétima
+   modalidade obrigaria a reconsiderar o valor da coluna — é exatamente esse
+   aviso que deixa de ser necessário.
    ========================================================================== */
 
+/* Estreito: uma por fileira, e nenhuma regra de sobra faz sentido. */
 .formato-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
+}
+
+/* DUAS POR FILEIRA, em quatro trilhos de meia-meia.
+
+   OS DOIS LIMITES SÃO A LARGURA DO CARTÃO, não números redondos: o piso em
+   620px é onde duas colunas ainda dão ~272px de cartão, e o teto em 880 é onde
+   três colunas passam a dar ~257px. Abaixo de 620 duas colunas cairiam para
+   ~237px, que é menos do que o desenho do cartão aguenta — o selo, o título em
+   duas linhas e a nota do pé ficam apertados antes disso.
+
+   O teto é 879.98px e não `max-width: 880px` porque o bloco de três colunas
+   começa em 880: num viewport fracionário (zoom do navegador, tela HiDPI) os
+   dois valeriam ao mesmo tempo, e as regras de sobra do de baixo têm seletor
+   mais pesado do que o `.formato-grid > *` daqui. */
+@media (min-width: 620px) and (max-width: 879.98px) {
+  .formato-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .formato-grid > * {
+    grid-column: span 2;
+  }
+
+  /* Ímpar: o último fica sozinho na fileira, então ocupa a fileira. */
+  .formato-grid > :last-child:nth-child(odd):not(:first-child) {
+    grid-column: span 4;
+  }
+}
+
+/* TRÊS POR FILEIRA, em seis trilhos — o cartão ocupa dois.
+   Seis e não três para a última fileira poder ser dividida em dois (3+3 de
+   trilho, que é meio a meio) sem mudar a grade. */
+@media (min-width: 880px) {
+  .formato-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .formato-grid > * {
+    grid-column: span 2;
+  }
+
+  /* SOBRAM DOIS (5, 8, 11 cartões): cada um leva metade da última fileira.
+     O primeiro dos dois é o que abre fileira (`3n + 1`) e é o penúltimo da
+     lista; o segundo é o último e cai em `3n + 2`. As duas condições só se
+     satisfazem juntas quando o resto da divisão por três é dois, então a regra
+     se desliga sozinha nos outros casos. */
+  .formato-grid > :nth-child(3n + 1):nth-last-child(2),
+  .formato-grid > :nth-child(3n + 2):last-child {
+    grid-column: span 3;
+  }
+
+  /* SOBRA UM (4, 7, 10 cartões): ele leva a fileira inteira.
+     O `:not(:first-child)` é para a lista de um item só — que não tem fileira
+     quebrada para consertar e ficaria esticada à toa. */
+  .formato-grid > :nth-child(3n + 1):last-child:not(:first-child) {
+    grid-column: span 6;
+  }
 }
 
 .formato-card {
@@ -2954,16 +3044,27 @@ section {
   border-color: var(--gema);
 }
 
-/* AS MODALIDADES DO ARENA DAY reaproveitam o `.formato-card` inteiro e mudam
-   só a largura mínima da coluna. Com os 250px dos formatos os cartões caíam em
-   4+1 — uma linha cheia e um órfão embaixo. Com 320px a grade fecha em três
-   colunas, e desde que a Copa de E-Sports entrou são SEIS cartões: 3+3, duas
-   fileiras cheias. (Eram cinco, e a divisão 3+2 já era a razão do valor; com
-   seis ela só melhorou. Se uma sétima modalidade aparecer, a conta volta a ser
-   3+3+1 e vale reconsiderar os 320px.) */
-.arena-grid {
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-}
+/* AS MODALIDADES DO ARENA DAY reaproveitam o `.formato-card` inteiro, e agora
+   também a grade inteira: a classe não precisa mais mudar nada.
+
+   ELA FORÇAVA `minmax(320px, 1fr)` para escapar do órfão que o `auto-fit`
+   produzia com cinco cartões — o mesmo problema que o `.formato-grid` acima
+   agora resolve contando os cartões. Com as duas grades sob a mesma regra, os
+   formatos e as modalidades passam a ter a MESMA largura de cartão na mesma
+   tela: antes, a 1024px, a seção 02 desenhava três colunas de 300px e a 04
+   duas de 457px, com cartões de desenho idêntico.
+
+   E O MÍNIMO RÍGIDO DE 320px ERA UM BUG DE TELA PEQUENA. Num aparelho de 320px
+   de largura sobram 280px de conteúdo depois dos respiros, e a coluna não
+   encolhia abaixo de 320: os cartões passavam 40px da borda e o
+   `overflow-x: clip` do `html` cortava esse pedaço fora. O selo e o texto do
+   lado direito das seis modalidades ficavam decepados, sem barra de rolagem
+   que denunciasse. O `.formato-grid` não tem mínimo em pixel nenhum, então o
+   corte não tem como voltar.
+
+   A classe continua no HTML: ela é o gancho de qualquer diferença futura entre
+   as duas grades, e tirá-la do template para devolver depois é mais trabalho
+   do que deixar um seletor vazio de regra. */
 
 
 /* ==========================================================================
@@ -3201,12 +3302,66 @@ section {
 
 
 /* ==========================================================================
+   ESCOLHER A MODALIDADE DO ARENA DAY
+
+   Os dois formulários do sábado, embaixo da grade que descreve as seis
+   modalidades. O cartão é o `.acao-card` da /seja-membro — aquele em que o
+   `<a>` é a caixa inteira —, então aqui só existe o cabeçalho do bloco e o
+   respiro que o separa da grade de cima.
+
+   UM SUBTÍTULO E NÃO UMA SEÇÃO NOVA: o assunto continua sendo o Arena Day, e
+   abrir uma seção 05 só para dois botões faria o índice da página anunciar
+   como capítulo o que é o desfecho do capítulo anterior. O título é `h3`
+   porque a seção já abriu com o `h2` "O sábado de competição".
+
+   O `margin-top` é a mesma `clamp` do `.dia-padrao`, que faz o mesmo papel na
+   seção 03 — um bloco filho que respira mais do que o `gap` de uma grade e
+   menos do que o vão entre duas seções.
+   ========================================================================== */
+
+.arena-escolha {
+  margin-top: clamp(56px, 7vw, 84px);
+}
+
+.arena-escolha-topo {
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--traco);
+}
+
+.arena-escolha-topo h3 {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--giz);
+}
+
+/* `max-width` em `ch` e não em pixel: o que cansa numa linha é o número de
+   caracteres, e a medida em `ch` acompanha o corpo da letra se ele mudar. */
+.arena-escolha-topo p {
+  margin-top: 10px;
+  max-width: 62ch;
+  font-size: 0.975rem;
+  line-height: 1.6;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+
+/* ==========================================================================
    GRADE DA PROGRAMAÇÃO
    ========================================================================== */
 
+/* O `min(280px, 100%)` no lugar de `280px` secos: o mínimo de uma coluna de
+   `minmax` é rígido, e numa tela de 320px sobram 280px de conteúdo — a coluna
+   media exatamente o espaço disponível, sem um pixel de folga, e qualquer
+   mudança no `--gutter` a empurraria para fora da borda, onde o
+   `overflow-x: clip` do `html` cortaria o texto sem deixar rastro. Com o
+   `min()` a coluna nunca passa da largura do pai. */
 .grade {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 14px;
 }
 
@@ -3611,9 +3766,12 @@ section {
    acende.
    ========================================================================== */
 
+/* `min(268px, 100%)` pelo mesmo motivo do `.grade` acima: mínimo de coluna é
+   rígido, e 268px numa tela de 320 deixam 12px de folga — perto demais da
+   borda para depender da `clamp` do respiro continuar como está. */
 .comissao-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(268px, 100%), 1fr));
   gap: 14px;
   list-style: none;
 }

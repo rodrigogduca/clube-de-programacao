@@ -52,6 +52,31 @@ export const SITE_LINKS = {
    */
   hackathon: 'https://portal-hackathon.vercel.app/',
 
+  /**
+   * ESCOLHA DA MODALIDADE DO ARENA DAY — dois formulários, e são dois de
+   * propósito.
+   *
+   * O sábado tem jogos que não pedem computador (Ping Pong, Totó, Dominó,
+   * Truco) e jogos que só existem nele (a Copa de E-Sports). Quem se inscreve
+   * numa coisa raramente se inscreve na outra, e as duas listas vão para mãos
+   * diferentes na comissão — chaveamento de mesa é uma escala de horário no
+   * terraço, chaveamento de e-sports é uma escala de máquina.
+   *
+   * Guardados sem o `?usp=header` com que o Google os entrega: é a marca de
+   * origem que o formulário gruda quando o endereço é copiado do cabeçalho da
+   * própria página de edição, não faz parte do endereço público e é a mesma
+   * cauda que os convites da maratona levam limpa aqui embaixo.
+   *
+   * SÃO DESTINOS À PARTE DO EVEN3. O Even3 inscreve na SEMCOMP; estes
+   * escolhem o que jogar no sábado. Já é a confusão que o comentário do
+   * `semcomp` acima registra entre PROSEL e Even3, então os três ficam com
+   * nomes que não se parecem.
+   */
+  arenaJogosMesa:
+    'https://docs.google.com/forms/d/e/1FAIpQLSc9yYV9hqNH0fTUCFXJeyzHoGjnTvIK0QsEzl3bXAcxQQaCjg/viewform',
+  arenaJogosDigitais:
+    'https://docs.google.com/forms/d/e/1FAIpQLSfJUR7JPQKkzxf04MyOVOjd6ePR67lBbZv1z4QhGlS5MH1KiQ/viewform',
+
   /** Pré-venda das camisas do clube. */
   camisas: 'https://tally.so/r/xXbva9',
 

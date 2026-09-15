@@ -605,6 +605,17 @@
         Ela fica entre a Game Jam e os jogos presenciais porque a leitura da
         fileira desce do teclado para o controle: programar jogo, jogar jogo
         eletrônico, jogar sem computador nenhum.
+
+        A `nota` DE CADA CARTÃO APONTA PARA ONDE SE INSCREVE, e nas duas
+        últimas esse lugar deixou de ser o Even3 quando a comissão abriu os
+        formulários do sábado (`arenaJogosDigitais` e `arenaJogosMesa`). As duas
+        caem no `else` e voltam a dizer o que diziam — Even3 para a copa,
+        inscrição no local para os jogos de mesa — no dia em que as chaves
+        saírem de `site-links.ts`, junto com o bloco de escolha lá embaixo.
+
+        O comentário está aqui fora e não ao lado da `nota`: um comentário de
+        Nunjucks dentro de um literal de objeto é erro de sintaxe, e o que se
+        vê não é o comentário ignorado — é a página inteira em 500.
       #}
       {% set modalidades = [
         {
@@ -635,13 +646,13 @@
           selo: 'E-Sports',
           titulo: 'Copa de E-Sports',
           desc: 'O torneio de jogos eletrônicos da semana, disputado no sábado junto com as outras modalidades. Os títulos e o formato das chaves saem no Even3, com o regulamento.',
-          nota: 'Em equipe &middot; títulos definidos no Even3'
+          nota: ('Em equipe &middot; <a href="' + links.arenaJogosDigitais + '" target="_blank" rel="noopener noreferrer">escolher no formulário</a>') if links.arenaJogosDigitais else 'Em equipe &middot; títulos definidos no Even3'
         },
         {
           selo: 'Presenciais',
           titulo: 'Jogos presenciais',
           desc: 'Os torneios que não pedem computador nenhum: Ping Pong, Totó, Dominó e Truco, no terraço do Cimatec 3.',
-          nota: 'Inscrição no local &middot; premiação por modalidade'
+          nota: ('Premiação por modalidade &middot; <a href="' + links.arenaJogosMesa + '" target="_blank" rel="noopener noreferrer">escolher no formulário</a>') if links.arenaJogosMesa else 'Inscrição no local &middot; premiação por modalidade'
         }
       ] %}
 
@@ -656,8 +667,84 @@
         {% endfor %}
       </div>
 
+      {#
+        ESCOLHER O QUE JOGAR — os dois formulários do sábado.
+
+        A seção acima DESCREVE as seis modalidades; até aqui não havia onde
+        dizer "essa é a minha". O cartão da Copa de E-Sports mandava ao Even3 e
+        o dos jogos presenciais dizia "inscrição no local" — e nenhuma das duas
+        coisas é verdade desde que a comissão abriu os formulários.
+
+        DOIS CARTÕES E NÃO UMA LISTA DE SEIS LINKS: os formulários são dois, um
+        por família de jogo, e cada um pergunta as modalidades dele por dentro.
+        Quem quer jogar Totó e Truco preenche um; quem quer os dois mundos
+        preenche os dois.
+
+        Reaproveita o `.acao-card` da /seja-membro, que é o cartão em que o
+        `<a>` É a caixa inteira. Num bloco cujo objetivo é o clique, um link de
+        14px no pé de uma caixa de 200px é um alvo que se erra no celular.
+
+        O BLOCO INTEIRO É CONDICIONAL. Fechado o prazo, as duas chaves saem de
+        `site-links.ts` e a seção some sozinha, em vez de virar dois botões que
+        levam a um formulário que já não recebe resposta. Se só uma fechar,
+        sobra a outra e o `.acao-grid` se reacomoda.
+      #}
+      {% if links.arenaJogosMesa or links.arenaJogosDigitais %}
+      <div class="arena-escolha">
+        <div class="arena-escolha-topo fade-in">
+          <h3>Escolha a sua modalidade</h3>
+          <p>As chaves do sábado são montadas a partir destes dois formulários — um para o que se joga na mesa, outro para o que se joga na tela.</p>
+        </div>
+
+        <div class="acao-grid stagger-children">
+          {% if links.arenaJogosMesa %}
+          <a class="acao-card acao-card--destaque fade-in"
+             href="{{ links.arenaJogosMesa }}" target="_blank" rel="noopener noreferrer">
+            <span class="acao-selo">Jogos de mesa</span>
+            <h3>Ping Pong, Totó, Dominó e Truco</h3>
+            <p>Os torneios presenciais do terraço do Cimatec 3, os que não pedem computador nenhum. O formulário pergunta em quais você entra.</p>
+            <span class="acao-pe">
+              <span class="acao-nota">Formulário do Google &middot; premiação por modalidade</span>
+              <span class="acao-seta" aria-hidden="true">{{ ic.icone('seta', 16) }}</span>
+            </span>
+          </a>
+          {% endif %}
+
+          {% if links.arenaJogosDigitais %}
+          <a class="acao-card acao-card--destaque fade-in"
+             href="{{ links.arenaJogosDigitais }}" target="_blank" rel="noopener noreferrer">
+            <span class="acao-selo">Jogos digitais</span>
+            <h3>Copa de E-Sports</h3>
+            <p>O torneio de jogos eletrônicos da semana. Os títulos e o formato das chaves saem com o regulamento — o formulário é o que garante a sua vaga.</p>
+            <span class="acao-pe">
+              <span class="acao-nota">Formulário do Google &middot; vagas limitadas</span>
+              <span class="acao-seta" aria-hidden="true">{{ ic.icone('seta', 16) }}</span>
+            </span>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+      {#
+        O RODAPÉ DEIXOU DE MANDAR TUDO AO EVEN3.
+
+        Ele dizia "a inscrição de cada uma abre no Even3, junto com o
+        regulamento" — o que, com os dois formulários desenhados logo acima,
+        virava o texto contradizendo os botões a trinta pixels de distância.
+
+        Hoje os dois destinos convivem e cada frase diz qual é qual: os jogos do
+        sábado passam pelos formulários, as competições de código continuam no
+        Even3, e o regulamento sai lá para todas. Sem os formulários (`else`
+        acima), esta linha volta a ser a de antes.
+      #}
       <p class="secao-rodape fade-in">
-        As competições têm <strong>premiação por modalidade</strong> e vagas limitadas. A inscrição de cada uma abre no Even3, junto com o regulamento.
+        As competições têm <strong>premiação por modalidade</strong> e vagas limitadas.
+        {% if links.arenaJogosMesa or links.arenaJogosDigitais %}
+        Os jogos do sábado se escolhem nos formulários acima; as demais modalidades abrem no Even3, e o regulamento de cada uma sai por lá.
+        {% else %}
+        A inscrição de cada uma abre no Even3, junto com o regulamento.
+        {% endif %}
       </p>
     </div>
   </section>
