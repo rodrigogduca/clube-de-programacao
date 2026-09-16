@@ -339,13 +339,19 @@
   </div>
 
   {#
-    MODAL DE AVISO — o único que abre sozinho.
+    MODAL DE AVISO DO PROSEL — um dos dois que abrem sozinhos.
 
     Anuncia o que tem prazo AGORA: o PROSEL aberto, e ao lado dele as duas
     outras portas que também estão de pé (a membresia e a pré-venda da camisa).
     Fica no layout porque o aviso vale para as três telas públicas — quem chega
     pela `/semcomp` compartilhada no WhatsApp precisa vê-lo tanto quanto quem
     chega pela home.
+
+    ELE VEM ANTES DO `#modalSemcomp` DE PROPÓSITO. O `main.js` abre o PRIMEIRO
+    `.modal-overlay[data-aviso]` do documento, um só por página — nas edições
+    em que as duas campanhas estiverem de pé ao mesmo tempo, quem interrompe é
+    o processo seletivo, que fecha antes. Hoje a questão é teórica: `prosel`
+    está vazio e este bloco inteiro não é desenhado.
 
     ELE INTEIRO DEPENDE DE `links.prosel`. Quando o processo encerrar, basta a
     string vazia em `site-links.ts` (a convenção que aquele arquivo documenta) e
@@ -413,6 +419,119 @@
     </div>
   </div>
   {% endif %}
+
+  {#
+    ==========================================================================
+    MODAL DA SEMCOMP — o aviso que abre sozinho em toda tela pública MENOS a
+    da própria SEMCOMP.
+
+    O EVENTO É O QUE TEM PRAZO AGORA. O PROSEL encerrou (`prosel: ''` em
+    `site-links.ts`), e com ele saíram do ar a tarja do topo e o pop-up que
+    ficava logo acima — o slot do aviso automático ficou vago no mês em que a
+    semana acontece. Quem cai na home por uma busca, ou na /seja-membro por um
+    link do Instagram, não tem por onde descobrir que faltam dias para a
+    SEMCOMP: a navbar tem o item, mas item de menu não interrompe ninguém.
+
+    POR QUE ELE NÃO APARECE NA /semcomp: um diálogo que anuncia a página em que
+    a pessoa já está é um obstáculo, não um aviso — ela chegou lá justamente
+    para ler o que a caixa resume, e o primeiro gesto é fechá-la. Pior: fechar
+    grava a dispensa da campanha no localStorage, então o aviso queimaria a
+    única chance que tinha de aparecer para essa pessoa, na única página em que
+    não servia para nada.
+
+    E O DESLIGAMENTO É UM `{% block %}`, NÃO UM `if` SOBRE O ENDEREÇO. Comparar
+    `request.path` com '/semcomp' aqui dentro amarraria o layout à rota, e a
+    rota é a coisa que muda (a SEMCOMP já foi modal antes de ser página). O
+    bloco inverte a responsabilidade: quem não quer o aviso o dispensa, em uma
+    linha, dentro da própria tela — é o que `core/semcomp.njk` faz no fim do
+    arquivo. Qualquer página pública futura nasce com o aviso por padrão, que é
+    o padrão certo.
+
+    `data-aviso` É A IDENTIDADE DA CAMPANHA, e é sob ela que o `main.js` grava
+    a dispensa no localStorage — uma vez por pessoa, não uma por página. Trocar
+    o valor faz o aviso voltar para todo mundo, inclusive para quem já fechou
+    o anterior. Ele é também o que ESCOLHE o modal: o `main.js` abre o primeiro
+    `.modal-overlay[data-aviso]` do documento, e é por isso que este fica
+    DEPOIS do `#modalAviso` do PROSEL — nas edições em que os dois estiverem de
+    pé, quem interrompe é o processo seletivo, que tem prazo mais curto.
+
+    O BLOCO INTEIRO DEPENDE DE `links.semcomp`. Passado o evento, a string
+    vazia em `site-links.ts` apaga o pop-up, o selo de "inscrições abertas" do
+    herói e os botões de inscrição de uma vez — nada aqui precisa ser removido.
+    ==========================================================================
+  #}
+  {% block aviso_semcomp %}
+  {% if links.semcomp %}
+  <div class="modal-overlay" id="modalSemcomp" role="dialog" aria-modal="true"
+       aria-labelledby="tituloSemcomp" data-aviso="semcomp-2026" hidden>
+    <div class="modal-card modal-card--aviso">
+      <button class="modal-close" type="button" data-modal-fechar aria-label="Fechar">
+        {{ ic.icone('fechar') }}
+      </button>
+
+      <div class="modal-topo">
+        <span class="modal-selo modal-selo--vivo">
+          <span class="aviso-ponto" aria-hidden="true"></span>
+          29/09 a 03/10 &middot; inscrições abertas
+        </span>
+        <h2 id="tituloSemcomp">A SEMCOMP 2026 está chegando</h2>
+        {# "Aberta ao público" e NÃO "de graça": a comissão nunca definiu se
+           há preço, e a página da SEMCOMP deixa o "é pago?" fora do FAQ pelo
+           mesmo motivo. Um pop-up prometendo gratuidade é uma promessa que
+           alguém cobra no credenciamento. #}
+        <p>Cinco dias de palestras, workshops e competições na Universidade SENAI CIMATEC, de 29 de setembro a 3 de outubro. Aberta ao público, com certificado pelo Even3.</p>
+      </div>
+
+      {# Inscrever é o que tem prazo; ver a programação é o que a pessoa faz
+         quando ainda está decidindo. Daí um cheio e um contornado. #}
+      <div class="modal-acoes">
+        <a class="btn-primary" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
+          Garantir minha inscrição
+          {{ ic.icone('externo', 15) }}
+        </a>
+        <a class="btn-outline" href="{{ url('semcomp') }}">Ver a programação</a>
+      </div>
+
+      {#
+        AS DUAS PORTAS QUE O EVEN3 NÃO ABRE.
+
+        Inscrever-se na semana NÃO inscreve ninguém no hackathon nem nos jogos
+        do sábado: o primeiro tem portal próprio, os segundos têm formulários
+        próprios. É a confusão mais cara da edição — a pessoa se dá por
+        inscrita e descobre que não estava no dia da chamada das equipes —, e
+        este é o único lugar do site que alcança quem nunca abriu a /semcomp.
+
+        Abaixo do filete e não ao lado dos botões: são "além disso", não a
+        decisão principal da caixa.
+      #}
+      {% if links.hackathon or links.arenaJogosMesa or links.arenaJogosDigitais %}
+      <div class="modal-bloco">
+        <span class="modal-bloco-titulo">Inscrição à parte</span>
+        <div class="aviso-portas">
+          {% if links.hackathon %}
+          <a class="aviso-porta" href="{{ links.hackathon }}" target="_blank" rel="noopener noreferrer">
+            <span class="aviso-porta-selo">Hackathon</span>
+            <strong>Inscrever minha equipe</strong>
+            <span class="aviso-porta-desc">Regulamento, desafio e inscrição ficam no portal do hackathon — fora do Even3.</span>
+            <span class="aviso-porta-seta" aria-hidden="true">{{ ic.icone('seta', 15) }}</span>
+          </a>
+          {% endif %}
+
+          {% if links.arenaJogosMesa or links.arenaJogosDigitais %}
+          <a class="aviso-porta" href="{{ url('semcomp') }}#arena">
+            <span class="aviso-porta-selo">Arena Day</span>
+            <strong>Escolher a modalidade</strong>
+            <span class="aviso-porta-desc">O sábado de competições: e-sports, jogos de mesa e as provas de código.</span>
+            <span class="aviso-porta-seta" aria-hidden="true">{{ ic.icone('seta', 15) }}</span>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+  {% endblock %}
 
   <!-- FOOTER -->
   <footer>

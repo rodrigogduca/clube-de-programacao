@@ -2,7 +2,7 @@
   SEMCOMP 2026 — a página do maior evento do clube.
 
     herói ilustrado · sobre o evento · o que acontece · a semana dia a dia ·
-    Arena Day · inscrição e dúvidas · comissão organizadora
+    Arena Day · inscrição, dúvidas e vestimenta · comissão organizadora
 
   ERA UM MODAL. Um diálogo não tem endereço: não dava para mandar o link do
   evento no grupo, o Google não indexava uma linha dele, e a semana inteira
@@ -175,6 +175,36 @@
         {% else %}
         <a class="btn-primary" href="#inscricao">Como participar</a>
         {% endif %}
+
+        {#
+          O HACKATHON TEM PORTA PRÓPRIA, e por isso tem botão próprio aqui em
+          cima — não é "mais um detalhe da semana" que a pessoa encontra
+          rolando até a seção 02.
+
+          Ele é a única atividade da SEMCOMP que NÃO se resolve no Even3: a
+          inscrição da equipe, o regulamento e o desafio vivem num portal
+          mantido pela organização do hackathon (ver `hackathon` em
+          `site-links.ts`). Quem se inscreveu na semana e parou por aí acha que
+          está inscrito no hackathon também — e descobre que não estava no dia
+          em que as equipes são chamadas.
+
+          `btn-outline` e não um segundo `btn-secondary`: o âmbar do contorno
+          diz que este leva para FORA, igual ao "Quero me inscrever" ao lado,
+          enquanto o cinza do "Ver os cinco dias" é o que rola a própria
+          página. Preenchido ele não pode ser — duas pílulas cheias lado a lado
+          disputam a mesma atenção, que é a mesma razão do "Seja Membro" da
+          navbar.
+
+          Condicional como todos os outros: some junto com a string vazia em
+          `site-links.ts` quando as equipes fecharem.
+        #}
+        {% if links.hackathon %}
+        <a class="btn-outline" href="{{ links.hackathon }}" target="_blank" rel="noopener noreferrer">
+          Portal do Hackathon
+          {{ ic.icone('externo', 15) }}
+        </a>
+        {% endif %}
+
         <a class="btn-secondary" href="#programacao">Ver os cinco dias</a>
       </div>
 
@@ -198,6 +228,142 @@
       </dl>
     </div>
   </header>
+
+  {#
+    ==========================================================================
+    A FAIXA DE MARCAS — quem apoia a semana, andando devagar.
+
+    É A MESMA `.faixa` DA HOME, e de propósito. Aquele componente já resolveu,
+    com o laço fechando sem emenda, as quatro coisas difíceis de um letreiro
+    corrido: a segunda cópia caindo no pixel exato onde a primeira começou, o
+    desbotado nas pontas, a pausa no ponteiro e o `animation: none` de
+    movimento reduzido. Escrever um segundo trilho aqui seria reescrever esses
+    quatro acertos — e é sempre a cópia que fica sem o quarto.
+
+    A REGRA DAS DUAS CÓPIAS VALE AQUI TAMBÉM: o HTML repete a lista duas vezes
+    e a animação anda exatamente -50%. Mexer no número de cópias sem mexer nos
+    -50% quebra a emenda (ver o comentário do `.faixa` na folha).
+
+    SÃO CINCO MARCAS, E CINCO É POUCO PARA UM TRILHO. A faixa da home tem oito
+    termos longos ("Maratona de Programação"), então uma cópia da lista já é
+    mais larga que qualquer tela. Cinco nomes curtos não são — medido, davam
+    1050px num viewport de 1536px, e o passo de -50% descobria o fim: a faixa
+    andava com um buraco atrás de si. Quem resolve é o `min-width: 100vw` da
+    lista, na folha, e não a quantidade de cópias aqui — então acrescentar ou
+    tirar patrocinador desta lista não pede conta nenhuma.
+
+    `logo` É OPCIONAL, e sem o campo a marca sai com o nome escrito na fonte de
+    título. Hoje as cinco têm arquivo, mas a saída de texto continua sendo o
+    caminho certo para um patrocinador novo enquanto o logo dele não chega:
+    texto é uma faixa honesta, não um buraco — ninguém desenha logo de terceiro
+    no CSS.
+
+    OS LOGOS ENTRAM NA COR DA PRÓPRIA MARCA, sem filtro de cinza nem `opacity`
+    na folha: é a mesma decisão dos selos das competições na /seja-membro.
+
+    TRÊS ARQUIVOS SÃO A VERSÃO CLARA DA MARCA, e isso não é exceção àquilo: é o
+    lockup "reverse", que é o que toda marca publica para fundo escuro. A
+    Fortinet chega com o wordmark em quase-preto; a AWS e a Caffeine Army
+    chegam em tinta escura sobre papel branco opaco, que nesta página seria um
+    quadrado branco. Nos três, só o escuro do LETREIRO virou claro e a cor de
+    marca ficou intacta — o vermelho da Fortinet, o laranja do sorriso da AWS,
+    e no caso da Caffeine Army o ícone inteiro (círculo creme com a chama
+    escura dentro), que se apoia no próprio creme e não no fundo da página;
+    clarear a chama junto teria apagado o desenho por dentro do círculo.
+
+    A procedência de cada arquivo, o que foi mexido e as duas contas que isso
+    exigiu (a do alfa e a que separa cor de marca de tinta escura) estão em
+    `images/parceiros/PROCEDENCIA.md`.
+
+    `pendente` REPETE O QUE A TRILHA JÁ DIZ. Google e Fortinet aparecem na
+    seção 03 com a pílula em traço tracejado, sob a nota "nada é anunciado como
+    fechado antes de estar" — e uma faixa de patrocinadores a quatrocentos
+    pixels dali, exibindo as duas como assinadas, seria a mesma página se
+    contradizendo. Enquanto houver uma marca pendente na lista, sai a linha de
+    rodapé abaixo da faixa. Fechado o contrato, tira-se o `pendente: true`
+    daqui E a pílula tracejada da trilha, no mesmo commit.
+    ==========================================================================
+  #}
+  {#
+    `altura` É A ALTURA DO LOGO EM PIXELS, UMA POR MARCA — e sem ela a fileira
+    não funciona.
+
+    Os cinco arquivos têm proporções que não se parecem: o Fortinet é um
+    wordmark de 8,3:1, o da AWS é a pilha de 1,5:1, o Google fica em 3,3:1.
+    Com uma altura só para todos, o Fortinet sairia com 281px de largura e a
+    AWS com 51 — cinco vezes menor, na mesma fileira, e a leitura vira "a
+    Fortinet é o patrocinador grande". Altura igual NÃO é tamanho igual.
+
+    Os números saem de equalizar a ÁREA de cada logo (altura = raiz de
+    área/proporção, com a área do Google a 30px como alvo), que é o que
+    aproxima o peso óptico quando os desenhos são diferentes demais para o
+    olho comparar por um lado só. A AWS e a Caffeine Army ficariam em 44 e 42
+    e estão presas em 40: acima disso a faixa engorda para acomodar duas
+    marcas, e a altura da faixa é do conjunto, não de um logo.
+
+    Afinar um número aqui é o jeito certo de acertar uma marca que "parece
+    grande demais" — nunca mexer no `.marca-logo` da folha, que vale para todas.
+  #}
+  {% set marcas = [
+    { nome: 'Red Bull',      logo: 'red-bull.svg',      altura: 27 },
+    { nome: 'Google',        logo: 'google.svg',        altura: 30, pendente: true },
+    { nome: 'AWS',           logo: 'aws.png',           altura: 40 },
+    { nome: 'Fortinet',      logo: 'fortinet.svg',      altura: 19, pendente: true },
+    { nome: 'Caffeine Army', logo: 'caffeine-army.png', altura: 40 }
+  ] %}
+
+  {# `selectattr` e não um `set` dentro de um `for`: no Nunjucks a atribuição
+     vaza para fora do laço (ao contrário do Jinja, de onde a sintaxe veio), e
+     contar com isso é contar com a diferença entre os dois. #}
+  {% set pendentes = marcas | selectattr('pendente') | length %}
+
+  <div class="marcas-faixa">
+    <div class="container">
+      <span class="section-label marcas-rotulo" id="tituloMarcas">// quem apoia</span>
+    </div>
+
+    <div class="faixa faixa--marcas" role="group" aria-labelledby="tituloMarcas">
+      <div class="faixa-trilho">
+        {% for repeticao in [1, 2] %}
+        <ul class="faixa-lista faixa-lista--marcas"{% if repeticao == 2 %} aria-hidden="true"{% endif %}>
+          {% for m in marcas %}
+          <li class="marca">
+            {#
+              SEM `loading="lazy"`, e é o trilho que proíbe.
+
+              A faixa anda: uma marca que está fora da tela agora entra nela em
+              segundos, sozinha, sem ninguém rolar a página. Com carregamento
+              preguiçoso o navegador só vai buscar o arquivo quando ele já
+              estiver entrando — e o que se vê é a casa da marca passando vazia
+              e o logo aparecendo estalado no meio do movimento. Foi o que
+              apareceu no teste: metade do trilho andando com buraco.
+
+              Aqui não há nada a economizar: são cinco arquivos de 3 a 4 KB, a
+              faixa fica logo abaixo do herói (quase na dobra) e as duas cópias
+              pedem os MESMOS cinco endereços, então a segunda sai do cache.
+              `decoding="async"` fica: ele não adia o download, só tira a
+              decodificação do caminho da primeira pintura.
+            #}
+            {% if m.logo %}
+            <img class="marca-logo" src="{{ static('images/parceiros/' ~ m.logo) }}"
+                 alt="{{ m.nome }}" style="--marca-altura: {{ m.altura | default(30) }}"
+                 decoding="async">
+            {% else %}
+            <span class="marca-nome">{{ m.nome }}</span>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% if pendentes %}
+    <div class="container">
+      <p class="marcas-nota">Parte destes convites ainda está em confirmação &mdash; nada é anunciado como fechado antes de estar.</p>
+    </div>
+    {% endif %}
+  </div>
 
   {#
     ==========================================================================
@@ -753,13 +919,18 @@
 
   {#
     ==========================================================================
-    05 — INSCRIÇÃO E DÚVIDAS
+    05 — INSCRIÇÃO, DÚVIDAS E VESTIMENTA
 
     O FAQ RESPONDE SÓ O QUE A DOCUMENTAÇÃO OFICIAL JÁ AFIRMA. Falta aqui, de
     propósito, a pergunta mais frequente de todas — "é pago?": nenhum documento
     da comissão define isso, e chutar num FAQ é criar uma promessa que alguém
     vai cobrar no credenciamento. Quando a comissão definir, acrescente o par
     na lista `duvidas`.
+
+    O CÓDIGO DE VESTIMENTA FECHA A SEÇÃO, antes do mapa. É a única exigência da
+    página que a pessoa precisa cumprir ANTES de sair de casa, e por isso
+    aparece duas vezes: em uma linha da ficha (ao lado do botão de inscrição,
+    onde a decisão é tomada) e no bloco inteiro, com as duas listas.
     ==========================================================================
   #}
   <section id="inscricao">
@@ -798,6 +969,13 @@
             <div>
               <dt>Credenciamento</dt>
               <dd>Das 07:30 às 08:50, todo dia de palestra</dd>
+            </div>
+            <div>
+              <dt>Vestimenta</dt>
+              <dd>
+                Calça comprida, blusa com manga e sapato fechado &mdash;
+                <a href="#vestimenta">ver o código completo</a>
+              </dd>
             </div>
           </dl>
 
@@ -844,6 +1022,10 @@
             r: ('As equipes recebem um desafio e têm o prazo do evento para entregar uma solução funcionando. O regulamento, o desafio e a inscrição das equipes ficam no <a href="' ~ links.hackathon ~ '" target="_blank" rel="noopener noreferrer">portal do hackathon</a>.') if links.hackathon else 'As equipes recebem um desafio e têm o prazo do evento para entregar uma solução funcionando. O regulamento e a inscrição saem no Even3.'
           },
           {
+            p: 'Tem código de vestimenta?',
+            r: 'Tem, e é a regra de acesso do campus: nada de shorts, bermudas, minissaias, tops, blusas curtas, camisetas sem manga, regatas nem calçados abertos; boné e chapéu saem nas áreas de aula e de laboratório; e estampa de torcida organizada ou de partido político não entra. O seguro é calça comprida, blusa com manga e sapato fechado — <a href="#vestimenta">a lista completa está logo abaixo</a>.'
+          },
+          {
             p: 'Preciso levar computador?',
             r: 'Só para os workshops e para as competições digitais, que são práticos. Palestras, estandes e jogos presenciais não pedem nada além de aparecer.'
           },
@@ -875,6 +1057,107 @@
           </details>
           {% endfor %}
         </div>
+      </div>
+
+      {#
+        O CÓDIGO DE VESTIMENTA.
+
+        Não é regra da SEMCOMP: é a regra de acesso do campus, e vale para
+        qualquer pessoa que entre nele. Mas quem chega de fora — e a semana
+        convida seis universidades — não tem como saber disso, e a portaria
+        não é hora de descobrir: quem vem de Feira, de Conceição ou de ônibus
+        às 07:00 não volta em casa para trocar de sapato.
+
+        DUAS COLUNAS E NÃO UMA LISTA SÓ. "Não pode chinelo" e "use sapato
+        fechado" são o mesmo fato dito de dois jeitos, e misturados numa lista
+        única viram um texto que a pessoa lê inteiro para descobrir em que
+        metade cada linha está. Separadas, cada coluna responde a uma pergunta
+        diferente: "o que me barra na entrada" e "o que eu visto amanhã".
+
+        FICA ANTES DO MAPA e depois do FAQ, porque a ordem da seção é a ordem
+        da decisão: se eu vou (CTA), o que eu ainda não sei (FAQ), o que eu
+        visto, como eu chego.
+
+        O ÍCONE É `aria-hidden` de propósito: quem decide o sentido de cada
+        coluna é o `h4` acima dela. Um círculo cortado anunciado como "imagem"
+        no meio de cada item só repetiria o título oito vezes.
+      #}
+      {#
+        CADA ITEM É UM OBJETO, e não mais uma string solta, por causa do
+        `rotulo`.
+
+        A lista do que PODE chegou da coordenação organizada por categoria —
+        calças, blusas, calçados, frio —, e a categoria não é enfeite: é por ela
+        que se procura. Ninguém lê a coluna inteira; a pessoa já está de pé na
+        frente do armário com uma pergunta específica ("o que eu calço?") e
+        precisa achar a linha dela de relance. Com a categoria diluída no meio
+        da frase, achar "botas" custa ler as quatro linhas.
+
+        A coluna do que NÃO pode não tem rótulo, e é por isso que o campo é
+        opcional: lá cada linha já é uma peça, e inventar uma categoria por
+        item ("Pernas: shorts e bermudas") seria uma hierarquia que o original
+        não tem.
+      #}
+      {% set vestimenta = [
+        {
+          chave: 'nao',
+          icone: 'proibido',
+          titulo: 'Itens proibidos no campus',
+          resumo: 'Barra a entrada no campus',
+          itens: [
+            { texto: 'Shorts e bermudas.' },
+            { texto: 'Minissaias.' },
+            { texto: 'Tops e blusas curtas, ou que deixem a barriga de fora.' },
+            { texto: 'Camisetas sem manga e regatas.' },
+            { texto: 'Chinelos e calçados abertos.' },
+            { texto: 'Bonés, chapéus e similares — nas áreas de aula e laboratório.' },
+            { texto: 'Roupas com estampas de torcidas organizadas ou de partidos políticos.' }
+          ]
+        },
+        {
+          chave: 'sim',
+          icone: 'certo',
+          titulo: 'Itens permitidos no campus',
+          resumo: 'Áreas comuns e salas de aula',
+          itens: [
+            { rotulo: 'Calças', texto: 'Jeans convencional, sarja, cargo ou alfaiataria.' },
+            { rotulo: 'Blusas e camisas', texto: 'Polo, camisa de botão, camiseta de manga curta convencional e blusas com mangas — desde que cubram os ombros e o abdômen por inteiro.' },
+            { rotulo: 'Calçados', texto: 'Tênis, sapatos sociais, sapatilhas e botas, sempre totalmente fechados.' },
+            { rotulo: 'Frio', texto: 'Moletons, jaquetas, casacos e suéteres.' }
+          ]
+        }
+      ] %}
+
+      <div class="vestimenta fade-in" id="vestimenta">
+        <div class="vestimenta-topo">
+          <h3>Código de vestimenta</h3>
+          <span>Vale nos cinco dias, em todo o campus</span>
+        </div>
+
+        <div class="vestimenta-grade">
+          {% for v in vestimenta %}
+          <section class="vestimenta-col vestimenta-col--{{ v.chave }}">
+            <header class="vestimenta-cabecalho">
+              <h4>{{ v.titulo }}</h4>
+              <span class="vestimenta-resumo">{{ v.resumo }}</span>
+            </header>
+            <ul class="vestimenta-itens">
+              {% for i in v.itens %}
+              <li class="vestimenta-item">
+                <span class="vestimenta-marca" aria-hidden="true">{{ ic.icone(v.icone, 17) }}</span>
+                <span>{% if i.rotulo %}<strong class="vestimenta-rotulo">{{ i.rotulo }}:</strong> {% endif %}{{ i.texto }}</span>
+              </li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% endfor %}
+        </div>
+
+        <p class="vestimenta-pe">
+          A regra é da Universidade SENAI CIMATEC e vale para todo mundo que entra no campus, inscrito ou não.
+          Na dúvida sobre uma peça específica, pergunte no
+          <a href="{{ links.instagramSemcomp }}" target="_blank" rel="noopener noreferrer">Instagram da SEMCOMP</a>.
+        </p>
       </div>
 
       {#
@@ -1059,3 +1342,21 @@
   }
   </script>
 {% endblock %}
+
+{#
+  O POP-UP DA SEMCOMP NÃO ABRE AQUI.
+
+  `layouts/site.njk` desenha, em toda tela pública, um aviso que abre sozinho
+  anunciando a semana. Nesta página ele seria um diálogo dizendo "existe uma
+  página da SEMCOMP" por cima da página da SEMCOMP — o primeiro gesto de quem
+  chegou aqui de propósito seria fechá-lo.
+
+  E fechar não é de graça: o `main.js` grava a dispensa da campanha no
+  localStorage, uma vez por pessoa. O aviso queimaria a única aparição que
+  tinha — na única tela em que não servia para nada — e nunca mais alcançaria
+  essa pessoa na home nem na /seja-membro, que é onde ele existe para funcionar.
+
+  Sobrescrever o bloco com nada é o desligamento inteiro. Ver o comentário do
+  `aviso_semcomp` no layout.
+#}
+{% block aviso_semcomp %}{% endblock %}

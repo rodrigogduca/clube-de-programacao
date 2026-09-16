@@ -1484,6 +1484,123 @@ section {
 }
 
 
+/* ---- A faixa de marcas (/semcomp) ----
+
+   A mesma mecânica do trilho acima, com outro conteúdo: em vez dos termos do
+   clube, quem apoia a semana. Tudo o que é difícil — o laço sem emenda, o
+   desbotado das pontas, a pausa no ponteiro, o `animation: none` de movimento
+   reduzido — vem de `.faixa` e `.faixa-trilho` e não é reescrito aqui. O que
+   muda é o espaçamento, o corpo da letra e o tratamento do logo.
+
+   `min-width: 100vw` NA LISTA, E É ELE QUE FAZ A FAIXA FUNCIONAR COM CINCO
+   ITENS.
+
+   A regra do trilho é que a animação anda -50%, ou seja, exatamente UMA cópia
+   da lista. Isso só esconde a emenda enquanto uma cópia for mais larga que a
+   tela: se for menor, o deslocamento passa do fim do conteúdo e a faixa anda
+   com um buraco atrás de si. A faixa da home tem oito termos longos ("Maratona
+   de Programação") e passa disso sobrando. Cinco nomes de marca não passam —
+   medido num viewport de 1536px, uma cópia dava 1050px.
+
+   Prender a lista em `100vw` resolve por construção, e em qualquer tela: a
+   cópia nunca é menor que a janela, então o passo de -50% nunca descobre o
+   fim. É melhor do que empurrar a largura no `min-width` de cada marca (que
+   depende de quantas marcas existem, e quebraria de novo ao remover uma) e
+   melhor do que repetir a lista mais vezes (que multiplica o DOM e ainda
+   precisa de conta para saber quantas cópias bastam).
+
+   `space-evenly` é o par necessário disso: com a cópia esticada até 100vw,
+   sem ele as cinco marcas ficariam amontoadas à esquerda com um vazio à
+   direita. Com ele, sobra espaço = respiro entre as marcas. O `gap` continua
+   valendo para o outro caso, o do celular, em que o conteúdo é mais largo que
+   os 100vw e não há folga para distribuir. */
+.marcas-faixa {
+  margin-top: clamp(40px, 5vw, 64px);
+}
+
+.marcas-rotulo {
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+/* A faixa da home encosta no herói e por isso tem fundo; esta flutua entre
+   duas respirações da página e fica só com os filetes. */
+.faixa--marcas {
+  background: transparent;
+}
+
+.faixa-lista--marcas {
+  align-items: center;
+  justify-content: space-evenly;
+  min-width: 100vw;
+  gap: clamp(30px, 4vw, 60px);
+}
+
+/* A casa de cada marca. Ela existe para os logos, que chegam em larguras
+   diferentes (um wordmark deitado ao lado de um símbolo quadrado): sem um piso
+   de largura, a fileira se acomoda ao desenho de cada arquivo e deixa de
+   parecer uma fileira. */
+.marca {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: clamp(110px, 12vw, 170px);
+}
+
+/* O logo entra NA COR DA PRÓPRIA MARCA — sem `grayscale`, sem `opacity` e sem
+   fundo branco atrás. É a mesma decisão dos selos das competições na
+   /seja-membro, e pelo mesmo motivo: a página não desbota a marca de ninguém
+   para caber numa fileira uniforme, e plaquinha branca atrás de logo foi o que
+   se removeu de lá.
+
+   DUAS MARCAS SÃO A VERSÃO CLARA DELAS, E NÃO UMA EXCEÇÃO A ISSO. O arquivo da
+   AWS e o da Fortinet vêm com o wordmark em quase-preto (#161d26 e #231f20),
+   que sobre esta página é um logo invisível. Nos dois o escuro virou branco e
+   a cor de marca ficou intacta (o laranja da AWS, o vermelho da Fortinet) —
+   que é exatamente o lockup "reverse" que as duas publicam para fundo escuro,
+   e não uma repintura inventada aqui.
+
+   A ALTURA VEM DE FORA, uma por marca, no `--marca-altura` que o template
+   escreve em cada `<img>` — ver o comentário da lista `marcas` em
+   `core/semcomp.njk` para o porquê de não haver uma altura só. O `30` do
+   `var()` é a reserva para uma marca que entre sem o campo.
+
+   `width: auto` e `max-width: 100%`: a altura é que alinha uma fileira de
+   logos, nunca a largura, e o teto impede que um wordmark muito deitado
+   atropele a casa da vizinha. */
+.marca-logo {
+  height: calc(var(--marca-altura, 30) * 1px);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* O nome escrito, enquanto o logo não existe.
+
+   `--display` e não o `--marca` da faixa da home: aquela é a letra à mão do
+   clube, e nome de empresa escrito à mão parece rascunho, não marca. Aqui a
+   grotesca de título em 600 lê como wordmark — que é exatamente o que é
+   enquanto a arte não chega. */
+.marca-nome {
+  font-family: var(--display);
+  font-size: clamp(1rem, 1.7vw, 1.3rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--giz);
+}
+
+.marcas-nota {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--cinza);
+  text-wrap: pretty;
+}
+
+
 /* ==========================================================================
    CABEÇALHO DA PÁGINA INTERNA (/seja-membro)
 
@@ -3570,6 +3687,168 @@ section {
   margin-top: 28px;
 }
 
+/* ---- O código de vestimenta, em duas colunas ----
+
+   Entre o FAQ e o mapa. O bloco tem a mesma anatomia do `.dia-padrao` da seção
+   03 — título com filete embaixo e uma grade de cartões — porque é o mesmo
+   papel: um sub-bloco que responde a uma pergunta prática dentro de uma seção
+   que já tem assunto próprio. Repetir a forma é o que evita que a página pareça
+   ter um componente novo a cada rolagem.
+
+   AS DUAS COLUNAS NÃO SÃO VERDE E VERMELHO. `--vermelho` e `--verde` existem
+   nos tokens, mas são cores de estado (erro, sucesso) das calculadoras do
+   painel; trazidos para cá, o bloco viraria um formulário validado no meio de
+   uma página de evento, e o vermelho ainda leria como "deu errado" para quem
+   só está decidindo que sapato usar. A distinção fica no desenho do ícone
+   (círculo cortado x círculo com visto) e na cor do filete: a coluna do que não
+   pode usa o neutro forte, a das recomendações usa o âmbar da interface.
+
+   `align-content: start` nas colunas: elas têm sete e quatro itens — as duas
+   listas são as oficiais do campus e não empatam — e sem isso a mais curta
+   esticaria os filetes para igualar a altura da vizinha. */
+.vestimenta {
+  margin-top: clamp(36px, 4.5vw, 56px);
+}
+
+.vestimenta-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px 20px;
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--traco);
+}
+
+.vestimenta-topo h3 {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--giz);
+}
+
+.vestimenta-topo > span {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.06em;
+  color: var(--cinza);
+}
+
+/* `min(280px, 100%)` pelo mesmo motivo do `.grade`: o mínimo de uma coluna de
+   `minmax` é rígido e estouraria o container numa tela de 320px. */
+.vestimenta-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: 14px;
+}
+
+.vestimenta-col {
+  align-content: start;
+  padding: 26px 24px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+}
+
+.vestimenta-col--sim {
+  border-color: var(--ambar-traco);
+}
+
+.vestimenta-cabecalho {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--traco);
+}
+
+.vestimenta-cabecalho h4 {
+  font-family: var(--marca);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--giz);
+}
+
+.vestimenta-resumo {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.vestimenta-itens {
+  list-style: none;
+}
+
+.vestimenta-item {
+  display: flex;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--traco);
+  font-size: 0.975rem;
+  line-height: 1.5;
+  color: var(--giz);
+  text-wrap: pretty;
+}
+
+.vestimenta-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+/* `margin-top` de 1px alinha o ícone à primeira linha do texto: o círculo é
+   centrado no viewBox e a letra tem ombro, então os dois centros geométricos
+   não coincidem. `flex-shrink: 0` para o desenho não achatar quando o item
+   quebra em três linhas no celular. */
+.vestimenta-marca {
+  display: flex;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--fumaca);
+}
+
+.vestimenta-col--sim .vestimenta-marca {
+  color: var(--ambar);
+}
+
+/* A categoria da linha — "Calças", "Calçados", "Frio" — na coluna do que pode.
+
+   Só peso, sem cor própria: o texto do item já é `--giz`, e o rótulo é um
+   ponto de entrada para a leitura, não um segundo nível de informação. Pintado
+   de âmbar viraria o terceiro sinal âmbar do mesmo cartão (o ícone e o filete
+   da coluna já são), e quatro rótulos acesos em fila roubam a linha que eles
+   deviam apenas ajudar a achar.
+
+   600 e não o 700 padrão do `<strong>`: é o peso de destaque do resto da
+   folha (`.secao-rodape strong`, `.grade-corpo strong`), e num corpo de
+   0.975rem o 700 empasta. */
+.vestimenta-rotulo {
+  font-weight: 600;
+  color: var(--giz);
+}
+
+.vestimenta-pe {
+  margin-top: 18px;
+  max-width: 76ch;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+.vestimenta-pe a {
+  color: var(--ambar);
+  border-bottom: 1px solid var(--ambar-traco);
+  transition: color var(--transicao), border-color var(--transicao);
+}
+
+.vestimenta-pe a:hover {
+  color: var(--gema);
+  border-color: var(--gema);
+}
+
 /* ---- O mapa do local, em faixa ----
 
    Um iframe do Google dentro de uma página com identidade fechada é o elemento
@@ -4360,9 +4639,10 @@ section {
 
 /* ---- O aviso que abre sozinho ----
 
-   O modal do PROSEL aberto. É o único que a pessoa não pediu para ver, e a
-   diferença de tratamento vem daí: ele precisa se explicar em um segundo, antes
-   de a mão chegar no X.
+   A campanha com prazo do momento — hoje a SEMCOMP chegando, ontem o PROSEL
+   aberto, e a forma é a mesma para as duas. É o único modal que a pessoa não
+   pediu para ver, e a diferença de tratamento vem daí: ele precisa se explicar
+   em um segundo, antes de a mão chegar no X.
 
    A luz âmbar no topo é a mesma do `.acao-card--destaque` — o site inteiro usa
    esse degradê para dizer "é por aqui", e um aviso que aparece sem ser chamado
@@ -4382,9 +4662,10 @@ section {
     var(--penumbra);
 }
 
-/* Membresia e camisa, abaixo do filete. `auto-fit` e não duas colunas fixas:
-   no celular elas empilham sozinhas, que é onde a altura sobra e a largura é
-   que falta. */
+/* As portas secundárias, abaixo do filete — hackathon e Arena Day no aviso da
+   SEMCOMP, membresia e camisa no do PROSEL. `auto-fit` e não duas colunas
+   fixas: no celular elas empilham sozinhas, que é onde a altura sobra e a
+   largura é que falta. */
 .aviso-portas {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -4846,6 +5127,7 @@ footer {
   .modal-acoes .btn-outline,
   .capa-acoes .btn-primary,
   .capa-acoes .btn-secondary,
+  .capa-acoes .btn-outline,
   .inscricao-acoes .btn-primary,
   .inscricao-acoes .btn-outline,
   .acoes-centro .btn-outline {

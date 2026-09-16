@@ -233,7 +233,22 @@ if (hamburger && mobileMenu) {
   }
 
   /* ------------------------------------------------------------------
-     AVISO QUE ABRE SOZINHO — o PROSEL aberto, a membresia e a camisa.
+     AVISO QUE ABRE SOZINHO — hoje, a SEMCOMP chegando.
+
+     QUEM ABRE É O `data-aviso`, NÃO UM `id`. Antes daqui saía um
+     `getElementById('modalAviso')`, e o modal do PROSEL era o único que existia
+     — quando a SEMCOMP ganhou o dela, o caminho barato seria reaproveitar
+     aquele id para outro assunto, e o site passaria a ter um "modalAviso" que
+     não fala do aviso de que o nome dele veio. O atributo já era o contrato
+     (é ele que nomeia a campanha no localStorage); agora é ele que também
+     escolhe o modal, e um aviso novo é um `data-aviso` novo no template, sem
+     linha nenhuma aqui.
+
+     UM POR PÁGINA, E É O PRIMEIRO DO DOM. `querySelector` e não `querySelectorAll`
+     de propósito: dois diálogos abrindo sozinhos um por cima do outro é a praga
+     que as regras abaixo existem para evitar. Quando duas campanhas estiverem
+     de pé ao mesmo tempo, quem decide qual interrompe é a ORDEM em que o
+     `layouts/site.njk` as desenha — o de cima ganha.
 
      É o único modal do site que ninguém pede para ver, então as três regras
      abaixo existem para ele não virar praga:
@@ -255,7 +270,7 @@ if (hamburger && mobileMenu) {
      em navegação privada de Safari antigo e quando o usuário bloqueia dados de
      site. Sem a proteção, o erro derruba o resto deste arquivo junto.
      ------------------------------------------------------------------ */
-  const modalAviso = document.getElementById('modalAviso');
+  const modalAviso = document.querySelector('.modal-overlay[data-aviso]');
 
   if (modalAviso) {
     const chave = 'aviso:' + (modalAviso.dataset.aviso || 'padrao');
