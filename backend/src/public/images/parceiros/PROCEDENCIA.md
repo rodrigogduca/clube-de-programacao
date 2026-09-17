@@ -17,6 +17,7 @@ aí o arquivo dele substitui o daqui.
 | `red-bull.svg` | Wikimedia Commons, `Logo of Red bull.svg`                   | domínio público    | nenhuma                            |
 | `fortinet.svg` | Wikimedia Commons, `Fortinet logo.svg`                      | domínio público    | `#231f20` → `#ffffff` (ver abaixo) |
 | `caffeine-army.png` | derivado de `caffeine.png`, posto na pasta pela comissão | —                  | versão clara (ver abaixo)          |
+| `senai-cimatec.png` | derivado de `universidade-senai-cimatec-300x132.png`, posto na pasta pela comissão | — | versão clara (ver abaixo) |
 
 Os do Commons foram baixados em 16/09/2026. Os três SVG não têm `<script>`,
 manipulador de evento nem referência externa — foi conferido, porque SVG é
@@ -75,8 +76,22 @@ que sai uma nova versão se o tamanho ou a cor precisarem mudar.
 Se a marca mandar o kit de imprensa (SVG, ou PNG com transparência e versão
 para fundo escuro), ele substitui os dois — é sempre melhor que uma conversão.
 
+## A versão clara do SENAI CIMATEC
+
+`universidade-senai-cimatec-300x132.png` é o arquivo como veio, já com fundo
+transparente, mas com o letreiro em marinho `#164194` — sobre o `--breu` da
+página dá contraste de cerca de 2:1, um logo que some. `senai-cimatec.png` é o
+que a faixa usa:
+
+  · o marinho virou branco, com o alfa de cada pixel mantido (o arquivo só tem
+    duas cores cheias e o antisserrilhado já está no alfa, então a troca é
+    exata e não pede a conta de cobertura da AWS);
+  · **o laranja `#e84910` ficou intacto.**
+
+O original fica na pasta, como o da Caffeine Army: é a procedência do derivado.
+
 ## Tamanho dos PNG
 
-`aws.png` e `caffeine-army.png` são quantizados em 64 cores. Os dois têm três
-cores de verdade e o resto é antisserrilhado, então a paleta não tira nada
-visível e corta o arquivo em cerca de seis vezes (33 KB → 4 KB no da AWS).
+`aws.png`, `caffeine-army.png` e `senai-cimatec.png` são quantizados em 64
+cores. Os três têm duas ou três cores de verdade e o resto é antisserrilhado,
+então a paleta não tira nada visível e corta o arquivo em cerca de seis vezes (33 KB → 4 KB no da AWS).

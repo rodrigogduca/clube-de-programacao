@@ -4540,12 +4540,21 @@ section {
 
 /* O letreiro de neon É o título do modal da SEMCOMP. O halo é literal e não
    enfeite: a mesma luz que sai do pato, só que aqui ela já vem pintada no
-   arquivo e o `drop-shadow` apenas a estende para fora do traço. */
+   arquivo e o `drop-shadow` apenas a estende para fora do traço.
+
+   `display: block` porque a imagem mora dentro do <h2>, que tem a
+   `line-height` da fonte de título: inline, ela ganharia a folga de descida da
+   linha e o parágrafo abaixo ficaria mais longe do que o de qualquer outro
+   modal. O `margin-top` do título continua vindo de `.modal-topo h2`. */
+.modal-semcomp-titulo {
+  line-height: 0;
+}
+
 .modal-semcomp-logo {
+  display: block;
   width: 100%;
-  max-width: 420px;
+  max-width: 380px;
   height: auto;
-  margin-top: 20px;
   filter: drop-shadow(0 0 34px rgba(255, 77, 0, 0.34));
 }
 
@@ -5189,6 +5198,13 @@ footer {
      dos aparelhos de hoje) isso já é o bastante para caber inteiro. */
   .modal-card--aviso .modal-topo {
     margin-bottom: 18px;
+  }
+
+  /* O letreiro é largo (2,5:1) e, com a largura toda do cartão, passaria de
+     120px de altura — mais que o título escrito que ele substituiu. Preso em
+     260px ele fica com ~104px, e as portas de baixo não caem na rolagem. */
+  .modal-semcomp-logo {
+    max-width: 260px;
   }
 
   .modal-card--aviso .modal-acoes {

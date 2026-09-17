@@ -474,7 +474,22 @@
           <span class="aviso-ponto" aria-hidden="true"></span>
           29/09 a 03/10 &middot; inscrições abertas
         </span>
-        <h2 id="tituloSemcomp">A SEMCOMP 2026 está chegando</h2>
+        {# O LETREIRO É O TÍTULO, como no <h1> da /semcomp: um "SEMCOMP 2026"
+           escrito em cima do "SEMCOMP 2026" desenhado seria dizer a mesma
+           coisa duas vezes, na caixa que menos tem altura para gastar. A frase
+           continua no `.sr-only`, para leitor de tela e para quando a imagem
+           não carrega; o `aria-labelledby` do diálogo aponta para ela.
+
+           SEM `loading="lazy"`. O modal está escondido até o `main.js` abri-lo,
+           e imagem preguiçosa dentro de elemento escondido só é buscada quando
+           ele aparece — o letreiro estalaria no meio da animação de entrada.
+           Com o carregamento normal ele já chega pronto nos 1,2s de respiro, e
+           nas páginas seguintes sai do cache. #}
+        <h2 id="tituloSemcomp" class="modal-semcomp-titulo">
+          <span class="sr-only">A SEMCOMP 2026 está chegando</span>
+          <img src="{{ static('images/semcomp/semcomp-2026.png') }}" alt=""
+               class="modal-semcomp-logo" width="767" height="308" decoding="async">
+        </h2>
         {# "Aberta ao público" e NÃO "de graça": a comissão nunca definiu se
            há preço, e a página da SEMCOMP deixa o "é pago?" fora do FAQ pelo
            mesmo motivo. Um pop-up prometendo gratuidade é uma promessa que

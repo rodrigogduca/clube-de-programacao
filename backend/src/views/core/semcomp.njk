@@ -244,16 +244,16 @@
     e a animação anda exatamente -50%. Mexer no número de cópias sem mexer nos
     -50% quebra a emenda (ver o comentário do `.faixa` na folha).
 
-    SÃO CINCO MARCAS, E CINCO É POUCO PARA UM TRILHO. A faixa da home tem oito
+    SÃO SEIS MARCAS, E SEIS É POUCO PARA UM TRILHO. A faixa da home tem oito
     termos longos ("Maratona de Programação"), então uma cópia da lista já é
-    mais larga que qualquer tela. Cinco nomes curtos não são — medido, davam
+    mais larga que qualquer tela. Seis nomes curtos não são — medido com cinco, davam
     1050px num viewport de 1536px, e o passo de -50% descobria o fim: a faixa
     andava com um buraco atrás de si. Quem resolve é o `min-width: 100vw` da
     lista, na folha, e não a quantidade de cópias aqui — então acrescentar ou
     tirar patrocinador desta lista não pede conta nenhuma.
 
     `logo` É OPCIONAL, e sem o campo a marca sai com o nome escrito na fonte de
-    título. Hoje as cinco têm arquivo, mas a saída de texto continua sendo o
+    título. Hoje as seis têm arquivo, mas a saída de texto continua sendo o
     caminho certo para um patrocinador novo enquanto o logo dele não chega:
     texto é uma faixa honesta, não um buraco — ninguém desenha logo de terceiro
     no CSS.
@@ -261,13 +261,14 @@
     OS LOGOS ENTRAM NA COR DA PRÓPRIA MARCA, sem filtro de cinza nem `opacity`
     na folha: é a mesma decisão dos selos das competições na /seja-membro.
 
-    TRÊS ARQUIVOS SÃO A VERSÃO CLARA DA MARCA, e isso não é exceção àquilo: é o
-    lockup "reverse", que é o que toda marca publica para fundo escuro. A
-    Fortinet chega com o wordmark em quase-preto; a AWS e a Caffeine Army
-    chegam em tinta escura sobre papel branco opaco, que nesta página seria um
-    quadrado branco. Nos três, só o escuro do LETREIRO virou claro e a cor de
-    marca ficou intacta — o vermelho da Fortinet, o laranja do sorriso da AWS,
-    e no caso da Caffeine Army o ícone inteiro (círculo creme com a chama
+    QUATRO ARQUIVOS SÃO A VERSÃO CLARA DA MARCA, e isso não é exceção àquilo: é
+    o lockup "reverse", que é o que toda marca publica para fundo escuro. A
+    Fortinet chega com o wordmark em quase-preto; o SENAI CIMATEC, em marinho
+    que some neste fundo; a AWS e a Caffeine Army chegam em tinta escura sobre
+    papel branco opaco, que nesta página seria um quadrado branco. Nos quatro,
+    só o escuro do LETREIRO virou claro e a cor de marca ficou intacta — o
+    vermelho da Fortinet, o laranja do CIMATEC e do sorriso da AWS, e no caso
+    da Caffeine Army o ícone inteiro (círculo creme com a chama
     escura dentro), que se apoia no próprio creme e não no fundo da página;
     clarear a chama junto teria apagado o desenho por dentro do círculo.
 
@@ -288,7 +289,7 @@
     `altura` É A ALTURA DO LOGO EM PIXELS, UMA POR MARCA — e sem ela a fileira
     não funciona.
 
-    Os cinco arquivos têm proporções que não se parecem: o Fortinet é um
+    Os seis arquivos têm proporções que não se parecem: o Fortinet é um
     wordmark de 8,3:1, o da AWS é a pilha de 1,5:1, o Google fica em 3,3:1.
     Com uma altura só para todos, o Fortinet sairia com 281px de largura e a
     AWS com 51 — cinco vezes menor, na mesma fileira, e a leitura vira "a
@@ -305,7 +306,8 @@
     grande demais" — nunca mexer no `.marca-logo` da folha, que vale para todas.
   #}
   {% set marcas = [
-    { nome: 'Red Bull',      logo: 'red-bull.svg',      altura: 27 },
+    { nome: 'Universidade SENAI CIMATEC', logo: 'senai-cimatec.png', altura: 36 },
+    { nome: 'Red Bull',     logo: 'red-bull.svg',      altura: 27 },
     { nome: 'Google',        logo: 'google.svg',        altura: 30, pendente: true },
     { nome: 'AWS',           logo: 'aws.png',           altura: 40 },
     { nome: 'Fortinet',      logo: 'fortinet.svg',      altura: 19, pendente: true },
@@ -338,9 +340,9 @@
               e o logo aparecendo estalado no meio do movimento. Foi o que
               apareceu no teste: metade do trilho andando com buraco.
 
-              Aqui não há nada a economizar: são cinco arquivos de 3 a 4 KB, a
+              Aqui não há nada a economizar: são seis arquivos de 3 a 5 KB, a
               faixa fica logo abaixo do herói (quase na dobra) e as duas cópias
-              pedem os MESMOS cinco endereços, então a segunda sai do cache.
+              pedem os MESMOS seis endereços, então a segunda sai do cache.
               `decoding="async"` fica: ele não adia o download, só tira a
               decodificação do caminho da primeira pintura.
             #}
