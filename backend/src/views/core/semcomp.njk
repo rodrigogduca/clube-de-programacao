@@ -50,7 +50,7 @@
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:site_name" content="Clube de Programação - Universidade SENAI CIMATEC">
   <meta property="og:title" content="SEMCOMP 2026 | Semana da Computação | 29/09 a 03/10, SENAI CIMATEC">
-  <meta property="og:description" content="Cinco dias: Cimatec Day, Dev &amp; IA Day, Cyber &amp; Quantum Day e Arena Day, com palestras, workshops e competições. Onde a ideia acende.">
+  <meta property="og:description" content="Cinco dias: Cimatec Day, Dev Day, AI Day, Cyber &amp; Quantum Day e Arena Day, com palestras, workshops e competições. Onde a ideia acende.">
   {#
     A MINIATURA É A LOGO, E SÓ A LOGO.
 
@@ -143,7 +143,8 @@
       pasta: 'parceiros',
       itens: [
         { nome: 'Universidade SENAI CIMATEC', logo: 'senai-cimatec.png', altura: 54 },
-        { nome: 'Red Bull', logo: 'red-bull.svg', altura: 44 }
+        { nome: 'Red Bull', logo: 'red-bull.svg', altura: 44 },
+        { nome: 'FIAP', logo: 'fiap.png', altura: 48 }
       ]
     },
     {
@@ -228,7 +229,7 @@
         #}
         <div class="contagem fade-in" id="contagemSemcomp"
              data-inicio="2026-09-29T07:30:00-03:00"
-             data-fim="2026-10-03T18:00:00-03:00" hidden>
+             data-fim="2026-10-03T17:00:00-03:00" hidden>
           <span class="contagem-rotulo" data-contagem-rotulo>Faltam para a abertura</span>
           <div class="contagem-numeros" role="timer" data-contagem-numeros>
             <div class="contagem-bloco"><span class="contagem-valor" data-contagem="dias">00</span><span class="contagem-unidade">dias</span></div>
@@ -356,6 +357,8 @@
           <h2 class="section-title">A semana em que<br>o campus vira código</h2>
           <p class="section-desc">A Semana da Computação é o maior evento organizado pelo Clube de Programação, e em 2026 ela chega à quinta edição: cinco anos de SEMCOMP.</p>
         </div>
+        <img class="secao-ilustra" src="{{ static('images/semcomp/icones/dias-tematicos.webp') }}"
+             alt="" aria-hidden="true" width="295" height="245" loading="lazy" decoding="async">
       </div>
 
       <div class="sobre-evento">
@@ -364,7 +367,7 @@
             A SEMCOMP nasceu da mesma ideia que sustenta o clube: <strong>conhecimento se constrói melhor quando é compartilhado</strong>. Durante cinco dias, o campus recebe gente de fora e de dentro para falar do que está fazendo, seja em palestra, em oficina de mão na massa ou em competição.
           </p>
           <p>
-            A semana abre com o <strong>Cimatec Day</strong>, passa pelo <strong>Dev &amp; IA Day</strong> e pelo <strong>Cyber &amp; Quantum Day</strong> e fecha no sábado com o <strong>Arena Day</strong>, o festival de jogos e desafios que encerra a semana.
+            A semana abre com o <strong>Cimatec Day</strong>, passa pelo <strong>Dev Day</strong>, pelo <strong>AI Day</strong> e pelo <strong>Cyber &amp; Quantum Day</strong> e fecha no sábado com o <strong>Arena Day</strong>, o festival de jogos e desafios que encerra a semana.
           </p>
           <p>
             Tudo é organizado por estudantes voluntários. Quem monta a grade, fala com os palestrantes, cuida do credenciamento e corrige as competições é a <a href="#comissao">comissão da SEMCOMP</a>, formada na diretoria do clube, que entra por <a href="{{ url('seja_membro') }}#prosel">processo seletivo</a>.
@@ -375,30 +378,38 @@
         </div>
 
         {#
-          A PLATEIA, e não mais `turma.jpg` — QUE É A FOTO DO HERÓI desta mesma
-          página, trinta centímetros de rolagem acima.
+          A COLETÂNEA, no lugar da foto única da plateia.
 
-          A justificativa que estava escrita aqui dizia que repetir a imagem do
-          herói era de propósito, porque lá em cima ela é textura: vive sob as
-          duas camadas do `.capa-veu`, escurecida e atravessada pelo letreiro de
-          neon. O argumento não se sustenta na tela. Quem rola a página vê a
-          mesma foto duas vezes em dois segundos e lê isso como acervo curto,
-          não como intenção — e não custava nada, porque a comissão entregou
-          outras fotos do mesmo dia.
+          Sete fotos que NÃO REPETEM nenhuma da faixa que rola na seção 02: as
+          de lá são as fotos da câmera (IMG_*), as daqui chegaram depois pela
+          comissão (WhatsApp, 23/09). Juntas elas cobrem o que o texto ao lado
+          diz: gente de fora e de dentro, a equipe, a sala, o palestrante.
 
-          `plateia.jpg` é o auditório cheio visto de perto, e ao lado de um texto
-          que diz "o campus recebe gente de fora e de dentro" ela é a prova mais
-          direta da frase: são as pessoas de quem o parágrafo fala, olhando para
-          o palco. Mesma caixa de 1600x1200 que a anterior ocupava.
+          UM MOSAICO DE TRÊS COLUNAS: a foto do grupo grande abre em 2x2, as
+          duas verticais ocupam duas linhas e as horizontais preenchem o resto.
+          `grid-auto-flow: dense` fecha os buracos sozinho, então a ordem da
+          lista pode mudar sem desmontar o desenho.
 
-          Sem legenda: a imagem ilustra o texto ao lado, e um filete embaixo
-          repetiria o que o parágrafo já diz.
+          Arquivos em `images/semcomp/coletanea/` (WebP, até 900px); os
+          originais estão em `outros/fotos semcomp/`.
         #}
-        <figure class="foto-quadro fade-in-right">
-          <img src="{{ static('images/semcomp/plateia.jpg') }}"
-               alt="Plateia da SEMCOMP acompanhando uma palestra no auditório da Universidade SENAI CIMATEC, com os crachás do evento no pescoço"
-               width="1600" height="1200" loading="lazy" decoding="async">
-        </figure>
+        {% set coletanea = [
+          { f: 'grupo',       tam: 'grande',   alt: 'Turma grande de participantes da SEMCOMP reunida no corredor para a foto' },
+          { f: 'palestrante', tam: 'vertical', alt: 'Palestrante de terno sorrindo em frente à projeção' },
+          { f: 'fortinet',    tam: '',         alt: 'Quatro pessoas posando, duas com a camisa da Fortinet' },
+          { f: 'equipe',      tam: '',         alt: 'Cinco participantes com as camisas do evento, lado a lado' },
+          { f: 'costas',      tam: 'vertical', alt: 'Três participantes de costas mostrando as camisas do evento' },
+          { f: 'roda',        tam: '',         alt: 'Participantes sentados no chão de uma sala, em roda' },
+          { f: 'laboratorio', tam: '',         alt: 'Estudantes atentos em um laboratório de computadores' }
+        ] %}
+        <div class="coletanea fade-in-right">
+          {% for ft in coletanea %}
+          <figure class="coletanea-foto{% if ft.tam %} coletanea-foto--{{ ft.tam }}{% endif %}">
+            <img src="{{ static('images/semcomp/coletanea/' ~ ft.f ~ '.webp') }}" alt="{{ ft.alt }}"
+                 loading="lazy" decoding="async">
+          </figure>
+          {% endfor %}
+        </div>
       </div>
 
       {#
@@ -477,6 +488,8 @@
           <h2 class="section-title">Cinco formatos,<br>cinco dias</h2>
           <p class="section-desc">Dá para ir a tudo, e dá para ir a uma coisa só. Cada formato pede um tipo diferente de disponibilidade.</p>
         </div>
+        <img class="secao-ilustra" src="{{ static('images/semcomp/icones/calendario.webp') }}"
+             alt="" aria-hidden="true" width="320" height="305" loading="lazy" decoding="async">
       </div>
 
       {#
@@ -507,7 +520,7 @@
         {
           selo: 'Competição',
           arte: 'premiacoes.webp',
-          titulo: 'Da Game Jam ao Arena Day',
+          titulo: 'Oportunidade de ganhar premiações',
           desc: 'Olimpíada de programação, DeepRacer, Capture The Flag, Capture The Leak, e-sports e jogos presenciais, quase tudo no sábado, e uma game jam online antes da semana. Todas com premiação.',
           nota: 'Em equipe ou individual &middot; <a href="#arena">ver as modalidades</a>'
         },
@@ -540,18 +553,27 @@
           <span class="formato-selo">{{ f.selo }}</span>
           <h3>{{ f.titulo }}</h3>
           <p>{{ f.desc }}</p>
+          {#
+            UM LOGO POR VEZ EM CADA GRUPO: os logos de um grupo ficam
+            empilhados no mesmo lugar e o `main.js` acende um de cada vez
+            (`.estandes-item--ativo`), em rodízio. Sem JavaScript fica o
+            primeiro de cada grupo, e a lista inteira continua na seção 06.
+            Os apagados seguem no HTML com `alt`, então o leitor de tela lê o
+            grupo inteiro, e não só o logo que está aceso no momento.
+          #}
           {% if f.estandes %}
           <dl class="estandes-marcas">
             {% for g in grupos %}
             <div class="estandes-grupo">
               <dt>{{ g.curto }}</dt>
-              <dd>
+              <dd class="estandes-rodizio">
                 {% for i in g.itens %}
+                {% set classe_item = 'estandes-item' ~ (' estandes-item--ativo' if loop.first else '') %}
                 {% if i.logo %}
-                <img src="{{ static('images/' ~ g.pasta ~ '/' ~ i.logo) }}" alt="{{ i.nome }}"
-                     style="--estande-altura: {{ (i.altura * 0.42) | round }}" loading="lazy" decoding="async">
+                <img class="{{ classe_item }}" src="{{ static('images/' ~ g.pasta ~ '/' ~ i.logo) }}" alt="{{ i.nome }}"
+                     style="--estande-altura: {{ (i.altura * 0.72) | round }}" loading="lazy" decoding="async">
                 {% else %}
-                <span class="estandes-nome">{{ i.nome }}</span>
+                <span class="{{ classe_item }} estandes-nome">{{ i.nome }}</span>
                 {% endif %}
                 {% endfor %}
               </dd>
@@ -643,8 +665,9 @@
     às 09:00 para uma sala vazia. Quando o status mudar na planilha, a
     palestra entra na `grade` do dia, pelo horário ('09:00': {...}).
 
-    A QUARTA (30/09) AINDA NÃO TEM TEMA. `tema` fica vazio e o template escreve
-    "Tema a definir" — não inventar um nome para preencher o cartão.
+    A QUARTA (30/09) É O DEV DAY E A QUINTA (01/10) É O AI DAY. Se um dia
+    ficar sem nome, `tema` vazio faz o template escrever "Tema a definir" em
+    vez de inventar um.
 
     OS PARCEIROS DE CADA DIA entram como `tags`, e as que ainda não estão
     assinadas levam `pendente: true` — o template desenha essas em traço
@@ -671,10 +694,8 @@
           { hora: '09:00' }, { hora: '10:00' }, { hora: '11:00' },
           { hora: '12:00', fixo: 'Almoço', ate: 'até as 12:50' }
         ] },
-        { nome: 'Tarde', ate: 'até 17:50', slots: [
-          { hora: '13:00' }, { hora: '14:00' }, { hora: '15:00' },
-          { hora: '16:00', fixo: 'Coffee break', ate: 'até as 16:50' },
-          { hora: '17:00' }
+        { nome: 'Tarde', ate: 'até 16:50', slots: [
+          { hora: '13:00' }, { hora: '14:00' }, { hora: '15:00' }, { hora: '16:00' }
         ] }
       ] %}
 
@@ -691,12 +712,12 @@
             '13:00': { tipo: 'Palestra', titulo: 'Empreendedorismo jovem: acelere sua carreira no Movimento Empresa Júnior', quem: 'Cimatec Jr' },
             '14:00': { tipo: 'Mesa redonda', titulo: 'Do campus ao mercado: o potencial do ecossistema de startups do SENAI CIMATEC', quem: 'Thomas Buck' },
             '15:00': { tipo: 'Palestra', titulo: 'SENAI CIMATEC e big techs: como impulsionar sua carreira na era da inteligência artificial', quem: 'Sanval Ebert' },
-            '17:00': { tipo: 'Palestra', titulo: 'Indústria de games: criação, tecnologias e oportunidades no desenvolvimento de jogos na Bahia', quem: 'Clube de Jogos + BIND' }
+            '16:00': { tipo: 'Palestra', titulo: 'Indústria de games: criação, tecnologias e oportunidades no desenvolvimento de jogos na Bahia', quem: 'Clube de Jogos + BIND' }
           }
         },
         {
           num: '30', mes: 'set', semana: 'Quarta',
-          tema: '',
+          tema: 'Dev Day',
           desc: 'O tema do dia ainda está sendo fechado pela comissão. Por enquanto há uma palestra confirmada; o resto da grade sai no Even3.',
           tags: [{ nome: 'FIAP' }],
           grade: {
@@ -705,7 +726,7 @@
         },
         {
           num: '01', mes: 'out', semana: 'Quinta',
-          tema: 'Dev &amp; IA Day',
+          tema: 'AI Day',
           desc: 'Inteligência artificial e desenvolvimento: da indústria de jogos à realidade virtual e à IA dentro do carro.',
           tags: [{ nome: 'Dortech', destaque: true }, { nome: 'IA' }, { nome: 'Realidade virtual' }, { nome: 'Jogos' }],
           grade: {
@@ -744,8 +765,9 @@
         escrito para não depender do relógio de quem abre), e o `main.js` faz
         a conta e refaz a cada minuto.
 
-        O DIA "ANDA" DAS 07:30 ÀS 18:00 — do credenciamento ao fim do último
-        bloco. À noite a barra para no começo do dia seguinte e espera.
+        O DIA "ANDA" DAS 07:30 ÀS 17:00, do credenciamento ao fim do último
+        bloco (16:00 a 16:50; não há coffee break). À noite a barra para no
+        começo do dia seguinte e espera.
 
         SEM JAVASCRIPT o bloco inteiro fica `hidden` e a trilha volta a ser o
         que era: cinco cartões com o filete cinza, sem nada quebrado.
@@ -776,7 +798,7 @@
         <li class="trilha-dia{% if d.destaque %} trilha-dia--destaque{% endif %} fade-in"
             data-data="{{ data_iso }}"
             data-inicio="{{ data_iso }}T07:30:00-03:00"
-            data-fim="{{ data_iso }}T18:00:00-03:00"
+            data-fim="{{ data_iso }}T17:00:00-03:00"
             data-tema="{{ (d.tema or (d.num ~ '/' ~ ('09' if d.mes == 'set' else '10'))) | safe }}">
           <div class="trilha-data" aria-hidden="true">
             <span class="trilha-num">{{ d.num }}</span>
@@ -811,7 +833,7 @@
             {#
               O DIA EM DOIS TURNOS, MANHÃ E TARDE, no modelo da planilha de
               logística: credenciamento às 07:30, três palestras de manhã,
-              almoço, três à tarde, coffee break e o bloco das 17:00. Todo dia
+              almoço e quatro à tarde, de 13:00 a 16:50 (não há coffee break). Todo dia
               segue a mesma grade (`turnos`, definida antes da lista), e cada
               horário procura a sua palestra em `d.grade`. Horário sem palestra
               confirmada sai como "A definir", mais apagado: a grade inteira
@@ -927,10 +949,14 @@
         junto com o bloco de escolha lá embaixo.
 
         `premios` é opcional: os jogos presenciais não têm prêmio fechado na
-        planilha e o cartão sai sem a linha. `logo` e `ilustracoes` também —
-        são desenho, e o cartão funciona sem eles. As ilustrações dos jogos de
-        mesa foram desenhadas para esta página (SVG próprio, sem licença de
-        terceiro); os originais ficam em `outros/jogos-presenciais/`.
+        planilha e o cartão sai sem a linha. `ilustra` também — é desenho, e o
+        cartão funciona sem ele.
+
+        OS JOGOS PRESENCIAIS SÃO SÓ CITADOS NO PARÁGRAFO, sem a fileira de
+        desenhos com o nome de cada um que existia no cartão: a pedido da
+        comissão, e o texto já diz os quatro. Os desenhos (SVG próprio, sem
+        licença de terceiro; originais em `outros/jogos-presenciais/`)
+        continuam no cartão "Jogos de mesa" do bloco de escolha, lá embaixo.
 
         O comentário está aqui fora e não ao lado da `nota`: um comentário de
         Nunjucks dentro de um literal de objeto é erro de sintaxe, e o que se
@@ -979,6 +1005,7 @@
         },
         {
           selo: 'CTF',
+          ilustra: { src: 'icones/ctf.webp', largura: 320, altura: 262 },
           titulo: 'Capture The Flag',
           desc: 'Captura de bandeira organizada pelo Clube de Cyber: criptografia, engenharia reversa e exploração de falhas em ambiente controlado.',
           premios: premio_padrao,
@@ -986,6 +1013,7 @@
         },
         {
           selo: 'CTL',
+          ilustra: { src: 'icones/ctl.webp', largura: 166, altura: 152 },
           titulo: 'Capture The Leak',
           desc: 'O desafio de cibersegurança organizado pela Fortinet, do lado da defesa. O desafio e a premiação são da própria Fortinet.',
           premios: ['Prêmio da Fortinet', 'Prêmio da Fortinet', 'Prêmio da Fortinet'],
@@ -993,6 +1021,7 @@
         },
         {
           selo: 'Game Jam',
+          ilustra: { src: 'icones/gamejam.webp', largura: 320, altura: 295 },
           titulo: 'Game Jam',
           desc: 'Desenvolvimento de jogos contra o relógio, online e antes da semana: um tema, um prazo e um jogo jogável no fim.',
           premios: ['Video game retrô', 'Fone Bluetooth', 'Garrafa térmica'],
@@ -1002,7 +1031,6 @@
           selo: 'Presenciais',
           titulo: 'Jogos presenciais',
           ilustra: { src: 'icones/jogos-de-mesa.webp', largura: 320, altura: 266 },
-          ilustracoes: jogos_mesa,
           premios: ['Medalha de ouro', 'Medalha de prata', 'Medalha de bronze'],
           desc: 'Os torneios que não pedem computador nenhum: Ping Pong, Totó, Dominó e Truco, no terraço do Cimatec 3.',
           nota: ('Sáb 03/10 &middot; <a href="' + links.arenaJogosMesa + '" target="_blank" rel="noopener noreferrer">escolher no formulário</a>') if links.arenaJogosMesa else 'Sáb 03/10 &middot; inscrição no local'
@@ -1025,22 +1053,12 @@
           {% endif %}
           <h3>{{ m.titulo }}</h3>
           <p>{{ m.desc }}</p>
-          {% if m.ilustracoes %}
-          <ul class="formato-ilustras">
-            {% for il in m.ilustracoes %}
-            <li>
-              <img src="{{ static('images/semcomp/arena/' ~ il.src) }}" alt="" width="160" height="160" loading="lazy" decoding="async">
-              <span>{{ il.nome }}</span>
-            </li>
-            {% endfor %}
-          </ul>
-          {% endif %}
           {% if m.premios %}
           <ol class="formato-premios" aria-label="Premiação">
             {% for pr in m.premios %}
             <li>
               {% if m.premios | length > 1 %}<span class="formato-premio-rank">{{ loop.index }}º</span>{% endif %}
-              <span class="formato-premio-icone{% if icone_premio[pr] == 'medalha' %} formato-premio-icone--medalha-{{ loop.index }}{% endif %}" aria-hidden="true">{{ ic.icone(icone_premio[pr] or 'presente', 16) }}</span>
+              <span class="formato-premio-icone" aria-hidden="true">{{ ic.icone(icone_premio[pr] or 'presente', 16) }}</span>
               {{ pr }}
             </li>
             {% endfor %}
@@ -1076,8 +1094,8 @@
         Riot e da Supercell (ver PROCEDENCIA.md).
 
         O BRAWL STARS NÃO ESTÁ NA PLANILHA DE COMPETIÇÕES: entrou a pedido da
-        comissão, e formato e prêmio ficam como "no regulamento" até alguém
-        mandar os dados. Não inventar.
+        comissão. O prêmio veio dela (medalhas, como nos jogos de mesa); o
+        formato fica "no regulamento" até alguém mandar o dado. Não inventar.
 
         A `nota` volta ao Even3 quando `arenaJogosDigitais` sair de
         `site-links.ts`, como os outros.
@@ -1087,7 +1105,7 @@
         { nome: 'Valorant',          logo: 'valorant.svg',          formato: 'Equipes de 5', premios: ['Video game retrô', 'Fone Bluetooth'] },
         { nome: 'EA Sports FC 26',   logo: 'ea.svg', sufixo: 'FC 26', formato: 'Individual', premios: ['SSD NVMe', 'Kit gamer'] },
         { nome: 'Teamfight Tactics', logo: 'tft.png',               formato: 'Individual', premios: ['SSD NVMe', 'Kit gamer'] },
-        { nome: 'Brawl Stars',       logo: 'brawl-stars.png',       formato: 'Formato no regulamento' }
+        { nome: 'Brawl Stars',       logo: 'brawl-stars.png',       formato: 'Formato no regulamento', premios: ['Medalha de ouro', 'Medalha de prata'] }
       ] %}
 
       <div class="esports fade-in">
@@ -1367,6 +1385,11 @@
           JS para chegar pior nessas quatro coisas.
         #}
         <div class="faq fade-in-right">
+          <div class="faq-topo">
+            <img src="{{ static('images/semcomp/icones/faq.webp') }}" alt="" aria-hidden="true"
+                 width="320" height="309" loading="lazy" decoding="async">
+            <h3>Dúvidas frequentes</h3>
+          </div>
           {% for d in duvidas %}
           <details class="faq-item">
             <summary>
@@ -1422,6 +1445,7 @@
         {
           chave: 'nao',
           icone: 'proibido',
+          arte: { src: 'nao-pode.webp', largura: 278, altura: 306 },
           titulo: 'Itens proibidos no campus',
           resumo: 'Barra a entrada no campus',
           itens: [
@@ -1437,6 +1461,7 @@
         {
           chave: 'sim',
           icone: 'certo',
+          arte: { src: 'pode.webp', largura: 276, altura: 301 },
           titulo: 'Itens permitidos no campus',
           resumo: 'Áreas comuns e salas de aula',
           itens: [
@@ -1450,6 +1475,8 @@
 
       <div class="vestimenta fade-in" id="vestimenta">
         <div class="vestimenta-topo">
+          <img class="vestimenta-ilustra" src="{{ static('images/semcomp/icones/vestimenta.webp') }}" alt="" aria-hidden="true"
+               width="320" height="244" loading="lazy" decoding="async">
           <h3>Código de vestimenta</h3>
           <span>Vale nos cinco dias, em todo o campus</span>
         </div>
@@ -1458,8 +1485,12 @@
           {% for v in vestimenta %}
           <section class="vestimenta-col vestimenta-col--{{ v.chave }}">
             <header class="vestimenta-cabecalho">
-              <h4>{{ v.titulo }}</h4>
-              <span class="vestimenta-resumo">{{ v.resumo }}</span>
+              <img class="vestimenta-cabecalho-arte" src="{{ static('images/semcomp/icones/' ~ v.arte.src) }}" alt="" aria-hidden="true"
+                   width="{{ v.arte.largura }}" height="{{ v.arte.altura }}" loading="lazy" decoding="async">
+              <div>
+                <h4>{{ v.titulo }}</h4>
+                <span class="vestimenta-resumo">{{ v.resumo }}</span>
+              </div>
             </header>
             <ul class="vestimenta-itens">
               {% for i in v.itens %}
@@ -1529,7 +1560,11 @@
           loading="lazy" referrerpolicy="no-referrer-when-downgrade"
           allowfullscreen></iframe>
         <figcaption class="mapa-pe">
-          <span>{{ evento.local }} &middot; CEP {{ evento.cep }}</span>
+          <span class="mapa-local">
+            <img src="{{ static('images/semcomp/icones/mapa.webp') }}" alt="" aria-hidden="true"
+                 width="320" height="248" loading="lazy" decoding="async">
+            {{ evento.local }} &middot; CEP {{ evento.cep }}
+          </span>
           <a href="{{ evento_mapa }}" target="_blank" rel="noopener noreferrer">
             Abrir no Google Maps
             {{ ic.icone('externo', 13) }}
@@ -1560,7 +1595,8 @@
         dele, pela planilha de competições), X Logic e Dortech (as duas
         assinam palestra, pela planilha de logística). Google, AWS e Caffeine
         Army saíram.
-      · Apoio — Universidade SENAI CIMATEC (a casa) e Red Bull (o produto).
+      · Apoio — Universidade SENAI CIMATEC (a casa), Red Bull (o produto) e
+        FIAP (a pedido da comissão; também assina a palestra de 30/09).
       · Iniciativas — Cimatec Jr, Info Jr, LAMIT, NEXUPP, LIAO, Falcons,
         HorusTec, Prometheus Aerodesign e AWS Student Builder Group. O `sub` é
         o que o PRÓPRIO LOGO ou o perfil oficial diz de si; o da NEXUPP (UCSAL)
@@ -1745,8 +1781,8 @@
     {% endif %}
     "subEvent": [
       { "@type": "Event", "name": "Cimatec Day",        "startDate": "2026-09-29", "endDate": "2026-09-29" },
-      { "@type": "Event", "name": "SEMCOMP 2026, 30/09", "startDate": "2026-09-30", "endDate": "2026-09-30" },
-      { "@type": "Event", "name": "Dev & IA Day",       "startDate": "2026-10-01", "endDate": "2026-10-01" },
+      { "@type": "Event", "name": "Dev Day",            "startDate": "2026-09-30", "endDate": "2026-09-30" },
+      { "@type": "Event", "name": "AI Day",             "startDate": "2026-10-01", "endDate": "2026-10-01" },
       { "@type": "Event", "name": "Cyber & Quantum Day","startDate": "2026-10-02", "endDate": "2026-10-02" },
       { "@type": "Event", "name": "Arena Day",          "startDate": "2026-10-03", "endDate": "2026-10-03" }
     ]

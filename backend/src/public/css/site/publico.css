@@ -2687,6 +2687,47 @@ section {
 
 /* ---- Foto ao lado de texto (Sobre o Evento) ---- */
 
+/* A COLETÂNEA DA SEÇÃO 01 — mosaico de três colunas. As fotos seguem o
+   repouso das outras da página (um pouco apagadas, acendem no ponteiro). */
+.coletanea {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: clamp(80px, 9vw, 118px);
+  grid-auto-flow: dense;
+  gap: 8px;
+}
+
+.coletanea-foto {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--traco);
+  border-radius: calc(var(--r) - 4px);
+  background: var(--breu);
+}
+
+.coletanea-foto--grande {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.coletanea-foto--vertical {
+  grid-row: span 2;
+}
+
+.coletanea-foto img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.85) brightness(0.86);
+  transition: filter 0.5s var(--transicao), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.coletanea-foto:hover img {
+  filter: none;
+  transform: scale(1.04);
+}
+
 .sobre-evento {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
@@ -3448,16 +3489,16 @@ section {
 .estandes-marcas {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 18px;
+  gap: 20px;
+  margin-top: 22px;
 }
 
 .estandes-grupo {
   display: grid;
-  grid-template-columns: 100px minmax(0, 1fr);
+  grid-template-columns: 120px minmax(0, 1fr);
   align-items: center;
-  gap: 12px;
-  padding-top: 10px;
+  gap: 20px;
+  padding-top: 20px;
   border-top: 1px solid var(--traco);
 }
 
@@ -3476,6 +3517,42 @@ section {
   gap: 10px 18px;
 }
 
+/* O RODÍZIO: todos os logos do grupo na mesma célula da grade, um em cima
+   do outro, e só o `--ativo` aceso. Empilhar pela grade (e não por
+   `position: absolute`) faz a linha ter a altura do logo mais alto do grupo,
+   então ela não pula quando a marca troca. */
+.estandes-grupo dd.estandes-rodizio {
+  display: grid;
+  justify-items: start;
+  align-items: center;
+}
+
+.estandes-item {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.6s var(--transicao), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.estandes-item--ativo {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .estandes-item {
+    transform: none;
+    transition: opacity 0.2s linear;
+  }
+}
+
+@media (max-width: 480px) {
+  .estandes-grupo {
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 14px;
+  }
+}
+
 /* Marca sem logo ainda: o nome, no tamanho de um logo pequeno. */
 .estandes-nome {
   font-family: var(--display);
@@ -3485,10 +3562,13 @@ section {
   color: var(--giz);
 }
 
+/* O teto de altura segura os logos quase quadrados (LAMIT, HorusTec), que
+   com o fator do template passariam de 60px e esticariam a linha. */
 .estandes-grupo img {
-  height: calc(var(--estande-altura, 22) * 1px);
+  height: calc(var(--estande-altura, 36) * 1px);
+  max-height: 56px;
   width: auto;
-  max-width: 120px;
+  max-width: min(190px, 100%);
   object-fit: contain;
 }
 
@@ -3521,12 +3601,6 @@ section {
   color: var(--ambar);
 }
 
-/* O 1º lugar em ouro claro: é o prêmio que a pessoa lê primeiro. */
-.formato-premios li:first-child .formato-premio-rank {
-  color: var(--gema);
-  font-weight: 700;
-}
-
 .formato-premio-icone {
   flex: none;
   display: grid;
@@ -3538,66 +3612,45 @@ section {
   color: var(--ambar);
 }
 
-.formato-premios li:first-child .formato-premio-icone {
-  background: rgba(255, 196, 107, 0.14);
-  color: var(--gema);
+/* A COR É A DA COLOCAÇÃO: 1º em ouro, 2º em prata, 3º em bronze, no número
+   e no ícone do prêmio, em todas as listas de premiação da página (os
+   cartões das competições e a lista dos e-sports). Vale para qualquer
+   prêmio, não só medalha: quem bate o olho acha o pódio pela cor. */
+.formato-premios li:nth-child(1),
+.esports-premios li:nth-child(1),
+.esports-colunas > :nth-child(1) {
+  --podio: #ffdd40;
+  --podio-fundo: rgba(255, 221, 64, 0.16);
 }
 
-/* AS MEDALHAS DOS JOGOS DE MESA levam a cor do metal, e não o âmbar dos
-   outros prêmios: ouro, prata e bronze são o prêmio inteiro, e é a cor que
-   diz qual é qual. As duas classes no seletor igualam a força do
-   `:first-child` acima, e como a regra vem depois, o ouro do 1º vence. */
-.formato-premios li .formato-premio-icone.formato-premio-icone--medalha-1 {
-  background: rgba(255, 221, 64, 0.16);
-  color: #ffdd40;
+.formato-premios li:nth-child(2),
+.esports-premios li:nth-child(2),
+.esports-colunas > :nth-child(2) {
+  --podio: #c8cdd6;
+  --podio-fundo: rgba(200, 205, 214, 0.14);
 }
 
-.formato-premios li .formato-premio-icone.formato-premio-icone--medalha-2 {
-  background: rgba(200, 205, 214, 0.14);
-  color: #c8cdd6;
+.formato-premios li:nth-child(3),
+.esports-premios li:nth-child(3) {
+  --podio: #c47a45;
+  --podio-fundo: rgba(176, 101, 52, 0.22);
 }
 
-.formato-premios li .formato-premio-icone.formato-premio-icone--medalha-3 {
-  background: rgba(176, 101, 52, 0.22);
-  color: #c47a45;
+.formato-premios .formato-premio-rank,
+.esports-premios .formato-premio-rank {
+  color: var(--podio, var(--ambar));
+  font-weight: 700;
 }
 
-/* AS ILUSTRAÇÕES DOS JOGOS DE MESA — quatro desenhos lado a lado, cada um com
-   o nome embaixo. `repeat(4)` e não `auto-fit`: são sempre quatro, e uma
-   quebra em 3+1 deixaria o truco sozinho numa fileira. */
-.formato-ilustras {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 18px;
-  list-style: none;
+.formato-premios .formato-premio-icone,
+.esports-premios .formato-premio-icone {
+  background: var(--podio-fundo, var(--ambar-lavagem));
+  color: var(--podio, var(--ambar));
 }
 
-.formato-ilustras li {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
+.esports-colunas > span {
+  color: var(--podio, var(--cinza));
 }
-
-.formato-ilustras img {
-  width: 100%;
-  max-width: 64px;
-  height: auto;
-  transition: transform var(--transicao);
-}
-
-.formato-card:hover .formato-ilustras li:nth-child(odd) img { transform: rotate(-6deg) scale(1.06); }
-.formato-card:hover .formato-ilustras li:nth-child(even) img { transform: rotate(6deg) scale(1.06); }
-
-.formato-ilustras span {
-  font-family: var(--mono);
-  font-size: var(--t-mini);
-  letter-spacing: 0;
-  white-space: nowrap;
-  color: var(--fumaca);
-}
-
 
 /* ==========================================================================
    E-SPORTS — a faixa da Jett
@@ -3713,16 +3766,7 @@ section {
   color: var(--giz);
 }
 
-/* 1º lugar em ouro, como nos cartões de cima. */
-.esports-premios li:first-child .formato-premio-rank {
-  color: var(--gema);
-  font-weight: 700;
-}
-
-.esports-premios li:first-child .formato-premio-icone {
-  background: rgba(255, 196, 107, 0.14);
-  color: var(--gema);
-}
+/* A cor de cada colocação está junto da dos cartões (`--podio`). */
 
 .esports-sem-premio {
   font-size: 0.85rem;
@@ -4818,7 +4862,7 @@ section {
 .vestimenta-topo {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 10px 20px;
   padding-bottom: 18px;
@@ -4826,7 +4870,17 @@ section {
   border-bottom: 1px solid var(--traco);
 }
 
+/* O ícone ilustrado da comissão abre o título; o `margin-right: auto` do h3
+   é o que continua mandando o subtítulo para a direita. */
+.vestimenta-ilustra {
+  flex: none;
+  width: 56px;
+  height: auto;
+  transform: rotate(-4deg);
+}
+
 .vestimenta-topo h3 {
+  margin-right: auto;
   font-family: var(--display);
   font-size: 1.3rem;
   font-weight: 600;
@@ -4862,8 +4916,17 @@ section {
 }
 
 .vestimenta-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--traco);
+}
+
+.vestimenta-cabecalho-arte {
+  flex: none;
+  width: 40px;
+  height: auto;
 }
 
 .vestimenta-cabecalho h4 {
@@ -5032,6 +5095,18 @@ section {
   color: var(--cinza);
 }
 
+.mapa-local {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mapa-local img {
+  flex: none;
+  width: 30px;
+  height: auto;
+}
+
 .mapa-pe a {
   display: inline-flex;
   align-items: center;
@@ -5050,6 +5125,28 @@ section {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.faq-topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.faq-topo img {
+  flex: none;
+  width: 48px;
+  height: auto;
+  transform: rotate(-4deg);
+}
+
+.faq-topo h3 {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--giz);
 }
 
 .faq-item {

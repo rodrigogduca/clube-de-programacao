@@ -18,6 +18,7 @@ aí o arquivo dele substitui o daqui.
 | `fortinet.svg` | Wikimedia Commons, `Fortinet logo.svg`                      | domínio público    | `#231f20` → `#ffffff` (ver abaixo) |
 | `caffeine-army.png` | derivado de `caffeine.png`, posto na pasta pela comissão | —                  | versão clara (ver abaixo)          |
 | `senai-cimatec.png` | derivado de `universidade-senai-cimatec-300x132.png`, posto na pasta pela comissão | — | versão clara (ver abaixo) |
+| `fiap.png`     | Wikimedia Commons, `Fiap-logo-novo.jpg` (autor: Germanoparra) | CC BY-SA 4.0     | fundo branco removido (ver abaixo) |
 | `x-logic.png` | `X_Logic.png`, posto na pasta pela comissão (já em branco, fundo transparente) | — | recortado, reduzido a 160px de altura e quantizado em 64 cores |
 
 A Dortech ainda não mandou logo e sai com o nome escrito. Google, AWS e
@@ -99,3 +100,12 @@ O original fica na pasta, como o da Caffeine Army: é a procedência do derivado
 `aws.png`, `caffeine-army.png` e `senai-cimatec.png` são quantizados em 64
 cores. Os três têm duas ou três cores de verdade e o resto é antisserrilhado,
 então a paleta não tira nada visível e corta o arquivo em cerca de seis vezes (33 KB → 4 KB no da AWS).
+
+## A FIAP sem fundo
+
+O arquivo do Commons é um JPG com o wordmark rosa sobre branco, que nesta
+página viraria um retângulo branco. O rosa da marca (`#ED145B`) foi mantido
+como cor única e o branco virou transparência, com a opacidade de cada pixel
+tirada da distância dele ao branco, para a borda das letras continuar
+suave. Baixado em 23/09/2026. Quando a FIAP mandar o kit de imprensa, o
+arquivo dela substitui este.

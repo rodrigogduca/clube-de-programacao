@@ -551,7 +551,7 @@ const semcompAgora = (function () {
     const dia = Math.min(TOTAL_DIAS, Math.floor((hojeMs - primeiroMs) / 864e5) + 1);
     const horaLocal = new Date(t - 3 * 3600e3);
     const minutosDoDia = horaLocal.getUTCHours() * 60 + horaLocal.getUTCMinutes();
-    const emHorario = minutosDoDia >= 7 * 60 + 30 && minutosDoDia < 18 * 60;
+    const emHorario = minutosDoDia >= 7 * 60 + 30 && minutosDoDia < 17 * 60;
 
     if (emHorario) {
       rotulo.textContent = 'Acontecendo agora';
@@ -693,4 +693,39 @@ const semcompAgora = (function () {
   window.addEventListener('resize', () => preencherFilete(situacao(agora())));
   // As fontes mudam a altura dos cartões depois do primeiro desenho.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(atualizar);
+})();
+
+/* ---- RODÍZIO DOS LOGOS DO CARTÃO "ESTANDES" (/semcomp) ----
+   Cada grupo mostra um logo por vez. Os grupos começam defasados para não
+   trocarem todos no mesmo instante, e o rodízio para enquanto o ponteiro
+   ou o foco estão no cartão, para quem quer ler o logo com calma. */
+(function () {
+  const grupos = document.querySelectorAll('.estandes-rodizio');
+  if (!grupos.length) return;
+
+  const INTERVALO = 2600;
+  let pausado = false;
+
+  const cartao = grupos[0].closest('.formato-card');
+  if (cartao) {
+    cartao.addEventListener('mouseenter', () => { pausado = true; });
+    cartao.addEventListener('mouseleave', () => { pausado = false; });
+    cartao.addEventListener('focusin', () => { pausado = true; });
+    cartao.addEventListener('focusout', () => { pausado = false; });
+  }
+
+  grupos.forEach((grupo, g) => {
+    const itens = grupo.querySelectorAll('.estandes-item');
+    if (itens.length < 2) return;
+    let atual = 0;
+
+    setTimeout(() => {
+      setInterval(() => {
+        if (pausado || document.hidden) return;
+        itens[atual].classList.remove('estandes-item--ativo');
+        atual = (atual + 1) % itens.length;
+        itens[atual].classList.add('estandes-item--ativo');
+      }, INTERVALO);
+    }, g * (INTERVALO / grupos.length));
+  });
 })();
