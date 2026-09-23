@@ -4362,14 +4362,76 @@ section {
   color: var(--fumaca);
 }
 
-/* AS PALESTRAS CONFIRMADAS DE CADA DIA — a `.grade` em miniatura: hora numa
-   coluna fixa à esquerda, o resto empilhado ao lado. Filete entre as linhas e
-   não caixa em volta de cada uma: o cartão do dia já é a caixa. */
-.trilha-palestras {
+/* O DIA EM DOIS TURNOS — manhã e tarde lado a lado, dentro do cartão.
+
+   Cada turno é uma caixa com o nome e o horário de fim no topo e os blocos
+   embaixo: hora numa coluna fixa à esquerda, o que acontece ao lado.
+   Credenciamento, almoço e coffee break são "pausa" (texto mais baixo, sem
+   tipo); horário sem palestra confirmada é "aberto" (apagado, em itálico). */
+.trilha-turnos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
   margin-top: 20px;
-  padding-top: 6px;
-  border-top: 1px solid var(--traco);
+}
+
+.trilha-turno {
+  padding: 14px 16px 6px;
+  border: 1px solid var(--traco);
+  border-radius: calc(var(--r) - 4px);
+  background: rgba(8, 8, 11, 0.4);
+}
+
+.trilha-turno-topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--traco);
+}
+
+.trilha-turno-topo h4 {
+  font-family: var(--marca);
+  font-size: 1.1rem;
+  color: var(--gema);
+}
+
+.trilha-turno-topo span {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  color: var(--cinza);
+}
+
+.trilha-palestras {
   list-style: none;
+}
+
+.trilha-slot--pausa .trilha-hora {
+  color: var(--cinza);
+}
+
+.trilha-slot--pausa .trilha-palestra strong {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--fumaca);
+}
+
+.trilha-slot--aberto .trilha-hora {
+  color: var(--cinza);
+  opacity: 0.8;
+}
+
+.trilha-palestra-aberto {
+  font-size: 0.875rem;
+  font-style: italic;
+  color: var(--cinza);
+}
+
+@media (max-width: 760px) {
+  .trilha-turnos {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .trilha-palestras li {

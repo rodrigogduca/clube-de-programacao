@@ -640,8 +640,8 @@
     2026 — LOGÍSTICA"). Entra aqui só a linha com status CONFIRMADO. As
     marcadas "SEM CONFIRMAÇÃO" e as "A DEFINIR" ficam de fora de propósito —
     uma palestra anunciada e depois cancelada é alguém que atravessou a cidade
-    às 09:00 para uma sala vazia. Quando o status mudar na planilha, a linha
-    entra na lista `palestras` do dia.
+    às 09:00 para uma sala vazia. Quando o status mudar na planilha, a
+    palestra entra na `grade` do dia, pelo horário ('09:00': {...}).
 
     A QUARTA (30/09) AINDA NÃO TEM TEMA. `tema` fica vazio e o template escreve
     "Tema a definir" — não inventar um nome para preencher o cartão.
@@ -665,51 +665,64 @@
              alt="" aria-hidden="true" width="258" height="320" loading="lazy" decoding="async">
       </div>
 
+      {% set turnos = [
+        { nome: 'Manhã', ate: 'até 12:50', slots: [
+          { hora: '07:30', fixo: 'Credenciamento', ate: 'até as 08:50' },
+          { hora: '09:00' }, { hora: '10:00' }, { hora: '11:00' },
+          { hora: '12:00', fixo: 'Almoço', ate: 'até as 12:50' }
+        ] },
+        { nome: 'Tarde', ate: 'até 17:50', slots: [
+          { hora: '13:00' }, { hora: '14:00' }, { hora: '15:00' },
+          { hora: '16:00', fixo: 'Coffee break', ate: 'até as 16:50' },
+          { hora: '17:00' }
+        ] }
+      ] %}
+
       {% set dias = [
         {
           num: '29', mes: 'set', semana: 'Terça',
           tema: 'Cimatec Day',
           desc: 'A abertura da semana é o dia da casa: iniciativas estudantis, extensão, empresa júnior, startups e a carreira que começa dentro do campus.',
           tags: [{ nome: 'SENAI CIMATEC', destaque: true }, { nome: 'Iniciativas estudantis' }, { nome: 'Empreendedorismo' }, { nome: 'Carreira' }],
-          palestras: [
-            { hora: '09:00', tipo: 'Mesa redonda', titulo: 'Protagonismo universitário: o impacto das iniciativas estudantis na graduação', quem: 'Jeangela' },
-            { hora: '10:00', tipo: 'Palestra', titulo: 'Papel das iniciativas de extensão no contexto acadêmico e social', quem: 'Marinilda' },
-            { hora: '11:00', tipo: 'Palestra', titulo: 'Saúde mental e vida universitária: estratégias para o equilíbrio emocional nos estudos', quem: 'NAAE' },
-            { hora: '13:00', tipo: 'Palestra', titulo: 'Empreendedorismo jovem: acelere sua carreira no Movimento Empresa Júnior', quem: 'Cimatec Jr' },
-            { hora: '14:00', tipo: 'Mesa redonda', titulo: 'Do campus ao mercado: o potencial do ecossistema de startups do SENAI CIMATEC', quem: 'Thomas Buck' },
-            { hora: '15:00', tipo: 'Palestra', titulo: 'SENAI CIMATEC e big techs: como impulsionar sua carreira na era da inteligência artificial', quem: 'Sanval Ebert' },
-            { hora: '17:00', tipo: 'Palestra', titulo: 'Indústria de games: criação, tecnologias e oportunidades no desenvolvimento de jogos na Bahia', quem: 'Clube de Jogos + BIND' }
-          ]
+          grade: {
+            '09:00': { tipo: 'Mesa redonda', titulo: 'Protagonismo universitário: o impacto das iniciativas estudantis na graduação', quem: 'Jeangela' },
+            '10:00': { tipo: 'Palestra', titulo: 'Papel das iniciativas de extensão no contexto acadêmico e social', quem: 'Marinilda' },
+            '11:00': { tipo: 'Palestra', titulo: 'Saúde mental e vida universitária: estratégias para o equilíbrio emocional nos estudos', quem: 'NAAE' },
+            '13:00': { tipo: 'Palestra', titulo: 'Empreendedorismo jovem: acelere sua carreira no Movimento Empresa Júnior', quem: 'Cimatec Jr' },
+            '14:00': { tipo: 'Mesa redonda', titulo: 'Do campus ao mercado: o potencial do ecossistema de startups do SENAI CIMATEC', quem: 'Thomas Buck' },
+            '15:00': { tipo: 'Palestra', titulo: 'SENAI CIMATEC e big techs: como impulsionar sua carreira na era da inteligência artificial', quem: 'Sanval Ebert' },
+            '17:00': { tipo: 'Palestra', titulo: 'Indústria de games: criação, tecnologias e oportunidades no desenvolvimento de jogos na Bahia', quem: 'Clube de Jogos + BIND' }
+          }
         },
         {
           num: '30', mes: 'set', semana: 'Quarta',
           tema: '',
           desc: 'O tema do dia ainda está sendo fechado pela comissão. Por enquanto há uma palestra confirmada; o resto da grade sai no Even3.',
           tags: [{ nome: 'FIAP' }],
-          palestras: [
-            { hora: '11:00', tipo: 'Palestra', titulo: 'Síndrome do impostor: estamos juntos nisso', quem: 'Prof. Antonio Pedro (FIAP)' }
-          ]
+          grade: {
+            '11:00': { tipo: 'Palestra', titulo: 'Síndrome do impostor: estamos juntos nisso', quem: 'Prof. Antonio Pedro (FIAP)' }
+          }
         },
         {
           num: '01', mes: 'out', semana: 'Quinta',
           tema: 'Dev &amp; IA Day',
           desc: 'Inteligência artificial e desenvolvimento: da indústria de jogos à realidade virtual e à IA dentro do carro.',
           tags: [{ nome: 'Dortech', destaque: true }, { nome: 'IA' }, { nome: 'Realidade virtual' }, { nome: 'Jogos' }],
-          palestras: [
-            { hora: '09:00', tipo: 'Mesa redonda', titulo: 'Indústria de jogos', quem: 'BIND + Clube de Jogos' },
-            { hora: '13:00', tipo: 'Palestra', titulo: 'Novas pesquisas e tecnologias no mundo VR, com acompanhamento ao vivo do SVR 2026', quem: 'Ingrid Winkler' },
-            { hora: '15:00', tipo: 'Palestra', titulo: 'IA na indústria automotiva', quem: 'Anderson Dorea (Dortech)' }
-          ]
+          grade: {
+            '09:00': { tipo: 'Mesa redonda', titulo: 'Indústria de jogos', quem: 'BIND + Clube de Jogos' },
+            '13:00': { tipo: 'Palestra', titulo: 'Novas pesquisas e tecnologias no mundo VR, com acompanhamento ao vivo do SVR 2026', quem: 'Ingrid Winkler' },
+            '15:00': { tipo: 'Palestra', titulo: 'IA na indústria automotiva', quem: 'Anderson Dorea (Dortech)' }
+          }
         },
         {
           num: '02', mes: 'out', semana: 'Sexta',
           tema: 'Cyber &amp; Quantum Day',
           desc: 'Cibersegurança e computação quântica no mesmo dia: o que já ataca hoje e o que muda a criptografia amanhã. É também o dia do Capture The Leak da Fortinet.',
           tags: [{ nome: 'X Logic', destaque: true }, { nome: 'Fortinet', destaque: true }, { nome: 'Capture The Leak' }],
-          palestras: [
-            { hora: '10:00', tipo: 'Palestra', titulo: 'Impacto atual das tecnologias quantum safe na cibersegurança', quem: 'Henrique' },
-            { hora: '13:00', tipo: 'Palestra', titulo: 'IA para cibersegurança e cibersegurança para IA', quem: 'Jamson Borges, gerente de tecnologia da X Logic' }
-          ]
+          grade: {
+            '10:00': { tipo: 'Palestra', titulo: 'Impacto atual das tecnologias quantum safe na cibersegurança', quem: 'Henrique' },
+            '13:00': { tipo: 'Palestra', titulo: 'IA para cibersegurança e cibersegurança para IA', quem: 'Jamson Borges, gerente de tecnologia da X Logic' }
+          }
         },
         {
           num: '03', mes: 'out', semana: 'Sábado',
@@ -796,93 +809,52 @@
             </ul>
 
             {#
-              AS PALESTRAS DO DIA, hora à esquerda — o mesmo desenho da `.grade`
-              lá embaixo, em versão compacta para caber dentro do cartão.
-              O Arena Day não tem `palestras` e a lista não sai.
+              O DIA EM DOIS TURNOS, MANHÃ E TARDE, no modelo da planilha de
+              logística: credenciamento às 07:30, três palestras de manhã,
+              almoço, três à tarde, coffee break e o bloco das 17:00. Todo dia
+              segue a mesma grade (`turnos`, definida antes da lista), e cada
+              horário procura a sua palestra em `d.grade`. Horário sem palestra
+              confirmada sai como "A definir", mais apagado: a grade inteira
+              fica à vista e dá para planejar o dia mesmo com buracos.
             #}
-            {% if d.palestras %}
-            <ol class="trilha-palestras">
-              {% for pl in d.palestras %}
-              <li>
-                <span class="trilha-hora">{{ pl.hora }}</span>
-                <span class="trilha-palestra">
-                  <span class="trilha-palestra-tipo">{{ pl.tipo }}</span>
-                  <strong>{{ pl.titulo }}</strong>
-                  <span class="trilha-palestra-quem">{{ pl.quem }}</span>
-                </span>
-              </li>
+            <div class="trilha-turnos">
+              {% for t in turnos %}
+              <section class="trilha-turno">
+                <header class="trilha-turno-topo">
+                  <h4>{{ t.nome }}</h4>
+                  <span>{{ t.ate }}</span>
+                </header>
+                <ol class="trilha-palestras">
+                  {% for sl in t.slots %}
+                  {% set pl = d.grade[sl.hora] if d.grade else null %}
+                  <li class="{% if sl.fixo %}trilha-slot--pausa{% elif not pl %}trilha-slot--aberto{% endif %}">
+                    <span class="trilha-hora">{{ sl.hora }}</span>
+                    <span class="trilha-palestra">
+                      {% if sl.fixo %}
+                      <strong>{{ sl.fixo }}</strong>
+                      <span class="trilha-palestra-quem">{{ sl.ate }}</span>
+                      {% elif pl %}
+                      <span class="trilha-palestra-tipo">{{ pl.tipo }}</span>
+                      <strong>{{ pl.titulo }}</strong>
+                      <span class="trilha-palestra-quem">{{ pl.quem }}</span>
+                      {% else %}
+                      <span class="trilha-palestra-aberto">A definir</span>
+                      {% endif %}
+                    </span>
+                  </li>
+                  {% endfor %}
+                </ol>
+              </section>
               {% endfor %}
-            </ol>
-            {% endif %}
+            </div>
           </div>
         </li>
         {% endfor %}
       </ol>
 
       <p class="trilha-nota fade-in">
-        As pílulas acesas dão nome ao dia. Só aparecem aqui as palestras já confirmadas. Salas e horários ainda em aberto saem no Even3.
+        As pílulas acesas dão nome ao dia. Só entram na grade as palestras já confirmadas; os horários "A definir" e as salas saem no Even3.
       </p>
-
-      {#
-        A ESTRUTURA PADRÃO DE UM DIA DE PALESTRAS, em duas colunas — manhã e
-        tarde. É a informação que resolve a pergunta prática de quem vem de
-        outra faculdade: a que horas eu preciso estar lá e até quando isso vai.
-
-        Reaproveita o `.grade` que já existia para a programação: um cartão por
-        bloco, `hora` de um lado e o que acontece do outro.
-      #}
-      <div class="dia-padrao fade-in">
-        <div class="dia-padrao-topo">
-          <h3>Como é um dia de palestras</h3>
-          <span>29/09 a 02/10 &middot; credenciamento a partir das 07:30</span>
-        </div>
-
-        {% set turnos = [
-          {
-            dia: 'Manhã', data: 'até 12:50',
-            itens: [
-              { hora: '07:30', tipo: 'Chegada',   titulo: 'Credenciamento', quem: 'até as 08:50' },
-              { hora: '09:00', tipo: 'Palestra',  titulo: '1º bloco',       quem: '50 minutos' },
-              { hora: '10:00', tipo: 'Palestra',  titulo: '2º bloco',       quem: '50 minutos' },
-              { hora: '11:00', tipo: 'Palestra',  titulo: '3º bloco',       quem: '50 minutos' },
-              { hora: '12:00', tipo: 'Intervalo', titulo: 'Almoço',         quem: 'até as 12:50' }
-            ]
-          },
-          {
-            dia: 'Tarde', data: 'até 17:50',
-            itens: [
-              { hora: '13:00', tipo: 'Palestra',  titulo: '4º bloco',        quem: '50 minutos' },
-              { hora: '14:00', tipo: 'Palestra',  titulo: '5º bloco',        quem: '50 minutos' },
-              { hora: '15:00', tipo: 'Palestra',  titulo: '6º bloco',        quem: '50 minutos' },
-              { hora: '16:00', tipo: 'Intervalo', titulo: 'Coffee break',    quem: 'até as 16:50' },
-              { hora: '17:00', tipo: 'Clubes',    titulo: 'Clube temático',  quem: 'até as 17:50' }
-            ]
-          }
-        ] %}
-
-        <div class="grade">
-          {% for t in turnos %}
-          <section class="grade-dia">
-            <header class="grade-cabecalho">
-              <h4>{{ t.dia }}</h4>
-              <span class="grade-data">{{ t.data }}</span>
-            </header>
-            <ol class="grade-itens">
-              {% for i in t.itens %}
-              <li class="grade-item">
-                <span class="grade-hora">{{ i.hora }}</span>
-                <span class="grade-corpo">
-                  <span class="grade-tipo">{{ i.tipo }}</span>
-                  <strong>{{ i.titulo }}</strong>
-                  {% if i.quem %}<span class="grade-quem">{{ i.quem }}</span>{% endif %}
-                </span>
-              </li>
-              {% endfor %}
-            </ol>
-          </section>
-          {% endfor %}
-        </div>
-      </div>
 
       {# A quebra é MANUAL e fica no fim da primeira frase: são dois recados
          diferentes ("onde sai" e "como você fica sabendo"), e o `text-wrap:
