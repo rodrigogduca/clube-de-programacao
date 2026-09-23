@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Peças de dominó">
+  <defs>
+    <g id="pip"><circle r="5.2" fill="#15151b"/></g>
+  </defs>
+  <!-- peça deitada ao fundo: 3 | 5 -->
+  <g transform="rotate(-14 80 80)">
+    <rect x="22" y="94" width="104" height="52" rx="10" fill="#bdb4a6"/>
+    <rect x="22" y="90" width="104" height="52" rx="10" fill="#f6f1e9"/>
+    <line x1="74" y1="98" x2="74" y2="134" stroke="#15151b" stroke-width="3" stroke-linecap="round"/>
+    <use href="#pip" x="36" y="102"/><use href="#pip" x="48" y="116"/><use href="#pip" x="60" y="130"/>
+    <use href="#pip" x="88" y="102"/><use href="#pip" x="112" y="102"/><use href="#pip" x="100" y="116"/>
+    <use href="#pip" x="88" y="130"/><use href="#pip" x="112" y="130"/>
+  </g>
+  <!-- peça em pé na frente: 6 | 1 -->
+  <g transform="rotate(12 80 80)">
+    <rect x="70" y="16" width="52" height="104" rx="10" fill="#bdb4a6"/>
+    <rect x="66" y="12" width="52" height="104" rx="10" fill="#f6f1e9"/>
+    <line x1="74" y1="64" x2="110" y2="64" stroke="#15151b" stroke-width="3" stroke-linecap="round"/>
+    <use href="#pip" x="80" y="24"/><use href="#pip" x="104" y="24"/>
+    <use href="#pip" x="80" y="38"/><use href="#pip" x="104" y="38"/>
+    <use href="#pip" x="80" y="52"/><use href="#pip" x="104" y="52"/>
+    <circle cx="92" cy="90" r="7" fill="#ff5a1f"/>
+  </g>
+</svg>

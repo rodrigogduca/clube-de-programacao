@@ -36,6 +36,24 @@
     <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"></line></svg>
   {%- elif nome == 'certo' -%}
     <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12.3 2.7 2.7L16 9.7"></path></svg>
+  {#- PRÊMIOS DAS COMPETIÇÕES — traço de 2px, o mesmo peso de `certo` e
+      `proibido`, para a coluna de prêmios ler como uma família só. -#}
+  {%- elif nome == 'ssd' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="10" rx="1.5"></rect><path d="M5 17v2M8 17v2M11 17v2M14 17v2"></path><rect x="5" y="10" width="7" height="4" rx=".5"></rect><circle cx="17.5" cy="12" r="1.2"></circle></svg>
+  {%- elif nome == 'kit-gamer' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="9" width="14" height="9" rx="1.5"></rect><path d="M4.5 12h.01M7.5 12h.01M10.5 12h.01M12.5 12h.01M5.5 15h6"></path><rect x="17.5" y="9" width="5" height="9" rx="2.5"></rect><path d="M20 9v3"></path><path d="M20 9c0-2 1-3 2.5-3.5"></path></svg>
+  {%- elif nome == 'headset' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15v-3a8 8 0 0 1 16 0v3"></path><rect x="2.5" y="14" width="4.5" height="6.5" rx="1.5"></rect><rect x="17" y="14" width="4.5" height="6.5" rx="1.5"></rect><path d="M19.5 20.5c0 1.2-2 2-5 2h-1.5"></path></svg>
+  {%- elif nome == 'videogame' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10a5 5 0 0 1 4.9 6l-.8 4a2.5 2.5 0 0 1-4.3 1.2L14.5 16h-5l-2.3 2.2A2.5 2.5 0 0 1 2.9 17l-.8-4A5 5 0 0 1 7 7z"></path><path d="M7.5 10v4M5.5 12h4"></path><path d="M15.5 11h.01M17.5 13h.01"></path></svg>
+  {%- elif nome == 'fone' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4.5a3 3 0 0 1 4 2.8V9a2 2 0 0 1-2 2H6.5"></path><path d="M6.5 11v8.5"></path><circle cx="5.5" cy="6.5" r="3"></circle><circle cx="18.5" cy="6.5" r="3"></circle><path d="M17.5 11v8.5"></path><path d="M19 4.5a3 3 0 0 0-4 2.8V9a2 2 0 0 0 2 2h.5"></path></svg>
+  {%- elif nome == 'garrafa' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="1.5" width="6" height="3" rx="1"></rect><path d="M9.5 4.5 8 7.5v13A2 2 0 0 0 10 22.5h4a2 2 0 0 0 2-2v-13l-1.5-3"></path><path d="M8 11h8M8 17h8"></path></svg>
+  {%- elif nome == 'medalha' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 2.5 10 9M16.5 2.5 14 9"></path><path d="M9 2.5h6"></path><circle cx="12" cy="15" r="6.5"></circle><path d="m12 11.8 1 2 2.2.3-1.6 1.5.4 2.2-2-1-2 1 .4-2.2-1.6-1.5 2.2-.3z" fill="currentColor" stroke-width="1"></path></svg>
+  {%- elif nome == 'presente' -%}
+    <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M19 12v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-8"></path><path d="M12 8v14"></path><path d="M12 8C10 4 6 4 6.5 6.5S12 8 12 8zM12 8c2-4 6-4 5.5-1.5S12 8 12 8z"></path></svg>
   {%- elif nome == 'fechar' -%}
     <svg width="{{ tamanho }}" height="{{ tamanho }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
   {%- endif -%}

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Raquetes e bolinha de ping pong">
+  <!-- raquete de trás (preta) -->
+  <g transform="rotate(28 80 80)">
+    <rect x="96" y="92" width="14" height="44" rx="6" fill="#8a5a2b"/>
+    <rect x="96" y="92" width="14" height="10" rx="3" fill="#6e4520"/>
+    <ellipse cx="103" cy="66" rx="34" ry="36" fill="#1d1d24"/>
+    <ellipse cx="103" cy="66" rx="30" ry="32" fill="#2b2b35"/>
+  </g>
+  <!-- raquete da frente (vermelha) -->
+  <g transform="rotate(-24 80 80)">
+    <rect x="45" y="94" width="15" height="46" rx="6" fill="#b07338"/>
+    <rect x="45" y="94" width="15" height="11" rx="3" fill="#8a5a2b"/>
+    <rect x="49" y="108" width="7" height="28" rx="3" fill="#c98d4f" opacity=".5"/>
+    <ellipse cx="52" cy="66" rx="36" ry="38" fill="#b3261e"/>
+    <ellipse cx="52" cy="66" rx="32" ry="34" fill="#e0402a"/>
+    <ellipse cx="42" cy="52" rx="12" ry="8" fill="#ff7a5c" opacity=".55"/>
+  </g>
+  <!-- bolinha -->
+  <circle cx="122" cy="34" r="13" fill="#ff7a1a"/>
+  <circle cx="118" cy="30" r="4.5" fill="#ffc28a"/>
+  <path d="M98 44 q-8 4 -16 3" stroke="#f6f1e9" stroke-width="2.5" stroke-linecap="round" fill="none" opacity=".45"/>
+  <path d="M100 52 q-7 3 -13 2" stroke="#f6f1e9" stroke-width="2.5" stroke-linecap="round" fill="none" opacity=".3"/>
+</svg>

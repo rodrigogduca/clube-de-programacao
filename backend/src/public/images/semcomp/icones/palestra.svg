@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" role="img" aria-label="Púlpito com microfone e balão de fala">
+  <defs>
+    <linearGradient id="lar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffb52e"/>
+      <stop offset="1" stop-color="#fb5b00"/>
+    </linearGradient>
+    <g id="desenho">
+      <!-- balão de fala -->
+      <path d="M186 22h96a18 18 0 0 1 18 18v44a18 18 0 0 1-18 18h-52l-22 20v-20h-22a18 18 0 0 1-18-18V40a18 18 0 0 1 18-18z"/>
+      <!-- púlpito -->
+      <path d="M70 128h140l-14 108H84z"/>
+      <path d="M58 112h164a10 10 0 0 1 10 10v10a10 10 0 0 1-10 10H58a10 10 0 0 1-10-10v-10a10 10 0 0 1 10-10z"/>
+      <!-- haste e microfone -->
+      <path d="M132 112l-14-30"/>
+      <rect x="88" y="14" width="52" height="72" rx="26"/>
+    </g>
+  </defs>
+
+  <!-- halo laranja em volta de tudo -->
+  <g fill="#fb5b00" stroke="#fb5b00" stroke-width="26" stroke-linejoin="round" stroke-linecap="round"><use href="#desenho"/></g>
+  <g fill="#000" stroke="#000" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"><use href="#desenho"/></g>
+
+  <!-- raios -->
+  <g stroke="#000" stroke-width="12" stroke-linecap="round"><path d="M40 70l-14-8M44 44l-10-16M70 30l-4-18"/></g>
+  <g stroke="#fb5b00" stroke-width="6" stroke-linecap="round"><path d="M40 70l-14-8M44 44l-10-16M70 30l-4-18"/></g>
+
+  <!-- balão -->
+  <path d="M186 22h96a18 18 0 0 1 18 18v44a18 18 0 0 1-18 18h-52l-22 20v-20h-22a18 18 0 0 1-18-18V40a18 18 0 0 1 18-18z" fill="#fae4c8"/>
+  <g fill="#29282c"><circle cx="208" cy="62" r="8"/><circle cx="234" cy="62" r="8"/><circle cx="260" cy="62" r="8"/></g>
+
+  <!-- púlpito -->
+  <path d="M70 128h140l-14 108H84z" fill="#29282c"/>
+  <path d="M92 150h96l-10 70H102z" fill="none" stroke="#000" stroke-width="5" opacity=".6"/>
+  <rect x="126" y="170" width="28" height="28" rx="6" fill="url(#lar)" stroke="#000" stroke-width="5"/>
+  <path d="M133 184h14M140 177v14" stroke="#fae4c8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M58 112h164a10 10 0 0 1 10 10v10a10 10 0 0 1-10 10H58a10 10 0 0 1-10-10v-10a10 10 0 0 1 10-10z" fill="url(#lar)"/>
+  <path d="M66 122h60" stroke="#fae4c8" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+
+  <!-- microfone -->
+  <path d="M132 112l-14-30" stroke="#29282c" stroke-width="8" stroke-linecap="round"/>
+  <rect x="88" y="14" width="52" height="72" rx="26" fill="#29282c"/>
+  <rect x="96" y="22" width="36" height="42" rx="18" fill="url(#lar)" stroke="#000" stroke-width="4"/>
+  <path d="M105 32v16" stroke="#fae4c8" stroke-width="5" stroke-linecap="round"/>
+  <path d="M98 74h32" stroke="#fae4c8" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+</svg>

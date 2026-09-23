@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="As quatro manilhas do truco em leque: zap, copas, espadilha e pica-fumo">
+  <defs>
+    <path id="paus" d="M0-9a4.6 4.6 0 1 1 0 .1zM-5-1a4.6 4.6 0 1 1 .1 0zM5-1a4.6 4.6 0 1 1 .1 0zM-1.4 0h2.8l1.6 9h-6z"/>
+    <path id="copas" d="M0 8C-12-1-9-9-4.5-9-2-9 0-7 0-5c0-2 2-4 4.5-4C9-9 12-1 0 8z"/>
+    <path id="espadas" d="M0-9C-11 0-9 7-4.5 7-2.5 7-1 6-.8 5L-2.5 10h5L.8 5C1 6 2.5 7 4.5 7 9 7 11 0 0-9z"/>
+    <path id="ouros" d="M0-10L7 0 0 10-7 0z"/>
+    <g id="carta">
+      <rect x="-24" y="-36" width="48" height="72" rx="6" fill="#bdb4a6" transform="translate(2 2)"/>
+      <rect x="-24" y="-36" width="48" height="72" rx="6" fill="#f6f1e9"/>
+    </g>
+  </defs>
+  <g transform="translate(80 104)">
+    <!-- 7 de ouros (pica-fumo) -->
+    <g transform="rotate(-33) translate(0 -38)">
+      <use href="#carta"/>
+      <text x="-18" y="-20" font-family="Arial, sans-serif" font-weight="700" font-size="15" fill="#d6281e">7</text>
+      <use href="#ouros" fill="#d6281e" transform="translate(-13 -2) scale(0.95)"/>
+    </g>
+    <!-- A de espadas (espadilha) -->
+    <g transform="rotate(-11) translate(0 -38)">
+      <use href="#carta"/>
+      <text x="-18" y="-20" font-family="Arial, sans-serif" font-weight="700" font-size="15" fill="#15151b">A</text>
+      <use href="#espadas" fill="#15151b" transform="translate(-13 -2) scale(0.95)"/>
+    </g>
+    <!-- 7 de copas -->
+    <g transform="rotate(11) translate(0 -38)">
+      <use href="#carta"/>
+      <text x="-18" y="-20" font-family="Arial, sans-serif" font-weight="700" font-size="15" fill="#d6281e">7</text>
+      <use href="#copas" fill="#d6281e" transform="translate(-13 -2) scale(0.95)"/>
+    </g>
+    <!-- 4 de paus (zap) -->
+    <g transform="rotate(33) translate(0 -38)">
+      <use href="#carta"/>
+      <text x="-18" y="-20" font-family="Arial, sans-serif" font-weight="700" font-size="15" fill="#15151b">4</text>
+      <use href="#paus" fill="#15151b" transform="translate(-13 -2) scale(0.95)"/>
+    </g>
+  </g>
+</svg>

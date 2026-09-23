@@ -18,6 +18,10 @@ aí o arquivo dele substitui o daqui.
 | `fortinet.svg` | Wikimedia Commons, `Fortinet logo.svg`                      | domínio público    | `#231f20` → `#ffffff` (ver abaixo) |
 | `caffeine-army.png` | derivado de `caffeine.png`, posto na pasta pela comissão | —                  | versão clara (ver abaixo)          |
 | `senai-cimatec.png` | derivado de `universidade-senai-cimatec-300x132.png`, posto na pasta pela comissão | — | versão clara (ver abaixo) |
+| `x-logic.png` | `X_Logic.png`, posto na pasta pela comissão (já em branco, fundo transparente) | — | recortado, reduzido a 160px de altura e quantizado em 64 cores |
+
+A Dortech ainda não mandou logo e sai com o nome escrito. Google, AWS e
+Caffeine Army saíram da faixa em 23/09/2026; os arquivos continuam aqui.
 
 Os do Commons foram baixados em 16/09/2026. Os três SVG não têm `<script>`,
 manipulador de evento nem referência externa — foi conferido, porque SVG é

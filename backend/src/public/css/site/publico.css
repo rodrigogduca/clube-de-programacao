@@ -764,6 +764,40 @@ section {
   min-width: 0;
 }
 
+/* O ÍCONE ILUSTRADO DA SEÇÃO (só na /semcomp), empurrado para a direita do
+   título. `margin-left: auto` é o que o manda para o canto no flex do
+   `.secao-topo`; a leve inclinação e o balanço no hover são o mesmo gesto das
+   ilustrações dos jogos de mesa. No celular ele encolhe e continua ao lado,
+   em vez de descer e empurrar o título para baixo. */
+.secao-ilustra {
+  flex: none;
+  align-self: center;
+  width: clamp(92px, 13vw, 168px);
+  height: auto;
+  margin-left: auto;
+  transform: rotate(4deg);
+  filter: drop-shadow(0 12px 30px rgba(242, 138, 31, 0.18));
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.secao-topo:hover .secao-ilustra {
+  transform: rotate(-3deg) scale(1.04);
+}
+
+@media (max-width: 620px) {
+  .secao-ilustra {
+    width: 72px;
+    align-self: flex-start;
+  }
+}
+
+/* A miniatura dentro dos botões do topo da /semcomp. */
+.btn-ilustra {
+  width: 26px;
+  height: auto;
+  margin: -4px 0;
+}
+
 /* Link de texto com seta que anda no hover. É o fecho de um parágrafo, não um
    botão: usar `.btn-*` aqui daria a um "ver mais" o mesmo peso visual de uma
    inscrição. */
@@ -1484,96 +1518,12 @@ section {
 }
 
 
-/* ---- A faixa de marcas (/semcomp) ----
+/* ---- Marcas da /semcomp ----
 
-   A mesma mecânica do trilho acima, com outro conteúdo: em vez dos termos do
-   clube, quem apoia a semana. Tudo o que é difícil — o laço sem emenda, o
-   desbotado das pontas, a pausa no ponteiro, o `animation: none` de movimento
-   reduzido — vem de `.faixa` e `.faixa-trilho` e não é reescrito aqui. O que
-   muda é o espaçamento, o corpo da letra e o tratamento do logo.
-
-   `min-width: 100vw` NA LISTA, E É ELE QUE FAZ A FAIXA FUNCIONAR COM CINCO
-   ITENS.
-
-   A regra do trilho é que a animação anda -50%, ou seja, exatamente UMA cópia
-   da lista. Isso só esconde a emenda enquanto uma cópia for mais larga que a
-   tela: se for menor, o deslocamento passa do fim do conteúdo e a faixa anda
-   com um buraco atrás de si. A faixa da home tem oito termos longos ("Maratona
-   de Programação") e passa disso sobrando. Cinco nomes de marca não passam —
-   medido num viewport de 1536px, uma cópia dava 1050px.
-
-   Prender a lista em `100vw` resolve por construção, e em qualquer tela: a
-   cópia nunca é menor que a janela, então o passo de -50% nunca descobre o
-   fim. É melhor do que empurrar a largura no `min-width` de cada marca (que
-   depende de quantas marcas existem, e quebraria de novo ao remover uma) e
-   melhor do que repetir a lista mais vezes (que multiplica o DOM e ainda
-   precisa de conta para saber quantas cópias bastam).
-
-   `space-evenly` é o par necessário disso: com a cópia esticada até 100vw,
-   sem ele as cinco marcas ficariam amontoadas à esquerda com um vazio à
-   direita. Com ele, sobra espaço = respiro entre as marcas. O `gap` continua
-   valendo para o outro caso, o do celular, em que o conteúdo é mais largo que
-   os 100vw e não há folga para distribuir. */
-.marcas-faixa {
-  margin-top: clamp(40px, 5vw, 64px);
-}
-
-.marcas-rotulo {
-  justify-content: center;
-  margin-bottom: 18px;
-}
-
-/* A faixa da home encosta no herói e por isso tem fundo; esta flutua entre
-   duas respirações da página e fica só com os filetes. */
-.faixa--marcas {
-  background: transparent;
-}
-
-.faixa-lista--marcas {
-  align-items: center;
-  justify-content: space-evenly;
-  min-width: 100vw;
-  gap: clamp(30px, 4vw, 60px);
-}
-
-/* A casa de cada marca. Ela existe para os logos, que chegam em larguras
-   diferentes (um wordmark deitado ao lado de um símbolo quadrado): sem um piso
-   de largura, a fileira se acomoda ao desenho de cada arquivo e deixa de
-   parecer uma fileira. */
-.marca {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: clamp(110px, 12vw, 170px);
-}
-
-/* O logo entra NA COR DA PRÓPRIA MARCA — sem `grayscale`, sem `opacity` e sem
-   fundo branco atrás. É a mesma decisão dos selos das competições na
-   /seja-membro, e pelo mesmo motivo: a página não desbota a marca de ninguém
-   para caber numa fileira uniforme, e plaquinha branca atrás de logo foi o que
-   se removeu de lá.
-
-   DUAS MARCAS SÃO A VERSÃO CLARA DELAS, E NÃO UMA EXCEÇÃO A ISSO. O arquivo da
-   AWS e o da Fortinet vêm com o wordmark em quase-preto (#161d26 e #231f20),
-   que sobre esta página é um logo invisível. Nos dois o escuro virou branco e
-   a cor de marca ficou intacta (o laranja da AWS, o vermelho da Fortinet) —
-   que é exatamente o lockup "reverse" que as duas publicam para fundo escuro,
-   e não uma repintura inventada aqui.
-
-   A ALTURA VEM DE FORA, uma por marca, no `--marca-altura` que o template
-   escreve em cada `<img>` — ver o comentário da lista `marcas` em
-   `core/semcomp.njk` para o porquê de não haver uma altura só. O `30` do
-   `var()` é a reserva para uma marca que entre sem o campo.
-
-   `width: auto` e `max-width: 100%`: a altura é que alinha uma fileira de
-   logos, nunca a largura, e o teto impede que um wordmark muito deitado
-   atropele a casa da vizinha. */
-.marca-logo {
-  height: calc(var(--marca-altura, 30) * 1px);
-  width: auto;
-  max-width: 100%;
-  object-fit: contain;
-}
+   A faixa girando de patrocinadores saiu do topo da página: os logos agora
+   ficam parados em cartões na seção 06 (`.parceiros-grid`). Destas regras
+   sobraram só duas, usadas lá: o nome escrito de uma marca sem logo e a nota
+   de "em confirmação". */
 
 /* O nome escrito, enquanto o logo não existe.
 
@@ -2817,30 +2767,60 @@ section {
   text-wrap: pretty;
 }
 
+/* OS LOGOS DAS SETE UNIVERSIDADES, uma casa por logo.
+
+   A casa ocupa a fileira de cima inteira (`span` de todas as colunas) e as
+   seis convidadas se dividem em duas fileiras de três — 1 + 3 + 3 fecha
+   sem órfão, e é a hierarquia que as pílulas acesas faziam antes. No
+   celular viram duas colunas: 1 + 2 + 2 + 2. */
 .instituicoes {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
   list-style: none;
 }
 
 .instituicoes li {
-  padding: 9px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 86px;
+  padding: 10px 14px;
   border: 1px solid var(--traco-forte);
-  border-radius: 999px;
+  border-radius: var(--r);
   background: var(--sombra);
-  font-family: var(--mono);
-  font-size: 0.8125rem;
-  letter-spacing: 0.04em;
-  color: var(--giz);
+  transition: border-color var(--transicao), transform var(--transicao);
 }
 
-/* A casa em primeiro: é a instituição que recebe, e no meio de seis siglas
-   iguais ela desaparecia. */
-.instituicoes li:first-child {
+.instituicoes li:hover {
+  border-color: var(--ambar-traco);
+  transform: translateY(-2px);
+}
+
+.instituicoes img {
+  height: calc(var(--uni-altura, 32) * 1px);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  /* TODAS EM BRANCO. `brightness(0)` apaga a cor e `invert(1)` devolve
+     branco; a transparência de cada pixel não muda. É por isso que o UESB e
+     o UNEB, cujos brasões são cor sobre cor, vêm de arquivos já convertidos
+     em tons de transparência (ver `images/universidades/PROCEDENCIA.md`):
+     chapados, os brasões virariam uma mancha branca. */
+  filter: brightness(0) invert(1);
+}
+
+/* A casa em primeiro e acesa: é a instituição que recebe. */
+.instituicoes li.instituicao--casa {
+  grid-column: 1 / -1;
   border-color: var(--ambar-traco);
   background: var(--ambar-lavagem);
-  color: var(--gema);
+}
+
+@media (max-width: 560px) {
+  .instituicoes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 
@@ -2943,6 +2923,136 @@ section {
   line-height: 1.1;
   color: var(--gema);
   text-shadow: 0 0 34px rgba(255, 77, 0, 0.35);
+}
+
+/* LOGO E CONTAGEM NA MESMA LINHA: logo à esquerda, contagem à direita.
+
+   É a ordem do HTML (o `<h1>` com a logo vem primeiro), então não há
+   `order` nenhum. Lado a lado só a partir de 900px, quando as duas cabem sem
+   a logo encolher demais; abaixo disso elas empilham, logo em cima. */
+@media (min-width: 900px) {
+  .capa-topo {
+    display: flex;
+    align-items: center;
+    gap: clamp(28px, 4vw, 56px);
+    margin-top: 24px;
+  }
+
+  .capa-topo .capa-titulo {
+    margin-top: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .capa-topo .contagem {
+    flex: none;
+    margin-top: 0;
+  }
+}
+
+/* A CONTAGEM REGRESSIVA DO TOPO.
+
+   Quatro casas com o número grande e a unidade embaixo, num vidro escuro por
+   cima da foto (o mesmo `backdrop-filter` que tira o ruído da foto atrás de
+   um texto pequeno). Os números usam `tabular-nums`: sem isso a largura muda
+   a cada segundo ("11" é mais estreito que "00") e a fileira treme. */
+.contagem {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 16px 20px 14px;
+  border: 1px solid var(--ambar-traco);
+  border-radius: var(--r);
+  background: rgba(8, 8, 11, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 0 40px rgba(255, 77, 0, 0.12);
+}
+
+.contagem[hidden] {
+  display: none;
+}
+
+.contagem-rotulo {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+/* O ponto que pulsa enquanto a semana acontece, como o da barra. */
+.contagem[data-fase="dia"] .contagem-rotulo::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: var(--ambar);
+  vertical-align: 1px;
+  animation: semana-pulso 1.8s ease-out infinite;
+}
+
+.contagem-numeros {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(8px, 1.6vw, 14px);
+}
+
+.contagem-numeros[hidden] {
+  display: none;
+}
+
+.contagem-bloco {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: clamp(54px, 7vw, 74px);
+}
+
+.contagem-valor {
+  font-family: var(--display);
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--giz);
+  text-shadow: 0 0 26px rgba(255, 138, 31, 0.35);
+}
+
+.contagem-unidade {
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fumaca);
+}
+
+.contagem-sep {
+  font-family: var(--display);
+  font-size: clamp(1.6rem, 4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--ambar);
+  opacity: 0.6;
+}
+
+.contagem-aovivo {
+  font-family: var(--display);
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--giz);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contagem[data-fase="dia"] .contagem-rotulo::before {
+    animation: none;
+  }
 }
 
 .capa-linha {
@@ -3183,6 +3293,696 @@ section {
    as duas grades, e tirá-la do template para devolver depois é mais trabalho
    do que deixar um seletor vazio de regra. */
 
+/* OS CINCO FORMATOS DA SEÇÃO 02 — ilustração no topo, num "palco".
+
+   O palco tem ALTURA FIXA e é ele que padroniza a fileira: as ilustrações têm
+   proporções diferentes (o troféu com pódio é largo, o púlpito é alto), e
+   sem uma caixa de altura igual os títulos de cartões vizinhos ficariam em
+   alturas diferentes. O brilho âmbar por trás é o mesmo das outras áreas
+   acesas da página. */
+.formato-card--arte {
+  padding-top: 22px;
+}
+
+.formato-palco {
+  display: grid;
+  place-items: center;
+  height: 128px;
+  margin: 0 -6px 18px;
+  border-radius: calc(var(--r) - 4px);
+  background:
+    radial-gradient(ellipse 55% 70% at 50% 60%, rgba(255, 122, 26, 0.16), transparent 70%),
+    rgba(8, 8, 11, 0.45);
+}
+
+.formato-palco img {
+  height: 104px;
+  width: auto;
+  max-width: 88%;
+  object-fit: contain;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.formato-card--arte:hover .formato-palco img {
+  transform: translateY(-4px) rotate(-3deg) scale(1.05);
+}
+
+
+/* A GRADE DA SEÇÃO 02: quatro cartões iguais e o dos estandes na largura
+   inteira, embaixo. Só de 1000px para cima; abaixo disso vale a grade comum
+   do `.formato-grid` (duas por fileira, e o quinto, ímpar, já ocupa a fileira).
+
+   Os seletores levam as duas classes para vencer as regras de "sobra" do
+   `.formato-grid` (as de `:nth-child`), que têm o mesmo peso e vêm antes. */
+@media (min-width: 1000px) {
+  .formato-grid.formato-grid--atividades {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .formato-grid.formato-grid--atividades > :nth-child(n) {
+    grid-column: auto;
+  }
+
+  .formato-grid.formato-grid--atividades > .formato-card--largo {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr) minmax(0, 1.4fr);
+    grid-template-areas:
+      "palco selo   marcas"
+      "palco titulo marcas"
+      "palco texto  marcas"
+      "palco nota   marcas";
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: 32px;
+    align-items: start;
+  }
+
+  .formato-card--largo .formato-palco {
+    grid-area: palco;
+    height: 100%;
+    min-height: 160px;
+    margin: 0;
+  }
+
+  .formato-card--largo .formato-selo { grid-area: selo; justify-self: start; }
+  .formato-card--largo h3 { grid-area: titulo; }
+  .formato-card--largo p { grid-area: texto; }
+  .formato-card--largo .formato-nota { grid-area: nota; align-self: end; }
+
+  .formato-card--largo .estandes-marcas {
+    grid-area: marcas;
+    margin-top: 0;
+  }
+
+  .formato-card--largo .estandes-grupo:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+}
+
+
+/* A SEMCOMP EM FOTOS — a faixa que rola para o lado.
+
+   Ocupa a largura inteira da tela (está fora do `.container`) e usa a
+   mesma animação da faixa da home (`faixa-anda`, -50% com duas cópias da
+   lista). A duração é bem maior que os 42s de lá porque a tira de fotos é
+   muito mais comprida: em 42s ela passaria a uns 160px por segundo, rápido
+   demais para ver uma foto. */
+.fotos-faixa {
+  margin-top: clamp(40px, 5vw, 64px);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.fotos-trilho {
+  animation-duration: 120s;
+}
+
+.fotos-faixa:hover .fotos-trilho {
+  animation-play-state: paused;
+}
+
+.fotos-lista {
+  display: flex;
+  flex-shrink: 0;
+  gap: 14px;
+  padding-right: 14px;
+  list-style: none;
+}
+
+.fotos-lista li {
+  flex: none;
+}
+
+.fotos-lista img {
+  display: block;
+  height: clamp(180px, 22vw, 260px);
+  width: auto;
+  border-radius: var(--r);
+  border: 1px solid var(--traco);
+  transition: transform var(--transicao), border-color var(--transicao);
+}
+
+.fotos-lista img:hover {
+  transform: translateY(-4px);
+  border-color: var(--ambar-traco);
+}
+
+/* Com movimento reduzido o trilho para (regra do `.faixa-trilho` no fim da
+   folha) e a faixa passa a rolar na mão: a pessoa ainda vê todas as fotos,
+   só que no ritmo dela. */
+@media (prefers-reduced-motion: reduce) {
+  .fotos-faixa {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+
+/* OS LOGOS DO CARTÃO "ESTANDES" — uma linha por grupo (patrocínio, apoio,
+   parceiros), o nome do grupo à esquerda e os logos pequenos ao lado. A
+   altura de cada logo vem do template, proporcional à da seção 06
+   (`--estande-altura`), para as marcas pesarem igual nos dois lugares. */
+.estandes-marcas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.estandes-grupo {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--traco);
+}
+
+.estandes-grupo dt {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.estandes-grupo dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+}
+
+/* Marca sem logo ainda: o nome, no tamanho de um logo pequeno. */
+.estandes-nome {
+  font-family: var(--display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--giz);
+}
+
+.estandes-grupo img {
+  height: calc(var(--estande-altura, 22) * 1px);
+  width: auto;
+  max-width: 120px;
+  object-fit: contain;
+}
+
+/* A PREMIAÇÃO, uma linha por colocação — é a segunda pergunta de quem lê o
+   cartão, e diluída no parágrafo ela some. */
+.formato-premios {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 16px;
+  list-style: none;
+  font-size: 0.875rem;
+  color: var(--giz);
+}
+
+/* Cada linha: colocação, ícone do prêmio, nome. O ícone vai numa casinha de
+   fundo lavado para os desenhos de proporções diferentes (a garrafa em pé, o
+   SSD deitado) ocuparem o mesmo lugar na coluna. */
+.formato-premios li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.formato-premio-rank {
+  flex: none;
+  min-width: 22px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  color: var(--ambar);
+}
+
+/* O 1º lugar em ouro claro: é o prêmio que a pessoa lê primeiro. */
+.formato-premios li:first-child .formato-premio-rank {
+  color: var(--gema);
+  font-weight: 700;
+}
+
+.formato-premio-icone {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: var(--ambar-lavagem);
+  color: var(--ambar);
+}
+
+.formato-premios li:first-child .formato-premio-icone {
+  background: rgba(255, 196, 107, 0.14);
+  color: var(--gema);
+}
+
+/* AS MEDALHAS DOS JOGOS DE MESA levam a cor do metal, e não o âmbar dos
+   outros prêmios: ouro, prata e bronze são o prêmio inteiro, e é a cor que
+   diz qual é qual. As duas classes no seletor igualam a força do
+   `:first-child` acima, e como a regra vem depois, o ouro do 1º vence. */
+.formato-premios li .formato-premio-icone.formato-premio-icone--medalha-1 {
+  background: rgba(255, 221, 64, 0.16);
+  color: #ffdd40;
+}
+
+.formato-premios li .formato-premio-icone.formato-premio-icone--medalha-2 {
+  background: rgba(200, 205, 214, 0.14);
+  color: #c8cdd6;
+}
+
+.formato-premios li .formato-premio-icone.formato-premio-icone--medalha-3 {
+  background: rgba(176, 101, 52, 0.22);
+  color: #c47a45;
+}
+
+/* AS ILUSTRAÇÕES DOS JOGOS DE MESA — quatro desenhos lado a lado, cada um com
+   o nome embaixo. `repeat(4)` e não `auto-fit`: são sempre quatro, e uma
+   quebra em 3+1 deixaria o truco sozinho numa fileira. */
+.formato-ilustras {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+  list-style: none;
+}
+
+.formato-ilustras li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.formato-ilustras img {
+  width: 100%;
+  max-width: 64px;
+  height: auto;
+  transition: transform var(--transicao);
+}
+
+.formato-card:hover .formato-ilustras li:nth-child(odd) img { transform: rotate(-6deg) scale(1.06); }
+.formato-card:hover .formato-ilustras li:nth-child(even) img { transform: rotate(6deg) scale(1.06); }
+
+.formato-ilustras span {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0;
+  white-space: nowrap;
+  color: var(--fumaca);
+}
+
+
+/* ==========================================================================
+   E-SPORTS — a faixa da Jett
+
+   Texto à esquerda, a heroína à direita, saindo por cima da moldura. O
+   `overflow: visible` e a margem de cima são o que deixa a cabeça e a pistola
+   passarem da borda — é esse vazamento que chama o olho, e cortar a figura na
+   linha da caixa a transformaria numa foto de catálogo.
+
+   No celular a figura sai do fluxo e vira fundo do canto direito, bem mais
+   apagada: empilhada embaixo do texto ela empurraria a lista de jogos para a
+   segunda tela.
+   ========================================================================== */
+
+.esports {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  align-items: end;
+  gap: 24px;
+  margin-top: clamp(64px, 8vw, 96px);
+  padding: 32px 32px 0;
+  border: 1px solid var(--ambar-traco);
+  border-radius: var(--r);
+  background:
+    radial-gradient(ellipse 70% 90% at 85% 100%, rgba(255, 122, 26, 0.18), transparent 70%),
+    radial-gradient(ellipse 50% 60% at 0% 0%, rgba(90, 170, 255, 0.07), transparent 70%),
+    var(--penumbra);
+}
+
+.esports-texto {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 30px;
+}
+
+.esports-texto h3 {
+  margin-top: 18px;
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--giz);
+}
+
+.esports-texto > p {
+  margin-top: 10px;
+  max-width: 52ch;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--fumaca);
+}
+
+/* A PREMIAÇÃO DOS E-SPORTS, como uma tabela de três colunas: o jogo (logo,
+   nome e formato), o 1º lugar e o 2º lugar. O cabeçalho das duas colunas de
+   prêmio fica numa linha só, em cima, com o ícone de premiações; cada linha
+   de jogo repete a mesma grade, e é isso que alinha os prêmios em coluna. */
+.esports-premiacao-topo {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) repeat(2, minmax(0, 0.9fr));
+  align-items: end;
+  gap: 12px;
+  margin-top: 22px;
+  padding: 0 14px 8px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+.esports-premiacao-topo img {
+  width: 40px;
+  height: auto;
+}
+
+.esports-colunas {
+  display: contents;
+  color: var(--cinza);
+}
+
+.esports-jogos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+}
+
+.esports-jogos > li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) minmax(0, 1.8fr);
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: rgba(8, 8, 11, 0.6);
+}
+
+.esports-premios {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  list-style: none;
+}
+
+.esports-premios li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--giz);
+}
+
+/* 1º lugar em ouro, como nos cartões de cima. */
+.esports-premios li:first-child .formato-premio-rank {
+  color: var(--gema);
+  font-weight: 700;
+}
+
+.esports-premios li:first-child .formato-premio-icone {
+  background: rgba(255, 196, 107, 0.14);
+  color: var(--gema);
+}
+
+.esports-sem-premio {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--fumaca);
+}
+
+/* No celular os prêmios descem para baixo do nome, e o cabeçalho das
+   colunas some (cada linha já diz 1º e 2º). */
+@media (max-width: 620px) {
+  .esports-premiacao-topo {
+    grid-template-columns: 64px 1fr;
+  }
+
+  .esports-colunas {
+    display: none;
+  }
+
+  .esports-jogos > li {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+
+  .esports-premios,
+  .esports-sem-premio {
+    grid-column: 1 / -1;
+  }
+}
+
+.esports-marca {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: none;
+  min-width: 44px;
+  height: 36px;
+}
+
+.esports-marca img {
+  width: 28px;
+  height: 28px;
+}
+
+.esports-sufixo {
+  white-space: nowrap;
+  font-family: var(--display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--giz);
+}
+
+.esports-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.esports-info strong {
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: var(--giz);
+}
+
+.esports-info span {
+  font-size: 0.8rem;
+  color: var(--fumaca);
+}
+
+.esports .formato-nota {
+  padding-top: 18px;
+}
+
+.esports-heroina {
+  align-self: end;
+  justify-self: center;
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  margin-top: -110px;
+  filter: drop-shadow(0 18px 40px rgba(255, 122, 26, 0.25));
+  pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  .esports {
+    display: block;
+    padding: 26px 22px 0;
+    overflow: hidden;
+  }
+
+  .esports-heroina {
+    position: absolute;
+    right: -60px;
+    bottom: 0;
+    width: 240px;
+    margin: 0;
+    opacity: 0.35;
+  }
+
+  .esports-texto {
+    position: relative;
+  }
+}
+
+
+/* As imagens dentro dos cartões de formulário ("Escolha a sua modalidade"):
+   a mesma fileira dos jogos de mesa, menor, e os logos dos e-sports. */
+/* O ÍCONE GRANDE NO CANTO dos cartões de formulário e do cartão do
+   hackathon. Fica no canto de cima à direita, na altura do selo, e não
+   empurra o texto: o cartão ganha `position: relative` e o ícone sai do
+   fluxo. */
+.acao-card,
+.formato-card--ilustrado {
+  position: relative;
+}
+
+.acao-ilustra,
+.formato-ilustra {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 92px;
+  height: auto;
+  transform: rotate(6deg);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.acao-card:hover .acao-ilustra,
+.formato-card:hover .formato-ilustra {
+  transform: rotate(-4deg) scale(1.06);
+}
+
+.formato-ilustra {
+  /* A MESMA CAIXA PARA TODOS OS ÍCONES DE CARTÃO: altura fixa e largura até
+     um teto. Os ícones ilustrados são quase quadrados e saem com ~80px; o
+     logo da OCC, que é deitado, bate no teto de largura e sai mais baixo, sem
+     crescer mais que os outros. */
+  width: auto;
+  height: 62px;
+  max-width: 108px;
+  object-fit: contain;
+}
+
+/* O título não passa por baixo do ícone do canto. */
+.formato-card--ilustrado h3 {
+  padding-right: 96px;
+}
+
+.acao-ilustras {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.acao-ilustras img {
+  width: 44px;
+  height: 44px;
+}
+
+.acao-ilustras--logos img {
+  width: 30px;
+  height: 30px;
+}
+
+
+/* ==========================================================================
+   INICIATIVAS PARCEIRAS
+
+   Um cartão por iniciativa, com o logo em cima e o nome embaixo. A altura do
+   logo vem do template (`--parceiro-altura`), pelo mesmo motivo da faixa de
+   patrocinadores: os desenhos têm proporções diferentes demais para uma
+   altura só.
+   ========================================================================== */
+
+/* OS TRÊS BLOCOS DA SEÇÃO 06 — patrocinadores, apoio e iniciativas — cada
+   um com o seu título pequeno, no mesmo tom dos rótulos de seção. */
+.parceiros-bloco + .parceiros-bloco {
+  margin-top: clamp(36px, 5vw, 52px);
+}
+
+.parceiros-bloco-titulo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+.parceiros-bloco-titulo::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--traco);
+}
+
+.parceiros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr));
+  gap: 14px;
+  list-style: none;
+}
+
+.parceiro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 30px 22px 24px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+  transition: border-color var(--transicao), background var(--transicao),
+    transform var(--transicao);
+}
+
+.parceiro:hover {
+  border-color: var(--ambar-traco);
+  background: var(--sombra);
+  transform: translateY(-3px);
+}
+
+.parceiro-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 92px;
+}
+
+.parceiro-logo img {
+  height: calc(var(--parceiro-altura, 50) * 1px);
+  width: auto;
+  max-width: 100%;
+}
+
+.parceiro-nome {
+  margin-top: 18px;
+  font-family: var(--display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--giz);
+}
+
+.parceiro-sub {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
 
 /* ==========================================================================
    OS CINCO DIAS TEMÁTICOS — a trilha da semana
@@ -3375,6 +4175,249 @@ section {
   line-height: 1.6;
   letter-spacing: 0.04em;
   color: var(--cinza);
+}
+
+/* ==========================================================================
+   O ANDAMENTO DA SEMANA
+
+   Duas leituras do mesmo número, calculado no `main.js`: a barra de cima diz
+   "quanto da semana já foi" num relance, e o filete da trilha, preenchendo de
+   âmbar de uma plaqueta para a outra, diz ONDE a semana está — que é a
+   pergunta de quem rola até o cartão do dia.
+   ========================================================================== */
+
+.semana-status {
+  margin-bottom: 28px;
+  padding: 18px 20px 14px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+}
+
+.semana-status-topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.semana-status-rotulo {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--giz);
+  text-wrap: pretty;
+}
+
+/* O ponto que pulsa só existe enquanto um dia está acontecendo — o mesmo
+   recado do `.aviso-ponto` da tarja de inscrições. */
+.semana-status[data-fase="dia"] .semana-status-rotulo::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: var(--ambar);
+  box-shadow: 0 0 0 0 rgba(242, 138, 31, 0.6);
+  vertical-align: 1px;
+  animation: semana-pulso 1.8s ease-out infinite;
+}
+
+@keyframes semana-pulso {
+  to { box-shadow: 0 0 0 9px rgba(242, 138, 31, 0); }
+}
+
+.semana-status-pct {
+  flex: none;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.06em;
+  color: var(--ambar);
+}
+
+.semana-status-barra {
+  position: relative;
+  height: 8px;
+  margin-top: 14px;
+  border-radius: 999px;
+  background: var(--sombra);
+  box-shadow: inset 0 0 0 1px var(--traco);
+  overflow: hidden;
+}
+
+/* As quatro divisas entre os cinco dias, desenhadas na própria barra por um
+   degradê repetido — sem cinco elementos a mais para alinhar à mão. */
+.semana-status-barra::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg,
+      transparent 0 calc(20% - 1px), var(--breu) calc(20% - 1px) 20%);
+  pointer-events: none;
+}
+
+.semana-status-preenchido {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--ambar), var(--gema));
+  box-shadow: 0 0 14px rgba(242, 138, 31, 0.45);
+  transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.semana-status-dias {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 8px;
+  list-style: none;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.04em;
+  color: var(--cinza);
+  text-align: center;
+}
+
+.semana-status-dias li.feito { color: var(--fumaca); }
+.semana-status-dias li.hoje { color: var(--gema); font-weight: 600; }
+
+/* O FILETE PREENCHIDO. Mesma coluna e mesma largura do `::before`, só que
+   em âmbar e com a altura que o script mede (`--trilha-progresso`). Começa no
+   centro da primeira plaqueta (`--trilha-topo`), e não no `top: 34px` fixo do
+   filete cinza, porque é a partir do centro medido que o script conta. */
+.trilha::after {
+  content: "";
+  position: absolute;
+  top: var(--trilha-topo, 34px);
+  left: 32px;
+  width: 3px;
+  height: var(--trilha-progresso, 0px);
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--ambar), var(--gema));
+  box-shadow: 0 0 12px rgba(242, 138, 31, 0.55);
+  transition: height 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* As plaquetas ficam por cima do filete preenchido também. */
+.trilha-data {
+  position: relative;
+  z-index: 1;
+}
+
+/* Dia que já passou: a plaqueta leva o âmbar apagado de "feito", o cartão
+   continua legível — a programação de ontem ainda serve para quem procura
+   quem falou. */
+.trilha-dia--passado .trilha-data {
+  border-color: var(--ambar-traco);
+}
+
+.trilha-dia--passado .trilha-num {
+  color: var(--fumaca);
+}
+
+/* Hoje: plaqueta e moldura acesas, como o Arena Day. */
+.trilha-dia--hoje .trilha-data {
+  border-color: var(--ambar);
+  background: var(--ambar-lavagem);
+  box-shadow: 0 0 0 4px rgba(242, 138, 31, 0.12);
+}
+
+.trilha-dia--hoje .trilha-num {
+  color: var(--gema);
+}
+
+.trilha-dia--hoje .trilha-corpo {
+  border-color: var(--ambar-traco);
+}
+
+.trilha-hoje {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--ambar);
+  font-weight: 700;
+  color: var(--breu);
+}
+
+.trilha-hoje[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .semana-status-preenchido,
+  .trilha::after {
+    transition: none;
+  }
+
+  .semana-status[data-fase="dia"] .semana-status-rotulo::before {
+    animation: none;
+  }
+}
+
+/* A quarta sem tema: o título sai em cinza e itálico para não ler como se
+   "Tema a definir" fosse o nome do dia. */
+.trilha-corpo h3.trilha-tema--aberto {
+  font-style: italic;
+  color: var(--fumaca);
+}
+
+/* AS PALESTRAS CONFIRMADAS DE CADA DIA — a `.grade` em miniatura: hora numa
+   coluna fixa à esquerda, o resto empilhado ao lado. Filete entre as linhas e
+   não caixa em volta de cada uma: o cartão do dia já é a caixa. */
+.trilha-palestras {
+  margin-top: 20px;
+  padding-top: 6px;
+  border-top: 1px solid var(--traco);
+  list-style: none;
+}
+
+.trilha-palestras li {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--traco);
+}
+
+.trilha-palestras li:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.trilha-hora {
+  padding-top: 1px;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ambar);
+}
+
+.trilha-palestra {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.trilha-palestra-tipo {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.trilha-palestra strong {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--giz);
+  text-wrap: pretty;
+}
+
+.trilha-palestra-quem {
+  font-size: 0.875rem;
+  color: var(--fumaca);
 }
 
 

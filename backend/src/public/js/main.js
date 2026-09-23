@@ -473,3 +473,224 @@ document.querySelectorAll('a[href^="#"]').forEach((ancora) => {
     if (e.key === 'Escape') dropdown.classList.remove('open');
   });
 })();
+
+/* ---- A HORA DA /semcomp ----
+   Um relógio só para a contagem do topo e para a barra da programação: as
+   duas precisam concordar sobre que horas são.
+
+   `?agora=2026-10-01T10:00` finge outra hora, para conferir a página fora da
+   semana. Sem fuso na string, vale o de Salvador. Só muda o navegador de quem
+   abriu o link. */
+const semcompAgora = (function () {
+  const falso = new URLSearchParams(location.search).get('agora');
+  const deslocamento = falso
+    ? new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(falso) ? falso : falso + '-03:00').getTime() - Date.now()
+    : 0;
+  return () => Date.now() + (Number.isNaN(deslocamento) ? 0 : deslocamento);
+})();
+
+/* ---- CONTAGEM REGRESSIVA (topo da /semcomp) ----
+   Até o credenciamento do primeiro dia; durante a semana vira "acontecendo
+   agora" e, depois, "terminou". Ver o comentário do `#contagemSemcomp` em
+   `core/semcomp.njk`. */
+(function () {
+  const caixa = document.getElementById('contagemSemcomp');
+  if (!caixa) return;
+
+  const inicio = new Date(caixa.dataset.inicio).getTime();
+  const fim = new Date(caixa.dataset.fim).getTime();
+  if (Number.isNaN(inicio) || Number.isNaN(fim)) return;
+
+  const rotulo = caixa.querySelector('[data-contagem-rotulo]');
+  const numeros = caixa.querySelector('[data-contagem-numeros]');
+  const aoVivo = caixa.querySelector('[data-contagem-aovivo]');
+  const campo = {};
+  caixa.querySelectorAll('[data-contagem]').forEach((el) => { campo[el.dataset.contagem] = el; });
+
+  const doisDigitos = (n) => String(n).padStart(2, '0');
+  const TOTAL_DIAS = 5;
+  let relogio = null;
+
+  function atualizar() {
+    const t = semcompAgora();
+
+    if (t < inicio) {
+      let resto = Math.floor((inicio - t) / 1000);
+      const dias = Math.floor(resto / 86400); resto -= dias * 86400;
+      const horas = Math.floor(resto / 3600); resto -= horas * 3600;
+      const minutos = Math.floor(resto / 60);
+      const segundos = resto - minutos * 60;
+
+      campo.dias.textContent = doisDigitos(dias);
+      campo.horas.textContent = doisDigitos(horas);
+      campo.minutos.textContent = doisDigitos(minutos);
+      campo.segundos.textContent = doisDigitos(segundos);
+      numeros.setAttribute('aria-label',
+        `Faltam ${dias} dias, ${horas} horas e ${minutos} minutos para a abertura da SEMCOMP 2026`);
+      rotulo.textContent = 'Faltam para a abertura';
+      numeros.hidden = false;
+      aoVivo.hidden = true;
+      caixa.dataset.fase = 'antes';
+      return;
+    }
+
+    numeros.hidden = true;
+    aoVivo.hidden = false;
+
+    if (t >= fim) {
+      rotulo.textContent = 'SEMCOMP 2026';
+      aoVivo.textContent = 'A semana terminou. Obrigado a quem veio, e até a próxima edição!';
+      caixa.dataset.fase = 'depois';
+      clearInterval(relogio);
+      return;
+    }
+
+    // Dia da semana (1 a 5) pela data em Salvador, e se é horário de evento.
+    const hojeMs = Date.parse(new Date(t - 3 * 3600e3).toISOString().slice(0, 10));
+    const primeiroMs = Date.parse(new Date(inicio - 3 * 3600e3).toISOString().slice(0, 10));
+    const dia = Math.min(TOTAL_DIAS, Math.floor((hojeMs - primeiroMs) / 864e5) + 1);
+    const horaLocal = new Date(t - 3 * 3600e3);
+    const minutosDoDia = horaLocal.getUTCHours() * 60 + horaLocal.getUTCMinutes();
+    const emHorario = minutosDoDia >= 7 * 60 + 30 && minutosDoDia < 18 * 60;
+
+    if (emHorario) {
+      rotulo.textContent = 'Acontecendo agora';
+      aoVivo.textContent = `Dia ${dia} de ${TOTAL_DIAS} da SEMCOMP 2026`;
+      caixa.dataset.fase = 'dia';
+    } else {
+      rotulo.textContent = `Dia ${dia} de ${TOTAL_DIAS}`;
+      aoVivo.textContent = minutosDoDia < 7 * 60 + 30
+        ? 'Hoje tem SEMCOMP: o credenciamento abre às 07:30'
+        : 'Amanhã tem mais, com credenciamento às 07:30';
+      caixa.dataset.fase = 'noite';
+    }
+  }
+
+  caixa.hidden = false;
+  atualizar();
+  relogio = setInterval(atualizar, 1000);
+})();
+
+/* ---- ANDAMENTO DA SEMCOMP (barra de progresso da /semcomp) ----
+   Lê o horário de cada dia nos `data-inicio`/`data-fim` da trilha e desenha
+   três coisas: a barra de cima, o preenchimento do filete que liga os dias e
+   o selo "Hoje" no dia corrente. Ver o comentário do `.semana-status` em
+   `core/semcomp.njk` para o porquê de ser no navegador. */
+(function () {
+  const trilha = document.getElementById('trilhaSemana');
+  const status = document.getElementById('semanaStatus');
+  if (!trilha || !status) return;
+
+  const dias = Array.from(trilha.querySelectorAll('.trilha-dia')).map((li) => ({
+    li,
+    data: li.dataset.data,
+    inicio: new Date(li.dataset.inicio).getTime(),
+    fim: new Date(li.dataset.fim).getTime(),
+    tema: li.dataset.tema,
+    selo: li.querySelector('[data-trilha-hoje]'),
+    plaqueta: li.querySelector('.trilha-data'),
+  }));
+  if (!dias.length || dias.some((d) => Number.isNaN(d.inicio))) return;
+
+  const rotulo = status.querySelector('[data-status-rotulo]');
+  const pct = status.querySelector('[data-status-pct]');
+  const barra = status.querySelector('[role="progressbar"]');
+  const preenchido = status.querySelector('[data-status-preenchido]');
+  const marcas = status.querySelectorAll('[data-status-dia]');
+
+  const agora = semcompAgora;
+
+  // A data de calendário em Salvador (-03:00, sem horário de verão).
+  const dataLocal = (ms) => new Date(ms - 3 * 3600e3).toISOString().slice(0, 10);
+  const diasEntre = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / 864e5);
+
+  /* Onde o dia está: `indice` do dia de referência e `fracao` (0 a 1) do
+     quanto ele já andou. À noite, entre dois dias, fica em 1 no dia que
+     acabou — a barra para e espera o credenciamento do seguinte. */
+  function situacao(t) {
+    if (t < dias[0].inicio) return { fase: 'antes', indice: 0, fracao: 0 };
+    const ultimo = dias.length - 1;
+    if (t >= dias[ultimo].fim) return { fase: 'depois', indice: ultimo, fracao: 1 };
+    for (let i = ultimo; i >= 0; i--) {
+      const d = dias[i];
+      if (t >= d.inicio) {
+        if (t < d.fim) return { fase: 'dia', indice: i, fracao: (t - d.inicio) / (d.fim - d.inicio) };
+        return { fase: 'noite', indice: i, fracao: 1 };
+      }
+    }
+    return { fase: 'antes', indice: 0, fracao: 0 };
+  }
+
+  function texto(s, t) {
+    const n = dias.length;
+    if (s.fase === 'antes') {
+      const faltam = diasEntre(dataLocal(t), dias[0].data);
+      if (faltam <= 0) return 'Começa hoje · credenciamento às 07:30';
+      if (faltam === 1) return 'Começa amanhã · credenciamento às 07:30';
+      return `Começa em ${faltam} dias`;
+    }
+    if (s.fase === 'depois') return 'A SEMCOMP 2026 terminou · até a próxima edição';
+    const d = dias[s.indice];
+    if (s.fase === 'dia') return `Acontecendo agora · dia ${s.indice + 1} de ${n}: ${d.tema}`;
+    const prox = dias[s.indice + 1];
+    return `Dia ${s.indice + 1} de ${n} encerrado · amanhã: ${prox.tema}`;
+  }
+
+  /* O filete da trilha: vai do centro da primeira plaqueta ao centro da
+     última, e dentro de um dia anda proporcionalmente até a plaqueta do dia
+     seguinte. O último dia anda até o fim do filete, que termina a 34px do
+     pé da lista (o mesmo `bottom` do `.trilha::before` na folha). */
+  function preencherFilete(s) {
+    const centro = (d) => d.li.offsetTop + d.plaqueta.offsetTop + d.plaqueta.offsetHeight / 2;
+    const topo = centro(dias[0]);
+    let alvo = topo;
+    if (s.fase !== 'antes') {
+      const daqui = centro(dias[s.indice]);
+      const dali = s.indice + 1 < dias.length ? centro(dias[s.indice + 1]) : trilha.offsetHeight - 34;
+      alvo = daqui + (dali - daqui) * s.fracao;
+    }
+    trilha.style.setProperty('--trilha-topo', `${topo}px`);
+    trilha.style.setProperty('--trilha-progresso', `${Math.max(0, alvo - topo)}px`);
+  }
+
+  function atualizar() {
+    const t = agora();
+    const s = situacao(t);
+    const hoje = dataLocal(t);
+    const total = s.fase === 'antes' ? 0 : (s.indice + s.fracao) / dias.length;
+    const porcento = Math.round(total * 100);
+
+    rotulo.textContent = texto(s, t);
+    pct.textContent = `${porcento}%`;
+    barra.setAttribute('aria-valuenow', String(porcento));
+    barra.setAttribute('aria-valuetext', rotulo.textContent);
+    preenchido.style.width = `${total * 100}%`;
+    status.dataset.fase = s.fase;
+
+    dias.forEach((d, i) => {
+      const passou = t >= d.fim;
+      const ehHoje = d.data === hoje;
+      const aoVivo = t >= d.inicio && t < d.fim;
+      d.li.classList.toggle('trilha-dia--passado', passou && !ehHoje);
+      d.li.classList.toggle('trilha-dia--hoje', ehHoje);
+      d.li.classList.toggle('trilha-dia--vivo', aoVivo);
+      if (d.selo) {
+        d.selo.hidden = !ehHoje;
+        d.selo.textContent = aoVivo ? 'Ao vivo' : 'Hoje';
+      }
+      if (marcas[i]) {
+        marcas[i].classList.toggle('feito', passou);
+        marcas[i].classList.toggle('hoje', ehHoje);
+      }
+    });
+
+    preencherFilete(s);
+  }
+
+  status.hidden = false;
+  atualizar();
+  setInterval(atualizar, 60e3);
+  window.addEventListener('resize', () => preencherFilete(situacao(agora())));
+  // As fontes mudam a altura dos cartões depois do primeiro desenho.
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(atualizar);
+})();
