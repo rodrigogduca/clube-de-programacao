@@ -127,39 +127,46 @@
     estandes são deles) e na seção 06, com nome e descrição. O comentário da
     seção 06 explica de onde vem cada um e o que é `altura`; `curto` é o nome
     do grupo no cartão pequeno.
+
+    `redes` SÃO OS CANAIS OFICIAIS DE CADA UM, e cada endereço foi conferido
+    na fonte em 23/09/2026: no Linktree ou no site oficial da própria marca
+    (que listam os perfis dela), e no Help CIMATEC para as iniciativas do
+    campus. Não é chute de @: o Instagram do SENAI CIMATEC, por exemplo, é
+    `@cimatecoficial` (o `senaicimatec_oficial` é o nome do Linktree), e o da
+    XLogic é `xlogiconline`. Rede sem fonte fica de fora.
   #}
   {% set grupos = [
     {
       titulo: 'Patrocinadores', curto: 'Patrocínio',
       pasta: 'parceiros',
       itens: [
-        { nome: 'Fortinet', logo: 'fortinet.svg', altura: 30 },
-        { nome: 'X Logic',  logo: 'x-logic.png',  altura: 78 },
-        { nome: 'Dortech',  logo: 'dortech.png',  altura: 52 }
+        { nome: 'Fortinet', logo: 'fortinet.svg', altura: 30, redes: { site: 'https://www.fortinet.com/br', instagram: 'https://www.instagram.com/fortinet', linkedin: 'https://www.linkedin.com/company/fortinet', youtube: 'https://www.youtube.com/@FortinetBrasil' } },
+        { nome: 'X Logic',  logo: 'x-logic.png',  altura: 78, redes: { site: 'https://www.xlogic.com.br', instagram: 'https://www.instagram.com/xlogiconline', linkedin: 'https://br.linkedin.com/company/xlogiconline' } },
+        { nome: 'Dortech',  logo: 'dortech.png',  altura: 52, redes: { site: 'https://www.dortech-group.com', instagram: 'https://www.instagram.com/dortechgroup', linkedin: 'https://www.linkedin.com/company/dortechgroup', youtube: 'https://www.youtube.com/@Dortechgroup' } }
       ]
     },
     {
       titulo: 'Apoio', curto: 'Apoio',
       pasta: 'parceiros',
       itens: [
-        { nome: 'Universidade SENAI CIMATEC', logo: 'senai-cimatec.png', altura: 54 },
-        { nome: 'Red Bull', logo: 'red-bull.svg', altura: 44 },
-        { nome: 'FIAP', logo: 'fiap.png', altura: 48 }
+        { nome: 'Universidade SENAI CIMATEC', logo: 'senai-cimatec.png', altura: 54, redes: { site: 'https://www.universidadesenaicimatec.edu.br', instagram: 'https://www.instagram.com/cimatec_edu', linkedin: 'https://www.linkedin.com/school/senaicimatec', youtube: 'https://www.youtube.com/@SENAICIMATECoficial' } },
+        { nome: 'Red Bull', logo: 'red-bull.svg', altura: 44, redes: { site: 'https://www.redbull.com/br-pt', instagram: 'https://www.instagram.com/redbullbr', youtube: 'https://www.youtube.com/@redbullbr', tiktok: 'https://www.tiktok.com/@redbullbr' } },
+        { nome: 'FIAP', logo: 'fiap.png', altura: 48, redes: { site: 'https://www.fiap.com.br', instagram: 'https://www.instagram.com/fiapoficial/' } }
       ]
     },
     {
       titulo: 'Iniciativas parceiras', curto: 'Parceiros',
       pasta: 'iniciativas',
       itens: [
-        { nome: 'Cimatec Jr', sub: 'Empresa Júnior do SENAI CIMATEC', logo: 'cimatec-jr.png', altura: 66 },
-        { nome: 'Info Jr', sub: 'UFBA', logo: 'info-jr.png', altura: 64 },
-        { nome: 'LAMIT', sub: 'Liga Acadêmica de Maratonas, Inovação e Tecnologia', logo: 'lamit.png', altura: 84 },
-        { nome: 'NEXUPP', sub: 'UCSAL', logo: 'nexupp.png', altura: 82 },
-        { nome: 'LIAO', sub: 'Liga de Inteligência Artificial e Otimização', logo: 'liao.png', altura: 60 },
-        { nome: 'Falcons', sub: 'Associação esportiva, gamer e geek do CIMATEC', logo: 'falcons.png', altura: 78 },
-        { nome: 'HorusTec', logo: 'horustec.png', altura: 84 },
-        { nome: 'Prometheus', sub: 'Aerodesign', logo: 'prometheus.png', altura: 40 },
-        { nome: 'AWS Student Builder Group', sub: 'SENAI CIMATEC', logo: 'aws-sbg.png', altura: 80 }
+        { nome: 'Cimatec Jr', sub: 'Empresa Júnior do SENAI CIMATEC', logo: 'cimatec-jr.png', altura: 66, redes: { site: 'https://www.cimatecjr.com.br', instagram: 'https://www.instagram.com/cimatecjr', linkedin: 'https://www.linkedin.com/company/cimatecjr' } },
+        { nome: 'Info Jr', sub: 'Empresa Júnior de Informática da UFBA', logo: 'info-jr.png', altura: 64, redes: { site: 'https://infojr.com.br', instagram: 'https://www.instagram.com/infojrufba', linkedin: 'https://br.linkedin.com/company/infojrufba' } },
+        { nome: 'LAMIT', sub: 'Liga Acadêmica de Maratonas, Inovação e Tecnologia · UCSal', logo: 'lamit.png', altura: 84, redes: { site: 'https://linktr.ee/lamit.ucsal', instagram: 'https://www.instagram.com/lamit.ucsal', linkedin: 'https://www.linkedin.com/company/lamit-ucsal', tiktok: 'https://www.tiktok.com/@lamit.ucsal' } },
+        { nome: 'NEXUPP', sub: 'Comunidade de networking, tecnologia e inovação de Salvador', logo: 'nexupp.png', altura: 82, redes: { site: 'https://nexupp.com.br', instagram: 'https://www.instagram.com/nex.upp/' } },
+        { nome: 'LIAO', sub: 'Liga de Inteligência Artificial e Otimização · UFBA', logo: 'liao.png', altura: 60, redes: { site: 'https://www.liaoufba.com.br', instagram: 'https://www.instagram.com/liaoufba', linkedin: 'https://www.linkedin.com/company/liao-ufba' } },
+        { nome: 'Falcons', sub: 'Associação Atlética CIMATEC Falcons', logo: 'falcons.png', altura: 78, redes: { site: 'https://linktr.ee/atcfalcons', instagram: 'https://www.instagram.com/atcfalcons' } },
+        { nome: 'HorusTec', sub: 'Equipe de robótica competitiva da Universidade SENAI CIMATEC', logo: 'horustec.png', altura: 84, redes: { instagram: 'https://www.instagram.com/_horustec' } },
+        { nome: 'Prometheus', sub: 'Equipe SAE AeroDesign do SENAI CIMATEC', logo: 'prometheus.png', altura: 40, redes: { instagram: 'https://www.instagram.com/prometheus.aerodesign' } },
+        { nome: 'AWS Student Builder Group', sub: 'SENAI CIMATEC', logo: 'aws-sbg.png', altura: 80, redes: { site: 'https://www.awsclubsenai.com.br', instagram: 'https://www.instagram.com/awssbgsenaicimatec' } }
       ]
     }
   ] %}
@@ -227,20 +234,42 @@
           `role="timer"` sem `aria-live`: leitor de tela lê o número quando a
           pessoa chega nele, e não a cada segundo.
         #}
-        <div class="contagem fade-in" id="contagemSemcomp"
-             data-inicio="2026-09-29T07:30:00-03:00"
-             data-fim="2026-10-03T17:00:00-03:00" hidden>
-          <span class="contagem-rotulo" data-contagem-rotulo>Faltam para a abertura</span>
-          <div class="contagem-numeros" role="timer" data-contagem-numeros>
-            <div class="contagem-bloco"><span class="contagem-valor" data-contagem="dias">00</span><span class="contagem-unidade">dias</span></div>
-            <span class="contagem-sep" aria-hidden="true">:</span>
-            <div class="contagem-bloco"><span class="contagem-valor" data-contagem="horas">00</span><span class="contagem-unidade">horas</span></div>
-            <span class="contagem-sep" aria-hidden="true">:</span>
-            <div class="contagem-bloco"><span class="contagem-valor" data-contagem="minutos">00</span><span class="contagem-unidade">min</span></div>
-            <span class="contagem-sep" aria-hidden="true">:</span>
-            <div class="contagem-bloco"><span class="contagem-valor" data-contagem="segundos">00</span><span class="contagem-unidade">seg</span></div>
+        <div class="capa-lado">
+          <div class="contagem fade-in" id="contagemSemcomp"
+               data-inicio="2026-09-29T07:30:00-03:00"
+               data-fim="2026-10-03T18:00:00-03:00" hidden>
+            <span class="contagem-rotulo" data-contagem-rotulo>Faltam para a abertura</span>
+            <div class="contagem-numeros" role="timer" data-contagem-numeros>
+              <div class="contagem-bloco"><span class="contagem-valor" data-contagem="dias">00</span><span class="contagem-unidade">dias</span></div>
+              <span class="contagem-sep" aria-hidden="true">:</span>
+              <div class="contagem-bloco"><span class="contagem-valor" data-contagem="horas">00</span><span class="contagem-unidade">horas</span></div>
+              <span class="contagem-sep" aria-hidden="true">:</span>
+              <div class="contagem-bloco"><span class="contagem-valor" data-contagem="minutos">00</span><span class="contagem-unidade">min</span></div>
+              <span class="contagem-sep" aria-hidden="true">:</span>
+              <div class="contagem-bloco"><span class="contagem-valor" data-contagem="segundos">00</span><span class="contagem-unidade">seg</span></div>
+            </div>
+            <p class="contagem-aovivo" data-contagem-aovivo hidden></p>
           </div>
-          <p class="contagem-aovivo" data-contagem-aovivo hidden></p>
+
+          {#
+            O BOTÃO DE INSCRIÇÃO MORA EMBAIXO DO TIMER, e não na fileira de
+            botões mais abaixo: o timer diz "faltam 5 dias", e a ação que
+            responde a isso é se inscrever — os dois se leem juntos. No desktop
+            os dois formam a coluna da direita, ao lado da logo; no celular vêm
+            logo depois dela, antes do texto. Sem JavaScript (timer escondido)
+            ou passado o evento, o botão fica sozinho no mesmo lugar.
+          #}
+          <div class="capa-chamada fade-in">
+            {% if links.semcomp %}
+            <a class="btn-primary btn-primary--grande" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
+              <img class="btn-ilustra" src="{{ static('images/semcomp/icones/inscricoes.webp') }}" alt="" aria-hidden="true" width="26" height="18">
+              Quero me inscrever
+              {{ ic.icone('externo', 15) }}
+            </a>
+            {% else %}
+            <a class="btn-primary" href="#inscricao">Como participar</a>
+            {% endif %}
+          </div>
         </div>
       </div>
 
@@ -254,16 +283,6 @@
       <p class="capa-linha fade-in">Cinco dias de palestras, workshops e competições na Universidade SENAI CIMATEC, organizados por estudantes e abertos a quem quiser assistir.</p>
 
       <div class="capa-acoes fade-in">
-        {% if links.semcomp %}
-        <a class="btn-primary" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
-          <img class="btn-ilustra" src="{{ static('images/semcomp/icones/inscricoes.webp') }}" alt="" aria-hidden="true" width="26" height="18">
-          Quero me inscrever
-          {{ ic.icone('externo', 15) }}
-        </a>
-        {% else %}
-        <a class="btn-primary" href="#inscricao">Como participar</a>
-        {% endif %}
-
         {#
           O HACKATHON TEM PORTA PRÓPRIA, e por isso tem botão próprio aqui em
           cima — não é "mais um detalhe da semana" que a pessoa encontra
@@ -290,6 +309,7 @@
         <a class="btn-outline" href="{{ links.hackathon }}" target="_blank" rel="noopener noreferrer">
           <img class="btn-ilustra" src="{{ static('images/semcomp/icones/hackathon.webp') }}" alt="" aria-hidden="true" width="26" height="22">
           Hackathon
+          <span class="btn-restrito">só estudantes CIMATEC</span>
           {{ ic.icone('externo', 15) }}
         </a>
         {% endif %}
@@ -529,6 +549,7 @@
           arte: 'hackathon.webp',
           titulo: 'Um desafio, uma entrega',
           desc: 'Equipes recebem um problema real e têm o prazo do evento para entregar uma solução funcionando, defendida diante da banca no fim.',
+          restrito: 'Só estudantes CIMATEC',
           nota: ('Em equipe &middot; <a href="' + links.hackathon + '" target="_blank" rel="noopener noreferrer">portal do hackathon</a>') if links.hackathon else 'Em equipe &middot; detalhes no Even3'
         },
         {
@@ -581,6 +602,13 @@
             {% endfor %}
           </dl>
           {% endif %}
+          {#
+            `restrito` diz QUEM PODE ENTRAR quando não é todo mundo — hoje só
+            o hackathon, que é exclusivo para estudantes da Universidade SENAI
+            CIMATEC. Fica acima da nota, no mesmo lugar do "Aberto a todos"
+            dos cartões da seção 04, para as duas coisas se lerem como par.
+          #}
+          {% if f.restrito %}<span class="selo-restrito">{{ ic.icone('cadeado', 14) }} {{ f.restrito }}</span>{% endif %}
           <span class="formato-nota">{{ f.nota | safe }}</span>
         </article>
         {% endfor %}
@@ -694,8 +722,8 @@
           { hora: '09:00' }, { hora: '10:00' }, { hora: '11:00' },
           { hora: '12:00', fixo: 'Almoço', ate: 'até as 12:50' }
         ] },
-        { nome: 'Tarde', ate: 'até 16:50', slots: [
-          { hora: '13:00' }, { hora: '14:00' }, { hora: '15:00' }, { hora: '16:00' }
+        { nome: 'Tarde', ate: 'até 17:50', slots: [
+          { hora: '13:00' }, { hora: '14:00' }, { hora: '15:00' }, { hora: '16:00' }, { hora: '17:00' }
         ] }
       ] %}
 
@@ -712,37 +740,50 @@
             '13:00': { tipo: 'Palestra', titulo: 'Empreendedorismo jovem: acelere sua carreira no Movimento Empresa Júnior', quem: 'Cimatec Jr' },
             '14:00': { tipo: 'Mesa redonda', titulo: 'Do campus ao mercado: o potencial do ecossistema de startups do SENAI CIMATEC', quem: 'Thomas Buck' },
             '15:00': { tipo: 'Palestra', titulo: 'SENAI CIMATEC e big techs: como impulsionar sua carreira na era da inteligência artificial', quem: 'Sanval Ebert' },
-            '16:00': { tipo: 'Palestra', titulo: 'Indústria de games: criação, tecnologias e oportunidades no desenvolvimento de jogos na Bahia', quem: 'Clube de Jogos + BIND' }
+            '16:00': { pausa: 'Coffee break', ate: 'até as 16:50' }
           }
         },
         {
           num: '30', mes: 'set', semana: 'Quarta',
           tema: 'Dev Day',
-          desc: 'O tema do dia ainda está sendo fechado pela comissão. Por enquanto há uma palestra confirmada; o resto da grade sai no Even3.',
-          tags: [{ nome: 'FIAP' }],
+          desc: 'O dia em que o hackathon começa: abertura pela manhã e as equipes com a mão no código a tarde inteira. Entre uma coisa e outra, a FIAP e a indústria de jogos da Bahia.',
+          tags: [{ nome: 'FIAP', destaque: true }, { nome: 'Hackathon', destaque: true }, { nome: 'Clube de DS' }, { nome: 'Jogos' }],
           grade: {
-            '11:00': { tipo: 'Palestra', titulo: 'Síndrome do impostor: estamos juntos nisso', quem: 'Prof. Antonio Pedro (FIAP)' }
+            '10:00': { tipo: 'Hackathon', titulo: 'Abertura do hackathon', quem: 'Clube de DS' },
+            '11:00': { tipo: 'Palestra', titulo: 'Síndrome do impostor: estamos juntos nisso', quem: 'Prof. Antonio Pedro (FIAP)' },
+            '13:00': { tipo: 'Hackathon', titulo: 'Hackathon: desenvolvimento das soluções', quem: 'Clube de DS' },
+            '14:00': { tipo: 'Hackathon', titulo: 'Hackathon: desenvolvimento das soluções', quem: 'Clube de DS' },
+            '15:00': { tipo: 'Hackathon', titulo: 'Hackathon: desenvolvimento das soluções', quem: 'Clube de DS' },
+            '16:00': { pausa: 'Coffee break', ate: 'até as 16:50' },
+            '17:00': { tipo: 'Palestra', titulo: 'Indústria de games: criação, tecnologias e oportunidades no desenvolvimento de jogos na Bahia', quem: 'Clube de Jogos + BIND' }
           }
         },
         {
           num: '01', mes: 'out', semana: 'Quinta',
           tema: 'AI Day',
-          desc: 'Inteligência artificial e desenvolvimento: da indústria de jogos à realidade virtual e à IA dentro do carro.',
-          tags: [{ nome: 'Dortech', destaque: true }, { nome: 'IA' }, { nome: 'Realidade virtual' }, { nome: 'Jogos' }],
+          desc: 'Inteligência artificial e desenvolvimento: da indústria de jogos à realidade virtual, do Git ao uso de IA nos trabalhos acadêmicos e à IA dentro do carro.',
+          tags: [{ nome: 'Dortech', destaque: true }, { nome: 'IA' }, { nome: 'Realidade virtual' }, { nome: 'Git' }, { nome: 'Jogos' }],
           grade: {
             '09:00': { tipo: 'Mesa redonda', titulo: 'Indústria de jogos', quem: 'BIND + Clube de Jogos' },
+            '10:00': { tipo: 'Palestra', titulo: 'IA no contexto de trabalhos acadêmicos', quem: 'William Ferreira e Raissa' },
+            '11:00': { tipo: 'Palestra', titulo: 'Git & GitHub: a importância do versionamento de código', quem: 'Rian Dultra, Rafael Guerra e Victor Mendes' },
             '13:00': { tipo: 'Palestra', titulo: 'Novas pesquisas e tecnologias no mundo VR, com acompanhamento ao vivo do SVR 2026', quem: 'Ingrid Winkler' },
-            '15:00': { tipo: 'Palestra', titulo: 'IA na indústria automotiva', quem: 'Anderson Dorea (Dortech)' }
+            '15:00': { tipo: 'Palestra', titulo: 'IA na indústria automotiva', quem: 'Anderson Dorea (Dortech)' },
+            '16:00': { pausa: 'Coffee break', ate: 'até as 16:50' }
           }
         },
         {
           num: '02', mes: 'out', semana: 'Sexta',
           tema: 'Cyber &amp; Quantum Day',
-          desc: 'Cibersegurança e computação quântica no mesmo dia: o que já ataca hoje e o que muda a criptografia amanhã. É também o dia do Capture The Leak da Fortinet.',
-          tags: [{ nome: 'X Logic', destaque: true }, { nome: 'Fortinet', destaque: true }, { nome: 'Capture The Leak' }],
+          desc: 'Cibersegurança e computação quântica no mesmo dia: o que já ataca hoje e o que muda a criptografia amanhã. É também o dia do Capture The Leak da Fortinet, à tarde.',
+          tags: [{ nome: 'X Logic', destaque: true }, { nome: 'Fortinet', destaque: true }, { nome: 'Capture The Leak' }, { nome: 'Clube de Cyber' }],
           grade: {
             '10:00': { tipo: 'Palestra', titulo: 'Impacto atual das tecnologias quantum safe na cibersegurança', quem: 'Henrique' },
-            '13:00': { tipo: 'Palestra', titulo: 'IA para cibersegurança e cibersegurança para IA', quem: 'Jamson Borges, gerente de tecnologia da X Logic' }
+            '11:00': { tipo: 'Palestra', titulo: 'História da comunicação quântica', quem: 'Maria Heloísa' },
+            '13:00': { tipo: 'Palestra', titulo: 'IA para cibersegurança e cibersegurança para IA', quem: 'Jamson Borges, gerente de tecnologia da X Logic' },
+            '14:00': { tipo: 'Capture The Leak', titulo: 'Capture The Leak: caçada à ameaça interna com FortiDLP', quem: 'Robson Borges (Fortinet)' },
+            '15:00': { tipo: 'Capture The Leak', titulo: 'Capture The Leak: caçada à ameaça interna com FortiDLP (continuação)', quem: 'Robson Borges (Fortinet)' },
+            '16:00': { tipo: 'Palestra', titulo: 'Além da sala de aula: formação e experiência em cibersegurança', quem: 'Clube de Cyber' }
           }
         },
         {
@@ -750,6 +791,9 @@
           tema: 'Arena Day',
           desc: 'O dia das competições: Olimpíada de Programação, DeepRacer, Capture The Flag e as finais presenciais dos e-sports, com premiação e cerimônia de encerramento.',
           tags: [{ nome: 'Competições', destaque: true }, { nome: 'Premiação', destaque: true }, { nome: 'Encerramento' }],
+          grade: {
+            '16:00': { pausa: 'Coffee break', ate: 'até as 16:50' }
+          },
           destaque: true
         }
       ] %}
@@ -765,9 +809,9 @@
         escrito para não depender do relógio de quem abre), e o `main.js` faz
         a conta e refaz a cada minuto.
 
-        O DIA "ANDA" DAS 07:30 ÀS 17:00, do credenciamento ao fim do último
-        bloco (16:00 a 16:50; não há coffee break). À noite a barra para no
-        começo do dia seguinte e espera.
+        O DIA "ANDA" DAS 07:30 ÀS 18:00, do credenciamento ao fim do último
+        bloco (17:00 a 17:50). À noite a barra para no começo do dia seguinte
+        e espera.
 
         SEM JAVASCRIPT o bloco inteiro fica `hidden` e a trilha volta a ser o
         que era: cinco cartões com o filete cinza, sem nada quebrado.
@@ -798,7 +842,7 @@
         <li class="trilha-dia{% if d.destaque %} trilha-dia--destaque{% endif %} fade-in"
             data-data="{{ data_iso }}"
             data-inicio="{{ data_iso }}T07:30:00-03:00"
-            data-fim="{{ data_iso }}T17:00:00-03:00"
+            data-fim="{{ data_iso }}T18:00:00-03:00"
             data-tema="{{ (d.tema or (d.num ~ '/' ~ ('09' if d.mes == 'set' else '10'))) | safe }}">
           <div class="trilha-data" aria-hidden="true">
             <span class="trilha-num">{{ d.num }}</span>
@@ -833,7 +877,7 @@
             {#
               O DIA EM DOIS TURNOS, MANHÃ E TARDE, no modelo da planilha de
               logística: credenciamento às 07:30, três palestras de manhã,
-              almoço e quatro à tarde, de 13:00 a 16:50 (não há coffee break). Todo dia
+              almoço e a tarde de 13:00 a 17:50, com o coffee break das 16:00 nos dias que têm. Todo dia
               segue a mesma grade (`turnos`, definida antes da lista), e cada
               horário procura a sua palestra em `d.grade`. Horário sem palestra
               confirmada sai como "A definir", mais apagado: a grade inteira
@@ -848,13 +892,20 @@
                 </header>
                 <ol class="trilha-palestras">
                   {% for sl in t.slots %}
+                  {#
+                    PAUSA POR DIA, além das pausas fixas do turno: o coffee
+                    break das 16:00 existe em quatro dias, mas na sexta o
+                    Clube de Cyber fala nesse horário. `pausa` na `grade` do
+                    dia é o intervalo que só vale para ele.
+                  #}
                   {% set pl = d.grade[sl.hora] if d.grade else null %}
-                  <li class="{% if sl.fixo %}trilha-slot--pausa{% elif not pl %}trilha-slot--aberto{% endif %}">
+                  {% set pausa = sl.fixo or (pl.pausa if pl else null) %}
+                  <li class="{% if pausa %}trilha-slot--pausa{% elif not pl %}trilha-slot--aberto{% endif %}">
                     <span class="trilha-hora">{{ sl.hora }}</span>
                     <span class="trilha-palestra">
-                      {% if sl.fixo %}
-                      <strong>{{ sl.fixo }}</strong>
-                      <span class="trilha-palestra-quem">{{ sl.ate }}</span>
+                      {% if pausa %}
+                      <strong>{{ pausa }}</strong>
+                      <span class="trilha-palestra-quem">{{ sl.ate or pl.ate }}</span>
                       {% elif pl %}
                       <span class="trilha-palestra-tipo">{{ pl.tipo }}</span>
                       <strong>{{ pl.titulo }}</strong>
@@ -931,7 +982,7 @@
         <div class="secao-corpo">
           <span class="section-label">// competições &middot; arena day</span>
           <h2 class="section-title">Sete modalidades,<br>todas com prêmio</h2>
-          <p class="section-desc">Quase tudo acontece no sábado, no Arena Day: do algoritmo ao totó, com premiação e encerramento. A Game Jam corre online antes da semana, e o Capture The Leak da Fortinet fica na sexta.</p>
+          <p class="section-desc">Quase tudo acontece no sábado, no Arena Day: do algoritmo ao totó, com premiação e encerramento. O Capture The Leak, os jogos presenciais e os e-sports são <strong>abertos a todos</strong>; a Game Jam corre online antes da semana.</p>
         </div>
         <img class="secao-ilustra" src="{{ static('images/semcomp/icones/competicoes.webp') }}"
              alt="" aria-hidden="true" width="320" height="244" loading="lazy" decoding="async">
@@ -988,6 +1039,32 @@
       ] %}
       {% set modalidades = [
         {
+          selo: 'CTL',
+          ilustra: { src: 'icones/ctl.webp', largura: 166, altura: 152 },
+          aberto: true,
+          titulo: 'Capture The Leak',
+          desc: 'O desafio de cibersegurança organizado pela Fortinet, do lado da defesa. O desafio e a premiação são da própria Fortinet.',
+          premios: ['Prêmio da Fortinet', 'Prêmio da Fortinet', 'Prêmio da Fortinet'],
+          nota: 'Sex 02/10 &middot; 14:00 às 15:50 &middot; individual &middot; Fortinet'
+        },
+        {
+          selo: 'Presenciais',
+          aberto: true,
+          titulo: 'Jogos presenciais',
+          ilustra: { src: 'icones/jogos-de-mesa.webp', largura: 320, altura: 266 },
+          premios: ['Medalha de ouro', 'Medalha de prata', 'Medalha de bronze'],
+          desc: 'Os torneios que não pedem computador nenhum: Ping Pong, Totó, Dominó e Truco, no terraço do Cimatec 3.',
+          nota: ('Sáb 03/10 &middot; <a href="' + links.arenaJogosMesa + '" target="_blank" rel="noopener noreferrer">escolher no formulário</a>') if links.arenaJogosMesa else 'Sáb 03/10 &middot; inscrição no local'
+        },
+        {
+          selo: 'Game Jam',
+          ilustra: { src: 'icones/gamejam.webp', largura: 320, altura: 295 },
+          titulo: 'Game Jam',
+          desc: 'Desenvolvimento de jogos contra o relógio, online e antes da semana: um tema, um prazo e um jogo jogável no fim.',
+          premios: ['Video game retrô', 'Fone Bluetooth', 'Garrafa térmica'],
+          nota: 'Online &middot; 24/09 a 28/09 &middot; 1 a 5 pessoas'
+        },
+        {
           selo: 'OCC',
           ilustra: { src: 'arena/occ.png', largura: 318, altura: 120 },
           titulo: 'Olimpíada de Programação',
@@ -1010,223 +1087,240 @@
           desc: 'Captura de bandeira organizada pelo Clube de Cyber: criptografia, engenharia reversa e exploração de falhas em ambiente controlado.',
           premios: premio_padrao,
           nota: 'Sáb 03/10 &middot; individual &middot; Clube de Cyber'
-        },
-        {
-          selo: 'CTL',
-          ilustra: { src: 'icones/ctl.webp', largura: 166, altura: 152 },
-          titulo: 'Capture The Leak',
-          desc: 'O desafio de cibersegurança organizado pela Fortinet, do lado da defesa. O desafio e a premiação são da própria Fortinet.',
-          premios: ['Prêmio da Fortinet', 'Prêmio da Fortinet', 'Prêmio da Fortinet'],
-          nota: 'Sex 02/10 &middot; individual &middot; Fortinet'
-        },
-        {
-          selo: 'Game Jam',
-          ilustra: { src: 'icones/gamejam.webp', largura: 320, altura: 295 },
-          titulo: 'Game Jam',
-          desc: 'Desenvolvimento de jogos contra o relógio, online e antes da semana: um tema, um prazo e um jogo jogável no fim.',
-          premios: ['Video game retrô', 'Fone Bluetooth', 'Garrafa térmica'],
-          nota: 'Online &middot; 24/09 a 28/09 &middot; 1 a 5 pessoas'
-        },
-        {
-          selo: 'Presenciais',
-          titulo: 'Jogos presenciais',
-          ilustra: { src: 'icones/jogos-de-mesa.webp', largura: 320, altura: 266 },
-          premios: ['Medalha de ouro', 'Medalha de prata', 'Medalha de bronze'],
-          desc: 'Os torneios que não pedem computador nenhum: Ping Pong, Totó, Dominó e Truco, no terraço do Cimatec 3.',
-          nota: ('Sáb 03/10 &middot; <a href="' + links.arenaJogosMesa + '" target="_blank" rel="noopener noreferrer">escolher no formulário</a>') if links.arenaJogosMesa else 'Sáb 03/10 &middot; inscrição no local'
         }
       ] %}
 
-      <div class="formato-grid arena-grid stagger-children">
-        {% for m in modalidades %}
-        <article class="formato-card fade-in{% if m.ilustra %} formato-card--ilustrado{% endif %}">
-          <span class="formato-selo">{{ m.selo }}</span>
-          {#
-            UM ÍCONE POR CARTÃO, sempre no mesmo canto e no mesmo tamanho
-            (`.formato-ilustra`), como o do hackathon na seção 02. `ilustra.src`
-            é relativo a `images/semcomp/`. Cartão sem ícone fica sem nada no
-            canto, e o selo continua dizendo o que ele é.
-          #}
-          {% if m.ilustra %}
-          <img class="formato-ilustra" src="{{ static('images/semcomp/' ~ m.ilustra.src) }}" alt=""
-               aria-hidden="true" width="{{ m.ilustra.largura }}" height="{{ m.ilustra.altura }}" loading="lazy" decoding="async">
-          {% endif %}
-          <h3>{{ m.titulo }}</h3>
-          <p>{{ m.desc }}</p>
-          {% if m.premios %}
-          <ol class="formato-premios" aria-label="Premiação">
-            {% for pr in m.premios %}
-            <li>
-              {% if m.premios | length > 1 %}<span class="formato-premio-rank">{{ loop.index }}º</span>{% endif %}
-              <span class="formato-premio-icone" aria-hidden="true">{{ ic.icone(icone_premio[pr] or 'presente', 16) }}</span>
-              {{ pr }}
-            </li>
-            {% endfor %}
-          </ol>
-          {% endif %}
-          <span class="formato-nota">{{ m.nota | safe }}</span>
-        </article>
-        {% endfor %}
-      </div>
-
       {#
-        E-SPORTS — O BANNER DO PHOENIX.
+        DOIS BLOCOS, E A ORDEM É A DE QUEM LÊ.
 
-        Os e-sports saíram da grade e ganharam faixa própria: são cinco jogos
-        com formato e prêmio diferentes, o que num cartão de 300px virava um
-        parágrafo corrido. Aqui cada jogo tem uma linha, com o logo dele.
+        PRIMEIRO O QUE É ABERTO A TODOS: o Capture The Leak, os jogos
+        presenciais e os e-sports. É o que serve a quem não é da área, e por
+        isso vem antes e com destaque (selo âmbar no topo do bloco, borda e o
+        selo "Aberto a todos" em cada cartão e na faixa dos e-sports). Os
+        formulários de inscrição fecham esse bloco, porque são justamente
+        destes jogos: a pessoa lê a modalidade e escolhe logo abaixo.
 
-        O PHOENIX É DO VALORANT, um dos jogos da copa, e está aqui para chamar
-        a atenção, a pedido da comissão. Foi escolhido pela cor: a bola de fogo
-        e o forro dourado da jaqueta são o mesmo âmbar da página, onde a Jett
-        (azul-gelo) e a Tracer (de um jogo fora da copa), que passaram por aqui
-        antes, brigavam com a paleta. É decorativo: `alt=""` e `aria-hidden`.
-        Procedência em `images/semcomp/arena/PROCEDENCIA.md`.
+        DEPOIS AS COMPETIÇÕES DE CÓDIGO, em ordem de data: a Game Jam (online,
+        antes da semana) e as três do sábado. Quatro cartões, em duas
+        fileiras de dois (`.arena-grid--dupla`), e não três e um sobrando.
 
-        A PREMIAÇÃO É UMA LINHA POR JOGO, com 1º e 2º lugar lado a lado e o
-        ícone de cada prêmio, no mesmo desenho dos cartões de cima. Antes os
-        dois prêmios vinham grudados no formato ("Equipes de 5 · Video game
-        retrô · fone Bluetooth"), e não dava para saber qual era de quem.
-
-        Os logos de LoL, Valorant e EA são da simple-icons (CC0), na cor de cada
-        marca. O EA FC 26 não tem logo lá: entra a marca EA com "FC 26" escrito
-        ao lado. Os ícones do TFT e do Brawl Stars vêm dos sites oficiais da
-        Riot e da Supercell (ver PROCEDENCIA.md).
-
-        O BRAWL STARS NÃO ESTÁ NA PLANILHA DE COMPETIÇÕES: entrou a pedido da
-        comissão. O prêmio veio dela (medalhas, como nos jogos de mesa); o
-        formato fica "no regulamento" até alguém mandar o dado. Não inventar.
-
-        A `nota` volta ao Even3 quando `arenaJogosDigitais` sair de
-        `site-links.ts`, como os outros.
+        Quem é aberto é o `aberto: true` de cada item de `modalidades`. Esta
+        página não diz nada sobre quem pode entrar nas outras: a documentação
+        não diz, e não inventar.
       #}
-      {% set esports = [
-        { nome: 'League of Legends', logo: 'league-of-legends.svg', formato: 'Equipes de 5', premios: ['Video game retrô', 'Fone Bluetooth'] },
-        { nome: 'Valorant',          logo: 'valorant.svg',          formato: 'Equipes de 5', premios: ['Video game retrô', 'Fone Bluetooth'] },
-        { nome: 'EA Sports FC 26',   logo: 'ea.svg', sufixo: 'FC 26', formato: 'Individual', premios: ['SSD NVMe', 'Kit gamer'] },
-        { nome: 'Teamfight Tactics', logo: 'tft.png',               formato: 'Individual', premios: ['SSD NVMe', 'Kit gamer'] },
-        { nome: 'Brawl Stars',       logo: 'brawl-stars.png',       formato: 'Formato no regulamento', premios: ['Medalha de ouro', 'Medalha de prata'] }
+      {% set blocos_arena = [
+        { aberto: true,  titulo: 'Para todo mundo jogar', desc: 'Qualquer pessoa pode participar destas três: o Capture The Leak, os jogos presenciais e os e-sports.' },
+        { aberto: false, titulo: 'Competições de código', desc: 'Programação, inteligência artificial, cibersegurança e desenvolvimento de jogos, da Game Jam online às três do sábado.' }
       ] %}
 
-      <div class="esports fade-in">
-        <div class="esports-texto">
-          <span class="formato-selo">E-Sports &middot; finais no sáb 03/10</span>
-          <h3>As finais dos e-sports são presenciais</h3>
-          <p>Cinco jogos, disputados no sábado junto com o resto do Arena Day. 1º e 2º lugar levam prêmio em cada um.</p>
+      {% for bloco in blocos_arena %}
+      <div class="arena-bloco{% if bloco.aberto %} arena-bloco--aberto{% endif %}">
+        <header class="arena-bloco-topo fade-in">
+          {% if bloco.aberto %}<span class="arena-aberto">{{ ic.icone('certo', 14) }} Aberto a todos</span>{% endif %}
+          <h3>{{ bloco.titulo }}</h3>
+          <p>{{ bloco.desc }}</p>
+        </header>
 
-          <div class="esports-premiacao-topo">
-            <img src="{{ static('images/semcomp/icones/premiacoes.webp') }}" alt="" aria-hidden="true" width="320" height="253" loading="lazy" decoding="async">
-            <span>Premiação por jogo</span>
-            <span class="esports-colunas" aria-hidden="true"><span>1º lugar</span><span>2º lugar</span></span>
-          </div>
-
-          <ul class="esports-jogos">
-            {% for j in esports %}
-            <li>
-              <span class="esports-marca" aria-hidden="true">
-                <img src="{{ static('images/semcomp/arena/' ~ j.logo) }}" alt="" width="28" height="28" loading="lazy" decoding="async">
-                {% if j.sufixo %}<span class="esports-sufixo">{{ j.sufixo }}</span>{% endif %}
-              </span>
-              <span class="esports-info">
-                <strong>{{ j.nome }}</strong>
-                <span>{{ j.formato }}</span>
-              </span>
-              {% if j.premios %}
-              <ol class="esports-premios" aria-label="Premiação de {{ j.nome }}">
-                {% for pr in j.premios %}
+        <div class="formato-grid arena-grid{% if not bloco.aberto %} arena-grid--dupla{% endif %} stagger-children">
+          {% for m in modalidades %}
+          {% if (m.aberto or false) == bloco.aberto %}
+            <article class="formato-card fade-in{% if m.ilustra %} formato-card--ilustrado{% endif %}{% if m.aberto %} formato-card--aberto{% endif %}">
+              <span class="formato-selo">{{ m.selo }}</span>
+              {#
+                UM ÍCONE POR CARTÃO, sempre no mesmo canto e no mesmo tamanho
+                (`.formato-ilustra`), como o do hackathon na seção 02. `ilustra.src`
+                é relativo a `images/semcomp/`. Cartão sem ícone fica sem nada no
+                canto, e o selo continua dizendo o que ele é.
+              #}
+              {% if m.ilustra %}
+              <img class="formato-ilustra" src="{{ static('images/semcomp/' ~ m.ilustra.src) }}" alt=""
+                   aria-hidden="true" width="{{ m.ilustra.largura }}" height="{{ m.ilustra.altura }}" loading="lazy" decoding="async">
+              {% endif %}
+              <h3>{{ m.titulo }}</h3>
+              <p>{{ m.desc }}</p>
+              {% if m.premios %}
+              <ol class="formato-premios" aria-label="Premiação">
+                {% for pr in m.premios %}
                 <li>
-                  <span class="formato-premio-rank">{{ loop.index }}º</span>
+                  {% if m.premios | length > 1 %}<span class="formato-premio-rank">{{ loop.index }}º</span>{% endif %}
                   <span class="formato-premio-icone" aria-hidden="true">{{ ic.icone(icone_premio[pr] or 'presente', 16) }}</span>
-                  <span>{{ pr }}</span>
+                  {{ pr }}
                 </li>
                 {% endfor %}
               </ol>
-              {% else %}
-              <span class="esports-sem-premio">Prêmios no regulamento</span>
               {% endif %}
-            </li>
-            {% endfor %}
-          </ul>
-
-          <span class="formato-nota">
-            {% if links.arenaJogosDigitais %}
-            Inscrição: <a href="{{ links.arenaJogosDigitais }}" target="_blank" rel="noopener noreferrer">escolher no formulário</a>
-            {% else %}
-            Inscrição no Even3
-            {% endif %}
-          </span>
-        </div>
-
-        <img class="esports-heroina" src="{{ static('images/semcomp/arena/phoenix.webp') }}"
-             alt="" aria-hidden="true" width="640" height="1138" loading="lazy" decoding="async">
-      </div>
-
-      {#
-        ESCOLHER O QUE JOGAR — os dois formulários do sábado.
-
-        A seção acima DESCREVE as seis modalidades; até aqui não havia onde
-        dizer "essa é a minha". O cartão da Copa de E-Sports mandava ao Even3 e
-        o dos jogos presenciais dizia "inscrição no local" — e nenhuma das duas
-        coisas é verdade desde que a comissão abriu os formulários.
-
-        DOIS CARTÕES E NÃO UMA LISTA DE SEIS LINKS: os formulários são dois, um
-        por família de jogo, e cada um pergunta as modalidades dele por dentro.
-        Quem quer jogar Totó e Truco preenche um; quem quer os dois mundos
-        preenche os dois.
-
-        Reaproveita o `.acao-card` da /seja-membro, que é o cartão em que o
-        `<a>` É a caixa inteira. Num bloco cujo objetivo é o clique, um link de
-        14px no pé de uma caixa de 200px é um alvo que se erra no celular.
-
-        O BLOCO INTEIRO É CONDICIONAL. Fechado o prazo, as duas chaves saem de
-        `site-links.ts` e a seção some sozinha, em vez de virar dois botões que
-        levam a um formulário que já não recebe resposta. Se só uma fechar,
-        sobra a outra e o `.acao-grid` se reacomoda.
-      #}
-      {% if links.arenaJogosMesa or links.arenaJogosDigitais %}
-      <div class="arena-escolha">
-        <div class="arena-escolha-topo fade-in">
-          <h3>Escolha a sua modalidade</h3>
-          <p>As chaves do sábado são montadas a partir destes dois formulários: um para o que se joga na mesa, outro para o que se joga na tela.</p>
-        </div>
-
-        <div class="acao-grid stagger-children">
-          {% if links.arenaJogosMesa %}
-          <a class="acao-card acao-card--destaque fade-in"
-             href="{{ links.arenaJogosMesa }}" target="_blank" rel="noopener noreferrer">
-            <span class="acao-selo">Jogos de mesa</span>
-            <img class="acao-ilustra" src="{{ static('images/semcomp/icones/jogos-de-mesa.webp') }}" alt="" aria-hidden="true" width="320" height="266" loading="lazy" decoding="async">
-            <span class="acao-ilustras" aria-hidden="true">
-              {% for il in jogos_mesa %}<img src="{{ static('images/semcomp/arena/' ~ il.src) }}" alt="" width="160" height="160" loading="lazy" decoding="async">{% endfor %}
-            </span>
-            <h3>Ping Pong, Totó, Dominó e Truco</h3>
-            <p>Os torneios presenciais do terraço do Cimatec 3, os que não pedem computador nenhum. O formulário pergunta em quais você entra.</p>
-            <span class="acao-pe">
-              <span class="acao-nota">Formulário do Google &middot; medalhas para o pódio</span>
-              <span class="acao-seta" aria-hidden="true">{{ ic.icone('seta', 16) }}</span>
-            </span>
-          </a>
+              {% if m.aberto %}<span class="arena-aberto arena-aberto--cartao">{{ ic.icone('certo', 14) }} Aberto a todos</span>{% endif %}
+              <span class="formato-nota">{{ m.nota | safe }}</span>
+            </article>
           {% endif %}
-
-          {% if links.arenaJogosDigitais %}
-          <a class="acao-card acao-card--destaque fade-in"
-             href="{{ links.arenaJogosDigitais }}" target="_blank" rel="noopener noreferrer">
-            <span class="acao-selo">Jogos digitais</span>
-            <img class="acao-ilustra" src="{{ static('images/semcomp/icones/jogos-digitais.webp') }}" alt="" aria-hidden="true" width="320" height="266" loading="lazy" decoding="async">
-            <span class="acao-ilustras acao-ilustras--logos" aria-hidden="true">
-              {% for j in esports %}{% if j.logo %}<img src="{{ static('images/semcomp/arena/' ~ j.logo) }}" alt="" width="28" height="28" loading="lazy" decoding="async">{% endif %}{% endfor %}
-            </span>
-            <h3>LoL, Valorant, EA FC 26, TFT e Brawl Stars</h3>
-            <p>As finais presenciais dos e-sports, no sábado. O formulário é o que garante a sua vaga na chave.</p>
-            <span class="acao-pe">
-              <span class="acao-nota">Formulário do Google &middot; vagas limitadas</span>
-              <span class="acao-seta" aria-hidden="true">{{ ic.icone('seta', 16) }}</span>
-            </span>
-          </a>
-          {% endif %}
+          {% endfor %}
         </div>
+
+        {% if bloco.aberto %}
+          {#
+            E-SPORTS — O BANNER DO PHOENIX.
+
+            Os e-sports saíram da grade e ganharam faixa própria: são cinco jogos
+            com formato e prêmio diferentes, o que num cartão de 300px virava um
+            parágrafo corrido. Aqui cada jogo tem uma linha, com o logo dele.
+
+            O PHOENIX É DO VALORANT, um dos jogos da copa, e está aqui para chamar
+            a atenção, a pedido da comissão. Foi escolhido pela cor: a bola de fogo
+            e o forro dourado da jaqueta são o mesmo âmbar da página, onde a Jett
+            (azul-gelo) e a Tracer (de um jogo fora da copa), que passaram por aqui
+            antes, brigavam com a paleta. É decorativo: `alt=""` e `aria-hidden`.
+            Procedência em `images/semcomp/arena/PROCEDENCIA.md`.
+
+            A PREMIAÇÃO É UMA LINHA POR JOGO, com 1º e 2º lugar lado a lado e o
+            ícone de cada prêmio, no mesmo desenho dos cartões de cima. Antes os
+            dois prêmios vinham grudados no formato ("Equipes de 5 · Video game
+            retrô · fone Bluetooth"), e não dava para saber qual era de quem.
+
+            Os logos de LoL, Valorant e EA são da simple-icons (CC0), na cor de cada
+            marca. O EA FC 26 não tem logo lá: entra a marca EA com "FC 26" escrito
+            ao lado. Os ícones do TFT e do Brawl Stars vêm dos sites oficiais da
+            Riot e da Supercell (ver PROCEDENCIA.md).
+
+            O BRAWL STARS NÃO ESTÁ NA PLANILHA DE COMPETIÇÕES: entrou a pedido da
+            comissão. O prêmio veio dela (medalhas, como nos jogos de mesa); o
+            formato fica "no regulamento" até alguém mandar o dado. Não inventar.
+
+            A `nota` volta ao Even3 quando `arenaJogosDigitais` sair de
+            `site-links.ts`, como os outros.
+          #}
+          {% set esports = [
+            { nome: 'League of Legends', logo: 'league-of-legends.svg', formato: 'Equipes de 5', premios: ['Video game retrô', 'Fone Bluetooth'] },
+            { nome: 'Valorant',          logo: 'valorant.svg',          formato: 'Equipes de 5', premios: ['Video game retrô', 'Fone Bluetooth'] },
+            { nome: 'EA Sports FC 26',   logo: 'ea.svg', sufixo: 'FC 26', formato: 'Individual', premios: ['SSD NVMe', 'Kit gamer'] },
+            { nome: 'Teamfight Tactics', logo: 'tft.png',               formato: 'Individual', premios: ['SSD NVMe', 'Kit gamer'] },
+            { nome: 'Brawl Stars',       logo: 'brawl-stars.png',       formato: 'Formato no regulamento', premios: ['Medalha de ouro', 'Medalha de prata'] }
+          ] %}
+
+          <div class="esports fade-in">
+            <div class="esports-texto">
+              <div class="arena-selos">
+            <span class="formato-selo">E-Sports &middot; finais no sáb 03/10</span>
+            <span class="arena-aberto">{{ ic.icone('certo', 14) }} Aberto a todos</span>
+          </div>
+              <h3>As finais dos e-sports são presenciais</h3>
+              <p>Cinco jogos, disputados no sábado junto com o resto do Arena Day. 1º e 2º lugar levam prêmio em cada um.</p>
+
+              <div class="esports-premiacao-topo">
+                <img src="{{ static('images/semcomp/icones/premiacoes.webp') }}" alt="" aria-hidden="true" width="320" height="253" loading="lazy" decoding="async">
+                <span>Premiação por jogo</span>
+                <span class="esports-colunas" aria-hidden="true"><span>1º lugar</span><span>2º lugar</span></span>
+              </div>
+
+              <ul class="esports-jogos">
+                {% for j in esports %}
+                <li>
+                  <span class="esports-marca" aria-hidden="true">
+                    <img src="{{ static('images/semcomp/arena/' ~ j.logo) }}" alt="" width="28" height="28" loading="lazy" decoding="async">
+                    {% if j.sufixo %}<span class="esports-sufixo">{{ j.sufixo }}</span>{% endif %}
+                  </span>
+                  <span class="esports-info">
+                    <strong>{{ j.nome }}</strong>
+                    <span>{{ j.formato }}</span>
+                  </span>
+                  {% if j.premios %}
+                  <ol class="esports-premios" aria-label="Premiação de {{ j.nome }}">
+                    {% for pr in j.premios %}
+                    <li>
+                      <span class="formato-premio-rank">{{ loop.index }}º</span>
+                      <span class="formato-premio-icone" aria-hidden="true">{{ ic.icone(icone_premio[pr] or 'presente', 16) }}</span>
+                      <span>{{ pr }}</span>
+                    </li>
+                    {% endfor %}
+                  </ol>
+                  {% else %}
+                  <span class="esports-sem-premio">Prêmios no regulamento</span>
+                  {% endif %}
+                </li>
+                {% endfor %}
+              </ul>
+
+              <span class="formato-nota">
+                {% if links.arenaJogosDigitais %}
+                Inscrição: <a href="{{ links.arenaJogosDigitais }}" target="_blank" rel="noopener noreferrer">escolher no formulário</a>
+                {% else %}
+                Inscrição no Even3
+                {% endif %}
+              </span>
+            </div>
+
+            <img class="esports-heroina" src="{{ static('images/semcomp/arena/phoenix.webp') }}"
+                 alt="" aria-hidden="true" width="640" height="1138" loading="lazy" decoding="async">
+          </div>
+
+          {#
+            ESCOLHER O QUE JOGAR — os dois formulários do sábado.
+
+            Os cartões acima DESCREVEM os jogos abertos; até aqui não havia onde
+            dizer "essa é a minha". O cartão da Copa de E-Sports mandava ao Even3 e
+            o dos jogos presenciais dizia "inscrição no local" — e nenhuma das duas
+            coisas é verdade desde que a comissão abriu os formulários.
+
+            DOIS CARTÕES E NÃO UMA LISTA DE SEIS LINKS: os formulários são dois, um
+            por família de jogo, e cada um pergunta as modalidades dele por dentro.
+            Quem quer jogar Totó e Truco preenche um; quem quer os dois mundos
+            preenche os dois.
+
+            Reaproveita o `.acao-card` da /seja-membro, que é o cartão em que o
+            `<a>` É a caixa inteira. Num bloco cujo objetivo é o clique, um link de
+            14px no pé de uma caixa de 200px é um alvo que se erra no celular.
+
+            O BLOCO INTEIRO É CONDICIONAL. Fechado o prazo, as duas chaves saem de
+            `site-links.ts` e a seção some sozinha, em vez de virar dois botões que
+            levam a um formulário que já não recebe resposta. Se só uma fechar,
+            sobra a outra e o `.acao-grid` se reacomoda.
+          #}
+          {% if links.arenaJogosMesa or links.arenaJogosDigitais %}
+          <div class="arena-escolha">
+            <div class="arena-escolha-topo fade-in">
+              <h3>Escolha a sua modalidade</h3>
+              <p>As chaves do sábado são montadas a partir destes dois formulários: um para o que se joga na mesa, outro para o que se joga na tela.</p>
+            </div>
+
+            <div class="acao-grid stagger-children">
+              {% if links.arenaJogosMesa %}
+              <a class="acao-card acao-card--destaque fade-in"
+                 href="{{ links.arenaJogosMesa }}" target="_blank" rel="noopener noreferrer">
+                <span class="acao-selo">Jogos de mesa</span>
+                <img class="acao-ilustra" src="{{ static('images/semcomp/icones/jogos-de-mesa.webp') }}" alt="" aria-hidden="true" width="320" height="266" loading="lazy" decoding="async">
+                <span class="acao-ilustras" aria-hidden="true">
+                  {% for il in jogos_mesa %}<img src="{{ static('images/semcomp/arena/' ~ il.src) }}" alt="" width="160" height="160" loading="lazy" decoding="async">{% endfor %}
+                </span>
+                <h3>Ping Pong, Totó, Dominó e Truco</h3>
+                <p>Os torneios presenciais do terraço do Cimatec 3, os que não pedem computador nenhum. O formulário pergunta em quais você entra.</p>
+                <span class="acao-pe">
+                  <span class="acao-nota">Formulário do Google &middot; medalhas para o pódio</span>
+                  <span class="acao-seta" aria-hidden="true">{{ ic.icone('seta', 16) }}</span>
+                </span>
+              </a>
+              {% endif %}
+
+              {% if links.arenaJogosDigitais %}
+              <a class="acao-card acao-card--destaque fade-in"
+                 href="{{ links.arenaJogosDigitais }}" target="_blank" rel="noopener noreferrer">
+                <span class="acao-selo">Jogos digitais</span>
+                <img class="acao-ilustra" src="{{ static('images/semcomp/icones/jogos-digitais.webp') }}" alt="" aria-hidden="true" width="320" height="266" loading="lazy" decoding="async">
+                <span class="acao-ilustras acao-ilustras--logos" aria-hidden="true">
+                  {% for j in esports %}{% if j.logo %}<img src="{{ static('images/semcomp/arena/' ~ j.logo) }}" alt="" width="28" height="28" loading="lazy" decoding="async">{% endif %}{% endfor %}
+                </span>
+                <h3>LoL, Valorant, EA FC 26, TFT e Brawl Stars</h3>
+                <p>As finais presenciais dos e-sports, no sábado. O formulário é o que garante a sua vaga na chave.</p>
+                <span class="acao-pe">
+                  <span class="acao-nota">Formulário do Google &middot; vagas limitadas</span>
+                  <span class="acao-seta" aria-hidden="true">{{ ic.icone('seta', 16) }}</span>
+                </span>
+              </a>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+        {% endif %}
       </div>
-      {% endif %}
+      {% endfor %}
 
       {#
         O RODAPÉ DEIXOU DE MANDAR TUDO AO EVEN3.
@@ -1341,7 +1435,7 @@
           },
           {
             p: 'Estudo em outra universidade. Posso participar?',
-            r: 'Pode. Em 2026 a semana convida estudantes de UFBA, UESB, UNEB, UCSAL, UNIFACS e UNIJORGE, inclusive com equipes nas competições. A inscrição é a mesma, pelo Even3.'
+            r: 'Pode. Em 2026 a semana convida estudantes de UFBA, UESB, UNEB, UCSAL, UNIFACS e UNIJORGE, inclusive com equipes nas competições. A inscrição é a mesma, pelo Even3. <strong>A exceção é o hackathon</strong>, que é só para estudantes do SENAI CIMATEC.'
           },
           {
             p: 'Preciso estudar computação?',
@@ -1357,7 +1451,7 @@
           },
           {
             p: 'Como funciona o hackathon?',
-            r: ('As equipes recebem um desafio e têm o prazo do evento para entregar uma solução funcionando. O regulamento, o desafio e a inscrição das equipes ficam no <a href="' ~ links.hackathon ~ '" target="_blank" rel="noopener noreferrer">portal do hackathon</a>.') if links.hackathon else 'As equipes recebem um desafio e têm o prazo do evento para entregar uma solução funcionando. O regulamento e a inscrição saem no Even3.'
+            r: ('<strong>É exclusivo para estudantes da Universidade SENAI CIMATEC.</strong> As equipes recebem um desafio e têm o prazo do evento para entregar uma solução funcionando. O regulamento, o desafio e a inscrição das equipes ficam no <a href="' ~ links.hackathon ~ '" target="_blank" rel="noopener noreferrer">portal do hackathon</a>.') if links.hackathon else '<strong>É exclusivo para estudantes da Universidade SENAI CIMATEC.</strong> As equipes recebem um desafio e têm o prazo do evento para entregar uma solução funcionando. O regulamento e a inscrição saem no Even3.'
           },
           {
             p: 'Tem código de vestimenta?',
@@ -1600,8 +1694,7 @@
       · Iniciativas — Cimatec Jr, Info Jr, LAMIT, NEXUPP, LIAO, Falcons,
         HorusTec, Prometheus Aerodesign e AWS Student Builder Group. O `sub` é
         o que o PRÓPRIO LOGO ou o perfil oficial diz de si; o da NEXUPP (UCSAL)
-        veio da comissão. A HorusTec sai sem `sub` porque nenhuma fonte
-        pública diz o que ela faz. Item sem `logo` sai com o nome escrito.
+        veio da comissão. A descrição da HorusTec veio da comissão. Item sem `logo` sai com o nome escrito.
 
     OS LOGOS SÃO A VERSÃO PARA FUNDO ESCURO: só o letreiro escuro virou branco,
     e a cor de marca ficou intacta. A procedência de cada arquivo está no
@@ -1651,6 +1744,16 @@
             </span>
             {% if i.logo %}<span class="parceiro-nome">{{ i.nome }}</span>{% endif %}
             {% if i.sub %}<span class="parceiro-sub">{{ i.sub }}</span>{% endif %}
+            {% if i.redes %}
+            <span class="parceiro-redes">
+              {% for rede, rotulo in [['site', 'Site'], ['instagram', 'Instagram'], ['linkedin', 'LinkedIn'], ['youtube', 'YouTube'], ['tiktok', 'TikTok']] %}
+              {% if i.redes[rede] %}
+              <a href="{{ i.redes[rede] }}" target="_blank" rel="noopener noreferrer"
+                 aria-label="{{ rotulo }} de {{ i.nome }}" title="{{ rotulo }}">{{ ic.icone(rede, 16) }}</a>
+              {% endif %}
+              {% endfor %}
+            </span>
+            {% endif %}
           </li>
           {% endfor %}
         </ul>

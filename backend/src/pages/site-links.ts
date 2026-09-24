@@ -37,6 +37,18 @@ export const SITE_LINKS = {
   semcomp: 'https://www.even3.com.br/semcomp2026-701106',
 
   /**
+   * INSCRIÇÃO PELO PRÓPRIO SITE (formulário com escolha de palestras e vagas,
+   * em `src/semcomp/`). DESLIGADA a pedido da comissão: a inscrição da
+   * SEMCOMP 2026 é só pelo Even3, e todo botão da página vai direto para lá.
+   *
+   * Vazia, `/semcomp/inscricao` redireciona para o Even3 e o painel esconde
+   * a área da SEMCOMP. O código, as tabelas e as atividades continuam no
+   * lugar: para religar, ponha '/semcomp/inscricao' aqui e troque os botões
+   * da `semcomp.njk` de volta para `url('semcomp_inscricao')`.
+   */
+  semcompInscricaoPeloSite: '',
+
+  /**
    * Cadastro de membro, sem seleção. Guardado sem o `?edit_requested=true` que
    * veio colado no endereço original — aquilo é resquício de quem estava
    * editando o formulário e não faz parte do endereço público.

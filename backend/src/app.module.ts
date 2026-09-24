@@ -10,6 +10,7 @@ import { DatabaseModule } from './database/database.module';
 import { MembersModule } from './members/members.module';
 import { PagesModule } from './pages/pages.module';
 import { SectorsModule } from './sectors/sectors.module';
+import { SemcompModule } from './semcomp/semcomp.module';
 import { SignupRequestsModule } from './signup-requests/signup-requests.module';
 import { TasksModule } from './tasks/tasks.module';
 import { AppController } from './app.controller';
@@ -29,6 +30,7 @@ import { AppService } from './app.service';
     TasksModule,
     AttachmentsModule,
     SignupRequestsModule,
+    SemcompModule,
   ],
   controllers: [AppController],
   providers: [AppService],

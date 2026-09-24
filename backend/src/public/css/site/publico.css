@@ -2933,7 +2933,12 @@ section {
   align-items: flex-start;
 }
 
+/* `align-self: stretch` NÃO É ENFEITE. O `.capa-corpo` é uma coluna com
+   `align-items: flex-start`, e sem isto o `<h1>` encolhe até o conteúdo — aí
+   o `width: 100%` da logo lá dentro vira a largura NATURAL dela (até os
+   520px do teto), e num celular de 320px a logo saía cortada na direita. */
 .capa-titulo {
+  align-self: stretch;
   margin: 24px 0 0;
   font-weight: 400;
 }
@@ -2985,8 +2990,11 @@ section {
     min-width: 0;
   }
 
-  .capa-topo .contagem {
+  .capa-topo .capa-lado {
     flex: none;
+  }
+
+  .capa-lado .contagem {
     margin-top: 0;
   }
 }
@@ -3000,6 +3008,7 @@ section {
 .contagem {
   display: inline-flex;
   flex-direction: column;
+  max-width: 100%;
   gap: 10px;
   margin-top: 22px;
   padding: 16px 20px 14px;
@@ -3013,6 +3022,49 @@ section {
 
 .contagem[hidden] {
   display: none;
+}
+
+/* O TIMER E O BOTÃO DE INSCRIÇÃO, empilhados: a coluna da direita do topo
+   no desktop, e o bloco logo abaixo da logo no celular. O botão estica até
+   a largura do timer, para os dois lerem como uma peça só. */
+.capa-lado {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  max-width: 100%;
+}
+
+/* `:not([hidden])` porque este seletor pesa o mesmo que `.contagem[hidden]`
+   e vem depois: sem ele, o timer escondido (sem JS, evento encerrado)
+   voltaria a aparecer. */
+.capa-lado .contagem:not([hidden]) {
+  display: flex;
+}
+
+.capa-chamada {
+  display: flex;
+  flex-direction: column;
+}
+
+.capa-chamada .btn-primary {
+  justify-content: center;
+}
+
+/* Sem o timer (sem JS, ou passado o evento) o botão não estica sozinho. */
+.capa-lado:has(.contagem[hidden]) {
+  align-items: flex-start;
+}
+
+@media (max-width: 899px) {
+  .capa-lado {
+    display: inline-flex;
+    margin-top: 22px;
+  }
+
+  .capa-lado .contagem {
+    margin-top: 0;
+  }
 }
 
 .contagem-rotulo {
@@ -3527,21 +3579,21 @@ section {
   align-items: center;
 }
 
+/* SÓ FADE, sem deslocamento: o logo que sai e o que entra ocupam o mesmo
+   lugar e se cruzam na opacidade. Um deslizar de poucos pixels fazia a
+   marca parecer que "caía" a cada troca. */
 .estandes-item {
   grid-area: 1 / 1;
   opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.6s var(--transicao), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 0.9s ease-in-out;
 }
 
 .estandes-item--ativo {
   opacity: 1;
-  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .estandes-item {
-    transform: none;
     transition: opacity 0.2s linear;
   }
 }
@@ -3650,6 +3702,116 @@ section {
 
 .esports-colunas > span {
   color: var(--podio, var(--cinza));
+}
+
+/* OS DOIS BLOCOS DA SEÇÃO 04 — "Abertas a todos" em cima, com destaque, e
+   as competições de código embaixo. Cada bloco tem um título curto, no
+   tamanho do "Código de vestimenta", abaixo do título da seção. */
+.arena-bloco + .arena-bloco {
+  margin-top: clamp(48px, 6vw, 72px);
+  padding-top: clamp(32px, 4vw, 44px);
+  border-top: 1px solid var(--traco);
+}
+
+.arena-bloco-topo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.arena-bloco-topo h3 {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--giz);
+}
+
+.arena-bloco-topo p {
+  max-width: 62ch;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+/* O SELO "ABERTO A TODOS": cheio, em âmbar, e não em filete como o
+   `.formato-selo` — é o único selo da página que diz quem pode entrar, e
+   precisa se ler antes do nome da modalidade. */
+.arena-aberto {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px 5px 9px;
+  border-radius: 999px;
+  background: var(--ambar);
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--breu);
+}
+
+.arena-aberto--cartao {
+  align-self: flex-start;
+  margin-top: 18px;
+}
+
+.arena-selos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.formato-card--aberto {
+  border-color: var(--ambar-traco);
+  background:
+    linear-gradient(180deg, rgba(242, 138, 31, 0.08), transparent 60%),
+    var(--penumbra);
+}
+
+/* AS COMPETIÇÕES DE CÓDIGO SÃO QUATRO: duas por fileira também na tela
+   larga, em vez de três e uma esticada. Três classes para vencer a regra de
+   "sobra um" do `.formato-grid`, que tem o mesmo peso de quatro. */
+@media (min-width: 880px) {
+  .formato-grid.arena-grid.arena-grid--dupla > :nth-child(n) {
+    grid-column: span 3;
+  }
+}
+
+/* O SELO DE QUEM PODE ENTRAR QUANDO NÃO É TODO MUNDO (hoje, só o hackathon).
+   Filete claro com cadeado, e não o âmbar cheio do "Aberto a todos": é um
+   aviso, não um convite, e os dois não podem ser confundidos de relance. */
+.selo-restrito {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 6px;
+  margin-top: 18px;
+  padding: 5px 12px 5px 9px;
+  border: 1px solid rgba(236, 234, 229, 0.45);
+  border-radius: 10px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--giz);
+}
+
+/* A mesma restrição dentro do botão do hackathon, no topo da página. */
+.btn-restrito {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.75;
 }
 
 /* ==========================================================================
@@ -3774,9 +3936,12 @@ section {
   color: var(--fumaca);
 }
 
-/* No celular os prêmios descem para baixo do nome, e o cabeçalho das
-   colunas some (cada linha já diz 1º e 2º). */
-@media (max-width: 620px) {
+/* Os prêmios descem para baixo do nome, e o cabeçalho das colunas some
+   (cada linha já diz 1º e 2º). ATÉ 1199px, e não só no celular: do tablet ao
+   notebook a lista divide a largura com o Phoenix, e em ~380–540px nome +
+   dois prêmios não cabem numa linha — no tablet o "2º" caía em cima do
+   "Video game retrô" do 1º, e em 1024px cada prêmio quebrava em três. */
+@media (max-width: 1199px) {
   .esports-premiacao-topo {
     grid-template-columns: 64px 1fr;
   }
@@ -3868,6 +4033,14 @@ section {
     opacity: 0.35;
   }
 
+  /* A figura é fundo aqui, mas vem DEPOIS do texto no HTML e, posicionada,
+     era pintada por cima dele — o "Formato no regulamento" do Brawl Stars
+     sumia atrás da jaqueta. O texto sobe uma camada. */
+  .esports-texto {
+    position: relative;
+    z-index: 1;
+  }
+
   .esports-texto {
     position: relative;
   }
@@ -3933,6 +4106,46 @@ section {
 .acao-ilustras--logos img {
   width: 30px;
   height: 30px;
+}
+
+/* A ILUSTRAÇÃO DO CANTO NÃO COBRE NADA. Ela é `absolute` no canto de cima
+   (18px do topo, 92px de largura, ~77px de altura), e sem reserva de espaço
+   passava por cima do selo e da fileira de ícones — no celular o logo do
+   Brawl Stars sumia atrás do troféu. O selo para antes dela, e a fileira
+   começa depois do fim dela (18 + 77 ≈ 95px do topo do cartão). */
+.acao-card:has(.acao-ilustra) .acao-selo {
+  margin-right: 92px;
+}
+
+.acao-card:has(.acao-ilustra) .acao-ilustras {
+  flex-wrap: wrap;
+  margin-top: 44px;
+}
+
+@media (max-width: 480px) {
+  /* No celular a ilustração encolhe (60px, ~50 de altura) e a fileira sobe
+     junto: o cartão não ganha altura para abrir espaço a um enfeite. */
+  .acao-card:has(.acao-ilustra) .acao-ilustra {
+    width: 60px;
+  }
+
+  .acao-card:has(.acao-ilustra) .acao-selo {
+    margin-right: 62px;
+  }
+
+  .acao-card:has(.acao-ilustra) .acao-ilustras {
+    margin-top: 22px;
+  }
+
+  .acao-ilustras img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .acao-ilustras--logos img {
+    width: 28px;
+    height: 28px;
+  }
 }
 
 
@@ -4025,6 +4238,35 @@ section {
   line-height: 1.45;
   color: var(--fumaca);
   text-wrap: pretty;
+}
+
+/* OS CANAIS OFICIAIS de cada marca, no pé do cartão. `margin-top: auto`
+   empurra a fileira para baixo, então ela fica na mesma altura em todos os
+   cartões da linha, tenham eles subtítulo ou não. Alvo de 34px: é tocado
+   no celular. */
+.parceiro-redes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.parceiro-redes a {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: var(--cinza);
+  transition: color var(--transicao), background var(--transicao);
+}
+
+.parceiro-redes a:hover,
+.parceiro-redes a:focus-visible {
+  background: var(--ambar-lavagem);
+  color: var(--ambar);
 }
 
 
@@ -4815,10 +5057,11 @@ section {
 
 /* O endereço leva ao mapa. O ícone de link externo entra no fim da linha e não
    pode ser a única pista de que ali se clica — daí o filete embaixo do texto. */
+/* `inline` e não `inline-flex`: o endereço quebra em duas linhas no celular,
+   e num `inline-flex` a seta virava um item à parte, solta no canto direito
+   da caixa. Em linha, ela acompanha o fim do texto. */
 .inscricao-ficha dd a {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  display: inline;
   color: var(--ambar);
   border-bottom: 1px solid var(--ambar-traco);
   transition: color var(--transicao), border-color var(--transicao);
@@ -5566,7 +5809,9 @@ section {
 .comp-destaque .link-seta {
   border: 0;
   background: none;
-  padding: 0;
+  /* Só o padding lateral zera: o vertical é a área de toque de 24px que
+     todo `.link-seta` ganha (ver "TELAS ESTREITAS" no fim do arquivo). */
+  padding: 4px 0;
   font-family: var(--mono);
   cursor: pointer;
   color: var(--acento-forte);
@@ -6539,5 +6784,315 @@ footer {
   .faixa-trilho {
     animation: none !important;
     transform: none;
+  }
+}
+
+
+/* ==========================================================================
+   TELAS ESTREITAS — o que precisou de ajuste para o site chegar inteiro ao
+   Mobile S (320px), conferido em 320, 375, 425, 768, 1024, 1440 e 2560.
+
+   Ficam juntos aqui, e não espalhados, porque são uma decisão só: o que
+   muda quando sobram ~280px de largura útil. Cada regra diz o que quebrava.
+   ========================================================================== */
+
+/* A seta que acompanha o endereço da ficha de inscrição. */
+.inscricao-ficha dd a svg {
+  display: inline;
+  margin-left: 4px;
+  vertical-align: -2px;
+}
+
+/* ALVOS DE TOQUE DE PELO MENOS 24px (WCAG 2.5.8). Os links de voltar, os de
+   seta, o "Abrir no Google Maps" e os do rodapé tinham 16 a 23px de altura:
+   o texto era do tamanho certo, faltava área para o dedo. O `padding` com
+   margem negativa igual aumenta a área sem mexer em nada do layout. */
+.pagina-voltar,
+.link-seta,
+.mapa-pe a,
+.footer-right a {
+  padding-block: 4px;
+  margin-block: -4px;
+}
+
+.footer-right a {
+  display: inline-block;
+}
+
+/* "Só estudantes CIMATEC" dentro do botão do hackathon: 11px era o tamanho
+   em que a letra mono deixa de ser lida sem esforço. */
+.btn-restrito {
+  font-size: 0.72rem;
+}
+
+@media (max-width: 480px) {
+  /* O selo de restrição desce para uma linha própria dentro do botão. Lado a
+     lado com "Hackathon" ele quebrava em três linhas de uma palavra cada. */
+  .btn-outline:has(.btn-restrito) {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 2px;
+  }
+
+  .btn-restrito {
+    flex-basis: 100%;
+    order: 3;
+    text-align: center;
+  }
+
+  /* A contagem: quatro blocos de 54px de largura mínima mais os separadores
+     davam ~350px, e a caixa passava da tela de 320px. */
+  .contagem {
+    padding: 14px 14px 12px;
+  }
+
+  .contagem-numeros {
+    gap: 4px;
+  }
+
+  .contagem-bloco {
+    min-width: 44px;
+  }
+
+  .contagem-valor {
+    font-size: 1.75rem;
+  }
+
+  .contagem-sep {
+    font-size: 1.4rem;
+  }
+
+  /* E-sports: 1º e 2º lugar lado a lado dividiam ~230px, e "Medalha de ouro"
+     encostava no "2º" da coluna vizinha. Um prêmio por linha. */
+  .esports-premios {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .esports-jogos > li {
+    padding: 12px;
+    row-gap: 10px;
+  }
+
+  /* GRADE DA SEMANA: o dia, o turno e a palestra eram três caixas uma dentro
+     da outra, e a coluna do título ficava com ~130px — uma palavra por linha.
+     O turno perde a caixa (o título dele já separa manhã de tarde) e o
+     cartão do dia aperta o respiro lateral. */
+  .trilha-corpo {
+    padding: 18px 14px 18px;
+  }
+
+  .trilha-turno {
+    padding: 12px 0 0;
+    border: 0;
+    border-top: 1px solid var(--traco);
+    border-radius: 0;
+    background: none;
+  }
+
+  .trilha-palestras li {
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 10px;
+  }
+}
+
+
+/* ==========================================================================
+   CELULAR (até 620px) — o desenho do desktop, e não uma pilha de caixas.
+
+   No celular cada bloco virava uma caixa da largura da tela, alta e quase
+   vazia: o parceiro era um logo e um nome em 250px de altura, a frente da
+   comissão três linhas numa faixa inteira, o formato da seção 02 um palco de
+   130px para um ícone. Aqui as caixas que dizem pouco dividem a largura, e
+   as ilustrações voltam a acompanhar o texto em vez de ocupar uma linha.
+   ========================================================================== */
+@media (max-width: 620px) {
+  /* O ÍCONE DA SEÇÃO NO CANTO DE CIMA, na linha do número, como um selo. A
+     coluna do celular o jogava para o fim do bloco, embaixo da descrição,
+     solto num vão de ~100px antes do conteúdo. Seção sem ícone só deixa a
+     célula vazia. */
+  .secao-topo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "indice ilustra"
+      "corpo  corpo";
+    align-items: end;
+    column-gap: 16px;
+    row-gap: 10px;
+  }
+
+  .secao-indice {
+    grid-area: indice;
+    padding-bottom: 4px;
+  }
+
+  .secao-corpo {
+    grid-area: corpo;
+  }
+
+  .secao-ilustra {
+    grid-area: ilustra;
+    width: 64px;
+    margin: 0;
+    align-self: end;
+  }
+
+  /* OS FORMATOS DA SEÇÃO 02: o palco encolhe para um quadrado ao lado do
+     selo e do título, como um ícone de lista, e o texto corre embaixo na
+     largura toda. `extra` é o selo "só estudantes CIMATEC" do hackathon. */
+  .formato-card--arte {
+    display: grid;
+    grid-template-columns: 68px minmax(0, 1fr);
+    grid-template-areas:
+      "palco selo"
+      "palco titulo"
+      "texto texto"
+      "marcas marcas"
+      "extra extra"
+      "nota nota";
+    column-gap: 14px;
+    row-gap: 0;
+    align-content: start;
+    padding: 18px 16px;
+  }
+
+  .formato-card--arte .formato-palco {
+    grid-area: palco;
+    width: 68px;
+    height: 68px;
+    margin: 0;
+  }
+
+  .formato-card--arte .formato-palco img {
+    height: 52px;
+    max-width: 90%;
+  }
+
+  .formato-card--arte .formato-selo {
+    grid-area: selo;
+    align-self: end;
+    justify-self: start;
+  }
+
+  .formato-card--arte h3 {
+    grid-area: titulo;
+    align-self: start;
+    margin-top: 8px;
+  }
+
+  .formato-card--arte > p {
+    grid-area: texto;
+    margin-top: 14px;
+  }
+
+  .formato-card--arte .estandes-marcas {
+    grid-area: marcas;
+  }
+
+  .formato-card--arte .selo-restrito {
+    grid-area: extra;
+    justify-self: start;
+  }
+
+  .formato-card--arte .formato-nota {
+    grid-area: nota;
+    padding-top: 16px;
+  }
+
+  /* PARCEIROS EM DUAS COLUNAS. O logo encolhe na proporção (a altura de
+     cada marca vem do template), e o cartão perde o respiro de vitrine que
+     só fazia sentido com três ou cinco lado a lado. */
+  .parceiros-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .parceiro {
+    padding: 18px 10px 12px;
+  }
+
+  /* Grupo com número ímpar (três patrocinadores, três apoios): o último
+     cartão fica sozinho na fileira. Centralizado e do tamanho dos outros,
+     em vez de encostado à esquerda com um buraco ao lado. */
+  .parceiros-grid > .parceiro:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc(50% - 5px);
+  }
+
+  .parceiro-logo {
+    height: 60px;
+  }
+
+  .parceiro-logo img {
+    height: calc(var(--parceiro-altura, 50) * 0.72px);
+    max-height: 58px;
+  }
+
+  .parceiro-nome {
+    margin-top: 12px;
+    font-size: 0.92rem;
+  }
+
+  .parceiro-sub {
+    font-size: 0.76rem;
+    line-height: 1.4;
+  }
+
+  .parceiro-redes {
+    gap: 0;
+    padding-top: 10px;
+  }
+
+  .parceiro-redes a {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* A COMISSÃO EM DUAS COLUNAS: cada frente é um rótulo, um nome e uma
+     linha. Na largura toda eram 12 faixas altas e quase vazias. */
+  .comissao-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .comissao-item {
+    padding: 16px 14px 14px;
+  }
+
+  .comissao-frente {
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+  }
+
+  .comissao-nomes {
+    margin-top: 8px;
+    font-size: 0.95rem;
+  }
+
+  .comissao-atribuicao {
+    font-size: 0.8rem;
+  }
+}
+
+/* Em 320px duas colunas de comissão dariam ~135px, e os rótulos em
+   maiúsculas ("COMUNICAÇÃO COM PATROCINADORES") quebrariam em quatro
+   linhas. Abaixo de 360px a comissão volta a uma coluna — já compacta. */
+@media (max-width: 359px) {
+  .comissao-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Quatro redes (site, Instagram, LinkedIn, YouTube) numa coluna de
+     ~113px: com 30px cada, a quarta descia sozinha para outra linha. */
+  .parceiro-redes a {
+    width: 27px;
+    height: 27px;
+  }
+
+  .parceiro-redes svg {
+    width: 14px;
+    height: 14px;
   }
 }

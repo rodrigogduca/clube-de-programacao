@@ -1,0 +1,317 @@
+{#
+  INSCRIÇÃO NA SEMCOMP PELO SITE — duas telas num template só.
+
+    modo 'novo'       o formulário: dados da pessoa + atividades de cada dia
+    modo 'gerenciar'  a inscrição de quem tem o link: as mesmas atividades,
+                      marcadas, para mudar
+
+  As duas partilham a lista de atividades, e é por isso que moram juntas: a
+  pessoa que volta pelo link vê exatamente o que viu ao se inscrever, e não
+  uma segunda tela para aprender.
+
+  UMA CAIXA POR ATIVIDADE, `atividade_<id>`, e não um array: quando o servidor
+  recusa o envio (vaga que acabou, dois horários que chocam), o formulário
+  volta com as marcações de antes — `old` só guarda campos de texto.
+
+  O JS no fim desmarca, ao marcar uma atividade, as que acontecem no mesmo
+  horário. É conforto: quem garante é o servidor (`SemcompService`).
+#}
+{% extends "layouts/site.njk" %}
+
+{% block titulo %}{% if modo == 'gerenciar' %}Minha inscrição{% else %}Inscrição{% endif %} | SEMCOMP 2026{% endblock %}
+
+{% block meta %}
+  <meta name="description" content="Inscreva-se na SEMCOMP 2026, a Semana da Computação da Universidade SENAI CIMATEC, e escolha as palestras de cada dia.">
+  {% if modo == 'gerenciar' %}
+  <meta name="robots" content="noindex, nofollow">
+  {% else %}
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{{ canonical_url }}">
+  {% endif %}
+{% endblock %}
+
+{% block estilos %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ static('css/site/inscricao.css') }}">
+{% endblock %}
+
+{# Quem já está no formulário não precisa do pop-up chamando para ele. #}
+{% block aviso_semcomp %}{% endblock %}
+
+{% block conteudo %}
+<main class="inscricao">
+  <div class="container">
+
+    <header class="inscricao-topo">
+      <a class="inscricao-voltar" href="{{ url('semcomp') }}">&larr; SEMCOMP 2026</a>
+      <span class="section-label">// {% if modo == 'gerenciar' %}minha inscrição{% else %}inscrição{% endif %}</span>
+      {% if modo == 'gerenciar' %}
+      <h1 class="section-title">Oi, {{ inscricao.nome.split(' ')[0] }}.</h1>
+      <p class="section-desc">Sua inscrição na SEMCOMP 2026 está feita. Aqui você muda as atividades até a hora em que cada uma começa.</p>
+      {% else %}
+      <h1 class="section-title">Inscrição na<br>SEMCOMP 2026</h1>
+      <p class="section-desc">De 29/09 a 03/10, na Universidade SENAI CIMATEC. Preencha seus dados e escolha as atividades de cada dia; dá para mudar depois pelo link que chega no seu e-mail.</p>
+      {% endif %}
+    </header>
+
+    {% if messages %}
+    <div class="inscricao-avisos" role="status">
+      {% for m in messages %}
+      <p class="inscricao-aviso inscricao-aviso--{{ m.tags }}">{{ m.text }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {#
+      BANCO FORA DO AR (ou sem as tabelas da SEMCOMP): no lugar da página de
+      erro, o motivo em uma frase e a saída que ainda funciona — o Even3.
+    #}
+    {% if modo == 'indisponivel' %}
+    <section class="inscricao-bloco inscricao-fora">
+      <h2>A inscrição pelo site está fora do ar agora</h2>
+      <p>Estamos resolvendo. Enquanto isso, dá para garantir a sua vaga na SEMCOMP direto pelo Even3, a plataforma oficial do evento; a escolha das palestras volta a funcionar aqui assim que o site voltar.</p>
+      {% if links.semcomp %}
+      <a class="btn-primary" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
+        Inscrever-me pelo Even3
+        {{ ic.icone('externo', 15) }}
+      </a>
+      {% endif %}
+    </section>
+    {% else %}
+
+    {% if modo == 'gerenciar' %}
+    {#
+      A FICHA E O LINK. O link é a única chave da inscrição, e quem acabou de
+      se inscrever talvez não receba o e-mail (SMTP fora, spam): por isso ele
+      aparece aqui, com o botão de copiar, e não só na caixa de entrada.
+    #}
+    <section class="inscricao-ficha">
+      <dl>
+        <div><dt>Nome</dt><dd>{{ inscricao.nome }}</dd></div>
+        <div><dt>E-mail</dt><dd>{{ inscricao.email }}</dd></div>
+        <div><dt>Instituição</dt><dd>{{ inscricao.instituicao }}</dd></div>
+        <div><dt>Atividades</dt><dd>{{ total_escolhidas }} escolhida{{ total_escolhidas | pluralize }}</dd></div>
+      </dl>
+      <div class="inscricao-link">
+        <span>Seu link (é a chave da inscrição; guarde e não compartilhe)</span>
+        <div class="inscricao-link-linha">
+          <input type="text" readonly value="{{ link_inscricao }}" id="linkInscricao" aria-label="Link da sua inscrição">
+          <button type="button" class="btn-outline" data-copiar="linkInscricao">Copiar</button>
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    <form method="POST" class="inscricao-form" id="atividades"
+          action="{% if modo == 'gerenciar' %}{{ url('semcomp_gerenciar', token) }}{% else %}{{ url('semcomp_inscricao') }}{% endif %}">
+      {{ csrf_token() | safe }}
+      {# Marca que o formulário voltou recusado: aí as caixas seguem `old`,
+         inclusive as que a pessoa tinha desmarcado. #}
+      <input type="hidden" name="enviado" value="1">
+
+      {% if modo == 'novo' %}
+      <fieldset class="inscricao-bloco">
+        <legend><span class="inscricao-passo">1</span> Seus dados</legend>
+
+        <div class="inscricao-campos">
+          <label class="inscricao-campo inscricao-campo--largo">
+            <span>Nome completo</span>
+            <input type="text" name="nome" value="{{ old.nome | default('') }}" required minlength="3" maxlength="120" autocomplete="name">
+            <small>Sai assim no certificado.</small>
+          </label>
+
+          <label class="inscricao-campo">
+            <span>E-mail</span>
+            <input type="email" name="email" value="{{ old.email | default('') }}" required maxlength="160" autocomplete="email">
+            <small>É para ele que vai o link da inscrição.</small>
+          </label>
+
+          <label class="inscricao-campo">
+            <span>Nome no crachá <em>(opcional)</em></span>
+            <input type="text" name="nome_cracha" value="{{ old.nome_cracha | default('') }}" maxlength="40" placeholder="Como te chamam">
+          </label>
+
+          {% set inst_atual = old.instituicao | default('') %}
+          <label class="inscricao-campo">
+            <span>Instituição</span>
+            <select name="instituicao" required id="campoInstituicao">
+              <option value="" {% if not inst_atual %}selected{% endif %} disabled>Escolha</option>
+              {% for i in instituicoes %}
+              <option value="{{ i }}" {% if inst_atual == i %}selected{% endif %}>{{ i }}</option>
+              {% endfor %}
+              <option value="Outra" {% if inst_atual == 'Outra' %}selected{% endif %}>Outra</option>
+            </select>
+          </label>
+
+          <label class="inscricao-campo" id="campoOutra" {% if inst_atual != 'Outra' %}hidden{% endif %}>
+            <span>Qual?</span>
+            <input type="text" name="instituicao_outra" value="{{ old.instituicao_outra | default('') }}" maxlength="120">
+          </label>
+        </div>
+      </fieldset>
+      {% endif %}
+
+      <fieldset class="inscricao-bloco">
+        <legend>{% if modo == 'novo' %}<span class="inscricao-passo">2</span> {% endif %}Atividades de cada dia</legend>
+        <p class="inscricao-ajuda">
+          Marque as palestras a que você vai. As vagas são limitadas pelo tamanho da sala, e a sua só fica garantida quando a inscrição é enviada. Não dá para estar em duas no mesmo horário.
+        </p>
+
+        {% for dia in dias %}
+        {#
+          CADA DIA ABRE E FECHA, e todos começam abertos: quem chega vê a
+          semana inteira, e quem já escolheu o dia dele recolhe os outros
+          para não rolar por eles. `<details>` nativo pelo mesmo motivo do FAQ
+          da /semcomp — teclado, leitor de tela e Ctrl+F de graça. As caixas
+          de um dia fechado continuam no formulário e são enviadas normalmente.
+        #}
+        {% set escolhidas_dia = dia.atividades | selectattr('escolhida') | length %}
+        <details class="inscricao-dia" open>
+          <summary>
+            <h2>{{ dia.rotulo }}</h2>
+            <span class="inscricao-dia-resumo" data-dia-resumo>
+              {{ dia.atividades.length }} atividade{{ dia.atividades.length | pluralize }}{% if escolhidas_dia %} &middot; <strong>{{ escolhidas_dia }} escolhida{{ escolhidas_dia | pluralize }}</strong>{% endif %}
+            </span>
+            <span class="inscricao-dia-seta" aria-hidden="true"></span>
+          </summary>
+          <ul class="inscricao-atividades">
+            {% for a in dia.atividades %}
+            {% set marcada = (old['atividade_' ~ a.id] == 'sim') if old.enviado else a.escolhida %}
+            <li>
+              <label class="atividade{% if not a.editavel %} atividade--travada{% endif %}{% if a.lotada %} atividade--lotada{% endif %}">
+                <input type="checkbox" name="atividade_{{ a.id }}" value="sim"
+                       data-inicio="{{ a.inicioIso }}" data-fim="{{ a.fimIso }}" data-titulo="{{ a.titulo }}"
+                       {% if marcada %}checked{% endif %}
+                       {% if not a.editavel %}disabled{% endif %}>
+                <span class="atividade-hora">{{ a.hora }}<small>{{ a.horaFim }}</small></span>
+                <span class="atividade-corpo">
+                  <span class="atividade-tipo">{{ a.tipo }}{% if a.local %} &middot; {{ a.local }}{% endif %}</span>
+                  <strong>{{ a.titulo }}</strong>
+                  {% if a.quem %}<span class="atividade-quem">{{ a.quem }}</span>{% endif %}
+                </span>
+                <span class="atividade-vagas">
+                  {% if a.comecou %}
+                    {% if a.escolhida %}sua{% else %}encerrada{% endif %}
+                  {% elif a.lotada %}
+                    lotada
+                  {% elif not a.aberta %}
+                    fechada
+                  {% elif a.restantes != none %}
+                    {{ a.restantes }} vaga{{ a.restantes | pluralize }}
+                  {% else %}
+                    sem limite
+                  {% endif %}
+                </span>
+              </label>
+            </li>
+            {% endfor %}
+          </ul>
+        </details>
+        {% else %}
+        <p class="inscricao-vazio">A programação ainda está sendo montada. Você já pode se inscrever; as atividades aparecem aqui assim que forem confirmadas, e o seu link serve para escolhê-las depois.</p>
+        {% endfor %}
+
+        <p class="inscricao-nota">
+          O <strong>Arena Day</strong> (sábado, 03/10) tem inscrição própria para cada competição: veja em <a href="{{ url('semcomp') }}#arena">competições</a>.
+        </p>
+      </fieldset>
+
+      {% if modo == 'novo' %}
+      <label class="inscricao-consentimento">
+        <input type="checkbox" name="consentimento" value="sim" required {% if old.consentimento == 'sim' %}checked{% endif %}>
+        <span>Concordo que a organização da SEMCOMP use estes dados para a minha inscrição, o credenciamento e o certificado, e que eles sejam enviados ao Even3, a plataforma oficial do evento.</span>
+      </label>
+      {% endif %}
+
+      <div class="inscricao-enviar">
+        <button type="submit" class="btn-primary">
+          {% if modo == 'gerenciar' %}Salvar atividades{% else %}Fazer minha inscrição{% endif %}
+        </button>
+        <span class="inscricao-conflito" id="avisoConflito" role="status" hidden></span>
+      </div>
+    </form>
+
+    {% if modo == 'novo' %}
+    <section class="inscricao-bloco inscricao-ja" id="ja-inscrito">
+      <h2>Já se inscreveu?</h2>
+      <p>Escreva o seu e-mail e mandamos de novo o link para ver e mudar as suas atividades. Se você se inscreveu antes pelo Even3, faça a inscrição aqui com o mesmo e-mail para escolher as atividades.</p>
+      <form method="POST" action="{{ url('semcomp_inscricao_link') }}" class="inscricao-ja-form">
+        {{ csrf_token() | safe }}
+        <input type="email" name="email" required maxlength="160" placeholder="seu@email.com" aria-label="Seu e-mail">
+        <button type="submit" class="btn-outline">Mandar o link</button>
+      </form>
+    </section>
+    {% endif %}
+    {% endif %}
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+    (function () {
+      // "Outra" instituição abre o campo de texto.
+      var sel = document.getElementById('campoInstituicao');
+      var outra = document.getElementById('campoOutra');
+      if (sel && outra) {
+        var input = outra.querySelector('input');
+        var ajustar = function () {
+          var e = sel.value === 'Outra';
+          outra.hidden = !e;
+          input.required = e;
+        };
+        sel.addEventListener('change', ajustar);
+        ajustar();
+      }
+
+      // Marcar uma atividade desmarca as que chocam com ela.
+      var caixas = Array.prototype.slice.call(document.querySelectorAll('.inscricao-atividades input[type=checkbox]'));
+      var aviso = document.getElementById('avisoConflito');
+      caixas.forEach(function (c) {
+        c.addEventListener('change', function () {
+          if (!c.checked) return;
+          var i = Date.parse(c.dataset.inicio), f = Date.parse(c.dataset.fim);
+          var tiradas = [];
+          caixas.forEach(function (o) {
+            if (o === c || !o.checked || o.disabled) return;
+            if (i < Date.parse(o.dataset.fim) && Date.parse(o.dataset.inicio) < f) {
+              o.checked = false;
+              tiradas.push(o.dataset.titulo);
+            }
+          });
+          if (aviso) {
+            aviso.hidden = tiradas.length === 0;
+            aviso.textContent = tiradas.length ? 'Desmarcamos "' + tiradas.join('", "') + '": é no mesmo horário.' : '';
+          }
+        });
+      });
+
+      // O resumo de cada dia acompanha as marcações (útil com o dia fechado).
+      var atualizarResumos = function () {
+        document.querySelectorAll('details.inscricao-dia').forEach(function (d) {
+          var total = d.querySelectorAll('input[type=checkbox]').length;
+          var marcadas = d.querySelectorAll('input[type=checkbox]:checked').length;
+          var r = d.querySelector('[data-dia-resumo]');
+          if (!r) return;
+          r.innerHTML = total + ' atividade' + (total === 1 ? '' : 's') +
+            (marcadas ? ' &middot; <strong>' + marcadas + ' escolhida' + (marcadas === 1 ? '' : 's') + '</strong>' : '');
+        });
+      };
+      caixas.forEach(function (c) { c.addEventListener('change', atualizarResumos); });
+      atualizarResumos();
+
+      // Copiar o link.
+      document.querySelectorAll('[data-copiar]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var alvo = document.getElementById(b.dataset.copiar);
+          if (!alvo) return;
+          alvo.select();
+          var ok = function () { b.textContent = 'Copiado'; setTimeout(function () { b.textContent = 'Copiar'; }, 1800); };
+          if (navigator.clipboard) navigator.clipboard.writeText(alvo.value).then(ok, function () { document.execCommand('copy'); ok(); });
+          else { document.execCommand('copy'); ok(); }
+        });
+      });
+    })();
+  </script>
+{% endblock %}

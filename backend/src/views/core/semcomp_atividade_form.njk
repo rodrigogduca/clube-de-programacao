@@ -1,0 +1,104 @@
+{% extends "layouts/painel.njk" %}
+{# Criar ou editar uma atividade da SEMCOMP. Só a diretoria chega aqui. #}
+{% block titulo %}{% if atividade %}Editar atividade{% else %}Nova atividade{% endif %} - SEMCOMP{% endblock %}
+
+{% block conteudo %}
+<div class="form-page">
+  <div class="painel-header">
+    <div>
+      <p class="eyebrow"><a href="{{ url('painel_semcomp') }}">semcomp</a></p>
+      <h1>{% if atividade %}Editar atividade{% else %}Nova atividade{% endif %}</h1>
+      <p class="painel-sub">Horários em Salvador (-03:00). Vagas em branco é sem limite.</p>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <form method="POST">
+      {{ csrf_token() | safe }}
+
+      <div class="form-group">
+        <label for="id_titulo" class="form-label">Título</label>
+        <input type="text" name="titulo" id="id_titulo" class="form-input" required maxlength="200"
+               value="{{ old.titulo | default(atividade.titulo if atividade else '') }}">
+      </div>
+
+      <div class="form-linha">
+        <div class="form-group">
+          <label for="id_tipo" class="form-label">Tipo</label>
+          <input type="text" name="tipo" id="id_tipo" class="form-input" required maxlength="40" list="tipos"
+                 value="{{ old.tipo | default(atividade.tipo if atividade else 'Palestra') }}">
+          <datalist id="tipos"><option value="Palestra"><option value="Mesa redonda"><option value="Workshop"><option value="Minicurso"></datalist>
+        </div>
+        <div class="form-group">
+          <label for="id_quem" class="form-label">Quem apresenta</label>
+          <input type="text" name="quem" id="id_quem" class="form-input" maxlength="160"
+                 value="{{ old.quem | default(atividade.quem if atividade and atividade.quem else '') }}">
+        </div>
+      </div>
+
+      <div class="form-linha">
+        <div class="form-group">
+          <label for="id_dia" class="form-label">Dia</label>
+          <input type="date" name="dia" id="id_dia" class="form-input" required min="2026-09-29" max="2026-10-03"
+                 value="{{ old.dia | default(campos.dia) }}">
+        </div>
+        <div class="form-group">
+          <label for="id_hora_inicio" class="form-label">Começa</label>
+          <input type="time" name="hora_inicio" id="id_hora_inicio" class="form-input" required
+                 value="{{ old.hora_inicio | default(campos.hora) }}">
+        </div>
+        <div class="form-group">
+          <label for="id_hora_fim" class="form-label">Termina</label>
+          <input type="time" name="hora_fim" id="id_hora_fim" class="form-input" required
+                 value="{{ old.hora_fim | default(campos_fim.hora) }}">
+        </div>
+      </div>
+
+      <div class="form-linha">
+        <div class="form-group">
+          <label for="id_local" class="form-label">Sala</label>
+          <input type="text" name="local" id="id_local" class="form-input" maxlength="80"
+                 value="{{ old.local | default(atividade.local if atividade and atividade.local else '') }}">
+        </div>
+        <div class="form-group">
+          <label for="id_vagas" class="form-label">Vagas</label>
+          <input type="number" name="vagas" id="id_vagas" class="form-input" min="0" step="1"
+                 value="{{ old.vagas | default(atividade.vagas if atividade and atividade.vagas != none else '') }}">
+          <p class="form-ajuda">O tamanho da sala. Não pode ficar abaixo de quem já se inscreveu.</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="id_even3" class="form-label">Id da sessão no Even3</label>
+        <input type="number" name="even3_session_id" id="id_even3" class="form-input" min="1" step="1"
+               value="{{ old.even3_session_id | default(atividade.even3SessionId if atividade and atividade.even3SessionId else '') }}">
+        <p class="form-ajuda">Opcional: o botão "Ligar atividades às sessões" do painel preenche sozinho pelo dia e horário.</p>
+      </div>
+
+      {% set aberta = (old.aberta == 'sim') if old.titulo else (atividade.aberta if atividade else true) %}
+      <div class="form-group">
+        <label class="form-label" style="display:flex;gap:10px;align-items:center;cursor:pointer">
+          <input type="checkbox" name="aberta" value="sim" {% if aberta %}checked{% endif %}>
+          Recebendo inscrições
+        </label>
+        <p class="form-ajuda">Desmarcada, a atividade some do formulário; quem já estava continua inscrito.</p>
+      </div>
+
+      <div class="form-buttons">
+        <button type="submit" class="btn-primary">{% if atividade %}Salvar{% else %}Criar atividade{% endif %}</button>
+        <a href="{{ url('painel_semcomp') }}" class="btn-secondary">Cancelar</a>
+      </div>
+    </form>
+
+    {% if atividade %}
+    <form method="POST" action="{{ url('painel_semcomp_excluir', atividade.id) }}" style="margin-top:24px"
+          data-confirm="Apagar esta atividade?"
+          data-confirm-detalhe="Quem a escolheu perde a vaga nela, e a lista de presença some junto."
+          data-confirm-acao="Apagar">
+      {{ csrf_token() | safe }}
+      <button type="submit" class="btn-danger-ghost">Apagar atividade</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

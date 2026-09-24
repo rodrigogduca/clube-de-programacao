@@ -1,0 +1,59 @@
+{% extends "layouts/painel.njk" %}
+{#
+  TODOS OS INSCRITOS, com o estado de cada um no Even3. O erro do Even3
+  aparece por extenso na linha: é o que a diretoria precisa para saber se
+  é o token, a entrada ou o Even3 fora do ar.
+#}
+{% block titulo %}Inscritos - SEMCOMP{% endblock %}
+
+{% block estilos_extra %}
+  <link rel="stylesheet" href="{{ static('css/painel/semcomp.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+<div class="painel-header">
+  <div>
+    <p class="eyebrow"><a href="{{ url('painel_semcomp') }}">semcomp</a></p>
+    <h1>Inscritos</h1>
+    <p class="painel-sub">{{ inscritos.length }} pessoa{{ inscritos.length | pluralize }}, das mais recentes para as mais antigas.</p>
+  </div>
+  <div class="painel-actions">
+    <a href="{{ url('painel_semcomp_inscritos_csv') }}" class="btn-secondary">Baixar CSV</a>
+  </div>
+</div>
+
+{% if inscritos.length %}
+<input type="search" class="form-input semcomp-busca" id="buscaInscrito" placeholder="Buscar por nome, e-mail ou instituição" aria-label="Buscar inscrito">
+{% endif %}
+
+<ul class="semcomp-inscritos" id="listaInscritos">
+  {% for i in inscritos %}
+  <li class="semcomp-inscrito" data-busca="{{ (i.nome ~ ' ' ~ i.email ~ ' ' ~ i.instituicao) | lower }}">
+    <span class="semcomp-inscrito-dados">
+      <strong>{{ i.nome }}</strong>
+      <span>{{ i.email }} &middot; {{ i.instituicao }} &middot; {{ i.escolhas.length }} atividade{{ i.escolhas.length | pluralize }}</span>
+      {% if i.even3Erro %}<span class="semcomp-erro">{{ i.even3Erro }}</span>{% endif %}
+    </span>
+    <span class="semcomp-even3-status semcomp-even3-status--{{ i.even3Status }}">
+      {% if i.even3Status == 'vinculado' %}no Even3{% elif i.even3Status == 'enviado' %}enviado{% elif i.even3Status == 'erro' %}erro{% else %}pendente{% endif %}
+    </span>
+  </li>
+  {% else %}
+  <li class="empty-state">Ninguém se inscreveu pelo site ainda.</li>
+  {% endfor %}
+</ul>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+  (function () {
+    var busca = document.getElementById('buscaInscrito');
+    if (!busca) return;
+    var itens = Array.prototype.slice.call(document.querySelectorAll('#listaInscritos > li'));
+    busca.addEventListener('input', function () {
+      var q = busca.value.trim().toLowerCase();
+      itens.forEach(function (li) { li.hidden = q && li.dataset.busca.indexOf(q) === -1; });
+    });
+  })();
+</script>
+{% endblock %}

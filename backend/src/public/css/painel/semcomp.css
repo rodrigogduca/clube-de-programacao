@@ -1,0 +1,313 @@
+/* ==========================================================================
+   SEMCOMP NO PAINEL — /painel/semcomp e as telas abaixo dele.
+   ========================================================================== */
+
+.semcomp-numeros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+  gap: 10px;
+  margin: 8px 0 24px;
+}
+
+.semcomp-numeros > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r-sm);
+  background: var(--penumbra);
+}
+
+.semcomp-numeros strong {
+  font-family: var(--display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--giz);
+}
+
+.semcomp-numeros span {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  color: var(--cinza);
+}
+
+.semcomp-numero--alerta {
+  border-color: rgba(239, 68, 68, 0.5) !important;
+}
+
+/* ---- Even3 ---- */
+
+.semcomp-even3 {
+  margin-bottom: 28px;
+  padding: 18px 20px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--fumaca);
+}
+
+.semcomp-even3 h2,
+.semcomp-dia h2 {
+  margin-bottom: 8px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+.semcomp-even3 code {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--breu);
+  font-family: var(--mono);
+  font-size: 0.85em;
+  color: var(--giz);
+}
+
+.semcomp-even3 strong {
+  color: var(--giz);
+}
+
+.semcomp-entradas {
+  margin: 6px 0 0 18px;
+}
+
+.semcomp-even3-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+/* ---- Programação ---- */
+
+.semcomp-dia + .semcomp-dia {
+  margin-top: 24px;
+}
+
+.semcomp-lista,
+.semcomp-inscritos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+}
+
+.semcomp-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.semcomp-item-link {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r-sm);
+  background: var(--penumbra);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color var(--transicao);
+}
+
+.semcomp-item-link:hover {
+  border-color: var(--ambar-traco);
+}
+
+.semcomp-item--fechada .semcomp-item-link {
+  opacity: 0.6;
+}
+
+.semcomp-hora {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--mono);
+  color: var(--giz);
+}
+
+.semcomp-hora small {
+  font-size: 0.72rem;
+  color: var(--cinza);
+}
+
+.semcomp-item-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.semcomp-tipo {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.semcomp-item-corpo strong {
+  font-size: 0.95rem;
+  color: var(--giz);
+}
+
+.semcomp-quem {
+  font-size: 0.85rem;
+  color: var(--fumaca);
+}
+
+.semcomp-ocupacao {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  min-width: 90px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  color: var(--cinza);
+}
+
+.semcomp-ocupacao strong {
+  font-size: 1rem;
+  color: var(--giz);
+}
+
+.semcomp-ocupacao--cheia strong {
+  color: var(--vermelho);
+}
+
+.semcomp-barra {
+  display: block;
+  width: 90px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--traco);
+  overflow: hidden;
+}
+
+.semcomp-barra > span {
+  display: block;
+  height: 100%;
+  background: var(--ambar);
+}
+
+.semcomp-ocupacao--cheia .semcomp-barra > span {
+  background: var(--vermelho);
+}
+
+.semcomp-presentes {
+  color: var(--verde);
+}
+
+@media (max-width: 620px) {
+  .semcomp-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .semcomp-item-link {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .semcomp-ocupacao {
+    grid-column: 2;
+    align-items: flex-start;
+  }
+}
+
+/* ---- Inscritos e presença ---- */
+
+.semcomp-busca {
+  margin-bottom: 14px;
+}
+
+.semcomp-inscrito {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r-sm);
+  background: var(--penumbra);
+}
+
+.semcomp-inscrito[hidden] {
+  display: none;
+}
+
+.semcomp-inscrito--presente {
+  border-color: rgba(34, 197, 94, 0.45);
+}
+
+.semcomp-inscrito-dados {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.semcomp-inscrito-dados strong {
+  color: var(--giz);
+}
+
+.semcomp-inscrito-dados > span {
+  overflow-wrap: anywhere;
+  font-size: 0.82rem;
+  color: var(--cinza);
+}
+
+.semcomp-inscrito form {
+  flex: none;
+  margin: 0;
+}
+
+.semcomp-erro {
+  color: var(--vermelho) !important;
+}
+
+.semcomp-even3-status {
+  flex: none;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  border: 1px solid var(--traco-forte);
+  color: var(--cinza);
+}
+
+.semcomp-even3-status--vinculado {
+  border-color: rgba(34, 197, 94, 0.5);
+  color: var(--verde);
+}
+
+.semcomp-even3-status--erro {
+  border-color: rgba(239, 68, 68, 0.5);
+  color: var(--vermelho);
+}
+
+/* O "semcomp" do topo das telas internas é o caminho de volta: área de toque
+   de 24px, como os outros links pequenos do site. */
+.eyebrow a {
+  display: inline-block;
+  padding-block: 4px;
+  margin-block: -4px;
+}
+
+.semcomp-even3-alerta {
+  padding: 10px 14px;
+  border-left: 3px solid var(--vermelho);
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.08);
+}

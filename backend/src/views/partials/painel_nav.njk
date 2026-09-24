@@ -26,6 +26,12 @@
 
         <a href="{{ url('listar_membros') }}" class="nav-link">Membros</a>
 
+        {# As inscrições da SEMCOMP e o credenciamento: todo membro vê, porque
+           quem marca presença na porta da sala é quem estiver lá. #}
+        {% if links.semcompInscricaoPeloSite %}
+        <a href="{{ url('painel_semcomp') }}" class="nav-link">SEMCOMP</a>
+        {% endif %}
+
         {#
           "+ Membro", "+ Tarefa" e "Novo setor" saíram daqui.
 

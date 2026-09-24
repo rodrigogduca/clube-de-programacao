@@ -19,6 +19,7 @@
     "prisma:deploy": "prisma migrate deploy",
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
+    "semcomp:seed": "ts-node prisma/seed-semcomp.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",

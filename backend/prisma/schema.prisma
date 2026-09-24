@@ -59,84 +59,84 @@ enum SolicitacaoStatus {
 }
 
 model User {
-  id             Int              @id @default(autoincrement())
-  username       String           @unique
-  email          String           @unique
-  passwordHash   String
-  firstName      String
-  lastName       String?
-  isActive       Boolean          @default(true)
-  sessionVersion Int              @default(1)
-  lastLogin      DateTime?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  member         Member?
+  id              Int             @id @default(autoincrement())
+  username        String          @unique
+  email           String          @unique
+  passwordHash    String
+  firstName       String
+  lastName        String?
+  isActive        Boolean         @default(true)
+  sessionVersion  Int             @default(1)
+  lastLogin       DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  member          Member?
   signupResponses SignupRequest[] @relation("SignupResponse")
 
   @@map("users")
 }
 
 model Sector {
-  id       Int           @id @default(autoincrement())
-  nome     String        @unique
-  descricao String?
-  criadoEm DateTime      @default(now())
-  membros  Member[]
-  tarefas  Task[]
+  id           Int             @id @default(autoincrement())
+  nome         String          @unique
+  descricao    String?
+  criadoEm     DateTime        @default(now())
+  membros      Member[]
+  tarefas      Task[]
   solicitacoes SignupRequest[]
 
   @@map("sectors")
 }
 
 model Member {
-  id           Int                 @id @default(autoincrement())
-  userId       Int                 @unique
-  cargo        Cargo               @default(membro)
-  setorId      Int?
-  bio          String?
-  dataEntrada  DateTime            @default(now())
-  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  setor        Sector?             @relation(fields: [setorId], references: [id], onDelete: SetNull)
-  tarefas      Task[]              @relation("Responsavel")
-  tarefasCriadas Task[]            @relation("CriadoPor")
+  id             Int              @id @default(autoincrement())
+  userId         Int              @unique
+  cargo          Cargo            @default(membro)
+  setorId        Int?
+  bio            String?
+  dataEntrada    DateTime         @default(now())
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  setor          Sector?          @relation(fields: [setorId], references: [id], onDelete: SetNull)
+  tarefas        Task[]           @relation("Responsavel")
+  tarefasCriadas Task[]           @relation("CriadoPor")
   anexosEnviados TaskAttachment[]
 
   @@map("members")
 }
 
 model Task {
-  id            Int             @id @default(autoincrement())
+  id            Int              @id @default(autoincrement())
   titulo        String
   descricao     String?
   responsavelId Int
   criadoPorId   Int?
   setorId       Int?
-  status        TarefaStatus    @default(pendente)
-  dataCriacao   DateTime        @default(now())
+  status        TarefaStatus     @default(pendente)
+  dataCriacao   DateTime         @default(now())
   prazo         DateTime?
   prioridade    TarefaPrioridade @default(media)
   funcao        TarefaFuncao?
   projeto       String?
-  responsavel   Member          @relation("Responsavel", fields: [responsavelId], references: [id], onDelete: Cascade)
-  criadoPor     Member?         @relation("CriadoPor", fields: [criadoPorId], references: [id], onDelete: SetNull)
-  setor         Sector?         @relation(fields: [setorId], references: [id], onDelete: SetNull)
+  responsavel   Member           @relation("Responsavel", fields: [responsavelId], references: [id], onDelete: Cascade)
+  criadoPor     Member?          @relation("CriadoPor", fields: [criadoPorId], references: [id], onDelete: SetNull)
+  setor         Sector?          @relation(fields: [setorId], references: [id], onDelete: SetNull)
   anexos        TaskAttachment[]
 
   @@map("tasks")
 }
 
 model TaskAttachment {
-  id             Int      @id @default(autoincrement())
-  tarefaId       Int
-  tipo           AnexoTipo
-  nome           String
-  arquivoUrl     String?
+  id              Int       @id @default(autoincrement())
+  tarefaId        Int
+  tipo            AnexoTipo
+  nome            String
+  arquivoUrl      String?
   arquivoPublicId String?
-  url            String?
-  enviadoPorId   Int?
-  dataUpload     DateTime @default(now())
-  tarefa         Task     @relation(fields: [tarefaId], references: [id], onDelete: Cascade)
-  enviadoPor     Member?  @relation(fields: [enviadoPorId], references: [id], onDelete: SetNull)
+  url             String?
+  enviadoPorId    Int?
+  dataUpload      DateTime  @default(now())
+  tarefa          Task      @relation(fields: [tarefaId], references: [id], onDelete: Cascade)
+  enviadoPor      Member?   @relation(fields: [enviadoPorId], references: [id], onDelete: SetNull)
 
   @@map("task_attachments")
 }
@@ -159,4 +159,81 @@ model SignupRequest {
   respondidoPor   User?             @relation("SignupResponse", fields: [respondidoPorId], references: [id], onDelete: SetNull)
 
   @@map("signup_requests")
+}
+
+// ---------------------------------------------------------------------------
+// SEMCOMP — inscrição pelo site, com escolha de atividades.
+//
+// O site é a fonte da verdade das ATIVIDADES e de quem escolheu cada uma: a
+// API do Even3 não tem endpoint para inscrever alguém numa atividade, só para
+// criar o participante e registrar presença. Então a inscrição nasce aqui,
+// o participante é enviado ao Even3 (que continua emitindo comunicados e
+// certificados), e no credenciamento a presença de cada atividade vai para lá.
+// Ver `src/semcomp/`.
+// ---------------------------------------------------------------------------
+
+enum Even3Status {
+  pendente // ainda não foi enviado (ou a integração está desligada)
+  enviado // criado no Even3; o id ainda não foi lido de volta
+  vinculado // temos o id_attendees do Even3
+  erro // a última tentativa falhou; ver `even3Erro`
+}
+
+model SemcompAtividade {
+  id             Int              @id @default(autoincrement())
+  tipo           String // "Palestra", "Mesa redonda", "Workshop"...
+  titulo         String
+  quem           String?
+  local          String?
+  inicio         DateTime
+  fim            DateTime
+  // null = sem limite. O limite é o tamanho da sala.
+  vagas          Int?
+  // Fechar uma atividade tira ela do formulário sem apagar quem já escolheu.
+  aberta         Boolean          @default(true)
+  // id_session no Even3, para a presença virar certificado lá.
+  even3SessionId Int?
+  criadoEm       DateTime         @default(now())
+  escolhas       SemcompEscolha[]
+
+  @@index([inicio])
+  @@map("semcomp_atividades")
+}
+
+model SemcompInscricao {
+  id              Int              @id @default(autoincrement())
+  nome            String
+  nomeCracha      String?
+  email           String           @unique
+  instituicao     String
+  // Só o hash do token do link de gerenciamento: quem ler o banco não
+  // consegue entrar na inscrição de ninguém.
+  tokenHash       String           @unique
+  linkEnviadoEm   DateTime?
+  consentimentoEm DateTime
+  even3Status     Even3Status      @default(pendente)
+  even3Id         Int?
+  even3Erro       String?
+  criadoEm        DateTime         @default(now())
+  atualizadoEm    DateTime         @updatedAt
+  escolhas        SemcompEscolha[]
+
+  @@map("semcomp_inscricoes")
+}
+
+model SemcompEscolha {
+  id           Int              @id @default(autoincrement())
+  inscricaoId  Int
+  atividadeId  Int
+  criadoEm     DateTime         @default(now())
+  presente     Boolean          @default(false)
+  presencaEm   DateTime?
+  // A presença já foi registrada no Even3?
+  even3Checkin Boolean          @default(false)
+  inscricao    SemcompInscricao @relation(fields: [inscricaoId], references: [id], onDelete: Cascade)
+  atividade    SemcompAtividade @relation(fields: [atividadeId], references: [id], onDelete: Cascade)
+
+  @@unique([inscricaoId, atividadeId])
+  @@index([atividadeId])
+  @@map("semcomp_escolhas")
 }

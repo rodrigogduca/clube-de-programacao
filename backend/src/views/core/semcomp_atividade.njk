@@ -1,0 +1,85 @@
+{% extends "layouts/painel.njk" %}
+{#
+  UMA ATIVIDADE E QUEM SE INSCREVEU NELA — a tela do credenciamento.
+
+  É aberta no celular, na porta da sala: por isso cada pessoa é uma linha
+  com um botão grande de presença, e não uma tabela de planilha. A busca
+  filtra na hora pelo nome ou e-mail, sem ir ao servidor.
+#}
+{% block titulo %}{{ atividade.titulo }} - SEMCOMP{% endblock %}
+
+{% block estilos_extra %}
+  <link rel="stylesheet" href="{{ static('css/painel/semcomp.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+<div class="painel-header">
+  <div>
+    <p class="eyebrow"><a href="{{ url('painel_semcomp') }}">semcomp</a> &middot; {{ atividade.rotuloDia }}, {{ atividade.hora }}–{{ atividade.horaFim }}</p>
+    <h1>{{ atividade.titulo }}</h1>
+    <p class="painel-sub">{{ atividade.tipo }}{% if atividade.quem %} com {{ atividade.quem }}{% endif %}{% if atividade.local %} &middot; {{ atividade.local }}{% endif %}</p>
+  </div>
+  <div class="painel-actions">
+    <a href="{{ url('painel_semcomp_atividade_csv', atividade.id) }}" class="btn-secondary">Baixar lista</a>
+    {% if pode_editar %}<a href="{{ url('painel_semcomp_editar', atividade.id) }}" class="btn-secondary">Editar</a>{% endif %}
+  </div>
+</div>
+
+<div class="semcomp-numeros">
+  <div><strong>{{ atividade.escolhas.length }}{% if atividade.vagas != none %}/{{ atividade.vagas }}{% endif %}</strong><span>inscritos</span></div>
+  <div><strong>{{ presentes }}</strong><span>presentes</span></div>
+  <div><strong>{{ 'sim' if atividade.even3SessionId else 'não' }}</strong><span>ligada ao Even3</span></div>
+</div>
+
+{% if atividade.escolhas.length %}
+<input type="search" class="form-input semcomp-busca" id="buscaInscrito" placeholder="Buscar por nome ou e-mail" aria-label="Buscar inscrito">
+
+<ul class="semcomp-inscritos" id="listaInscritos">
+  {% for e in atividade.escolhas %}
+  <li class="semcomp-inscrito{% if e.presente %} semcomp-inscrito--presente{% endif %}" id="p{{ e.id }}"
+      data-busca="{{ (e.inscricao.nome ~ ' ' ~ e.inscricao.email) | lower }}">
+    <span class="semcomp-inscrito-dados">
+      <strong>{{ e.inscricao.nome }}</strong>
+      <span>{{ e.inscricao.email }} &middot; {{ e.inscricao.instituicao }}</span>
+    </span>
+    <form method="POST" action="{{ url('painel_semcomp_presenca', e.id) }}">
+      {{ csrf_token() | safe }}
+      {% if e.presente %}
+      <input type="hidden" name="presente" value="nao">
+      <button type="submit" class="btn-small-outline" title="{{ 'Já enviada ao Even3; desmarcar aqui não desfaz lá.' if e.even3Checkin else 'Desmarcar' }}">
+        Presente{% if e.even3Checkin %} &check;{% endif %}
+      </button>
+      {% else %}
+      <input type="hidden" name="presente" value="sim">
+      <button type="submit" class="btn-primary">Marcar presença</button>
+      {% endif %}
+    </form>
+  </li>
+  {% endfor %}
+</ul>
+<p class="empty-state" id="buscaVazia" hidden>Ninguém com esse nome ou e-mail nesta atividade.</p>
+{% else %}
+<p class="empty-state">Ninguém se inscreveu nesta atividade ainda.</p>
+{% endif %}
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+  (function () {
+    var busca = document.getElementById('buscaInscrito');
+    if (!busca) return;
+    var itens = Array.prototype.slice.call(document.querySelectorAll('#listaInscritos > li'));
+    var vazio = document.getElementById('buscaVazia');
+    busca.addEventListener('input', function () {
+      var q = busca.value.trim().toLowerCase();
+      var visiveis = 0;
+      itens.forEach(function (li) {
+        var ok = !q || li.dataset.busca.indexOf(q) !== -1;
+        li.hidden = !ok;
+        if (ok) visiveis++;
+      });
+      vazio.hidden = visiveis !== 0;
+    });
+  })();
+</script>
+{% endblock %}

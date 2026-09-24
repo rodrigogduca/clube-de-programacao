@@ -1,0 +1,521 @@
+/* ==========================================================================
+   INSCRIÇÃO NA SEMCOMP — /semcomp/inscricao e /semcomp/inscricao/gerenciar
+
+   Só esta tela carrega esta folha (ver `core/semcomp_inscricao.njk`). O resto
+   vem do `publico.css`: container, títulos de seção e botões.
+   ========================================================================== */
+
+.inscricao {
+  padding: clamp(120px, 14vw, 160px) 0 var(--secao-y);
+}
+
+.inscricao .container {
+  max-width: 860px;
+}
+
+.inscricao-topo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.inscricao-voltar {
+  padding-block: 4px;
+  margin-block: -4px;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.06em;
+  color: var(--cinza);
+  transition: color var(--transicao);
+}
+
+.inscricao-voltar:hover {
+  color: var(--ambar);
+}
+
+/* ---- Mensagens do servidor ---- */
+
+.inscricao-avisos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.inscricao-aviso {
+  padding: 14px 18px;
+  border: 1px solid var(--traco-forte);
+  border-left-width: 3px;
+  border-radius: var(--r-sm);
+  background: var(--penumbra);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--giz);
+}
+
+.inscricao-aviso--success { border-left-color: var(--verde); }
+.inscricao-aviso--error   { border-left-color: var(--vermelho); }
+.inscricao-aviso--warning,
+.inscricao-aviso--info    { border-left-color: var(--ambar); }
+
+/* ---- Blocos ---- */
+
+/* O `publico.css` dá a todo `<section>` o respiro de uma seção de página
+   (`--secao-y`). Aqui `<section>` é um dia da lista ou a ficha, e esse
+   respiro abria um vão de tela inteira entre um dia e outro. */
+.inscricao section {
+  padding: 0;
+}
+
+.inscricao-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.inscricao-bloco {
+  min-width: 0;
+  margin: 0;
+  padding: clamp(20px, 3vw, 28px);
+  border: 1px solid var(--traco);
+  border-radius: var(--r);
+  background: var(--penumbra);
+}
+
+.inscricao-bloco legend,
+.inscricao-bloco > h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  font-family: var(--display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--giz);
+}
+
+/* O `legend` não aceita margem de baixo em todo navegador; o primeiro filho
+   depois dele leva o espaço. */
+.inscricao-bloco legend + * {
+  margin-top: 18px;
+}
+
+.inscricao-passo {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--ambar);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--breu);
+}
+
+.inscricao-ajuda,
+.inscricao-nota,
+.inscricao-vazio,
+.inscricao-ja p {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}
+
+.inscricao-nota {
+  margin-top: 18px;
+}
+
+.inscricao-nota a,
+.inscricao-ja a {
+  color: var(--ambar);
+}
+
+/* ---- Campos ---- */
+
+.inscricao-campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.inscricao-campo--largo {
+  grid-column: 1 / -1;
+}
+
+.inscricao-campo[hidden] {
+  display: none;
+}
+
+.inscricao-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inscricao-campo > span {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--giz);
+}
+
+.inscricao-campo em {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--cinza);
+}
+
+.inscricao-campo small {
+  font-size: 0.8rem;
+  color: var(--cinza);
+}
+
+.inscricao input[type="text"],
+.inscricao input[type="email"],
+.inscricao select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--traco-forte);
+  border-radius: var(--r-sm);
+  background: var(--breu);
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--giz);
+  transition: border-color var(--transicao);
+}
+
+.inscricao input:focus-visible,
+.inscricao select:focus-visible {
+  outline: 2px solid var(--ambar);
+  outline-offset: 1px;
+  border-color: var(--ambar-traco);
+}
+
+@media (max-width: 620px) {
+  .inscricao-campos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- Atividades ---- */
+
+.inscricao-dia + .inscricao-dia {
+  margin-top: 8px;
+  border-top: 1px solid var(--traco);
+}
+
+.inscricao-dia > summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0 10px;
+  padding: 6px 0;
+  list-style: none;
+  cursor: pointer;
+}
+
+.inscricao-dia > summary::-webkit-details-marker {
+  display: none;
+}
+
+.inscricao-dia > summary:focus-visible {
+  outline: 2px solid var(--ambar);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.inscricao-dia-resumo {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  color: var(--cinza);
+}
+
+.inscricao-dia-resumo strong {
+  font-weight: 500;
+  color: var(--ambar);
+}
+
+/* A seta: aponta para baixo com o dia aberto e para o lado com ele fechado. */
+.inscricao-dia-seta {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--cinza);
+  border-bottom: 2px solid var(--cinza);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform var(--transicao), border-color var(--transicao);
+}
+
+.inscricao-dia:not([open]) .inscricao-dia-seta {
+  transform: rotate(-45deg);
+}
+
+.inscricao-dia > summary:hover .inscricao-dia-seta {
+  border-color: var(--ambar);
+}
+
+.inscricao-dia:not([open]) > summary {
+  margin-bottom: 0;
+}
+
+.inscricao-dia h2 {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ambar);
+}
+
+.inscricao-atividades {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+}
+
+/* A LINHA INTEIRA É O ALVO DO CLIQUE: o `<label>` embrulha a caixa, então
+   tocar no título marca. Horário à esquerda, como numa grade de programação,
+   e as vagas à direita, que é o que se procura depois do título. */
+.atividade {
+  display: grid;
+  grid-template-columns: auto 58px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--traco);
+  border-radius: var(--r-sm);
+  background: var(--breu);
+  cursor: pointer;
+  transition: border-color var(--transicao), background var(--transicao);
+}
+
+.atividade:hover {
+  border-color: var(--ambar-traco);
+}
+
+.atividade:has(input:checked) {
+  border-color: var(--ambar);
+  background:
+    linear-gradient(90deg, rgba(242, 138, 31, 0.1), transparent 70%),
+    var(--breu);
+}
+
+.atividade input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--ambar);
+  cursor: inherit;
+}
+
+.atividade--travada {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Travada mas SUA (já começou e você está nela): continua legível. */
+.atividade--travada:has(input:checked) {
+  opacity: 0.85;
+}
+
+.atividade-hora {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--giz);
+}
+
+.atividade-hora small {
+  font-size: 0.72rem;
+  color: var(--cinza);
+}
+
+.atividade-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.atividade-tipo {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.atividade-corpo strong {
+  font-size: 0.96rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--giz);
+  text-wrap: pretty;
+}
+
+.atividade-quem {
+  font-size: 0.85rem;
+  color: var(--fumaca);
+}
+
+.atividade-vagas {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  white-space: nowrap;
+  color: var(--ambar);
+}
+
+.atividade--lotada .atividade-vagas {
+  color: var(--vermelho);
+}
+
+@media (max-width: 560px) {
+  .atividade {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "caixa hora"
+      "caixa corpo"
+      "caixa vagas";
+    row-gap: 6px;
+  }
+
+  .atividade input { grid-area: caixa; align-self: start; margin-top: 2px; }
+  .atividade-hora { grid-area: hora; flex-direction: row; gap: 6px; align-items: baseline; }
+  .atividade-hora small::before { content: "– "; }
+  .atividade-corpo { grid-area: corpo; }
+  .atividade-vagas { grid-area: vagas; }
+}
+
+/* ---- Envio ---- */
+
+.inscricao-consentimento {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--fumaca);
+  cursor: pointer;
+}
+
+.inscricao-consentimento input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--ambar);
+}
+
+.inscricao-enviar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+}
+
+.inscricao-conflito {
+  font-size: 0.88rem;
+  color: var(--gema);
+}
+
+/* ---- Minha inscrição ---- */
+
+.inscricao .inscricao-ficha {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 18px;
+  padding: clamp(20px, 3vw, 28px);
+  border: 1px solid var(--ambar-traco);
+  border-radius: var(--r);
+  background:
+    linear-gradient(180deg, rgba(242, 138, 31, 0.08), transparent 70%),
+    var(--penumbra);
+}
+
+.inscricao-ficha dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  gap: 14px 20px;
+}
+
+.inscricao-ficha dt {
+  font-family: var(--mono);
+  font-size: var(--t-mini);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.inscricao-ficha dd {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+  color: var(--giz);
+}
+
+.inscricao-link > span {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: var(--fumaca);
+}
+
+.inscricao-link-linha,
+.inscricao-ja-form {
+  display: flex;
+  gap: 10px;
+}
+
+.inscricao-link-linha input,
+.inscricao-ja-form input {
+  flex: 1;
+  min-width: 0;
+}
+
+.inscricao-link-linha input {
+  font-family: var(--mono);
+  font-size: 0.8rem !important;
+}
+
+/* ---- Já inscrito ---- */
+
+.inscricao .inscricao-ja {
+  margin-top: 36px;
+  padding: clamp(20px, 3vw, 28px);
+}
+
+.inscricao-ja p {
+  margin: 10px 0 16px;
+}
+
+@media (max-width: 480px) {
+  .inscricao-link-linha,
+  .inscricao-ja-form {
+    flex-direction: column;
+  }
+}
+
+/* ---- Inscrição fora do ar ---- */
+
+.inscricao-fora {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  border-color: var(--ambar-traco);
+}
+
+.inscricao-fora p {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--fumaca);
+  text-wrap: pretty;
+}

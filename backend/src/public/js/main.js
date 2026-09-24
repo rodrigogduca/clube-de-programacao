@@ -551,7 +551,7 @@ const semcompAgora = (function () {
     const dia = Math.min(TOTAL_DIAS, Math.floor((hojeMs - primeiroMs) / 864e5) + 1);
     const horaLocal = new Date(t - 3 * 3600e3);
     const minutosDoDia = horaLocal.getUTCHours() * 60 + horaLocal.getUTCMinutes();
-    const emHorario = minutosDoDia >= 7 * 60 + 30 && minutosDoDia < 17 * 60;
+    const emHorario = minutosDoDia >= 7 * 60 + 30 && minutosDoDia < 18 * 60;
 
     if (emHorario) {
       rotulo.textContent = 'Acontecendo agora';
@@ -703,7 +703,8 @@ const semcompAgora = (function () {
   const grupos = document.querySelectorAll('.estandes-rodizio');
   if (!grupos.length) return;
 
-  const INTERVALO = 2600;
+  // Tempo que cada logo fica no ar: dá para ler a marca com calma.
+  const INTERVALO = 4500;
   let pausado = false;
 
   const cartao = grupos[0].closest('.formato-card');

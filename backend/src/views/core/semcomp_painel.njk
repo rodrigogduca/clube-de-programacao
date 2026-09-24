@@ -1,0 +1,112 @@
+{% extends "layouts/painel.njk" %}
+{#
+  SEMCOMP NO PAINEL — a programação com as vagas e o estado do Even3.
+
+  A pergunta desta tela é "como estão as inscrições": quantas, quanto de cada
+  sala já foi, e o que ainda não chegou ao Even3. Cada atividade leva à lista
+  de quem se inscreveu, que é onde se marca presença no dia.
+#}
+{% block titulo %}SEMCOMP - Clube de Programação{% endblock %}
+
+{% block estilos_extra %}
+  <link rel="stylesheet" href="{{ static('css/painel/semcomp.css') }}">
+{% endblock %}
+
+{% block conteudo %}
+<div class="painel-header">
+  <div>
+    <p class="eyebrow">semcomp 2026</p>
+    <h1>Inscrições</h1>
+    <p class="painel-sub">Quem se inscreve pelo site escolhe as atividades aqui listadas. Clique numa atividade para ver os inscritos e marcar presença.</p>
+  </div>
+  <div class="painel-actions">
+    <a href="{{ url('painel_semcomp_inscritos') }}" class="btn-secondary">Ver inscritos</a>
+    <a href="{{ url('painel_semcomp_inscritos_csv') }}" class="btn-secondary">Baixar CSV</a>
+    {% if pode_editar %}<a href="{{ url('painel_semcomp_nova') }}" class="btn-primary">+ Nova atividade</a>{% endif %}
+  </div>
+</div>
+
+<div class="semcomp-numeros">
+  <div><strong>{{ resumo.total }}</strong><span>inscritos</span></div>
+  <div><strong>{{ resumo.status.vinculado }}</strong><span>no Even3</span></div>
+  <div{% if resumo.status.erro %} class="semcomp-numero--alerta"{% endif %}><strong>{{ resumo.status.pendente + resumo.status.enviado + resumo.status.erro }}</strong><span>ainda sem vínculo{% if resumo.status.erro %} ({{ resumo.status.erro }} com erro){% endif %}</span></div>
+  <div><strong>{{ resumo.presencasPendentes }}</strong><span>presenças a enviar</span></div>
+</div>
+
+{#
+  O EVEN3 EM TRÊS ESTADOS: desligado (sem token), meio configurado (sem a
+  entrada) e pronto. Cada um diz o que falta fazer, em vez de um botão que
+  falha ao ser clicado.
+#}
+<section class="semcomp-even3">
+  <h2>Even3</h2>
+  {% if not even3_ativo %}
+    <p>A integração está <strong>desligada</strong>: falta <code>EVEN3_TOKEN</code> nas variáveis de ambiente (Even3 &rarr; Configurações &rarr; Integrações). As inscrições continuam funcionando no site e sobem pelo botão abaixo quando o token for configurado.</p>
+  {% elif even3_erro %}
+    <p class="semcomp-even3-alerta"><strong>Chave do evento errado.</strong> {{ even3_erro }} Troque a chave no <code>.env</code> (Even3 &rarr; evento SEMCOMP 2026 &rarr; Configurações &rarr; Integrações).</p>
+  {% elif not even3_pode_criar %}
+    <p>Token configurado, mas falta <code>EVEN3_TICKET_PRICE_ID</code>: a entrada em que o site inscreve as pessoas no Even3.</p>
+    {% if even3_entradas.length %}
+    <p>Entradas do evento no Even3:</p>
+    <ul class="semcomp-entradas">
+      {% for e in even3_entradas %}<li><code>{{ e.idTicketPrice }}</code> {{ e.titulo }}{% if e.preco %} (R$ {{ e.preco }}){% else %} (gratuita){% endif %}</li>{% endfor %}
+    </ul>
+    {% endif %}
+  {% else %}
+    <p>Ligado. Cada inscrição feita no site vai para o Even3 na hora; se o Even3 falhar, ela fica "sem vínculo" e sobe pelo botão abaixo. {% if resumo.semSessao %}<strong>{{ resumo.semSessao }} atividade(s) sem sessão do Even3</strong>: a presença delas não vira certificado até serem ligadas.{% endif %}</p>
+    {% if even3_entradas.length %}
+    <p>Ingresso de cada instituição no Even3 (o site escolhe pelo que a pessoa marca no formulário):</p>
+    <ul class="semcomp-entradas">
+      {% for e in even3_entradas %}<li><code>{{ e.idTicketPrice }}</code> {{ e.titulo }}{% if e.fim %} &middot; vende até {{ e.fim | date('d/m') }}{% endif %}</li>{% endfor %}
+    </ul>
+    {% endif %}
+  {% endif %}
+
+  {% if pode_editar and even3_ativo %}
+  <div class="semcomp-even3-acoes">
+    <form method="POST" action="{{ url('painel_semcomp_even3_inscricoes') }}">
+      {{ csrf_token() | safe }}
+      <button type="submit" class="btn-secondary">Enviar inscrições pendentes</button>
+    </form>
+    <form method="POST" action="{{ url('painel_semcomp_even3_sessoes') }}">
+      {{ csrf_token() | safe }}
+      <button type="submit" class="btn-secondary">Ligar atividades às sessões</button>
+    </form>
+    <form method="POST" action="{{ url('painel_semcomp_even3_presencas') }}">
+      {{ csrf_token() | safe }}
+      <button type="submit" class="btn-secondary">Enviar presenças</button>
+    </form>
+  </div>
+  {% endif %}
+</section>
+
+{% for dia in resumo.dias %}
+<section class="semcomp-dia">
+  <h2>{{ dia.rotulo }}</h2>
+  <ul class="semcomp-lista">
+    {% for a in dia.atividades %}
+    {% set cheia = a.vagas != none and a.ocupadas >= a.vagas %}
+    <li class="semcomp-item{% if not a.aberta %} semcomp-item--fechada{% endif %}">
+      <a href="{{ url('painel_semcomp_atividade', a.id) }}" class="semcomp-item-link">
+        <span class="semcomp-hora">{{ a.hora }}<small>{{ a.horaFim }}</small></span>
+        <span class="semcomp-item-corpo">
+          <span class="semcomp-tipo">{{ a.tipo }}{% if not a.aberta %} &middot; fechada{% endif %}{% if not a.even3SessionId %} &middot; sem sessão Even3{% endif %}</span>
+          <strong>{{ a.titulo }}</strong>
+          {% if a.quem %}<span class="semcomp-quem">{{ a.quem }}</span>{% endif %}
+        </span>
+        <span class="semcomp-ocupacao{% if cheia %} semcomp-ocupacao--cheia{% endif %}">
+          <strong>{{ a.ocupadas }}{% if a.vagas != none %}/{{ a.vagas }}{% endif %}</strong>
+          <span>{% if a.vagas == none %}sem limite{% elif cheia %}lotada{% else %}vagas{% endif %}</span>
+          {% if a.vagas %}{% set pct = (a.ocupadas * 100 / a.vagas) | round %}<span class="semcomp-barra"><span style="width: {{ 100 if pct > 100 else pct }}%"></span></span>{% endif %}
+          {% if a.presentes %}<span class="semcomp-presentes">{{ a.presentes }} presente{{ a.presentes | pluralize }}</span>{% endif %}
+        </span>
+      </a>
+      {% if pode_editar %}<a href="{{ url('painel_semcomp_editar', a.id) }}" class="btn-small-outline">Editar</a>{% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% else %}
+<p class="empty-state">Nenhuma atividade cadastrada ainda. {% if pode_editar %}<a href="{{ url('painel_semcomp_nova') }}">Cadastre a primeira</a>.{% endif %}</p>
+{% endfor %}
+{% endblock %}

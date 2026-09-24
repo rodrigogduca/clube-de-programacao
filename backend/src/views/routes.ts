@@ -7,6 +7,22 @@ export const routes: Record<string, string> = {
   // programação, atividades e inscrição, e nada disso cabe num diálogo —
   // nem podia ser compartilhado por link, indexado ou aberto em nova aba.
   semcomp: '/semcomp',
+  // Inscrição pelo próprio site (antes era só o link do Even3). Ver src/semcomp/.
+  semcomp_inscricao: '/semcomp/inscricao',
+  semcomp_inscricao_link: '/semcomp/inscricao/link',
+  semcomp_gerenciar: '/semcomp/inscricao/gerenciar/:token',
+  painel_semcomp: '/painel/semcomp',
+  painel_semcomp_inscritos: '/painel/semcomp/inscritos',
+  painel_semcomp_inscritos_csv: '/painel/semcomp/inscritos.csv',
+  painel_semcomp_nova: '/painel/semcomp/atividade/nova',
+  painel_semcomp_atividade: '/painel/semcomp/atividade/:id',
+  painel_semcomp_atividade_csv: '/painel/semcomp/atividade/:id/lista.csv',
+  painel_semcomp_editar: '/painel/semcomp/atividade/:id/editar',
+  painel_semcomp_excluir: '/painel/semcomp/atividade/:id/excluir',
+  painel_semcomp_presenca: '/painel/semcomp/presenca/:escolhaId',
+  painel_semcomp_even3_inscricoes: '/painel/semcomp/even3/enviar-inscricoes',
+  painel_semcomp_even3_sessoes: '/painel/semcomp/even3/vincular-sessoes',
+  painel_semcomp_even3_presencas: '/painel/semcomp/even3/enviar-presencas',
   painel: '/painel',
   listar_membros: '/painel/membros',
   adicionar_membro: '/painel/adicionar-membro',
