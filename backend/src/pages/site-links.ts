@@ -89,6 +89,16 @@ export const SITE_LINKS = {
   arenaJogosDigitais:
     'https://docs.google.com/forms/d/e/1FAIpQLSfJUR7JPQKkzxf04MyOVOjd6ePR67lBbZv1z4QhGlS5MH1KiQ/viewform',
 
+  /**
+   * O TERCEIRO FORMULÁRIO DO ARENA DAY: as competições de código e a da
+   * Fortinet (Olimpíada de Programação, DeepRacer, Capture The Flag e
+   * Capture The Leak). Todas abertas a qualquer pessoa, como os jogos.
+   *
+   * Ficam de fora o hackathon (portal próprio, só estudantes CIMATEC) e a
+   * Game Jam, que lotou antes da semana.
+   */
+  arenaCompeticoes: 'https://forms.gle/1t8JYabqvrQ88cEt5',
+
   /** Pré-venda das camisas do clube. */
   camisas: 'https://tally.so/r/xXbva9',
 

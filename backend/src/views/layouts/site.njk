@@ -519,7 +519,7 @@
         Abaixo do filete e não ao lado dos botões: são "além disso", não a
         decisão principal da caixa.
       #}
-      {% if links.hackathon or links.arenaJogosMesa or links.arenaJogosDigitais %}
+      {% if links.hackathon or links.arenaJogosMesa or links.arenaJogosDigitais or links.arenaCompeticoes %}
       <div class="modal-bloco">
         <span class="modal-bloco-titulo">Inscrição à parte</span>
         <div class="aviso-portas">
@@ -532,7 +532,7 @@
           </a>
           {% endif %}
 
-          {% if links.arenaJogosMesa or links.arenaJogosDigitais %}
+          {% if links.arenaJogosMesa or links.arenaJogosDigitais or links.arenaCompeticoes %}
           <a class="aviso-porta" href="{{ url('semcomp') }}#arena">
             <span class="aviso-porta-selo">Arena Day</span>
             <strong>Escolher a modalidade</strong>
