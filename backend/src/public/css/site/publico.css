@@ -4651,8 +4651,8 @@ section {
 
    Cada turno é uma caixa com o nome e o horário de fim no topo e os blocos
    embaixo: hora numa coluna fixa à esquerda, o que acontece ao lado.
-   Credenciamento, almoço e coffee break são "pausa" (texto mais baixo, sem
-   tipo); horário sem palestra confirmada é "aberto" (apagado, em itálico). */
+   Credenciamento e almoço são "pausa" (texto mais baixo, sem
+   tipo); horário sem palestra confirmada não entra na grade. */
 .trilha-turnos {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4700,17 +4700,6 @@ section {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--fumaca);
-}
-
-.trilha-slot--aberto .trilha-hora {
-  color: var(--cinza);
-  opacity: 0.8;
-}
-
-.trilha-palestra-aberto {
-  font-size: 0.875rem;
-  font-style: italic;
-  color: var(--cinza);
 }
 
 @media (max-width: 760px) {

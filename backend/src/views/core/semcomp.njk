@@ -286,68 +286,18 @@
 
       <div class="capa-acoes fade-in">
         {#
-          O HACKATHON TEM PORTA PRÓPRIA, e por isso tem botão próprio aqui em
-          cima — não é "mais um detalhe da semana" que a pessoa encontra
-          rolando até a seção 02.
+          UM BOTÃO SÓ PARA AS COMPETIÇÕES, que desce até a seção 04. O
+          hackathon e os formulários do Arena Day tinham botão próprio aqui em
+          cima, e a capa virou uma fileira de portas; agora a seção 04 é quem
+          explica cada modalidade e leva a cada inscrição.
 
-          Ele é a única atividade da SEMCOMP que NÃO se resolve no Even3: a
-          inscrição da equipe, o regulamento e o desafio vivem num portal
-          mantido pela organização do hackathon (ver `hackathon` em
-          `site-links.ts`). Quem se inscreveu na semana e parou por aí acha que
-          está inscrito no hackathon também — e descobre que não estava no dia
-          em que as equipes são chamadas.
-
-          `btn-outline` e não um segundo `btn-secondary`: o âmbar do contorno
-          diz que este leva para FORA, igual ao "Quero me inscrever" ao lado,
-          enquanto o cinza do "Ver os cinco dias" é o que rola a própria
-          página. Preenchido ele não pode ser — duas pílulas cheias lado a lado
-          disputam a mesma atenção, que é a mesma razão do "Seja Membro" da
-          navbar.
-
-          Condicional como todos os outros: some junto com a string vazia em
-          `site-links.ts` quando as equipes fecharem.
+          `btn-secondary`, como o "Ver os cinco dias": os dois rolam a própria
+          página, e o âmbar do contorno fica para o que leva para fora.
         #}
-        {% if links.hackathon %}
-        <a class="btn-outline" href="{{ links.hackathon }}" target="_blank" rel="noopener noreferrer">
-          <img class="btn-ilustra" src="{{ static('images/semcomp/icones/hackathon.webp') }}" alt="" aria-hidden="true" width="26" height="22">
-          Hackathon
-          <span class="btn-restrito">só estudantes CIMATEC</span>
-          {{ ic.icone('externo', 15) }}
-        </a>
-        {% endif %}
-
-        {#
-          OS TRÊS FORMULÁRIOS DO ARENA DAY, ao lado do hackathon, pelo mesmo motivo
-          dele: são inscrições que NÃO passam pelo Even3, e quem só se inscreveu
-          na semana fica fora da chave. Aqui em cima eles aparecem logo de cara,
-          sem precisar rolar até a seção 04.
-
-          Contorno âmbar como o do hackathon, porque também levam para fora do
-          site. Cada um some junto com a sua chave em `site-links.ts`.
-        #}
-        {% if links.arenaJogosDigitais %}
-        <a class="btn-outline" href="{{ links.arenaJogosDigitais }}" target="_blank" rel="noopener noreferrer">
-          <img class="btn-ilustra" src="{{ static('images/semcomp/icones/jogos-digitais.webp') }}" alt="" aria-hidden="true" width="26" height="22">
-          Jogos digitais
-          {{ ic.icone('externo', 15) }}
-        </a>
-        {% endif %}
-
-        {% if links.arenaJogosMesa %}
-        <a class="btn-outline" href="{{ links.arenaJogosMesa }}" target="_blank" rel="noopener noreferrer">
-          <img class="btn-ilustra" src="{{ static('images/semcomp/icones/jogos-de-mesa.webp') }}" alt="" aria-hidden="true" width="26" height="22">
-          Jogos de mesa
-          {{ ic.icone('externo', 15) }}
-        </a>
-        {% endif %}
-
-        {% if links.arenaCompeticoes %}
-        <a class="btn-outline" href="{{ links.arenaCompeticoes }}" target="_blank" rel="noopener noreferrer">
+        <a class="btn-secondary" href="#arena">
           <img class="btn-ilustra" src="{{ static('images/semcomp/icones/competicoes.webp') }}" alt="" aria-hidden="true" width="26" height="20">
           Competições
-          {{ ic.icone('externo', 15) }}
         </a>
-        {% endif %}
 
         <a class="btn-secondary" href="#programacao">Ver os cinco dias</a>
       </div>
@@ -763,8 +713,7 @@
             '13:00': { tipo: 'Hackathon', titulo: 'Hackathon: desenvolvimento das soluções', quem: 'Clube de DS' },
             '14:00': { tipo: 'Hackathon', titulo: 'Hackathon: desenvolvimento das soluções', quem: 'Clube de DS' },
             '15:00': { tipo: 'Hackathon', titulo: 'Hackathon: desenvolvimento das soluções', quem: 'Clube de DS' },
-            '16:00': { pausa: 'Coffee break', ate: 'até as 16:50' },
-            '17:00': { tipo: 'Palestra', titulo: 'Indústria de games: criação, tecnologias e oportunidades no desenvolvimento de jogos na Bahia', quem: 'Clube de Jogos + BIND' }
+            '16:00': { tipo: 'Palestra', titulo: 'Indústria de games: criação, tecnologias e oportunidades no desenvolvimento de jogos na Bahia', quem: 'Clube de Jogos + BIND' }
           }
         },
         {
@@ -778,8 +727,7 @@
             '11:00': { tipo: 'Palestra', titulo: 'Git & GitHub: a importância do versionamento de código', quem: 'Rian Dultra, Rafael Guerra e Victor Mendes' },
             '13:00': { tipo: 'Palestra', titulo: 'Novas pesquisas e tecnologias no mundo VR, com acompanhamento ao vivo do SVR 2026', quem: 'Ingrid Winkler' },
             '15:00': { tipo: 'Palestra', titulo: 'IA na indústria automotiva', quem: 'Anderson Dorea (Dortech)' },
-            '16:00': { pausa: 'Coffee break', ate: 'até as 16:50' },
-            '17:00': { tipo: 'Clube de IA', titulo: 'Tema a divulgar', quem: 'Clube de IA' }
+            '16:00': { tipo: 'Clube de IA', titulo: 'Tema a divulgar', quem: 'Clube de IA' }
           }
         },
         {
@@ -802,8 +750,18 @@
           tema: 'Arena Day',
           desc: 'O dia das competições: Olimpíada de Programação, DeepRacer, Capture The Flag e as finais presenciais dos e-sports, com premiação e cerimônia de encerramento.',
           tags: [{ nome: 'Competições', destaque: true }, { nome: 'Premiação', destaque: true }, { nome: 'Encerramento' }],
+          turnos: [
+            { nome: 'Manhã', ate: 'até 12:30', slots: [
+              { hora: '07:30', fixo: 'Credenciamento', ate: 'a partir das 07:30' },
+              { hora: '08:00', id: 'occ' },
+              { hora: '08:00', id: 'deepracer' },
+              { hora: '10:00', id: 'ctf' }
+            ] }
+          ],
           grade: {
-            '16:00': { pausa: 'Coffee break', ate: 'até as 16:50' }
+            'occ': { tipo: 'Programação competitiva', titulo: 'OCC: Olimpíada Computação Cimatec', quem: 'das 08:00 às 12:30' },
+            'deepracer': { tipo: 'Competição de IA', titulo: 'AWS DeepRacer', quem: 'das 08:00 às 10:00' },
+            'ctf': { tipo: 'Segurança ofensiva', titulo: 'Capture The Flag', quem: 'das 10:00 às 12:00' }
           },
           destaque: true
         }
@@ -888,14 +846,15 @@
             {#
               O DIA EM DOIS TURNOS, MANHÃ E TARDE, no modelo da planilha de
               logística: credenciamento às 07:30, três palestras de manhã,
-              almoço e a tarde de 13:00 a 17:50, com o coffee break das 16:00 nos dias que têm. Todo dia
-              segue a mesma grade (`turnos`, definida antes da lista), e cada
-              horário procura a sua palestra em `d.grade`. Horário sem palestra
-              confirmada sai como "A definir", mais apagado: a grade inteira
-              fica à vista e dá para planejar o dia mesmo com buracos.
+              almoço e a tarde de 13:00 a 17:50. Todo dia segue a mesma grade
+              (`turnos`, definida antes da lista), menos o sábado, que traz a
+              sua em `d.turnos`: as competições começam às 08:00 e correm em
+              paralelo. Cada horário procura a sua palestra em `d.grade`, pelo
+              `id` do bloco quando dois dividem a mesma hora. Horário sem palestra
+              confirmada não aparece: a grade mostra só o que já está fechado.
             #}
             <div class="trilha-turnos">
-              {% for t in turnos %}
+              {% for t in (d.turnos or turnos) %}
               <section class="trilha-turno">
                 <header class="trilha-turno-topo">
                   <h4>{{ t.nome }}</h4>
@@ -904,15 +863,14 @@
                 <ol class="trilha-palestras">
                   {% for sl in t.slots %}
                   {#
-                    PAUSA POR DIA, além das pausas fixas do turno: o coffee
-                    break das 16:00 existe em três dias (quarta, quinta e sábado):
-                    na terça o horário está a definir e na sexta o Clube de
-                    Cyber fala nele. `pausa` na `grade` do
-                    dia é o intervalo que só vale para ele.
+                    PAUSA POR DIA, além das pausas fixas do turno: `pausa` na
+                    `grade` do dia é o intervalo que só vale para ele. Hoje
+                    nenhum dia usa (o coffee break saiu da programação).
                   #}
-                  {% set pl = d.grade[sl.hora] if d.grade else null %}
+                  {% set pl = d.grade[sl.id or sl.hora] if d.grade else null %}
                   {% set pausa = sl.fixo or (pl.pausa if pl else null) %}
-                  <li class="{% if pausa %}trilha-slot--pausa{% elif not pl %}trilha-slot--aberto{% endif %}">
+                  {% if pausa or pl %}
+                  <li{% if pausa %} class="trilha-slot--pausa"{% endif %}>
                     <span class="trilha-hora">{{ sl.hora }}</span>
                     <span class="trilha-palestra">
                       {% if pausa %}
@@ -922,11 +880,10 @@
                       <span class="trilha-palestra-tipo">{{ pl.tipo }}</span>
                       <strong>{{ pl.titulo }}</strong>
                       <span class="trilha-palestra-quem">{{ pl.quem }}</span>
-                      {% else %}
-                      <span class="trilha-palestra-aberto">A definir</span>
                       {% endif %}
                     </span>
                   </li>
+                  {% endif %}
                   {% endfor %}
                 </ol>
               </section>
@@ -938,7 +895,7 @@
       </ol>
 
       <p class="trilha-nota fade-in">
-        As pílulas acesas dão nome ao dia. Só entram na grade as palestras já confirmadas; os horários "A definir" e as salas saem no Even3.
+        As pílulas acesas dão nome ao dia. Só entram na grade as palestras já confirmadas; as que faltarem e as salas saem no Even3.
       </p>
 
       {# A quebra é MANUAL e fica no fim da primeira frase: são dois recados
@@ -1482,7 +1439,7 @@
           },
           {
             p: 'A que horas eu preciso chegar?',
-            r: 'Nos dias de palestra o credenciamento vai das 07:30 às 08:50, e o primeiro bloco começa às 09:00. No sábado, o Arena Day, o credenciamento também abre às 07:30; o horário de cada competição sai no Even3.'
+            r: 'Nos dias de palestra o credenciamento vai das 07:30 às 08:50, e o primeiro bloco começa às 09:00. No sábado, o Arena Day, o credenciamento também abre às 07:30 e as competições começam às 08:00: OCC das 08:00 às 12:30, AWS DeepRacer das 08:00 às 10:00 e Capture The Flag das 10:00 às 12:00.'
           },
           {
             p: 'Como funciona o hackathon?',

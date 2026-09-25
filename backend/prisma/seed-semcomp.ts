@@ -82,7 +82,7 @@ const ATIVIDADES: Linha[] = [
   ],
   [
     '2026-09-30',
-    '17:00',
+    '16:00',
     'Palestra',
     'Indústria de games: criação, tecnologias e oportunidades no desenvolvimento de jogos na Bahia',
     'Clube de Jogos + BIND',
