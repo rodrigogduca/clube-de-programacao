@@ -37,3 +37,14 @@ Os originais estão em `outros/novos-parceiros/`.
 As fotos do Instagram foram abertas no navegador logado da comissão, que é
 onde o Instagram entrega a imagem em tamanho maior. O perfil
 @aws.senaicimatec, que o site do grupo ainda indica, não existe mais.
+
+## Entraram em 25/09/2026
+
+| arquivo               | fonte                                           | alteração |
+|-----------------------|-------------------------------------------------|-----------|
+| `it-girls-league.png` | foto de perfil do Instagram @itgirlsleague (641px) | fundo rosa tirado; preto → `--giz` (a estrela e o cursor vão junto) |
+| `bahia-rt.png`        | foto de perfil do Instagram @bahia.rt (800px)      | fundo branco tirado; azul → `--giz`; vermelho clareado 35% para ler no fundo escuro |
+
+O site do Bahia RT (acso.uneb.br/bahiart) vem do Linktree oficial da equipe
+(linktr.ee/BahiaRT). O link da bio do I.T. Girls League é um formulário, não
+um site, e ficou de fora.

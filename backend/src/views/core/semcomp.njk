@@ -166,7 +166,9 @@
         { nome: 'Falcons', sub: 'Associação Atlética CIMATEC Falcons', logo: 'falcons.png', altura: 78, redes: { site: 'https://linktr.ee/atcfalcons', instagram: 'https://www.instagram.com/atcfalcons' } },
         { nome: 'HorusTec', sub: 'Equipe de robótica competitiva da Universidade SENAI CIMATEC', logo: 'horustec.png', altura: 84, redes: { instagram: 'https://www.instagram.com/_horustec' } },
         { nome: 'Prometheus', sub: 'Equipe SAE AeroDesign do SENAI CIMATEC', logo: 'prometheus.png', altura: 40, redes: { instagram: 'https://www.instagram.com/prometheus.aerodesign' } },
-        { nome: 'AWS Student Builder Group', sub: 'SENAI CIMATEC', logo: 'aws-sbg.png', altura: 80, redes: { site: 'https://www.awsclubsenai.com.br', instagram: 'https://www.instagram.com/awssbgsenaicimatec' } }
+        { nome: 'AWS Student Builder Group', sub: 'SENAI CIMATEC', logo: 'aws-sbg.png', altura: 80, redes: { site: 'https://www.awsclubsenai.com.br', instagram: 'https://www.instagram.com/awssbgsenaicimatec' } },
+        { nome: 'The I.T. Girls League', sub: 'Liga acadêmica de realidade estendida e metaverso · UNIFACS', logo: 'it-girls-league.png', altura: 70, redes: { instagram: 'https://www.instagram.com/itgirlsleague' } },
+        { nome: 'Bahia RT', sub: 'Bahia Robotics Team · equipe de robótica e IA do ACSO/UNEB', logo: 'bahia-rt.png', altura: 84, redes: { site: 'http://www.acso.uneb.br/bahiart/', instagram: 'https://www.instagram.com/bahia.rt' } }
       ]
     }
   ] %}
@@ -1140,7 +1142,7 @@
           <p>{{ bloco.desc }}</p>
         </header>
 
-        <div class="formato-grid arena-grid{% if not bloco.aberto %} arena-grid--dupla{% endif %} stagger-children">
+        <div class="formato-grid arena-grid{% if not bloco.aberto %} arena-grid--unica{% endif %} stagger-children">
           {% for m in modalidades %}
           {% if (m.aberto or false) == bloco.aberto %}
             <article class="formato-card fade-in{% if m.ilustra %} formato-card--ilustrado{% endif %}{% if m.aberto %} formato-card--aberto{% endif %}">
@@ -1466,10 +1468,6 @@
         </div>
 
         {% set duvidas = [
-          {
-            p: 'Preciso ser membro do clube para ir?',
-            r: 'Não. A SEMCOMP é aberta ao público: dá para assistir sem nenhum vínculo com o clube. Se depois você quiser entrar, a <a href="' ~ url('seja_membro') ~ '">membresia também é gratuita</a>.'
-          },
           {
             p: 'Estudo em outra universidade. Posso participar?',
             r: 'Pode. Em 2026 a semana convida estudantes de UFBA, UESB, UNEB, UCSAL, UNIFACS e UNIJORGE, inclusive com equipes nas competições. A inscrição é a mesma, pelo Even3. <strong>A exceção é o hackathon</strong>, que é só para estudantes do SENAI CIMATEC.'

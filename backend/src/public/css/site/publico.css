@@ -3775,13 +3775,12 @@ section {
     var(--penumbra);
 }
 
-/* AS COMPETIÇÕES DE CÓDIGO SÃO QUATRO: duas por fileira também na tela
-   larga, em vez de três e uma esticada. Três classes para vencer a regra de
-   "sobra um" do `.formato-grid`, que tem o mesmo peso de quatro. */
-@media (min-width: 880px) {
-  .formato-grid.arena-grid.arena-grid--dupla > :nth-child(n) {
-    grid-column: span 3;
-  }
+/* O BLOCO DE VAGAS ESGOTADAS TEM UM CARTÃO SÓ (a Game Jam): ele ocupa a
+   fileira inteira em qualquer largura, em vez de um terço com vazio ao lado.
+   O `:nth-child(n)` é para pesar mais que as regras de sobra do
+   `.formato-grid`. */
+.formato-grid.arena-grid.arena-grid--unica > :nth-child(n) {
+  grid-column: 1 / -1;
 }
 
 /* O SELO DE QUEM PODE ENTRAR QUANDO NÃO É TODO MUNDO (hoje, só o hackathon).
