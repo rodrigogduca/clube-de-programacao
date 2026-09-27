@@ -1087,7 +1087,7 @@
         hackathon, a outra exceção, fica na seção 02 com o selo dele.
       #}
       {% set blocos_arena = [
-        { aberto: true,  titulo: 'Para todo mundo participar', desc: 'Qualquer pessoa pode entrar em todas estas: Capture The Leak, jogos presenciais, Olimpíada de Programação, DeepRacer, Capture The Flag e os e-sports.' },
+        { aberto: true,  titulo: 'Para todo mundo participar', desc: 'Qualquer pessoa pode entrar em todas estas: Capture The Leak, jogos presenciais, Olimpíada de Programação, DeepRacer, Capture The Flag e os e-sports, menos LoL e Valorant, que são só para quem é do CIMATEC.' },
         { aberto: false, titulo: 'Vagas esgotadas', desc: 'A Game Jam online lotou antes da semana e não recebe mais inscrições.' }
       ] %}
 
@@ -1166,10 +1166,14 @@
 
             A `nota` volta ao Even3 quando `arenaJogosDigitais` sair de
             `site-links.ts`, como os outros.
+
+            LOL E VALORANT SÃO SÓ PARA QUEM É DO CIMATEC (decisão da comissão).
+            O `restrito` vira o selo com cadeado na linha do jogo, o mesmo do
+            hackathon, e o selo do topo diz o mesmo para quem não lê a lista.
           #}
           {% set esports = [
-            { nome: 'League of Legends', logo: 'league-of-legends.svg', formato: 'Equipes de 5', premios: ['Video game retrô', 'Fone Bluetooth'] },
-            { nome: 'Valorant',          logo: 'valorant.svg',          formato: 'Equipes de 5', premios: ['Video game retrô', 'Fone Bluetooth'] },
+            { nome: 'League of Legends', logo: 'league-of-legends.svg', formato: 'Equipes de 5', restrito: 'Só CIMATEC', premios: ['Video game retrô', 'Fone Bluetooth'] },
+            { nome: 'Valorant',          logo: 'valorant.svg',          formato: 'Equipes de 5', restrito: 'Só CIMATEC', premios: ['Video game retrô', 'Fone Bluetooth'] },
             { nome: 'EA Sports FC 26',   logo: 'ea.svg', sufixo: 'FC 26', formato: 'Individual', premios: ['SSD NVMe', 'Kit gamer'] },
             { nome: 'Teamfight Tactics', logo: 'tft.png',               formato: 'Individual', premios: ['SSD NVMe', 'Kit gamer'] },
             { nome: 'Brawl Stars',       logo: 'brawl-stars.png',       formato: 'Formato no regulamento', premios: ['Medalha de ouro', 'Medalha de prata'] }
@@ -1180,9 +1184,10 @@
               <div class="arena-selos">
             <span class="formato-selo">E-Sports &middot; finais no sáb 03/10</span>
             <span class="arena-aberto">{{ ic.icone('certo', 14) }} Aberto a todos</span>
+            <span class="selo-restrito selo-restrito--faixa">{{ ic.icone('cadeado', 14) }} LoL e Valorant: só CIMATEC</span>
           </div>
               <h3>As finais dos e-sports são presenciais</h3>
-              <p>Cinco jogos, disputados no sábado junto com o resto do Arena Day. 1º e 2º lugar levam prêmio em cada um.</p>
+              <p>Cinco jogos, disputados no sábado junto com o resto do Arena Day. 1º e 2º lugar levam prêmio em cada um. <strong>League of Legends e Valorant são só para quem é do CIMATEC</strong>; os outros três são abertos a todos.</p>
 
               <div class="esports-premiacao-topo">
                 <img src="{{ static('images/semcomp/icones/premiacoes.webp') }}" alt="" aria-hidden="true" width="320" height="253" loading="lazy" decoding="async">
@@ -1200,6 +1205,7 @@
                   <span class="esports-info">
                     <strong>{{ j.nome }}</strong>
                     <span>{{ j.formato }}</span>
+                    {% if j.restrito %}<span class="selo-restrito selo-restrito--linha">{{ ic.icone('cadeado', 12) }} {{ j.restrito }}</span>{% endif %}
                   </span>
                   {% if j.premios %}
                   <ol class="esports-premios" aria-label="Premiação de {{ j.nome }}">
@@ -1287,7 +1293,7 @@
                   {% for j in esports %}{% if j.logo %}<img src="{{ static('images/semcomp/arena/' ~ j.logo) }}" alt="" width="28" height="28" loading="lazy" decoding="async">{% endif %}{% endfor %}
                 </span>
                 <h3>LoL, Valorant, EA FC 26, TFT e Brawl Stars</h3>
-                <p>As finais presenciais dos e-sports, no sábado. O formulário é o que garante a sua vaga na chave.</p>
+                <p>As finais presenciais dos e-sports, no sábado. O formulário é o que garante a sua vaga na chave. LoL e Valorant são só para quem é do CIMATEC.</p>
                 <span class="acao-pe">
                   <span class="acao-nota">Formulário do Google &middot; vagas limitadas</span>
                   <span class="acao-seta" aria-hidden="true">{{ ic.icone('seta', 16) }}</span>

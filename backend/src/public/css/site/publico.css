@@ -3804,6 +3804,22 @@ section {
   color: var(--giz);
 }
 
+/* Ao lado do "Aberto a todos" da faixa dos e-sports: a margem vem do gap de
+   `.arena-selos`, não do cartão. */
+.selo-restrito--faixa {
+  margin-top: 0;
+}
+
+/* Na linha de LoL e Valorant, abaixo do formato. Pesa mais que
+   `.esports-info span`, que apagaria o selo no cinza do formato. */
+.esports-info .selo-restrito--linha {
+  margin-top: 4px;
+  padding: 2px 8px 2px 6px;
+  border-radius: 8px;
+  font-size: 0.66rem;
+  color: var(--giz);
+}
+
 /* A mesma restrição dentro do botão do hackathon, no topo da página. */
 .btn-restrito {
   font-family: var(--mono);
