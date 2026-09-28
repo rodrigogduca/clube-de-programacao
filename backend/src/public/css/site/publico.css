@@ -3164,60 +3164,6 @@ section {
   margin-top: 34px;
 }
 
-/* As inscrições à parte (hackathon, competições, jogos), na capa. A mesma luz
-   âmbar do `.modal-card--aviso`: é o vocabulário do site para "é por aqui".
-   `width: 100%` pelo mesmo motivo da `.capa-ficha` logo abaixo. */
-.capa-inscricoes {
-  width: 100%;
-  margin-top: 30px;
-  padding: 20px;
-  border: 1px solid var(--ambar-traco);
-  border-radius: var(--r);
-  background:
-    radial-gradient(ellipse 100% 80% at 0% 0%, rgba(255, 77, 0, 0.14), transparent 70%),
-    rgba(16, 15, 20, 0.82);
-  backdrop-filter: blur(6px);
-}
-
-.capa-inscricoes-topo {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px 16px;
-  margin-bottom: 16px;
-}
-
-.capa-inscricoes-titulo {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  font-family: var(--display);
-  font-size: 1.15rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--giz);
-}
-
-.capa-inscricoes-topo p {
-  font-size: 0.9rem;
-  color: var(--fumaca);
-}
-
-.capa-inscricoes .aviso-porta {
-  background: rgba(23, 22, 29, 0.9);
-}
-
-/* Na capa a seta é o convite: já nasce âmbar, sem esperar o ponteiro (que
-   no celular não existe). */
-.capa-inscricoes .aviso-porta-seta {
-  border-color: var(--ambar-traco);
-  color: var(--ambar);
-}
-
-.capa-inscricoes .aviso-porta strong {
-  color: var(--gema);
-}
-
 /* `width: 100%` porque o pai virou flex-column com `align-items: flex-start`:
    sem isto a grade da ficha encolhe até o conteúdo e as quatro colunas se
    amontoam à esquerda em vez de dividirem a largura. */
@@ -3416,6 +3362,15 @@ section {
 .formato-nota a:hover {
   color: var(--gema);
   border-color: var(--gema);
+}
+
+/* O botão de inscrição no pé do cartão, logo abaixo da nota. Menor que o
+   `.btn-primary` da capa: são vários na mesma fileira. */
+.formato-botao {
+  align-self: flex-start;
+  margin-top: 16px;
+  padding: 11px 20px;
+  font-size: 0.875rem;
 }
 
 /* AS MODALIDADES DO ARENA DAY reaproveitam o `.formato-card` inteiro, e agora

@@ -285,64 +285,6 @@
 
       <p class="capa-linha fade-in">Cinco dias de palestras, workshops e competições na Universidade SENAI CIMATEC, organizados por estudantes e abertos a quem quiser assistir.</p>
 
-      {#
-        AS INSCRIÇÕES À PARTE, NA CAPA.
-
-        Antes havia só um botão "Competições" que rolava até a seção 04, e os
-        formulários ficavam lá no fundo, dentro do sábado — quem procurava o
-        hackathon ou a olimpíada não achava. A inscrição no Even3 NÃO inscreve
-        em nenhuma delas, então cada porta fica aqui, com nome e destino, logo
-        abaixo do botão principal. As mesmas `.aviso-porta` do pop-up da
-        SEMCOMP, para as duas coisas se reconhecerem.
-
-        Cada porta depende da sua chave em `site-links.ts`: fechado um
-        formulário, a porta some sozinha; fechados todos, o bloco inteiro.
-      #}
-      {% if links.hackathon or links.arenaCompeticoes or links.arenaJogosDigitais or links.arenaJogosMesa %}
-      <div class="capa-inscricoes fade-in" id="inscricoes-a-parte">
-        <div class="capa-inscricoes-topo">
-          <span class="capa-inscricoes-titulo">
-            <span class="aviso-ponto" aria-hidden="true"></span>
-            Inscrições das competições
-          </span>
-          <p>A inscrição no Even3 não inclui estas. Cada uma tem a sua:</p>
-        </div>
-        <div class="aviso-portas">
-          {% if links.hackathon %}
-          <a class="aviso-porta" href="{{ links.hackathon }}" target="_blank" rel="noopener noreferrer">
-            <span class="aviso-porta-selo">Hackathon</span>
-            <strong>Inscrever minha equipe</strong>
-            <span class="aviso-porta-desc">No portal do hackathon. Só estudantes CIMATEC.</span>
-            <span class="aviso-porta-seta" aria-hidden="true">{{ ic.icone('externo', 15) }}</span>
-          </a>
-          {% endif %}
-          {% if links.arenaCompeticoes %}
-          <a class="aviso-porta" href="{{ links.arenaCompeticoes }}" target="_blank" rel="noopener noreferrer">
-            <span class="aviso-porta-selo">Competições</span>
-            <strong>Código e cibersegurança</strong>
-            <span class="aviso-porta-desc">Olimpíada de Programação, competição de IA, CTF e Capture The Leak.</span>
-            <span class="aviso-porta-seta" aria-hidden="true">{{ ic.icone('externo', 15) }}</span>
-          </a>
-          {% endif %}
-          {% if links.arenaJogosDigitais %}
-          <a class="aviso-porta" href="{{ links.arenaJogosDigitais }}" target="_blank" rel="noopener noreferrer">
-            <span class="aviso-porta-selo">E-sports</span>
-            <strong>Jogos digitais</strong>
-            <span class="aviso-porta-desc">LoL, Valorant, EA FC 26, TFT e Brawl Stars.</span>
-            <span class="aviso-porta-seta" aria-hidden="true">{{ ic.icone('externo', 15) }}</span>
-          </a>
-          {% endif %}
-          {% if links.arenaJogosMesa %}
-          <a class="aviso-porta" href="{{ links.arenaJogosMesa }}" target="_blank" rel="noopener noreferrer">
-            <span class="aviso-porta-selo">Arena Day</span>
-            <strong>Jogos de mesa</strong>
-            <span class="aviso-porta-desc">Ping Pong, Totó, Dominó e Truco.</span>
-            <span class="aviso-porta-seta" aria-hidden="true">{{ ic.icone('externo', 15) }}</span>
-          </a>
-          {% endif %}
-        </div>
-      </div>
-      {% endif %}
 
       <div class="capa-acoes fade-in">
         {# `btn-secondary`: os dois rolam a própria página, e o âmbar fica
@@ -563,7 +505,8 @@
           titulo: 'Um desafio, uma entrega',
           desc: 'Equipes recebem um problema real e têm o prazo do evento para entregar uma solução funcionando, defendida diante da banca no fim.',
           restrito: 'Só estudantes CIMATEC',
-          nota: ('Em equipe &middot; <a href="' + links.hackathon + '" target="_blank" rel="noopener noreferrer">portal do hackathon</a>') if links.hackathon else 'Em equipe &middot; detalhes no Even3'
+          nota: 'Em equipe' if links.hackathon else 'Em equipe &middot; detalhes no Even3',
+          inscricao: links.hackathon
         },
         {
           selo: 'Estandes',
@@ -623,6 +566,11 @@
           #}
           {% if f.restrito %}<span class="selo-restrito">{{ ic.icone('cadeado', 14) }} {{ f.restrito }}</span>{% endif %}
           <span class="formato-nota">{{ f.nota | safe }}</span>
+          {% if f.inscricao %}
+          <a class="btn-primary formato-botao" href="{{ f.inscricao }}" target="_blank" rel="noopener noreferrer">
+            Inscrever-se {{ ic.icone('externo', 14) }}
+          </a>
+          {% endif %}
         </article>
         {% endfor %}
       </div>
@@ -1061,11 +1009,11 @@
         { src: 'truco.svg',     nome: 'Truco' }
       ] %}
       {#
-        `form_competicoes` é o fim da nota do pé, com o link do formulário de competições,
-        igual nas quatro que passam por ele. Sem a chave em `site-links.ts`,
-        avisa que a inscrição abre em breve (o formulário está suspenso).
+        `inscricao` é o formulário de cada cartão, e vira o botão "Inscrever-se"
+        no pé dele. Sem a chave em `site-links.ts` o botão some e a `nota`
+        avisa onde a inscrição acontece.
       #}
-      {% set form_competicoes = (' &middot; <a href="' + links.arenaCompeticoes + '" target="_blank" rel="noopener noreferrer">inscrição no formulário</a>') if links.arenaCompeticoes else ' &middot; inscrição em breve' %}
+      {% set fim_competicoes = '' if links.arenaCompeticoes else ' &middot; inscrição no Even3' %}
       {% set modalidades = [
         {
           selo: 'CTL',
@@ -1074,7 +1022,8 @@
           titulo: 'Capture The Leak',
           desc: 'O desafio de cibersegurança organizado pela Fortinet, do lado da defesa. O desafio e a premiação são da própria Fortinet.',
           premios: ['Prêmio da Fortinet', 'Prêmio da Fortinet', 'Prêmio da Fortinet'],
-          nota: 'Sex 02/10 &middot; 14:00 às 15:50 &middot; individual' + form_competicoes
+          nota: 'Sex 02/10 &middot; 14:00 às 15:50 &middot; individual' + fim_competicoes,
+          inscricao: links.arenaCompeticoes
         },
         {
           selo: 'Presenciais',
@@ -1083,7 +1032,8 @@
           ilustra: { src: 'icones/jogos-de-mesa.webp', largura: 320, altura: 266 },
           premios: ['Medalha de ouro', 'Medalha de prata', 'Medalha de bronze'],
           desc: 'Os torneios que não pedem computador nenhum: Ping Pong, Totó, Dominó e Truco, no terraço do Cimatec 3.',
-          nota: ('Sáb 03/10 &middot; <a href="' + links.arenaJogosMesa + '" target="_blank" rel="noopener noreferrer">escolher no formulário</a>') if links.arenaJogosMesa else 'Sáb 03/10 &middot; inscrição no local'
+          nota: 'Sáb 03/10' if links.arenaJogosMesa else 'Sáb 03/10 &middot; inscrição no local',
+          inscricao: links.arenaJogosMesa
         },
         {
           selo: 'OCC',
@@ -1092,7 +1042,8 @@
           titulo: 'Olimpíada de Programação',
           desc: 'Programação competitiva presencial, com questões de dificuldade crescente. Organizada por Cezimbra, Victor e Petersen.',
           premios: premio_padrao,
-          nota: 'Sáb 03/10 &middot; duplas' + form_competicoes
+          nota: 'Sáb 03/10 &middot; duplas' + fim_competicoes,
+          inscricao: links.arenaCompeticoes
         },
         {
           selo: 'IA',
@@ -1100,7 +1051,7 @@
           titulo: 'Competição de IA',
           desc: 'Uma competição de inteligência artificial entra no lugar do AWS DeepRacer. Formato e regras serão divulgados em breve.',
           premios: premio_padrao,
-          nota: 'Sáb 03/10 &middot; individual' + form_competicoes
+          nota: 'Sáb 03/10 &middot; inscrição em breve'
         },
         {
           selo: 'CTF',
@@ -1109,7 +1060,8 @@
           titulo: 'Capture The Flag',
           desc: 'Captura de bandeira organizada pelo Clube de Cyber: criptografia, engenharia reversa e exploração de falhas em ambiente controlado.',
           premios: premio_padrao,
-          nota: 'Sáb 03/10 &middot; individual' + form_competicoes
+          nota: 'Sáb 03/10 &middot; individual' + fim_competicoes,
+          inscricao: links.arenaCompeticoes
         },
         {
           selo: 'Game Jam',
@@ -1183,6 +1135,11 @@
               {% if m.aberto %}<span class="arena-aberto arena-aberto--cartao">{{ ic.icone('certo', 14) }} Aberto a todos</span>{% endif %}
               {% if m.lotado %}<span class="selo-restrito">{{ ic.icone('cadeado', 14) }} Vagas esgotadas</span>{% endif %}
               <span class="formato-nota">{{ m.nota | safe }}</span>
+              {% if m.inscricao %}
+              <a class="btn-primary formato-botao" href="{{ m.inscricao }}" target="_blank" rel="noopener noreferrer">
+                Inscrever-se {{ ic.icone('externo', 14) }}
+              </a>
+              {% endif %}
             </article>
           {% endif %}
           {% endfor %}
@@ -1277,13 +1234,13 @@
                 {% endfor %}
               </ul>
 
-              <span class="formato-nota">
-                {% if links.arenaJogosDigitais %}
-                Inscrição: <a href="{{ links.arenaJogosDigitais }}" target="_blank" rel="noopener noreferrer">escolher no formulário</a>
-                {% else %}
-                Inscrição no Even3
-                {% endif %}
-              </span>
+              {% if links.arenaJogosDigitais %}
+              <a class="btn-primary formato-botao" href="{{ links.arenaJogosDigitais }}" target="_blank" rel="noopener noreferrer">
+                Inscrever-se {{ ic.icone('externo', 14) }}
+              </a>
+              {% else %}
+              <span class="formato-nota">Inscrição no Even3</span>
+              {% endif %}
             </div>
 
             <img class="esports-heroina" src="{{ static('images/semcomp/arena/phoenix.webp') }}"
