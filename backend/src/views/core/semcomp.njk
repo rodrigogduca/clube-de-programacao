@@ -320,7 +320,7 @@
           <a class="aviso-porta" href="{{ links.arenaCompeticoes }}" target="_blank" rel="noopener noreferrer">
             <span class="aviso-porta-selo">Competições</span>
             <strong>Código e cibersegurança</strong>
-            <span class="aviso-porta-desc">Olimpíada de Programação, DeepRacer, CTF e Capture The Leak.</span>
+            <span class="aviso-porta-desc">Olimpíada de Programação, competição de IA, CTF e Capture The Leak.</span>
             <span class="aviso-porta-seta" aria-hidden="true">{{ ic.icone('externo', 15) }}</span>
           </a>
           {% endif %}
@@ -554,7 +554,7 @@
           selo: 'Competição',
           arte: 'premiacoes.webp',
           titulo: 'Oportunidade de ganhar premiações',
-          desc: 'Olimpíada de programação, DeepRacer, Capture The Flag, Capture The Leak, e-sports e jogos presenciais, quase tudo no sábado, e uma game jam online antes da semana. Todas com premiação.',
+          desc: 'Olimpíada de programação, competição de IA, Capture The Flag, Capture The Leak, e-sports e jogos presenciais, quase tudo no sábado, e uma game jam online antes da semana. Todas com premiação.',
           nota: 'Em equipe ou individual &middot; <a href="#arena">ver as modalidades</a>'
         },
         {
@@ -780,7 +780,8 @@
             '11:00': { tipo: 'Palestra', titulo: 'Git & GitHub: a importância do versionamento de código', quem: 'Rian Dultra, Rafael Guerra e Victor Mendes' },
             '13:00': { tipo: 'Palestra', titulo: 'Novas pesquisas e tecnologias no mundo VR, com acompanhamento ao vivo do SVR 2026', quem: 'Ingrid Winkler' },
             '15:00': { tipo: 'Palestra', titulo: 'IA na indústria automotiva', quem: 'Anderson Dorea (Dortech)' },
-            '16:00': { tipo: 'Clube de IA', titulo: 'Tema a divulgar', quem: 'Clube de IA' }
+            '16:00': { tipo: 'Clube de IA', titulo: 'Tema a divulgar', quem: 'Clube de IA' },
+            '17:00': { tipo: 'Palestra', titulo: 'Como as máquinas enxergam?', quem: 'Lucas Amparo Barbosa' }
           }
         },
         {
@@ -801,19 +802,19 @@
         {
           num: '03', mes: 'out', semana: 'Sábado',
           tema: 'Arena Day',
-          desc: 'O dia das competições: Olimpíada de Programação, DeepRacer, Capture The Flag e as finais presenciais dos e-sports, com premiação e cerimônia de encerramento.',
+          desc: 'O dia das competições: Olimpíada de Programação, competição de IA, Capture The Flag e as finais presenciais dos e-sports, com premiação e cerimônia de encerramento.',
           tags: [{ nome: 'Competições', destaque: true }, { nome: 'Premiação', destaque: true }, { nome: 'Encerramento' }],
           turnos: [
             { nome: 'Manhã', ate: 'até 12:30', slots: [
               { hora: '07:30', fixo: 'Credenciamento', ate: 'a partir das 07:30' },
               { hora: '08:00', id: 'occ' },
-              { hora: '08:00', id: 'deepracer' },
+              { hora: '08:00', id: 'ia' },
               { hora: '10:00', id: 'ctf' }
             ] }
           ],
           grade: {
             'occ': { tipo: 'Programação competitiva', titulo: 'OCC: Olimpíada Computação Cimatec', quem: 'das 08:00 às 12:30' },
-            'deepracer': { tipo: 'Competição de IA', titulo: 'AWS DeepRacer', quem: 'das 08:00 às 10:00' },
+            'ia': { tipo: 'Competição de IA', titulo: 'Competição de IA', quem: 'horário a confirmar' },
             'ctf': { tipo: 'Segurança ofensiva', titulo: 'Capture The Flag', quem: 'das 10:00 às 12:00' }
           },
           destaque: true
@@ -1062,9 +1063,9 @@
       {#
         `form_competicoes` é o fim da nota do pé, com o link do formulário de competições,
         igual nas quatro que passam por ele. Sem a chave em `site-links.ts`,
-        volta a mandar ao Even3.
+        avisa que a inscrição abre em breve (o formulário está suspenso).
       #}
-      {% set form_competicoes = (' &middot; <a href="' + links.arenaCompeticoes + '" target="_blank" rel="noopener noreferrer">inscrição no formulário</a>') if links.arenaCompeticoes else ' &middot; inscrição no Even3' %}
+      {% set form_competicoes = (' &middot; <a href="' + links.arenaCompeticoes + '" target="_blank" rel="noopener noreferrer">inscrição no formulário</a>') if links.arenaCompeticoes else ' &middot; inscrição em breve' %}
       {% set modalidades = [
         {
           selo: 'CTL',
@@ -1094,11 +1095,10 @@
           nota: 'Sáb 03/10 &middot; duplas' + form_competicoes
         },
         {
-          selo: 'IA · DeepRacer',
-          ilustra: { src: 'icones/deepracer.webp', largura: 320, altura: 257 },
+          selo: 'IA',
           aberto: true,
-          titulo: 'DeepRacer',
-          desc: 'Corrida de carrinhos autônomos: cada participante treina um modelo de inteligência artificial por aprendizado por reforço, e o carro corre sozinho na pista.',
+          titulo: 'Competição de IA',
+          desc: 'Uma competição de inteligência artificial entra no lugar do AWS DeepRacer. Formato e regras serão divulgados em breve.',
           premios: premio_padrao,
           nota: 'Sáb 03/10 &middot; individual' + form_competicoes
         },
@@ -1140,7 +1140,7 @@
         hackathon, a outra exceção, fica na seção 02 com o selo dele.
       #}
       {% set blocos_arena = [
-        { aberto: true,  titulo: 'Para todo mundo participar', desc: 'Qualquer pessoa pode entrar em todas estas: Capture The Leak, jogos presenciais, Olimpíada de Programação, DeepRacer, Capture The Flag e os e-sports, menos LoL e Valorant, que são só para quem é do CIMATEC.' },
+        { aberto: true,  titulo: 'Para todo mundo participar', desc: 'Qualquer pessoa pode entrar em todas estas: Capture The Leak, jogos presenciais, Olimpíada de Programação, competição de IA, Capture The Flag e os e-sports, menos LoL e Valorant, que são só para quem é do CIMATEC.' },
         { aberto: false, titulo: 'Vagas esgotadas', desc: 'A Game Jam online lotou antes da semana e não recebe mais inscrições.' }
       ] %}
 
@@ -1360,9 +1360,9 @@
                 <span class="acao-selo">Competições</span>
                 <img class="acao-ilustra" src="{{ static('images/semcomp/icones/competicoes.webp') }}" alt="" aria-hidden="true" width="320" height="244" loading="lazy" decoding="async">
                 <span class="acao-ilustras" aria-hidden="true">
-                  {% for il in ['ctl.webp', 'deepracer.webp', 'ctf.webp'] %}<img src="{{ static('images/semcomp/icones/' ~ il) }}" alt="" width="160" height="160" loading="lazy" decoding="async">{% endfor %}
+                  {% for il in ['ctl.webp', 'ctf.webp'] %}<img src="{{ static('images/semcomp/icones/' ~ il) }}" alt="" width="160" height="160" loading="lazy" decoding="async">{% endfor %}
                 </span>
-                <h3>Olimpíada de Programação, DeepRacer, CTF e Capture The Leak</h3>
+                <h3>Olimpíada de Programação, competição de IA, CTF e Capture The Leak</h3>
                 <p>As competições de código e de cibersegurança, abertas a qualquer pessoa. O formulário pergunta em quais você entra.</p>
                 <span class="acao-pe">
                   <span class="acao-nota">Formulário do Google &middot; vagas limitadas</span>
@@ -1498,7 +1498,7 @@
           },
           {
             p: 'A que horas eu preciso chegar?',
-            r: 'Nos dias de palestra o credenciamento vai das 07:30 às 08:50, e o primeiro bloco começa às 09:00. No sábado, o Arena Day, o credenciamento também abre às 07:30 e as competições começam às 08:00: OCC das 08:00 às 12:30, AWS DeepRacer das 08:00 às 10:00 e Capture The Flag das 10:00 às 12:00.'
+            r: 'Nos dias de palestra o credenciamento vai das 07:30 às 08:50, e o primeiro bloco começa às 09:00. No sábado, o Arena Day, o credenciamento também abre às 07:30 e as competições começam às 08:00: OCC das 08:00 às 12:30 e Capture The Flag das 10:00 às 12:00.'
           },
           {
             p: 'Como funciona o hackathon?',

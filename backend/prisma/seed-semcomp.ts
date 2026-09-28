@@ -123,6 +123,13 @@ const ATIVIDADES: Linha[] = [
     'IA na indústria automotiva',
     'Anderson Dorea (Dortech)',
   ],
+  [
+    '2026-10-01',
+    '17:00',
+    'Palestra',
+    'Como as máquinas enxergam?',
+    'Lucas Amparo Barbosa',
+  ],
   // 02/10 — Cyber & Quantum Day
   [
     '2026-10-02',

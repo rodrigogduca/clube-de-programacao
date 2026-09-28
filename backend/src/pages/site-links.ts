@@ -91,13 +91,17 @@ export const SITE_LINKS = {
 
   /**
    * O TERCEIRO FORMULÁRIO DO ARENA DAY: as competições de código e a da
-   * Fortinet (Olimpíada de Programação, DeepRacer, Capture The Flag e
-   * Capture The Leak). Todas abertas a qualquer pessoa, como os jogos.
+   * Fortinet (Olimpíada de Programação, competição de IA, Capture The Flag
+   * e Capture The Leak). Todas abertas a qualquer pessoa, como os jogos.
    *
    * Ficam de fora o hackathon (portal próprio, só estudantes CIMATEC) e a
    * Game Jam, que lotou antes da semana.
+   *
+   * SUSPENSO — o AWS DeepRacer saiu e entra outra competição de IA; o
+   * formulário volta quando ela estiver definida. Endereço anterior:
+   * https://forms.gle/1t8JYabqvrQ88cEt5
    */
-  arenaCompeticoes: 'https://forms.gle/1t8JYabqvrQ88cEt5',
+  arenaCompeticoes: '',
 
   /** Pré-venda das camisas do clube. */
   camisas: 'https://tally.so/r/xXbva9',
