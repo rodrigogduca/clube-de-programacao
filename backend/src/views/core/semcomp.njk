@@ -161,6 +161,7 @@
         { nome: 'Cimatec Jr', sub: 'Empresa Júnior do SENAI CIMATEC', logo: 'cimatec-jr.png', altura: 66, redes: { site: 'https://www.cimatecjr.com.br', instagram: 'https://www.instagram.com/cimatecjr', linkedin: 'https://www.linkedin.com/company/cimatecjr' } },
         { nome: 'Info Jr', sub: 'Empresa Júnior de Informática da UFBA', logo: 'info-jr.png', altura: 64, redes: { site: 'https://infojr.com.br', instagram: 'https://www.instagram.com/infojrufba', linkedin: 'https://br.linkedin.com/company/infojrufba' } },
         { nome: 'LAMIT', sub: 'Liga Acadêmica de Maratonas, Inovação e Tecnologia · UCSal', logo: 'lamit.png', altura: 84, redes: { site: 'https://linktr.ee/lamit.ucsal', instagram: 'https://www.instagram.com/lamit.ucsal', linkedin: 'https://www.linkedin.com/company/lamit-ucsal', tiktok: 'https://www.tiktok.com/@lamit.ucsal' } },
+        { nome: 'LAES', sub: 'Liga Acadêmica de Engenharia de Software · UCSal', logo: 'laes.png', altura: 80, redes: { site: 'https://linktr.ee/laesucsal', instagram: 'https://www.instagram.com/laes.ucsal/' } },
         { nome: 'NEXUPP', sub: 'Comunidade de networking, tecnologia e inovação de Salvador', logo: 'nexupp.png', altura: 82, redes: { site: 'https://nexupp.com.br', instagram: 'https://www.instagram.com/nex.upp/' } },
         { nome: 'LIAO', sub: 'Liga de Inteligência Artificial e Otimização · UFBA', logo: 'liao.png', altura: 60, redes: { site: 'https://www.liaoufba.com.br', instagram: 'https://www.instagram.com/liaoufba', linkedin: 'https://www.linkedin.com/company/liao-ufba' } },
         { nome: 'Falcons', sub: 'Associação Atlética CIMATEC Falcons', logo: 'falcons.png', altura: 78, redes: { site: 'https://linktr.ee/atcfalcons', instagram: 'https://www.instagram.com/atcfalcons' } },
@@ -284,19 +285,71 @@
 
       <p class="capa-linha fade-in">Cinco dias de palestras, workshops e competições na Universidade SENAI CIMATEC, organizados por estudantes e abertos a quem quiser assistir.</p>
 
-      <div class="capa-acoes fade-in">
-        {#
-          UM BOTÃO SÓ PARA AS COMPETIÇÕES, que desce até a seção 04. O
-          hackathon e os formulários do Arena Day tinham botão próprio aqui em
-          cima, e a capa virou uma fileira de portas; agora a seção 04 é quem
-          explica cada modalidade e leva a cada inscrição.
+      {#
+        AS INSCRIÇÕES À PARTE, NA CAPA.
 
-          `btn-secondary`, como o "Ver os cinco dias": os dois rolam a própria
-          página, e o âmbar do contorno fica para o que leva para fora.
-        #}
+        Antes havia só um botão "Competições" que rolava até a seção 04, e os
+        formulários ficavam lá no fundo, dentro do sábado — quem procurava o
+        hackathon ou a olimpíada não achava. A inscrição no Even3 NÃO inscreve
+        em nenhuma delas, então cada porta fica aqui, com nome e destino, logo
+        abaixo do botão principal. As mesmas `.aviso-porta` do pop-up da
+        SEMCOMP, para as duas coisas se reconhecerem.
+
+        Cada porta depende da sua chave em `site-links.ts`: fechado um
+        formulário, a porta some sozinha; fechados todos, o bloco inteiro.
+      #}
+      {% if links.hackathon or links.arenaCompeticoes or links.arenaJogosDigitais or links.arenaJogosMesa %}
+      <div class="capa-inscricoes fade-in" id="inscricoes-a-parte">
+        <div class="capa-inscricoes-topo">
+          <span class="capa-inscricoes-titulo">
+            <span class="aviso-ponto" aria-hidden="true"></span>
+            Inscrições das competições
+          </span>
+          <p>A inscrição no Even3 não inclui estas. Cada uma tem a sua:</p>
+        </div>
+        <div class="aviso-portas">
+          {% if links.hackathon %}
+          <a class="aviso-porta" href="{{ links.hackathon }}" target="_blank" rel="noopener noreferrer">
+            <span class="aviso-porta-selo">Hackathon</span>
+            <strong>Inscrever minha equipe</strong>
+            <span class="aviso-porta-desc">No portal do hackathon. Só estudantes CIMATEC.</span>
+            <span class="aviso-porta-seta" aria-hidden="true">{{ ic.icone('externo', 15) }}</span>
+          </a>
+          {% endif %}
+          {% if links.arenaCompeticoes %}
+          <a class="aviso-porta" href="{{ links.arenaCompeticoes }}" target="_blank" rel="noopener noreferrer">
+            <span class="aviso-porta-selo">Competições</span>
+            <strong>Código e cibersegurança</strong>
+            <span class="aviso-porta-desc">Olimpíada de Programação, DeepRacer, CTF e Capture The Leak.</span>
+            <span class="aviso-porta-seta" aria-hidden="true">{{ ic.icone('externo', 15) }}</span>
+          </a>
+          {% endif %}
+          {% if links.arenaJogosDigitais %}
+          <a class="aviso-porta" href="{{ links.arenaJogosDigitais }}" target="_blank" rel="noopener noreferrer">
+            <span class="aviso-porta-selo">E-sports</span>
+            <strong>Jogos digitais</strong>
+            <span class="aviso-porta-desc">LoL, Valorant, EA FC 26, TFT e Brawl Stars.</span>
+            <span class="aviso-porta-seta" aria-hidden="true">{{ ic.icone('externo', 15) }}</span>
+          </a>
+          {% endif %}
+          {% if links.arenaJogosMesa %}
+          <a class="aviso-porta" href="{{ links.arenaJogosMesa }}" target="_blank" rel="noopener noreferrer">
+            <span class="aviso-porta-selo">Arena Day</span>
+            <strong>Jogos de mesa</strong>
+            <span class="aviso-porta-desc">Ping Pong, Totó, Dominó e Truco.</span>
+            <span class="aviso-porta-seta" aria-hidden="true">{{ ic.icone('externo', 15) }}</span>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="capa-acoes fade-in">
+        {# `btn-secondary`: os dois rolam a própria página, e o âmbar fica
+           para o que leva para fora. #}
         <a class="btn-secondary" href="#arena">
           <img class="btn-ilustra" src="{{ static('images/semcomp/icones/competicoes.webp') }}" alt="" aria-hidden="true" width="26" height="20">
-          Competições
+          Ver as competições
         </a>
 
         <a class="btn-secondary" href="#programacao">Ver os cinco dias</a>

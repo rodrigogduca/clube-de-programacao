@@ -48,3 +48,9 @@ onde o Instagram entrega a imagem em tamanho maior. O perfil
 O site do Bahia RT (acso.uneb.br/bahiart) vem do Linktree oficial da equipe
 (linktr.ee/BahiaRT). O link da bio do I.T. Girls League é um formulário, não
 um site, e ficou de fora.
+
+## Entrou em 28/09/2026
+
+| arquivo    | fonte                                          | alteração |
+|------------|------------------------------------------------|-----------|
+| `laes.png` | foto de perfil do Instagram @laes.ucsal        | fundo marinho tirado; notebook e letreiro → `--giz`; laranja intacto; recortado, 200px de altura |

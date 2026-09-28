@@ -181,6 +181,10 @@
          abre o modal de mesmo id. Não há um listener por botão. #}
       <li><button type="button" class="nav-item" data-modal="modalComunidade">Comunidade</button></li>
       <li><a href="{{ url('semcomp') }}" class="nav-item">SEMCOMP</a></li>
+      {# Atalho para as inscrições do hackathon e das competições, na capa da /semcomp. #}
+      {% if links.hackathon or links.arenaCompeticoes or links.arenaJogosDigitais or links.arenaJogosMesa %}
+      <li><a href="{{ url('semcomp') }}#inscricoes-a-parte" class="nav-item nav-destaque">Inscrições</a></li>
+      {% endif %}
       <li><a href="{{ url('seja_membro') }}" class="nav-item nav-destaque">Seja Membro</a></li>
       {% if user.is_authenticated %}
       <li>
@@ -220,6 +224,9 @@
   <div class="mobile-menu" id="mobileMenu">
     <button type="button" class="mobile-item" data-modal="modalComunidade">Comunidade</button>
     <a href="{{ url('semcomp') }}" class="mobile-item">SEMCOMP</a>
+    {% if links.hackathon or links.arenaCompeticoes or links.arenaJogosDigitais or links.arenaJogosMesa %}
+    <a href="{{ url('semcomp') }}#inscricoes-a-parte" class="mobile-item">Inscrições</a>
+    {% endif %}
     <a href="{{ url('seja_membro') }}" class="mobile-item">Seja Membro</a>
     {% if user.is_authenticated %}
     <a href="{{ url('painel') }}" class="mobile-item">Painel</a>
