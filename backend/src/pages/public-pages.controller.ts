@@ -28,7 +28,7 @@ export class PublicPagesController {
   ) {}
 
   @Get()
-  @Render('core/home')
+  @Render('pages/site/home')
   async home(@Req() req: SessionRequest) {
     return this.context.base(req);
   }
@@ -40,14 +40,14 @@ export class PublicPagesController {
    * destinos externos já chegam nele como `links`.
    */
   @Get('seja-membro')
-  @Render('core/seja_membro')
+  @Render('pages/site/seja_membro')
   async sejaMembro(@Req() req: SessionRequest) {
     return this.context.base(req);
   }
 
   /** Página do maior evento do clube. Estática: só o contexto base. */
   @Get('semcomp')
-  @Render('core/semcomp')
+  @Render('pages/semcomp/evento')
   async semcomp(@Req() req: SessionRequest) {
     return this.context.base(req);
   }
@@ -64,14 +64,14 @@ export class PublicPagesController {
     }
 
     const ctx = await this.context.base(req);
-    res.render('registration/login', {
+    res.render('pages/auth/login', {
       ...ctx,
       next: next && next.startsWith('/') && !next.startsWith('//') ? next : '',
     });
   }
 
   @Get('solicitar-cadastro')
-  @Render('core/solicitar_cadastro')
+  @Render('pages/site/solicitar_cadastro')
   async solicitarCadastro(@Req() req: SessionRequest) {
     const [ctx, setores] = await Promise.all([
       this.context.base(req),

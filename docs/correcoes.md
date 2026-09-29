@@ -293,7 +293,7 @@ conforme o ambiente: `src/` em desenvolvimento (com `noCache` no Nunjucks) e
   `AuthenticatedRequest`, eliminando o `any` que se espalhava pelos controllers.
 - **`robots.txt` e `sitemap.xml`** implementados (estavam declarados em
   `routes.ts` mas não existiam).
-- **Página de erro** (`core/erro.njk`) criada.
+- **Página de erro** (`pages/erro.njk`) criada.
 
 ## Como isso foi verificado
 
@@ -328,7 +328,7 @@ Leitura — todas as telas responderam 200 com dados reais:
 | Formulários de edição | Preenchidos com os valores do registro |
 | Chat com mensagens | Autor, conteúdo, horário e `data-message-id` presentes |
 | Isolamento de conversas | 404 ao abrir conversa de que não se participa |
-| Página de erro 404 e id inválido | Renderiza `core/erro.njk`; id não numérico dá 400 |
+| Página de erro 404 e id inválido | Renderiza `pages/erro.njk`; id não numérico dá 400 |
 
 Escrita — ciclo reversível, conferido no banco a cada passo:
 

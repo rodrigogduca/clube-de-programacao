@@ -492,7 +492,7 @@ const semcompAgora = (function () {
 /* ---- CONTAGEM REGRESSIVA (topo da /semcomp) ----
    Até o credenciamento do primeiro dia; durante a semana vira "acontecendo
    agora" e, depois, "terminou". Ver o comentário do `#contagemSemcomp` em
-   `core/semcomp.njk`. */
+   `pages/semcomp/evento.njk`. */
 (function () {
   const caixa = document.getElementById('contagemSemcomp');
   if (!caixa) return;
@@ -575,7 +575,7 @@ const semcompAgora = (function () {
    Lê o horário de cada dia nos `data-inicio`/`data-fim` da trilha e desenha
    três coisas: a barra de cima, o preenchimento do filete que liga os dias e
    o selo "Hoje" no dia corrente. Ver o comentário do `.semana-status` em
-   `core/semcomp.njk` para o porquê de ser no navegador. */
+   `pages/semcomp/evento.njk` para o porquê de ser no navegador. */
 (function () {
   const trilha = document.getElementById('trilhaSemana');
   const status = document.getElementById('semanaStatus');

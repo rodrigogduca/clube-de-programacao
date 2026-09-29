@@ -111,7 +111,7 @@ O `WebExceptionFilter` é global e traduz exceções conforme o tipo de cliente:
 | Caminho `/api/*` ou `Accept: application/json` | JSON `{ statusCode, message }` |
 | Qualquer erro 401 | Redirect para `/accounts/login?next=<url>` |
 | `POST` com erro < 500 | Flash de erro + redirect de volta (`Referer` da mesma origem, ou `/painel`) |
-| `GET` com erro | Renderiza `core/erro.njk` |
+| `GET` com erro | Renderiza `pages/erro.njk` |
 | Erro 5xx | Registrado no log com stack; a mensagem crua não vai para o usuário |
 
 Consequência prática: um `ForbiddenException` lançado lá no fundo de um service

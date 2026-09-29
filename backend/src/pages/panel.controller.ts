@@ -96,14 +96,14 @@ export class PanelController {
       membro.cargo === 'vice_presidente';
 
     if (!vePainelCompleto) {
-      res.render('core/painel_membro', {
+      res.render('pages/painel/inicio_membro', {
         ...ctx,
         ...(await this.dadosPainelMembro(membro)),
       });
       return;
     }
 
-    res.render('core/painel_admin', {
+    res.render('pages/painel/inicio_admin', {
       ...ctx,
       ...(await this.dadosPainelCompleto(membro)),
     });
@@ -224,7 +224,7 @@ export class PanelController {
    * painel_membro ja mostrava.
    */
   @Get('painel/membros')
-  @Render('core/membros')
+  @Render('pages/painel/membros/lista')
   async membros(
     @Req() req: AuthenticatedRequest,
     @Query('setor') setorFiltro?: string,
@@ -353,7 +353,7 @@ export class PanelController {
   // ---------------------------------------------------------------- membros
 
   @Get('painel/adicionar-membro')
-  @Render('core/adicionar_membro')
+  @Render('pages/painel/membros/adicionar')
   async novoMembroForm(@Req() req: AuthenticatedRequest) {
     const [ctx, setores] = await Promise.all([
       this.context.base(req),
@@ -396,7 +396,7 @@ export class PanelController {
   }
 
   @Get('painel/membro/:membro_id/editar')
-  @Render('core/editar_membro')
+  @Render('pages/painel/membros/editar')
   async editarMembroForm(
     @Req() req: AuthenticatedRequest,
     @Param('membro_id') membroId: string,
@@ -434,7 +434,7 @@ export class PanelController {
   }
 
   @Get('painel/membro/:membro_id/excluir')
-  @Render('core/excluir_membro')
+  @Render('pages/painel/membros/excluir')
   async excluirMembroForm(
     @Req() req: AuthenticatedRequest,
     @Param('membro_id') membroId: string,
@@ -466,7 +466,7 @@ export class PanelController {
   // ---------------------------------------------------------------- setores
 
   @Get('painel/criar-setor')
-  @Render('core/criar_setor')
+  @Render('pages/painel/setores/criar')
   async novoSetorForm(@Req() req: AuthenticatedRequest) {
     return this.context.base(req);
   }
@@ -487,7 +487,7 @@ export class PanelController {
   }
 
   @Get('painel/setor/:setor_id/editar')
-  @Render('core/editar_setor')
+  @Render('pages/painel/setores/editar')
   async editarSetorForm(
     @Req() req: AuthenticatedRequest,
     @Param('setor_id') setorId: string,
@@ -520,7 +520,7 @@ export class PanelController {
   }
 
   @Get('painel/setor/:setor_id/excluir')
-  @Render('core/excluir_setor')
+  @Render('pages/painel/setores/excluir')
   async excluirSetorForm(
     @Req() req: AuthenticatedRequest,
     @Param('setor_id') setorId: string,
@@ -589,7 +589,7 @@ export class PanelController {
       res.render('partials/detalhe_tarefa', dados);
       return;
     }
-    res.render('core/tarefa', dados);
+    res.render('pages/painel/tarefas/detalhe', dados);
   }
 
   @Get('painel/criar-tarefa')
@@ -618,7 +618,7 @@ export class PanelController {
       res.render('partials/form_tarefa', dados);
       return;
     }
-    res.render('core/criar_tarefa', dados);
+    res.render('pages/painel/tarefas/criar', dados);
   }
 
   @Post('painel/criar-tarefa')
@@ -676,7 +676,7 @@ export class PanelController {
       res.render('partials/form_tarefa', dados);
       return;
     }
-    res.render('core/editar_tarefa', dados);
+    res.render('pages/painel/tarefas/editar', dados);
   }
 
   @Post('painel/tarefa/:tarefa_id/editar')
@@ -735,7 +735,7 @@ export class PanelController {
   }
 
   @Get('painel/tarefa/:tarefa_id/excluir')
-  @Render('core/excluir_tarefa')
+  @Render('pages/painel/tarefas/excluir')
   async excluirTarefaForm(
     @Req() req: AuthenticatedRequest,
     @Param('tarefa_id') tarefaId: string,
@@ -879,7 +879,7 @@ export class PanelController {
   // ----------------------------------------------------------------- anexos
 
   @Get('painel/tarefa/:tarefa_id/anexos')
-  @Render('core/gerenciar_anexos')
+  @Render('pages/painel/anexos/gerenciar')
   async anexosForm(
     @Req() req: AuthenticatedRequest,
     @Param('tarefa_id') tarefaId: string,
@@ -960,7 +960,7 @@ export class PanelController {
   }
 
   @Get('painel/anexo/:anexo_id/editar')
-  @Render('core/editar_anexo')
+  @Render('pages/painel/anexos/editar')
   async editarAnexoForm(
     @Req() req: AuthenticatedRequest,
     @Param('anexo_id') anexoId: string,
@@ -995,7 +995,7 @@ export class PanelController {
   }
 
   @Get('painel/anexo/:anexo_id/excluir')
-  @Render('core/excluir_anexo')
+  @Render('pages/painel/anexos/excluir')
   async excluirAnexoForm(
     @Req() req: AuthenticatedRequest,
     @Param('anexo_id') anexoId: string,

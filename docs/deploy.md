@@ -259,7 +259,7 @@ cd backend
 npm run typecheck
 npm run build
 npx jest
-node render-check.cjs      # renderiza todas as telas com dados de mentira
+node scripts/render-check.cjs     # renderiza todas as telas com dados de mentira
 ```
 
 Para exercitar o mesmo caminho da Vercel na sua máquina — o `api/index.js`

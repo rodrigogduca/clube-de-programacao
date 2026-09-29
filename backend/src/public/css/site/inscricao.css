@@ -1,7 +1,7 @@
 /* ==========================================================================
    INSCRIÇÃO NA SEMCOMP — /semcomp/inscricao e /semcomp/inscricao/gerenciar
 
-   Só esta tela carrega esta folha (ver `core/semcomp_inscricao.njk`). O resto
+   Só esta tela carrega esta folha (ver `pages/semcomp/inscricao.njk`). O resto
    vem do `publico.css`: container, títulos de seção e botões.
    ========================================================================== */
 

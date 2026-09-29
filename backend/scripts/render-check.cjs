@@ -114,23 +114,23 @@ const porStatus = (s) => tarefas.filter((t) => t.status === s);
 const setores = [setorDev, setorDesign];
 
 const casos = [
-  ['core/membros.njk', { ...base, membros, setores,
+  ['pages/painel/membros/lista.njk', { ...base, membros, setores,
     membros_por_cargo: [['Presidente', [membros[0]]], ['Diretor', [membros[1]]], ['Membro', [membros[2]]]],
     total_membros: 3, total_sem_setor: 1, setor_filtro: '', escopo_reduzido: false, escopo_setor: null }],
   // Diretório de um diretor: escopo reduzido, com o setor nomeado no aviso.
-  ['core/membros.njk (escopo de setor)', { ...base, membros: [membros[1]], setores: [setorDesign],
+  ['pages/painel/membros/lista.njk (escopo de setor)', { ...base, membros: [membros[1]], setores: [setorDesign],
     membros_por_cargo: [['Diretor', [membros[1]]]],
     total_membros: 1, total_sem_setor: 0, setor_filtro: '',
-    escopo_reduzido: true, escopo_setor: setorDesign }, 'core/membros.njk'],
-  ['core/membros.njk (vazio)', { ...base, membros: [], setores: [], membros_por_cargo: [],
-    total_membros: 0, total_sem_setor: 0, setor_filtro: '', escopo_reduzido: true, escopo_setor: null }, 'core/membros.njk'],
-  ['core/tarefa.njk', { ...base, tarefa: tarefas[0], upload_habilitado: true,
+    escopo_reduzido: true, escopo_setor: setorDesign }, 'pages/painel/membros/lista.njk'],
+  ['pages/painel/membros/lista.njk (vazio)', { ...base, membros: [], setores: [], membros_por_cargo: [],
+    total_membros: 0, total_sem_setor: 0, setor_filtro: '', escopo_reduzido: true, escopo_setor: null }, 'pages/painel/membros/lista.njk'],
+  ['pages/painel/tarefas/detalhe.njk', { ...base, tarefa: tarefas[0], upload_habilitado: true,
     anexos: [{ id: 1, nome: 'brief.pdf', tipo: 'arquivo', url: 'http://x/y.pdf' }] }],
-  ['core/tarefa.njk (atrasada, sem anexo)', { ...base, tarefa: tarefas[1], anexos: [], upload_habilitado: true }, 'core/tarefa.njk'],
-  ['core/tarefa.njk (mínima)', { ...base, tarefa: tarefas[2], anexos: [], upload_habilitado: true }, 'core/tarefa.njk'],
+  ['pages/painel/tarefas/detalhe.njk (atrasada, sem anexo)', { ...base, tarefa: tarefas[1], anexos: [], upload_habilitado: true }, 'pages/painel/tarefas/detalhe.njk'],
+  ['pages/painel/tarefas/detalhe.njk (mínima)', { ...base, tarefa: tarefas[2], anexos: [], upload_habilitado: true }, 'pages/painel/tarefas/detalhe.njk'],
   // Sem Cloudinary o campo de arquivo some e a tela avisa que só links funcionam.
-  ['core/tarefa.njk (upload desligado)', { ...base, tarefa: tarefas[0], anexos: [], upload_habilitado: false }, 'core/tarefa.njk'],
-  ['core/painel_admin.njk', { ...base, membros, setores: [{ ...setorDev, membros: [membros[0]] }, { ...setorDesign, membros: [membros[1]] }],
+  ['pages/painel/tarefas/detalhe.njk (upload desligado)', { ...base, tarefa: tarefas[0], anexos: [], upload_habilitado: false }, 'pages/painel/tarefas/detalhe.njk'],
+  ['pages/painel/inicio_admin.njk', { ...base, membros, setores: [{ ...setorDev, membros: [membros[0]] }, { ...setorDesign, membros: [membros[1]] }],
     tarefas, total_membros: 3,
     todas_tarefas_pendente: porStatus('pendente'), todas_tarefas_em_andamento: porStatus('em_andamento'),
     todas_tarefas_concluida: porStatus('concluida'),
@@ -139,24 +139,24 @@ const casos = [
     setores_gerenciaveis: [1, 2], setor_ativo: setorDev, total_atrasadas: 1, total_sem_prazo: 1,
     escopo_restrito: false, escopo_setor: null }],
   // Painel do diretor: um setor só, sem abas e sem o balde "sem setor".
-  ['core/painel_admin.njk (diretor, escopo restrito)', { ...base, membro: membros[1], membros: [membros[1]],
+  ['pages/painel/inicio_admin.njk (diretor, escopo restrito)', { ...base, membro: membros[1], membros: [membros[1]],
     setores: [setorDesign], tarefas: [tarefas[1]], total_membros: 1,
     todas_tarefas_pendente: [tarefas[1]], todas_tarefas_em_andamento: [], todas_tarefas_concluida: [],
     tarefas_sem_setor_pendente: [], tarefas_sem_setor_em_andamento: [], tarefas_sem_setor_concluida: [],
     tarefas_por_setor: {}, setores_gerenciaveis: [], setor_ativo: setorDesign,
     total_atrasadas: 1, total_sem_prazo: 0,
-    escopo_restrito: true, escopo_setor: setorDesign }, 'core/painel_admin.njk'],
-  ['core/painel_admin.njk (tudo em dia)', { ...base, membros, setores: [], tarefas: [], total_membros: 3,
+    escopo_restrito: true, escopo_setor: setorDesign }, 'pages/painel/inicio_admin.njk'],
+  ['pages/painel/inicio_admin.njk (tudo em dia)', { ...base, membros, setores: [], tarefas: [], total_membros: 3,
     todas_tarefas_pendente: [], todas_tarefas_em_andamento: [], todas_tarefas_concluida: [],
     tarefas_sem_setor_pendente: [], tarefas_sem_setor_em_andamento: [], tarefas_sem_setor_concluida: [],
     tarefas_por_setor: {}, setores_gerenciaveis: [], setor_ativo: null,
     total_atrasadas: 0, total_sem_prazo: 0,
-    escopo_restrito: false, escopo_setor: null }, 'core/painel_admin.njk'],
-  ['core/painel_membro.njk', { ...base, can_manage_tasks: false, membro: membros[2],
+    escopo_restrito: false, escopo_setor: null }, 'pages/painel/inicio_admin.njk'],
+  ['pages/painel/inicio_membro.njk', { ...base, can_manage_tasks: false, membro: membros[2],
     colegas_setor: [membros[1]], total_minhas: 3, total_atrasadas: 1, tarefas_pendente: porStatus('pendente'),
     tarefas_em_andamento: porStatus('em_andamento'), tarefas_concluida: porStatus('concluida') }],
-  ['core/criar_tarefa.njk', { ...base, membros, setores, status_inicial: 'em_andamento' }],
-  ['core/editar_tarefa.njk', { ...base, membros, setores, tarefa: tarefas[0] }],
+  ['pages/painel/tarefas/criar.njk', { ...base, membros, setores, status_inicial: 'em_andamento' }],
+  ['pages/painel/tarefas/editar.njk', { ...base, membros, setores, tarefa: tarefas[0] }],
   ['partials/form_tarefa.njk (criar)', { ...base, membros, setores, status_inicial: 'pendente' }, 'partials/form_tarefa.njk'],
   ['partials/form_tarefa.njk (editar)', { ...base, membros, setores, tarefa: tarefas[0] }, 'partials/form_tarefa.njk'],
   ['partials/form_tarefa.njk (old após erro)', { ...base, membros, setores,
@@ -170,29 +170,29 @@ const casos = [
   // Telas de formulário e confirmação. Entraram aqui quando passaram a usar o
   // cabeçalho do painel: elas leem `setor.tarefas`, `tarefa.anexos` e
   // `membro_alvo.setor`, e compilar não prova que esses caminhos existem.
-  ['core/criar_setor.njk', { ...base }],
-  ['core/editar_setor.njk', { ...base, setor: setores[0] }],
-  ['core/excluir_setor.njk', { ...base, setor: setores[0] }],
-  ['core/adicionar_membro.njk', { ...base, restrito_ao_setor: false }],
-  ['core/adicionar_membro.njk (diretor)', { ...base, restrito_ao_setor: true }, 'core/adicionar_membro.njk'],
-  ['core/editar_membro.njk', { ...base, membro_alvo: membros[0] }],
-  ['core/excluir_membro.njk', { ...base, membro_alvo: membros[0] }],
-  ['core/excluir_tarefa.njk', { ...base, tarefa: tarefas[0] }],
-  ['core/gerenciar_anexos.njk', { ...base, tarefa: tarefas[0], upload_habilitado: true,
+  ['pages/painel/setores/criar.njk', { ...base }],
+  ['pages/painel/setores/editar.njk', { ...base, setor: setores[0] }],
+  ['pages/painel/setores/excluir.njk', { ...base, setor: setores[0] }],
+  ['pages/painel/membros/adicionar.njk', { ...base, restrito_ao_setor: false }],
+  ['pages/painel/membros/adicionar.njk (diretor)', { ...base, restrito_ao_setor: true }, 'pages/painel/membros/adicionar.njk'],
+  ['pages/painel/membros/editar.njk', { ...base, membro_alvo: membros[0] }],
+  ['pages/painel/membros/excluir.njk', { ...base, membro_alvo: membros[0] }],
+  ['pages/painel/tarefas/excluir.njk', { ...base, tarefa: tarefas[0] }],
+  ['pages/painel/anexos/gerenciar.njk', { ...base, tarefa: tarefas[0], upload_habilitado: true,
     anexos: [{ id: 1, nome: 'brief.pdf', tipo: 'arquivo', url: 'http://x/y.pdf', download_url: '/y.pdf',
       data_upload: new Date(), enviado_por: membros[0] }] }],
-  ['core/gerenciar_anexos.njk (sem upload, sem anexo)', { ...base, tarefa: tarefas[0],
-    upload_habilitado: false, anexos: [] }, 'core/gerenciar_anexos.njk'],
-  ['core/editar_anexo.njk', { ...base, tarefa: tarefas[0],
+  ['pages/painel/anexos/gerenciar.njk (sem upload, sem anexo)', { ...base, tarefa: tarefas[0],
+    upload_habilitado: false, anexos: [] }, 'pages/painel/anexos/gerenciar.njk'],
+  ['pages/painel/anexos/editar.njk', { ...base, tarefa: tarefas[0],
     anexo: { id: 1, nome: 'brief.pdf', tipo: 'arquivo', url: '' } }],
-  ['core/editar_anexo.njk (link)', { ...base, tarefa: tarefas[0],
-    anexo: { id: 2, nome: 'figma', tipo: 'link', url: 'http://x' } }, 'core/editar_anexo.njk'],
-  ['core/excluir_anexo.njk', { ...base, tarefa: tarefas[0],
+  ['pages/painel/anexos/editar.njk (link)', { ...base, tarefa: tarefas[0],
+    anexo: { id: 2, nome: 'figma', tipo: 'link', url: 'http://x' } }, 'pages/painel/anexos/editar.njk'],
+  ['pages/painel/anexos/excluir.njk', { ...base, tarefa: tarefas[0],
     anexo: { id: 1, nome: 'brief.pdf', tipo: 'arquivo', url: '', data_upload: new Date(),
       enviado_por: membros[0] } }],
-  ['core/excluir_anexo.njk (link)', { ...base, tarefa: tarefas[0],
+  ['pages/painel/anexos/excluir.njk (link)', { ...base, tarefa: tarefas[0],
     anexo: { id: 2, nome: 'figma', tipo: 'link', url: 'http://x', data_upload: new Date(),
-      enviado_por: membros[0] } }, 'core/excluir_anexo.njk'],
+      enviado_por: membros[0] } }, 'pages/painel/anexos/excluir.njk'],
 ];
 
 let falhas = 0;
@@ -216,7 +216,7 @@ if (process.argv[2] !== '--inspecionar') process.exit(falhas ? 1 : 0);
 
 // Inspeção da saída, ativada por argumento
 if (process.argv[2] === '--inspecionar') {
-  const html = env.render('core/membros.njk', casos[0][1]);
+  const html = env.render('pages/painel/membros/lista.njk', casos[0][1]);
   const linhas = html.split('\n').map((l) => l.trim()).filter(Boolean);
   const mostrar = (rotulo, teste, n) => {
     console.log('\n--- ' + rotulo + ' ---');

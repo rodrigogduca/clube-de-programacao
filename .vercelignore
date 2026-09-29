@@ -21,7 +21,7 @@ docs
 specs
 .claude
 backend/test
-backend/render-check.cjs
+backend/scripts/render-check.cjs
 LICENSE
 README.md
 

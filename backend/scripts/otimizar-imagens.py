@@ -22,7 +22,7 @@ na mão:
    queixo de quem é mais alto no quadro.
 
 Para adicionar um diretor novo: solte a foto em `assets/originais/`, acrescente
-o par em DIRETORES e rode de novo. Depois referencie em views/core/home.njk, na
+o par em DIRETORES e rode de novo. Depois referencie em views/pages/site/home.njk, na
 lista `diretores`.
 
 ATENÇÃO — treze originais não estão mais no repositório, só os derivados deles:
@@ -110,7 +110,7 @@ CLUBES = {
 # foto nova: original em `assets/originais/`, derivado em `src/public/images/`.
 GALERIA = {
     'IMG_3103.JPG': 'stand.jpg',
-    'evento.jpg': 'evento.jpg',
+    'fotos/clube/evento.jpg': 'evento.jpg',
 }
 
 # Material da SEMCOMP -> images/semcomp/. Fica junto porque a home consome os
@@ -121,7 +121,7 @@ SEMCOMP_FOTO = {
 
 # Banner deitado da SEMCOMP -> images/semcomp/.
 #
-# `semcomp-estande.jpg` é vertical de celular (4000x6000 depois do EXIF) e vira
+# `fotos/semcomp/estande.jpg` é vertical de celular (4000x6000 depois do EXIF) e vira
 # faixa 16:9 na seção "o que acontece", logo abaixo do cartão "Estandes — o
 # corredor": é literalmente a cena que o cartão descreve.
 #
@@ -131,12 +131,12 @@ BANNERS_SEMCOMP = {
     # da vertical, não no meio. A 0.22 a testa dos dois já encostava na borda
     # e a 0.28 as duas cabeças saíam do quadro — o que sobrava era um banner
     # de mãos segurando lata.
-    'semcomp-estande.jpg': ('estande.jpg', 0.13),
+    'fotos/semcomp/estande.jpg': ('estande.jpg', 0.13),
 }
 
 # Foto 4:3 da SEMCOMP -> images/semcomp/.
 #
-# `semcomp-plateia.jpg` é o auditório cheio visto de perto (6000x4000 de câmera,
+# `fotos/semcomp/plateia.jpg` é o auditório cheio visto de perto (6000x4000 de câmera,
 # 7 MB) e ocupa o quadro da seção "sobre o evento". ALI ESTAVA `turma.jpg`, QUE
 # É A FOTO DO HERÓI da mesma página: a mesma imagem duas vezes numa rolagem só é
 # repetição, não é ritmo — e no herói ela nem se vê direito, porque vive sob as
@@ -151,7 +151,7 @@ BANNERS_SEMCOMP = {
 #
 #   origem -> (saída, fração da altura onde o recorte começa)
 FOTOS_SEMCOMP = {
-    'semcomp-plateia.jpg': ('plateia.jpg', 0.20),
+    'fotos/semcomp/plateia.jpg': ('plateia.jpg', 0.20),
 }
 
 # Nome de saída sem espaço: o helper `static()` dos templates não escapa espaço
@@ -205,10 +205,10 @@ LOGO = {
 FOTOS_NOVAS = {
     # 0.24 e não 0.30: em 0.30 sobrava uma fileira inteira de carteira vazia no
     # pé da foto, e o grupo ficava espremido contra a borda de cima.
-    'prosel.HEIC': ('prosel.jpg', 0.24),
+    'fotos/clube/prosel.heic': ('prosel.jpg', 0.24),
     # 0.22 sobe o bastante para o "Bem vindas à MFP" escrito no quadro entrar
     # no quadro — é a legenda da foto, escrita à mão pelas próprias meninas.
-    'maratona-feminina.HEIC': ('maratona-feminina.jpg', 0.22),
+    'fotos/clube/maratona-feminina.heic': ('maratona-feminina.jpg', 0.22),
 }
 
 # Recorte deitado para banner. A foto do laboratório é 2256x4000 (vertical de
@@ -216,17 +216,17 @@ FOTOS_NOVAS = {
 # do meio, e teto e mesa vazia tomam o resto. `TOPO_BANNER` é onde essa faixa
 # começa, em fração da altura.
 BANNERS = {
-    'Maratonas1.jpg': 'maratona-lab.jpg',
+    'fotos/clube/maratona-lab.jpg': 'maratona-lab.jpg',
 }
 
 # Logotipos de terceiros -> images/competicoes/.
 #
 # O MATERIAL FOI TROCADO: as três marcas chegaram de novo, agora em PNG de
-# 1080x1350 com alfa (`obi logo.png`, `mfp nome.png`, ...) e cada uma em DOIS
+# 1080x1350 com alfa (`competicoes/obi-selo.png`, `competicoes/mfp-nome.png`, ...) e cada uma em DOIS
 # arquivos — o símbolo ("logo") e o wordmark ("nome"). Antes a SBC e a OBI só
 # existiam em JPEG desenhado para fundo BRANCO, e o script precisava repintá-las
 # inteiras em mono claro para elas assentarem no escuro (a função `logo_mono`,
-# que saiu junto com os originais `maratona-logo.jpg` e `logo-obi2.jpg` — os
+# que saiu junto com os originais `competicoes/maratona-logo.jpg` e `competicoes/obi-logo.jpg` — os
 # arquivos continuam em `assets/originais/`, sem mapa que os aponte).
 #
 # O GANHO: a OBI volta a aparecer NA COR DELA (o disco amarelo com a lâmpada
@@ -262,20 +262,20 @@ BANNERS = {
 # aparentes diferentes.
 #
 # A MARATONA SBC SAIU DESTA TABELA. Os dois arquivos dela em
-# `src/public/images/competicoes/` — `sbc.png` e `maratona sbc nome.png` — são
+# `src/public/images/competicoes/` — `sbc.png` e `sbc-marca.png` — são
 # postos à mão, na arte original e no AZUL ORIGINAL da marca, e a página os
 # consome como estão. Enquanto for assim, gerar derivado aqui só serviria para
 # este script apagar o arquivo posto à mão na próxima vez que alguém o rodasse.
 #
 # Se um dia a decisão voltar a ser repintar a marca em claro, a linha é
-#     'maratona sbc logo.png': ('sbc.png', 'tingir', 0.06),
+#     'competicoes/sbc-selo.png': ('sbc.png', 'tingir', 0.06),
 # e o wordmark, em MARCAS_COMP,
-#     'maratona sbc nome.png': ('sbc-marca.png', 'tingir'),
+#     'competicoes/sbc-nome.png': ('sbc-marca.png', 'tingir'),
 # com os dois originais já em `assets/originais/`. O `tingir` existe e continua
 # testado; o que mudou foi a escolha, não a receita.
 SELOS_COMP = {
-    'obi logo.png': ('obi.png', 'direto', 0.06),
-    'mfp logo.png': ('mfp.png', 'do-preto', 0.02),
+    'competicoes/obi-selo.png': ('obi.png', 'direto', 0.06),
+    'competicoes/mfp-selo.png': ('mfp.png', 'do-preto', 0.02),
 }
 
 # Wordmark: mantém a proporção do próprio desenho e é limitado por LARGURA —
@@ -288,12 +288,12 @@ SELOS_COMP = {
 # Rodar este script os SUBSTITUI pelas versões tingidas de branco. Antes de
 # rodar, veja o aviso no cabeçalho do arquivo.
 MARCAS_COMP = {
-    'obi nome.png': ('obi-marca.png', 'direto'),
-    'mfp nome.png': ('mfp-marca.png', 'do-preto'),
+    'competicoes/obi-nome.png': ('obi-marca.png', 'direto'),
+    'competicoes/mfp-nome.png': ('mfp-marca.png', 'do-preto'),
 }
 
 LARGURA_BANNER = 1600
-TOPO_BANNER = 0.44        # onde a faixa com gente começa em Maratonas1.jpg
+TOPO_BANNER = 0.44        # onde a faixa com gente começa em fotos/clube/maratona-lab.jpg
 PROPORCAO_BANNER = 16 / 9
 LARGURA_GRUPO = 1400
 # (o topo de cada foto de grupo vive junto do nome dela, em FOTOS_NOVAS)
@@ -540,7 +540,7 @@ def largura_fixa(origem, largura):
 def faixa(origem, largura, proporcao, topo_rel):
     """Recorta uma faixa deitada de uma foto vertical de celular.
 
-    As fotos novas são 9:16 e o assunto ocupa uma tira no meio: em `Maratonas1`
+    As fotos novas são 9:16 e o assunto ocupa uma tira no meio: em `maratona-lab.jpg`
     o terço de cima é teto e luminária, o de baixo é mesa com garrafa e mochila.
     Usada inteira num banner, a página mostraria dois metros de teto.
 
@@ -548,7 +548,7 @@ def faixa(origem, largura, proporcao, topo_rel):
     CORTE — não um deslocamento aplicado dentro de um dos ramos. Era isso antes,
     e o efeito era que `topo_rel` valia só para foto em pé: numa foto que já
     chega mais deitada que o alvo, o recorte saía centralizado na vertical e não
-    havia como dizer "comece mais embaixo". `semcomp-plateia.jpg` é 6000x4000
+    havia como dizer "comece mais embaixo". `fotos/semcomp/plateia.jpg` é 6000x4000
     com o terço de cima em parede vazia, e sem este corte um terço do quadro
     final era parede.
 

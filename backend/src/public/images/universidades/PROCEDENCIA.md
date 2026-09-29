@@ -1,7 +1,7 @@
 # Logos das universidades — de onde vieram
 
 Baixados do site oficial de cada universidade em 23/09/2026. Os arquivos
-como vieram ficam em `outros/universidades/` na raiz do repositório.
+como vieram ficam em `assets/originais/universidades/` na raiz do repositório.
 
 | arquivo        | fonte                                                                 | alteração |
 |----------------|-----------------------------------------------------------------------|-----------|
@@ -37,4 +37,4 @@ sobre cor, e chapados em branco viravam uma mancha. Nos dois arquivos atuais
 cada pixel é branco, e a transparência vem do brilho que ele tinha: o claro
 fica sólido, as cores ficam a meia transparência (com piso de 18%, para a
 silhueta do brasão continuar aparecendo) e o contorno quase preto some. As
-versões coloridas saem de novo dos originais em `outros/universidades/`.
+versões coloridas saem de novo dos originais em `assets/originais/universidades/`.

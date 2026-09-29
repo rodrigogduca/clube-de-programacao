@@ -6,17 +6,21 @@ Onde ficam os arquivos visuais do site, o que é original e o que é derivado.
 
 ```
 assets/originais/                    FONTE — nunca servida
-├── Maratonas1.jpg                   6 MB, 2256×4000 (celular)
-├── prosel.HEIC                      2,7 MB, 4284×5712
-├── maratona-feminina.HEIC           2,9 MB
-├── evento.jpg                       5,7 MB, arquivo de câmera
-├── semcomp-estande.jpg              8,3 MB, 6000×4000 (EXIF 8 → vertical)
-├── semcomp-plateia.jpg              7,4 MB, 6000×4000 → semcomp/plateia.jpg
-├── semcomp-vr.jpg                   6,8 MB — ainda sem derivado
-├── sbc-galera.jpeg                  138 KB, 903×637 — já em tamanho de web
-├── obi logo.png, obi nome.png, …    marcas de competição, 1080×1350 com alfa
-├── maratona sbc logo.png, … nome …  o mesmo par da SBC, já aparado na origem
-└── logo-mfp.png, logo-obi2.jpg, …   arte de terceiros como veio (substituída)
+├── competicoes/                     marcas: obi-selo/nome, mfp-selo/nome,
+│                                    sbc-selo/nome, occ-*, logos antigos
+├── deepracer/                       carro e referências do AWS DeepRacer
+├── fotos/
+│   ├── clube/                       maratona-lab.jpg (6 MB, celular),
+│   │                                prosel.heic, maratona-feminina.heic,
+│   │                                evento.jpg (câmera), maratona-sbc.jpeg
+│   └── semcomp/                     estande.jpg, plateia.jpg,
+│       │                            realidade-virtual.jpg (sem derivado)
+│       └── 2026/                    fotos de câmera da edição 2026
+├── icones/semcomp/                  ícones da página da SEMCOMP
+├── iniciativas/                     logos das iniciativas parceiras
+├── jogos/{digitais,presenciais}/    arte dos jogos da arena
+├── parceiros/                       logos de patrocinadores
+└── universidades/                   logos das universidades
 
 backend/src/public/                  PUBLICADO — só derivado
 ├── fonts/
@@ -32,7 +36,7 @@ backend/src/public/                  PUBLICADO — só derivado
     └── semcomp/                     ← letreiro, miniatura social e foto
 ```
 
-`sbc-galera.jpeg` é a exceção que confirma a regra do script: chegou com 903×637
+`fotos/clube/maratona-sbc.jpeg` é a exceção que confirma a regra do script: chegou com 903×637
 e 138 KB, ou seja **já em tamanho de web**, então a cópia em
 `images/galeria/maratona-sbc.jpeg` é o próprio arquivo e não um derivado. Passá-lo
 pelo `otimizar-imagens.py` não teria o que reduzir — o script nunca amplia, e
@@ -50,6 +54,15 @@ lugar delas continuava ali. E a pasta ficava no mesmo nível de `backend/` e
 `.vercelignore`: 14,6 MB que a função nunca abre não precisam subir em cada
 deploy.
 
+## Nomes de arquivo
+
+Todo arquivo novo, original ou derivado, segue a mesma regra: **minúsculas,
+sem acento, sem espaço, palavras separadas por hífen** e extensão em minúsculas
+(`maratona-feminina.heic`, não `Maratona Feminina.HEIC`). Nome com espaço
+funciona no navegador (vira `%20`), mas quebra script de shell, confunde diff e
+não sobrevive a certos uploads. O nome descreve o conteúdo — nada de `IMG_0229`,
+`novos-`, `-final` ou hash de CDN.
+
 ## Gerar os derivados
 
 ```bash
@@ -64,10 +77,11 @@ em `assets/originais/`, e imprime de qual das duas veio.
 
 ### Foto nova de diretor
 
-1. Solte a foto em `assets/originais/`.
-2. Acrescente o par em `DIRETORES`, dentro de `scripts/otimizar-imagens.py`.
+1. Solte a foto em `assets/originais/fotos/diretores/`.
+2. Acrescente o par em `DIRETORES`, dentro de `scripts/otimizar-imagens.py`, com
+   o caminho relativo a `assets/originais/` (ex.: `'fotos/diretores/ana.jpg'`).
 3. Rode o script.
-4. Acrescente a pessoa na lista `diretores` de `views/core/home.njk`.
+4. Acrescente a pessoa na lista `diretores` de `views/pages/site/home.njk`.
 
 Duas coisas que o script resolve e que erram fácil se refeitas à mão:
 
@@ -80,7 +94,7 @@ Duas coisas que o script resolve e que erram fácil se refeitas à mão:
 ## Logotipo de terceiro em página escura
 
 As três marcas de competição chegaram em **PNG de 1080×1350 com alfa**, cada uma
-em dois arquivos: o símbolo (`obi logo.png`) e o wordmark (`obi nome.png`). Os
+em dois arquivos: o símbolo (`competicoes/obi-selo.png`) e o wordmark (`competicoes/obi-nome.png`). Os
 derivados saem de `SELOS_COMP` e `MARCAS_COMP`, e cada linha dessas tabelas diz o
 **tratamento** que aquele arquivo pede — medido uma vez, não deduzido de limiar:
 
@@ -97,16 +111,13 @@ para ~48 px dentro de um selo de 84.
 ### A Maratona SBC saiu do script
 
 Os dois arquivos dela em `images/competicoes/` — `sbc.png` e
-`maratona sbc nome.png` — são **postos à mão, na arte e na cor originais**, e o
+`sbc-marca.png` — são **postos à mão, na arte e na cor originais**, e o
 script não os gera mais: as linhas saíram de `SELOS_COMP` e `MARCAS_COMP` para
 que rodá-lo não apague o que foi posto ali. A receita antiga (`tingir`, com os
 originais em `assets/originais/`) ficou escrita como comentário nas duas tabelas.
 
-É o único par de imagens do projeto que não é derivado, e cobra dois preços:
+É o único par de imagens do projeto que não é derivado, e cobra um preço:
 
-- **`maratona sbc nome.png` tem espaço no nome.** É o único caminho de imagem do
-  projeto com espaço, e funciona — o navegador escapa para `%20` e o servidor
-  estático desescapa. Está assim porque renomear seria mexer no arquivo curado.
 - **O azul não passa no contraste, e o CSS corrige o que o arquivo não corrige.**
   `#09467c` como título do bloco de destaque dá **1,49:1** — e é tão baixo porque
   o brilho do bloco também é azul. `.comp-destaque--sbc` declara
@@ -138,8 +149,8 @@ Três sutilezas que não são óbvias ao ler o código:
   é silhueta aberta e, com o mesmo respiro, lê como menor do que é. "Alinhado"
   aqui quer dizer presença óptica equivalente, não o mesmo número no CSS.
 
-Os originais antigos (`maratona-logo.jpg`, `logo-obi2.jpg`, `mfp-logo.png`,
-`mfp-lofo2.png`) continuam em `assets/originais/` sem mapa que os aponte — foram
+Os originais antigos (`maratona-logo.jpg`, `obi-logo.jpg`, `mfp-logo.png`,
+`mfp-logo-2.png`, `mfp-logo-3.png`, em `competicoes/`) continuam em `assets/originais/` sem mapa que os aponte — foram
 substituídos por este material, e a função `logo_mono()` que os tratava saiu do
 script.
 

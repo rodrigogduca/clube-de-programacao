@@ -41,7 +41,7 @@ export class SignupPagesController {
   ) {}
 
   @Get()
-  @Render('core/solicitacoes')
+  @Render('pages/painel/solicitacoes/lista')
   async lista(
     @Req() req: AuthenticatedRequest,
     @Query('status') status?: string,
@@ -61,7 +61,7 @@ export class SignupPagesController {
   }
 
   @Get(':solicitacao_id/editar')
-  @Render('core/editar_solicitacao')
+  @Render('pages/painel/solicitacoes/editar')
   async editarForm(
     @Req() req: AuthenticatedRequest,
     @Param('solicitacao_id') solicitacaoId: string,

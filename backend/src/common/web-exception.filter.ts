@@ -151,7 +151,7 @@ export class WebExceptionFilter implements ExceptionFilter {
       // sessao ganha um caminho para o painel, quem nao tem ganha o login.
       // Sem isto a tela so sabia dizer "volte para a pagina inicial", que quase
       // nunca era o lugar de onde a pessoa veio.
-      res.status(status).render('core/erro', {
+      res.status(status).render('pages/erro', {
         status,
         titulo: STATUS_TITLES[status] ?? 'Erro',
         mensagem: mensagemParaLeitor(status, message),

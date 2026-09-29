@@ -109,7 +109,7 @@ export class SemcompPublicoController {
   }
 
   @Get()
-  @Render('core/semcomp_inscricao')
+  @Render('pages/semcomp/inscricao')
   @Header('Cache-Control', 'no-store')
   async formulario(@Req() req: SessionRequest) {
     const ctx = await this.context.base(req);
@@ -188,7 +188,7 @@ export class SemcompPublicoController {
   }
 
   @Get('gerenciar/:token')
-  @Render('core/semcomp_inscricao')
+  @Render('pages/semcomp/inscricao')
   @Header('Cache-Control', 'no-store')
   async gerenciar(@Req() req: SessionRequest, @Param('token') token: string) {
     const inscricao = await this.semcomp.porToken(token);

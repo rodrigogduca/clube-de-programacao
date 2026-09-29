@@ -4,7 +4,7 @@
 
   Tudo o que é igual nas três mora aqui: as camadas de luz do fundo, a navbar,
   o menu do celular, os modais e o rodapé. Antes isso era o começo e o fim
-  de `core/home.njk`, e existia uma página pública só; a alternativa a esta
+  de `pages/site/home.njk`, e existia uma página pública só; a alternativa a esta
   camada seria manter três cópias da navbar em dia — que é como um item de menu
   some de uma tela e fica na outra.
 
@@ -450,7 +450,7 @@
     `request.path` com '/semcomp' aqui dentro amarraria o layout à rota, e a
     rota é a coisa que muda (a SEMCOMP já foi modal antes de ser página). O
     bloco inverte a responsabilidade: quem não quer o aviso o dispensa, em uma
-    linha, dentro da própria tela — é o que `core/semcomp.njk` faz no fim do
+    linha, dentro da própria tela — é o que `pages/semcomp/evento.njk` faz no fim do
     arquivo. Qualquer página pública futura nasce com o aviso por padrão, que é
     o padrão certo.
 

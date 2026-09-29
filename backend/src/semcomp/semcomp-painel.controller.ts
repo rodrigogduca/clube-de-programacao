@@ -94,7 +94,7 @@ export class SemcompPainelController {
   }
 
   @Get()
-  @Render('core/semcomp_painel')
+  @Render('pages/painel/semcomp/inicio')
   async inicio(@Req() req: AuthenticatedRequest) {
     const [ctx, resumo] = await Promise.all([
       this.context.base(req),
@@ -123,7 +123,7 @@ export class SemcompPainelController {
   }
 
   @Get('inscritos')
-  @Render('core/semcomp_inscritos')
+  @Render('pages/painel/semcomp/inscritos')
   async inscritos(@Req() req: AuthenticatedRequest) {
     const [ctx, inscritos] = await Promise.all([
       this.context.base(req),
@@ -144,7 +144,7 @@ export class SemcompPainelController {
   }
 
   @Get('atividade/nova')
-  @Render('core/semcomp_atividade_form')
+  @Render('pages/painel/semcomp/atividade_form')
   async novaForm(@Req() req: AuthenticatedRequest) {
     this.exigirDiretoria(req);
     const ctx = await this.context.base(req);
@@ -166,7 +166,7 @@ export class SemcompPainelController {
   }
 
   @Get('atividade/:id')
-  @Render('core/semcomp_atividade')
+  @Render('pages/painel/semcomp/atividade')
   async ver(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
     const [ctx, atividade] = await Promise.all([
       this.context.base(req),
@@ -200,7 +200,7 @@ export class SemcompPainelController {
   }
 
   @Get('atividade/:id/editar')
-  @Render('core/semcomp_atividade_form')
+  @Render('pages/painel/semcomp/atividade_form')
   async editarForm(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
     this.exigirDiretoria(req);
     const [ctx, atividade] = await Promise.all([

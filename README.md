@@ -10,11 +10,16 @@ você só quer rodar o projeto.
 ├── assets/originais/     Arquivos de câmera e arte como vieram. FONTE, não é
 │                         servido: `backend/scripts/otimizar-imagens.py` gera
 │                         os derivados de `src/public/images/` a partir daqui.
+│                         Subpastas por assunto: competicoes/, fotos/,
+│                         icones/, iniciativas/, jogos/, parceiros/…
 ├── backend/              A aplicação inteira (NestJS + Nunjucks + Prisma).
 │   ├── api/index.js      Ponto de entrada da função na Vercel.
-│   ├── prisma/           Schema do banco.
-│   ├── scripts/          Utilitários de manutenção (imagens, admin, build).
-│   ├── src/              Código, templates (`views/`) e estáticos (`public/`).
+│   ├── prisma/           Schema do banco e seed da SEMCOMP.
+│   ├── scripts/          Utilitários de manutenção (imagens, admin, build,
+│   │                     render-check).
+│   ├── src/              Código por módulo (auth, members, tasks, semcomp…),
+│   │   ├── public/       estáticos servidos (css/, js/, images/, fonts/)
+│   │   └── views/        templates: layouts/, partials/ e pages/ por área
 │   └── test/             Testes e2e.
 ├── docs/                 Documentação técnica — o índice abaixo.
 │   └── interno/          Material da diretoria. Git-ignorado de propósito.
@@ -27,6 +32,8 @@ Duas regras que explicam por que as pastas estão assim:
   6 MB de câmera não pode estar ao alcance de um `<img>`.
 - **Documento interno nunca é commitado.** O repositório é público, e
   `docs/interno/` existe justamente para o material que não pode ir junto.
+- **Nome de arquivo sem espaço, sem acento, em minúsculas e com hífen.** Vale
+  para imagem, documento e pasta (ver [Imagens e fontes](docs/imagens-e-fontes.md#nomes-de-arquivo)).
 
 ## Índice
 

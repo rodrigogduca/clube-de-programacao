@@ -1,7 +1,7 @@
 /**
  * DESTINOS EXTERNOS DO SITE PÚBLICO — a única fonte da verdade.
  *
- * Isto morava num `{% set links = {...} %}` no topo de `views/core/home.njk`,
+ * Isto morava num `{% set links = {...} %}` no topo de `views/pages/site/home.njk`,
  * o que bastava enquanto existia uma página pública só. Com a chegada de
  * `/seja-membro` passaram a ser duas, e um `set` de template não atravessa
  * `{% include %}` nem `{% extends %}`: o mapa teria de ser copiado nas duas —

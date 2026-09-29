@@ -25,8 +25,14 @@ views/
 ├── partials/
 │   ├── painel_nav.njk  Barra de navegação
 │   └── mensagens.njk   Bloco de mensagens flash
-├── core/             Telas do sistema
-├── registration/     login.njk
+├── pages/            Uma tela por arquivo, agrupadas por área
+│   ├── erro.njk        Página de erro (site e painel)
+│   ├── auth/           login.njk
+│   ├── site/           home, seja_membro, solicitar_cadastro
+│   ├── semcomp/        evento (página pública) e inscricao
+│   └── painel/         inicio_admin, inicio_membro e uma pasta por recurso:
+│                       membros/, setores/, tarefas/, anexos/, solicitacoes/,
+│                       semcomp/ (lista, criar/adicionar, editar, excluir…)
 └── routes.ts         Nomes de rota -> caminhos
 ```
 
@@ -399,11 +405,11 @@ navega e a tela de sempre aparece. É o mesmo contrato do `data-confirm`.
 
 ### Verificar que os templates ainda renderizam
 
-`backend/render-check.cjs` renderiza as telas do painel com dados plausíveis,
+`backend/scripts/render-check.cjs` renderiza as telas do painel com dados plausíveis,
 usando os mesmos filtros que o `bootstrap.ts` registra:
 
 ```bash
-cd backend && node render-check.cjs
+cd backend && node scripts/render-check.cjs
 ```
 
 Compilar só prova sintaxe; renderizar prova que os caminhos de dado existem. Os
