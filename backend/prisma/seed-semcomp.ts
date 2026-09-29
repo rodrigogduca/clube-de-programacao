@@ -24,7 +24,7 @@ type Linha = [
   minutos?: number,
 ];
 
-// Planilha de logística atualizada em 23/09/2026. Entram só as CONFIRMADAS.
+// Conferida com a programação do Even3 em 29/09/2026. Entram só as CONFIRMADAS.
 // O hackathon (30/09) fica de fora: tem portal próprio e é só para
 // estudantes do CIMATEC, não se escolhe pelo formulário. O Capture The Leak
 // é um bloco só, das 14:00 às 15:50.
@@ -43,13 +43,6 @@ const ATIVIDADES: Linha[] = [
     'Palestra',
     'Papel das iniciativas de extensão no contexto acadêmico e social',
     'Marinilda',
-  ],
-  [
-    '2026-09-29',
-    '11:00',
-    'Palestra',
-    'Saúde mental e vida universitária: estratégias para o equilíbrio emocional nos estudos',
-    'NAAE',
   ],
   [
     '2026-09-29',
@@ -123,14 +116,14 @@ const ATIVIDADES: Linha[] = [
     'IA na indústria automotiva',
     'Anderson Dorea (Dortech)',
   ],
-  [
-    '2026-10-01',
-    '17:00',
-    'Palestra',
-    'Como as máquinas enxergam?',
-    'Lucas Amparo Barbosa',
-  ],
   // 02/10 — Cyber & Quantum Day
+  [
+    '2026-10-02',
+    '09:00',
+    'Palestra',
+    'Introdução à computação quântica',
+    'Otto Menegasso Pires',
+  ],
   [
     '2026-10-02',
     '10:00',
@@ -142,8 +135,8 @@ const ATIVIDADES: Linha[] = [
     '2026-10-02',
     '11:00',
     'Palestra',
-    'História da comunicação quântica',
-    'Maria Heloísa',
+    'Potencialidades da computação quântica',
+    'Yan Chagas',
   ],
   [
     '2026-10-02',
