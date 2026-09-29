@@ -551,7 +551,7 @@ const semcompAgora = (function () {
     const dia = Math.min(TOTAL_DIAS, Math.floor((hojeMs - primeiroMs) / 864e5) + 1);
     const horaLocal = new Date(t - 3 * 3600e3);
     const minutosDoDia = horaLocal.getUTCHours() * 60 + horaLocal.getUTCMinutes();
-    const emHorario = minutosDoDia >= 7 * 60 + 30 && minutosDoDia < 18 * 60;
+    const emHorario = minutosDoDia >= 8 * 60 && minutosDoDia < 18 * 60;
 
     if (emHorario) {
       rotulo.textContent = 'Acontecendo agora';
@@ -559,9 +559,9 @@ const semcompAgora = (function () {
       caixa.dataset.fase = 'dia';
     } else {
       rotulo.textContent = `Dia ${dia} de ${TOTAL_DIAS}`;
-      aoVivo.textContent = minutosDoDia < 7 * 60 + 30
-        ? 'Hoje tem SEMCOMP: o credenciamento abre às 07:30'
-        : 'Amanhã tem mais, com credenciamento às 07:30';
+      aoVivo.textContent = minutosDoDia < 8 * 60
+        ? 'Hoje tem SEMCOMP: o credenciamento abre às 08:00'
+        : 'Amanhã tem mais, com credenciamento às 08:00';
       caixa.dataset.fase = 'noite';
     }
   }
@@ -625,8 +625,8 @@ const semcompAgora = (function () {
     const n = dias.length;
     if (s.fase === 'antes') {
       const faltam = diasEntre(dataLocal(t), dias[0].data);
-      if (faltam <= 0) return 'Começa hoje · credenciamento às 07:30';
-      if (faltam === 1) return 'Começa amanhã · credenciamento às 07:30';
+      if (faltam <= 0) return 'Começa hoje · credenciamento às 08:00';
+      if (faltam === 1) return 'Começa amanhã · credenciamento às 08:00';
       return `Começa em ${faltam} dias`;
     }
     if (s.fase === 'depois') return 'A SEMCOMP 2026 terminou · até a próxima edição';
@@ -674,6 +674,9 @@ const semcompAgora = (function () {
       d.li.classList.toggle('trilha-dia--passado', passou && !ehHoje);
       d.li.classList.toggle('trilha-dia--hoje', ehHoje);
       d.li.classList.toggle('trilha-dia--vivo', aoVivo);
+      // O traço deitado da faixa de data, que no celular substitui o filete.
+      const andamento = passou ? 1 : aoVivo ? (t - d.inicio) / (d.fim - d.inicio) : 0;
+      d.li.style.setProperty('--dia-andamento', andamento.toFixed(4));
       if (d.selo) {
         d.selo.hidden = !ehHoje;
         d.selo.textContent = aoVivo ? 'Ao vivo' : 'Hoje';

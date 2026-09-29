@@ -6525,10 +6525,59 @@ footer {
     mês), lado a lado, sem cobrar largura do texto.
 
     O filete que ligava as plaquetas sai junto — na vertical ele passaria por
-    dentro dos cartões, não por trás deles.
+    dentro dos cartões, não por trás deles. Vale para os dois: o cinza
+    (`::before`) e o âmbar do andamento (`::after`), que atravessava o texto
+    de todos os dias até o de hoje. O andamento vira um traço deitado no pé de
+    cada faixa de data, com a fração que o `main.js` escreve em
+    `--dia-andamento` (0 antes do dia, 1 depois dele).
   */
-  .trilha::before {
+  .trilha::before,
+  .trilha::after {
     display: none;
+  }
+
+  .trilha-data::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: calc(var(--dia-andamento, 0) * 100%);
+    height: 3px;
+    border-radius: 0 3px 3px 0;
+    background: linear-gradient(90deg, var(--ambar), var(--gema));
+    box-shadow: 0 0 10px rgba(242, 138, 31, 0.45);
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .trilha-dia--passado .trilha-data::after {
+    background: var(--ambar-traco);
+    box-shadow: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .trilha-data::after {
+      transition: none;
+    }
+  }
+
+  /* O rótulo da barra de cima quebra em duas linhas no celular; o ponto e o
+     percentual sobem para a primeira em vez de ficarem na linha de base. */
+  .semana-status {
+    padding: 14px 16px 12px;
+  }
+
+  .semana-status-topo {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .semana-status-rotulo {
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+
+  .semana-status-pct {
+    line-height: 1.6;
   }
 
   .trilha-dia {

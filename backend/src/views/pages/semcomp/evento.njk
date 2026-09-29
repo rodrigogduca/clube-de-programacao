@@ -224,7 +224,7 @@
           as duas ficam lado a lado (`.capa-topo`), logo à esquerda e contagem
           à direita; no celular empilham, logo em cima.
 
-          Conta até o credenciamento do primeiro dia (29/09, 07:30, com o fuso
+          Conta até o credenciamento do primeiro dia (29/09, 08:00, com o fuso
           -03:00 escrito para não depender do relógio de quem abre). Quem faz a
           conta é o `main.js`, pelo mesmo motivo da barra da seção 03: a página
           fica no cache da CDN, e um número escrito pelo servidor estaria parado
@@ -239,7 +239,7 @@
         #}
         <div class="capa-lado">
           <div class="contagem fade-in" id="contagemSemcomp"
-               data-inicio="2026-09-29T07:30:00-03:00"
+               data-inicio="2026-09-29T08:00:00-03:00"
                data-fim="2026-10-03T18:00:00-03:00" hidden>
             <span class="contagem-rotulo" data-contagem-rotulo>Faltam para a abertura</span>
             <div class="contagem-numeros" role="timer" data-contagem-numeros>
@@ -679,7 +679,7 @@
 
       {% set turnos = [
         { nome: 'Manhã', ate: 'até 12:50', slots: [
-          { hora: '07:30', fixo: 'Credenciamento', ate: 'até as 08:50' },
+          { hora: '08:00', fixo: 'Credenciamento', ate: 'até as 08:50' },
           { hora: '09:00' }, { hora: '10:00' }, { hora: '11:00' },
           { hora: '12:00', fixo: 'Almoço', ate: 'até as 12:50' }
         ] },
@@ -751,7 +751,7 @@
           tags: [{ nome: 'Competições', destaque: true }, { nome: 'Premiação', destaque: true }, { nome: 'Encerramento' }],
           turnos: [
             { nome: 'Manhã', ate: 'até 12:30', slots: [
-              { hora: '07:30', fixo: 'Credenciamento', ate: 'a partir das 07:30' },
+              { hora: '08:00', fixo: 'Credenciamento', ate: 'a partir das 08:00' },
               { hora: '08:00', id: 'occ' },
               { hora: '10:00', id: 'ctf' }
             ] },
@@ -779,7 +779,7 @@
         escrito para não depender do relógio de quem abre), e o `main.js` faz
         a conta e refaz a cada minuto.
 
-        O DIA "ANDA" DAS 07:30 ÀS 18:00, do credenciamento ao fim do último
+        O DIA "ANDA" DAS 08:00 ÀS 18:00, do credenciamento ao fim do último
         bloco (17:00 a 17:50). À noite a barra para no começo do dia seguinte
         e espera.
 
@@ -811,7 +811,7 @@
         {% set data_iso = '2026-' ~ ('09' if d.mes == 'set' else '10') ~ '-' ~ d.num %}
         <li class="trilha-dia{% if d.destaque %} trilha-dia--destaque{% endif %} fade-in"
             data-data="{{ data_iso }}"
-            data-inicio="{{ data_iso }}T07:30:00-03:00"
+            data-inicio="{{ data_iso }}T08:00:00-03:00"
             data-fim="{{ data_iso }}T18:00:00-03:00"
             data-tema="{{ (d.tema or (d.num ~ '/' ~ ('09' if d.mes == 'set' else '10'))) | safe }}">
           <div class="trilha-data" aria-hidden="true">
@@ -846,7 +846,7 @@
 
             {#
               O DIA EM DOIS TURNOS, MANHÃ E TARDE, no modelo da planilha de
-              logística: credenciamento às 07:30, três palestras de manhã,
+              logística: credenciamento às 08:00, três palestras de manhã,
               almoço e a tarde de 13:00 a 17:50. Todo dia segue a mesma grade
               (`turnos`, definida antes da lista), menos o sábado, que traz a
               sua em `d.turnos`: as competições começam às 08:00 e correm em
@@ -1413,7 +1413,7 @@
             </div>
             <div>
               <dt>Credenciamento</dt>
-              <dd>Das 07:30 às 08:50, todo dia de palestra</dd>
+              <dd>Das 08:00 às 08:50, todo dia de palestra</dd>
             </div>
             <div>
               <dt>Vestimenta</dt>
@@ -1456,7 +1456,7 @@
           },
           {
             p: 'A que horas eu preciso chegar?',
-            r: 'Nos dias de palestra o credenciamento vai das 07:30 às 08:50, e o primeiro bloco começa às 09:00. No sábado, o Arena Day, o credenciamento também abre às 07:30 e as competições começam às 08:00: OCC das 08:00 às 12:30, Capture The Flag das 10:00 às 12:00 e, à tarde, a Competição de IA Google das 13:30 às 15:30.'
+            r: 'Nos dias de palestra o credenciamento vai das 08:00 às 08:50, e o primeiro bloco começa às 09:00. No sábado, o Arena Day, o credenciamento também abre às 08:00, junto com o início das competições: OCC das 08:00 às 12:30, Capture The Flag das 10:00 às 12:00 e, à tarde, a Competição de IA Google das 13:30 às 15:30.'
           },
           {
             p: 'Como funciona o hackathon?',
