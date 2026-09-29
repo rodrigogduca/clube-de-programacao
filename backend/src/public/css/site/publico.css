@@ -6953,7 +6953,9 @@ footer {
 
   /* OS FORMATOS DA SEÇÃO 02: o palco encolhe para um quadrado ao lado do
      selo e do título, como um ícone de lista, e o texto corre embaixo na
-     largura toda. `extra` é o selo "só estudantes CIMATEC" do hackathon. */
+     largura toda. `extra` é o selo "só estudantes CIMATEC" do hackathon, e
+     `botao` o "Inscrever-se" dele: sem área própria, o botão caía sozinho
+     numa linha implícita na coluna de 68px do palco e vazava para o lado. */
   .formato-card--arte {
     display: grid;
     grid-template-columns: 68px minmax(0, 1fr);
@@ -6963,7 +6965,8 @@ footer {
       "texto texto"
       "marcas marcas"
       "extra extra"
-      "nota nota";
+      "nota nota"
+      "botao botao";
     column-gap: 14px;
     row-gap: 0;
     align-content: start;
@@ -7011,6 +7014,15 @@ footer {
   .formato-card--arte .formato-nota {
     grid-area: nota;
     padding-top: 16px;
+  }
+
+  /* Na largura toda do cartão: é o único botão da fileira no celular, e um
+     alvo de toque maior que o rótulo. */
+  .formato-card--arte .formato-botao {
+    grid-area: botao;
+    justify-self: stretch;
+    margin-top: 14px;
+    padding: 13px 20px;
   }
 
   /* PARCEIROS EM DUAS COLUNAS. O logo encolhe na proporção (a altura de
