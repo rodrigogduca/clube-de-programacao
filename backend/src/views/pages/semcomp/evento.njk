@@ -756,13 +756,15 @@
             { nome: 'Manhã', ate: 'até 12:30', slots: [
               { hora: '07:30', fixo: 'Credenciamento', ate: 'a partir das 07:30' },
               { hora: '08:00', id: 'occ' },
-              { hora: '08:00', id: 'ia' },
               { hora: '10:00', id: 'ctf' }
+            ] },
+            { nome: 'Tarde', ate: 'até 15:30', slots: [
+              { hora: '13:30', id: 'ia' }
             ] }
           ],
           grade: {
             'occ': { tipo: 'Programação competitiva', titulo: 'OCC: Olimpíada Computação Cimatec', quem: 'das 08:00 às 12:30' },
-            'ia': { tipo: 'Competição de IA', titulo: 'Competição de IA', quem: 'horário a confirmar' },
+            'ia': { tipo: 'Competição de IA', titulo: 'Competição de IA Google: Construa o Futuro com Agentes Inteligentes', quem: 'das 13:30 às 15:30' },
             'ctf': { tipo: 'Segurança ofensiva', titulo: 'Capture The Flag', quem: 'das 10:00 às 12:00' }
           },
           destaque: true
@@ -1047,11 +1049,13 @@
         },
         {
           selo: 'IA',
+          ilustra: { src: 'icones/ia.webp', largura: 320, altura: 248 },
           aberto: true,
-          titulo: 'Competição de IA',
-          desc: 'Uma competição de inteligência artificial entra no lugar do AWS DeepRacer. Formato e regras serão divulgados em breve.',
+          titulo: 'Competição de IA Google',
+          desc: 'Construa o Futuro com Agentes Inteligentes: uma competição de inteligência artificial com agentes, no lugar do AWS DeepRacer.',
           premios: premio_padrao,
-          nota: 'Sáb 03/10 &middot; inscrição em breve'
+          nota: 'Sáb 03/10 &middot; 13:30 às 15:30' + fim_competicoes,
+          inscricao: links.arenaCompeticoes
         },
         {
           selo: 'CTF',
@@ -1455,7 +1459,7 @@
           },
           {
             p: 'A que horas eu preciso chegar?',
-            r: 'Nos dias de palestra o credenciamento vai das 07:30 às 08:50, e o primeiro bloco começa às 09:00. No sábado, o Arena Day, o credenciamento também abre às 07:30 e as competições começam às 08:00: OCC das 08:00 às 12:30 e Capture The Flag das 10:00 às 12:00.'
+            r: 'Nos dias de palestra o credenciamento vai das 07:30 às 08:50, e o primeiro bloco começa às 09:00. No sábado, o Arena Day, o credenciamento também abre às 07:30 e as competições começam às 08:00: OCC das 08:00 às 12:30, Capture The Flag das 10:00 às 12:00 e, à tarde, a Competição de IA Google das 13:30 às 15:30.'
           },
           {
             p: 'Como funciona o hackathon?',
