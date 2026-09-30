@@ -90,9 +90,12 @@ export const SITE_LINKS = {
     'https://docs.google.com/forms/d/e/1FAIpQLSfJUR7JPQKkzxf04MyOVOjd6ePR67lBbZv1z4QhGlS5MH1KiQ/viewform',
 
   /**
-   * O TERCEIRO FORMULÁRIO DO ARENA DAY: as competições de código e a da
-   * Fortinet (Olimpíada de Programação, Capture The Flag e Capture The
-   * Leak). Todas abertas a qualquer pessoa, como os jogos.
+   * O TERCEIRO FORMULÁRIO DO ARENA DAY: as competições de código
+   * (Olimpíada de Programação, competição de IA e Capture The Flag). Todas
+   * abertas a qualquer pessoa, como os jogos.
+   *
+   * O Capture The Leak da Fortinet NÃO passa por aqui: a inscrição dele é
+   * uma atividade dentro do Even3 (`semcomp`), com um aviso antes de sair.
    *
    * Ficam de fora o hackathon (portal próprio, só estudantes CIMATEC) e a
    * Game Jam, que lotou antes da semana.

@@ -755,14 +755,18 @@
               { hora: '08:00', id: 'occ' },
               { hora: '10:00', id: 'ctf' }
             ] },
-            { nome: 'Tarde', ate: 'até 15:30', slots: [
-              { hora: '13:30', id: 'ia' }
+            { nome: 'Tarde', ate: 'até 17:45', slots: [
+              { hora: '13:30', id: 'ia' },
+              { hora: '15:30', id: 'mesa1' },
+              { hora: '16:45', id: 'mesa2' }
             ] }
           ],
           grade: {
             'occ': { tipo: 'Programação competitiva', titulo: 'OCC: Olimpíada Computação Cimatec', quem: 'das 08:00 às 12:30' },
             'ia': { tipo: 'Competição de IA', titulo: 'Competição de IA Google: Construa o Futuro com Agentes Inteligentes', quem: 'das 13:30 às 15:30' },
-            'ctf': { tipo: 'Segurança ofensiva', titulo: 'Capture The Flag', quem: 'das 10:00 às 12:00' }
+            'ctf': { tipo: 'Segurança ofensiva', titulo: 'Capture The Flag', quem: 'das 10:00 às 12:00' },
+            'mesa1': { tipo: 'Jogos presenciais', titulo: 'Dominó e Ping Pong', quem: 'das 15:30 às 16:45' },
+            'mesa2': { tipo: 'Jogos presenciais', titulo: 'Truco e Totó', quem: 'das 16:45 às 17:45' }
           },
           destaque: true
         }
@@ -1021,8 +1025,9 @@
           titulo: 'Capture The Leak',
           desc: 'O desafio de cibersegurança organizado pela Fortinet, do lado da defesa. O desafio e a premiação são da própria Fortinet.',
           premios: ['Prêmio da Fortinet', 'Prêmio da Fortinet', 'Prêmio da Fortinet'],
-          nota: 'Sex 02/10 &middot; 14:00 às 15:50 &middot; individual' + fim_competicoes,
-          inscricao: links.arenaCompeticoes
+          nota: 'Sex 02/10 &middot; 14:00 às 15:50 &middot; individual &middot; inscrição no Even3',
+          inscricao: links.semcomp,
+          modal: 'modalCtl'
         },
         {
           selo: 'Presenciais',
@@ -1137,7 +1142,13 @@
               {% if m.lotado %}<span class="selo-restrito">{{ ic.icone('cadeado', 14) }} Vagas esgotadas</span>{% endif %}
               <span class="formato-nota">{{ m.nota | safe }}</span>
               {% if m.inscricao %}
-              <a class="btn-primary formato-botao" href="{{ m.inscricao }}" target="_blank" rel="noopener noreferrer">
+              {#
+                `modal` abre um aviso ANTES de sair da página: o Capture The Leak
+                se inscreve DENTRO do Even3, como atividade, e quem só se inscreve
+                na SEMCOMP de lá acha que já está dentro. O `href` continua sendo
+                o Even3: sem JavaScript o botão vai direto, sem o aviso.
+              #}
+              <a class="btn-primary formato-botao" href="{{ m.inscricao }}" target="_blank" rel="noopener noreferrer"{% if m.modal %} data-modal="{{ m.modal }}"{% endif %}>
                 Inscrever-se {{ ic.icone('externo', 14) }}
               </a>
               {% endif %}
@@ -1318,10 +1329,10 @@
                 <span class="acao-selo">Competições</span>
                 <img class="acao-ilustra" src="{{ static('images/semcomp/icones/competicoes.webp') }}" alt="" aria-hidden="true" width="320" height="244" loading="lazy" decoding="async">
                 <span class="acao-ilustras" aria-hidden="true">
-                  {% for il in ['ctl.webp', 'ctf.webp'] %}<img src="{{ static('images/semcomp/icones/' ~ il) }}" alt="" width="160" height="160" loading="lazy" decoding="async">{% endfor %}
+                  {% for il in ['ia.webp', 'ctf.webp'] %}<img src="{{ static('images/semcomp/icones/' ~ il) }}" alt="" width="160" height="160" loading="lazy" decoding="async">{% endfor %}
                 </span>
-                <h3>Olimpíada de Programação, competição de IA, CTF e Capture The Leak</h3>
-                <p>As competições de código e de cibersegurança, abertas a qualquer pessoa. O formulário pergunta em quais você entra.</p>
+                <h3>Olimpíada de Programação, competição de IA e CTF</h3>
+                <p>As competições de código e de cibersegurança, abertas a qualquer pessoa. O formulário pergunta em quais você entra. O Capture The Leak é à parte, no Even3.</p>
                 <span class="acao-pe">
                   <span class="acao-nota">Formulário do Google &middot; vagas limitadas</span>
                   <span class="acao-seta" aria-hidden="true">{{ ic.icone('seta', 16) }}</span>
@@ -1837,6 +1848,45 @@
       </p>
     </div>
   </section>
+
+  {#
+    O AVISO DO CAPTURE THE LEAK — abre no "Inscrever-se" do cartão, antes de
+    mandar ao Even3.
+
+    A inscrição no CTL é uma ATIVIDADE dentro do evento no Even3, não o
+    formulário do Arena Day. Estar inscrito na SEMCOMP não garante vaga nele,
+    e é isso que o modal diz antes de a pessoa sair da página.
+  #}
+  {% if links.semcomp %}
+  <div class="modal-overlay" id="modalCtl" role="dialog" aria-modal="true"
+       aria-labelledby="tituloCtl" hidden>
+    <div class="modal-card">
+      <button class="modal-close" type="button" data-modal-fechar aria-label="Fechar">
+        {{ ic.icone('fechar') }}
+      </button>
+
+      <div class="modal-topo">
+        <span class="modal-selo">// capture the leak</span>
+        <h2 id="tituloCtl">A inscrição é dentro do Even3</h2>
+        <p>Estar inscrito na SEMCOMP não garante sua vaga no Capture The Leak. Ele é uma atividade à parte, e você precisa se inscrever nela lá na plataforma.</p>
+      </div>
+
+      <ol class="modal-passos">
+        <li>Entre no Even3 e faça login (ou se inscreva na SEMCOMP, se ainda não fez isso).</li>
+        <li>Na página do evento, abra a lista de <strong>atividades</strong>.</li>
+        <li>Procure <strong>Capture The Leak</strong> e confirme a inscrição na atividade.</li>
+      </ol>
+
+      <div class="modal-acoes">
+        <a class="btn-primary" href="{{ links.semcomp }}" target="_blank" rel="noopener noreferrer">
+          Ir para o Even3
+          {{ ic.icone('externo', 15) }}
+        </a>
+        <button class="btn-outline" type="button" data-modal-fechar>Agora não</button>
+      </div>
+    </div>
+  </div>
+  {% endif %}
 
 {% endblock %}
 
